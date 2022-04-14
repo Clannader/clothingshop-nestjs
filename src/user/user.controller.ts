@@ -3,8 +3,8 @@ import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import UserSchema from './entity/UserSchema';
 
-@Controller('user')
-@ApiTags('user')
+@Controller('/cms/api/user')
+@ApiTags('UserController')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
