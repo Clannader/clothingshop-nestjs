@@ -15,7 +15,7 @@ async function bootstrap() {
     logger: aopLogger,
   });
   app.use(helmet())
-  app.disable('x-powered-by') // TODO 好像这个又没有效果
+  app.disable('x-powered-by') // 还是有效果的,一旦用了helmet,框架自动帮去掉这个头了
   // app.enableCors() // 允许开启CORS
   app.useGlobalInterceptors(new LogInterceptor(aopLogger));
   // app.setGlobalPrefix('cms'); // 这里类似于设置context-path,设置全局的路由前缀,不影响swagger的地址路由
