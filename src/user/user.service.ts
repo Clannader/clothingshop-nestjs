@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import UserSchema from './entity/UserSchema';
+import { UserSchemaDto } from './entity/user-schema.dto';
 
 @Injectable()
 export class UserService {
-  getUser(username: string, password: string): UserSchema {
-    const user = new UserSchema();
+  getUser(username: string, password: string): UserSchemaDto {
+    const user = new UserSchemaDto();
     user.username = username;
     user.password = password;
     return user;
