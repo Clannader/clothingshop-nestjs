@@ -6,7 +6,7 @@ import { AopLogger } from './logger/AopLogger';
 import { LogInterceptor } from './interceptor/LogInterceptor';
 import helmet from 'helmet';
 import { join } from 'path';
-import { renderFile } from 'ejs'
+import { renderFile } from 'ejs';
 // import * as fs from 'fs';
 
 async function bootstrap() {
@@ -24,15 +24,15 @@ async function bootstrap() {
     logger: aopLogger, // 这里应该是修改了底层代码用到的logger函数的内容
     // httpsOptions
   });
-  app.use(helmet())
-  app.disable('x-powered-by') // 还是有效果的,一旦用了helmet,框架自动帮去掉这个头了
-  // app.enableCors() // 允许开启CORS
+  app.use(helmet());
+  app.disable('x-powered-by'); // 还是有效果的,一旦用了helmet,框架自动帮去掉这个头了
+  // app.enableCors() // 允许开启CORS,不过不满足需求,这里是定义全局的CORS
   app.useGlobalInterceptors(new LogInterceptor(aopLogger));
   // app.setGlobalPrefix('cms'); // 这里类似于设置context-path,设置全局的路由前缀,不影响swagger的地址路由
   // 也就是说swagger的路由访问是不用加上前缀的
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.engine('html', renderFile)
+  app.engine('html', renderFile);
   app.setViewEngine('html');
 
   const port = 3000;
@@ -40,9 +40,13 @@ async function bootstrap() {
     .setTitle('Clothingshop System API')
     .setDescription('The clothingshop restful api')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth() // 要研究一下授权问题,发现有三种授权方式,但是怎么设置都不生效
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
-    .setContact('oliver.wu', `http://localhost:${port}/index`, '294473343@qq.com')
+    .setContact(
+      'oliver.wu',
+      `http://localhost:${port}/index`,
+      '294473343@qq.com',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('swagger-ui', app, document, {
