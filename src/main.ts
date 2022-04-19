@@ -26,7 +26,7 @@ async function bootstrap() {
   });
   app.use(helmet());
   app.disable('x-powered-by'); // 还是有效果的,一旦用了helmet,框架自动帮去掉这个头了
-  // app.enableCors() // 允许开启CORS,不过不满足需求,这里是定义全局的CORS
+  // app.enableCors() // 允许开启CORS,不过不满足需求,这里是全局定义的CORS,可能需要部分开启而已
   app.useGlobalInterceptors(new LogInterceptor(aopLogger));
   // app.setGlobalPrefix('cms'); // 这里类似于设置context-path,设置全局的路由前缀,不影响swagger的地址路由
   // 也就是说swagger的路由访问是不用加上前缀的
@@ -40,7 +40,7 @@ async function bootstrap() {
     .setTitle('Clothingshop System API')
     .setDescription('The clothingshop restful api')
     .setVersion('1.0')
-    .addBearerAuth() // 要研究一下授权问题,发现有三种授权方式,但是怎么设置都不生效
+    .addOAuth2() // 要研究一下授权问题,发现有三种授权方式,但是怎么设置都不生效
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
     .setContact(
       'oliver.wu',
@@ -50,9 +50,13 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('swagger-ui', app, document, {
-    // swaggerOptions: {
-    //   persistAuthorization: false, // TODO 好像这个参数暂时不生效,不知道什么情况
-    // },
+    swaggerOptions: {
+      persistAuthorization: true, // TODO 好像这个参数暂时不生效,不知道什么情况
+      explorer: true,
+    },
+    uiConfig: {
+      filter: true,
+    },
   });
 
   await app.listen(port);
