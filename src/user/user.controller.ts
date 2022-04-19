@@ -4,12 +4,12 @@ import {
   ApiOperation,
   ApiBody,
   ApiResponse,
-  ApiBearerAuth,
+  ApiOAuth2,
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { UserSchemaDto } from './entity/user-schema.dto';
 
-@ApiBearerAuth()
+@ApiOAuth2(['pets:write'])
 @Controller('/cms/api/user')
 @ApiTags('UserController')
 export class UserController {
