@@ -7,7 +7,7 @@ import {
   ApiOAuth2,
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { UserSchemaDto } from './entity/user-schema.dto';
+import { UserSchemaDto } from './dto/user-schema.dto';
 
 @ApiOAuth2(['pets:write'])
 @Controller('/cms/api/user')
@@ -23,6 +23,7 @@ export class UserController {
   @ApiBody({ type: UserSchemaDto })
   @ApiResponse({ type: UserSchemaDto, status: 1000 })
   getUser(@Body() user: UserSchemaDto) {
+    console.log(user)
     return this.userService.getUser(user.username, user.password);
   }
 }

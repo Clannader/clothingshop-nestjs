@@ -52,11 +52,10 @@ async function bootstrap() {
   SwaggerModule.setup('swagger-ui', app, document, {
     swaggerOptions: {
       persistAuthorization: true, // TODO 好像这个参数暂时不生效,不知道什么情况
-      explorer: true,
-    },
-    uiConfig: {
       filter: true,
     },
+    // explorer: true,
+    customCss: '.swagger-ui .model-box { display:block }'
   });
 
   await app.listen(port);
