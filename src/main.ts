@@ -3,7 +3,6 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { AopLogger } from './logger/AopLogger';
-import { LogInterceptor } from './interceptor/LogInterceptor';
 import helmet from 'helmet';
 import { join } from 'path';
 import { renderFile } from 'ejs';
@@ -21,13 +20,13 @@ async function bootstrap() {
   // 并最终回到拦截器中的返回路径中（从而产生响应）
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    logger: aopLogger, // 这里应该是修改了底层代码用到的logger函数的内容
+    logger: aopLogger, // 这里应该是修改了底层代码用到的logger函数的调用
     // httpsOptions
   });
   app.use(helmet());
   app.disable('x-powered-by'); // 还是有效果的,一旦用了helmet,框架自动帮去掉这个头了
   // app.enableCors() // 允许开启CORS,不过不满足需求,这里是全局定义的CORS,可能需要部分开启而已
-  app.useGlobalInterceptors(new LogInterceptor(aopLogger));
+  // app.useGlobalInterceptors(new LogInterceptor(aopLogger));
   // app.setGlobalPrefix('cms'); // 这里类似于设置context-path,设置全局的路由前缀,不影响swagger的地址路由
   // 也就是说swagger的路由访问是不用加上前缀的
   app.useStaticAssets(join(__dirname, '..', 'public'));
@@ -51,7 +50,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('swagger-ui', app, document, {
     swaggerOptions: {
-      persistAuthorization: true, // TODO 好像这个参数暂时不生效,不知道什么情况
+      persistAuthorization: true, // 这个参数好像是做持久化认证的
       filter: true,
     },
     // explorer: true,
