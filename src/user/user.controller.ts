@@ -23,7 +23,7 @@ export class UserController {
   @ApiBody({ type: UserSchemaDto })
   @ApiResponse({ type: UserSchemaDto, status: 1000 })
   getUser(@Body() user: UserSchemaDto) {
-    console.log(user)
+    console.log(user);
     return this.userService.getUser(user.username, user.password);
   }
 }

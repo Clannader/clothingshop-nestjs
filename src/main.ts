@@ -54,7 +54,7 @@ async function bootstrap() {
       filter: true,
     },
     // explorer: true,
-    customCss: '.swagger-ui .model-box { display:block }'
+    customCss: '.swagger-ui .model-box { display:block }',
   });
 
   await app.listen(port);

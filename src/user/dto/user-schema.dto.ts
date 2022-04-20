@@ -17,7 +17,7 @@ export class UserSchemaDto {
    * 年龄
    */
   @IsInt({
-    message: '年龄必须是数字'
+    message: '年龄必须是数字',
   })
   age: number;
 }

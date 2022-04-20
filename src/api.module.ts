@@ -4,13 +4,14 @@
 import { Module } from '@nestjs/common';
 import { HttpExceptionFilter } from './filter/httpExceptionFilter';
 import { ValidationPipe } from './pipe/validationPipe';
-import { LogInterceptor} from './interceptor/LogInterceptor';
+import { LogInterceptor } from './interceptor/LogInterceptor';
 
 import { UserModule } from './user/user.module';
+import { LoggerModule } from './logger/logger.module';
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
-  imports: [UserModule],
+  imports: [UserModule, LoggerModule],
   controllers: [],
   providers: [
     {
@@ -24,7 +25,7 @@ import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
     {
       provide: APP_INTERCEPTOR,
       useClass: LogInterceptor,
-    }
+    },
   ],
 })
 export class ApiModule {}
