@@ -53,8 +53,9 @@ async function bootstrap() {
       persistAuthorization: true, // 这个参数好像是做持久化认证的
       filter: true,
     },
-    // explorer: true,
-    customCss: '.swagger-ui .model-box { display:block }',
+    explorer: true,
+    // customCss: '.swagger-ui .model-box { display:block }',
+    customCssUrl: '/swagger-ui-override.css'
   });
 
   await app.listen(port);

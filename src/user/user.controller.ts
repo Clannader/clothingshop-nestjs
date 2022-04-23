@@ -9,7 +9,9 @@ import {
 import { UserService } from './user.service';
 import { UserSchemaDto, UserSchema } from './dto/user-schema.dto';
 import { CommonResult } from '../public/dto/common.dto';
+import { ApiCommonHeader } from '../public/decorator/common.decorator';
 
+@ApiCommonHeader()
 @ApiOAuth2(['pets:write'])
 @Controller('/cms/api/user')
 @ApiTags('UserController')

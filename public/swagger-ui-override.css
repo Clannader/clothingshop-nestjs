@@ -1,0 +1,9 @@
+.swagger-ui .model-box {
+    display: block
+}
+.swagger-ui .parameters-col_description {
+    width: auto;
+}
+.swagger-ui .topbar {
+    background-color: #89bf04;
+}
