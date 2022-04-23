@@ -2,7 +2,7 @@
  * 这里是cms系统的api模块
  */
 import { Module } from '@nestjs/common';
-import { HttpExceptionFilter } from './filter/httpException.filter';
+import { HttpExceptionFilter } from './filter/http-exception.filter';
 import { ValidationPipe } from './pipe/validation.pipe';
 import { LogInterceptor } from './interceptor/log.interceptor';
 

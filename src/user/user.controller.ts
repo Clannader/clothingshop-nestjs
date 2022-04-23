@@ -8,6 +8,7 @@ import {
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { UserSchemaDto } from './dto/user-schema.dto';
+import { CommonResult } from '../public/dto/common.dto';
 
 @ApiOAuth2(['pets:write'])
 @Controller('/cms/api/user')
@@ -25,5 +26,16 @@ export class UserController {
   getUser(@Body() user: UserSchemaDto) {
     console.log(user);
     return this.userService.getUser(user.username, user.password);
+  }
+
+  @Post('getEnum')
+  @ApiOperation({
+    summary: '测试swagger',
+    description: '测试类型',
+  })
+  @ApiBody({ type: CommonResult })
+  @ApiResponse({ type: CommonResult, status: 1000 })
+  getEnum(@Body() user: CommonResult) {
+    return new CommonResult()
   }
 }
