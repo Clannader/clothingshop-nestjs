@@ -9,7 +9,7 @@ export class UserService {
   private systemService: SystemService;
 
   constructor(private readonly logger: AopLogger) {
-    this.logger.setContext('UserService')
+    this.logger.setContext('UserService');
   }
 
   getUser(username: string, password: string): UserSchemaDto {
@@ -17,7 +17,7 @@ export class UserService {
     user.username = username;
     user.password = password;
     console.log(this.systemService.config());
-    this.logger.log('哈哈Logger')
+    this.logger.log('哈哈Logger');
     return user;
   }
 }

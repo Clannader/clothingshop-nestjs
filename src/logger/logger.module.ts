@@ -5,11 +5,13 @@ import { AopLogger } from './aop.logger';
 @Module({
   imports: [],
   controllers: [],
-  providers: [{
-    provide: AopLogger,
-    useClass: AopLogger,
-    scope: Scope.TRANSIENT,
-  }],
+  providers: [
+    {
+      provide: AopLogger,
+      useClass: AopLogger,
+      scope: Scope.TRANSIENT,
+    },
+  ],
   exports: [AopLogger],
 })
 export class LoggerModule {}
