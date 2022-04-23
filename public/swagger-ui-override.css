@@ -7,3 +7,6 @@
 .swagger-ui .topbar {
     background-color: #89bf04;
 }
+.swagger-ui .response-col_description {
+    width: auto;
+}
