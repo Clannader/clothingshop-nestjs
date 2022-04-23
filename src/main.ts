@@ -55,7 +55,7 @@ async function bootstrap() {
     },
     explorer: true,
     // customCss: '.swagger-ui .model-box { display:block }',
-    customCssUrl: '/swagger-ui-override.css'
+    customCssUrl: '/swagger-ui-override.css',
   });
 
   await app.listen(port);

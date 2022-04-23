@@ -1,4 +1,3 @@
-
 export enum CodeEnum {
   SUCCESS = 100, // 成功响应时返回该响应码
   EMPTY = 101, // 校验字段为空时返回该响应码

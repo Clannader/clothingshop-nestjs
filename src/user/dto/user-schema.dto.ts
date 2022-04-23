@@ -24,9 +24,9 @@ export class UserSchema {
   age: number;
 }
 
-export class UserSchemaDto extends PartialType(CommonResult){
+export class UserSchemaDto extends PartialType(CommonResult) {
   /**
    * 用户结构
    */
-  user: UserSchema
+  user: UserSchema;
 }

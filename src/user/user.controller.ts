@@ -38,6 +38,6 @@ export class UserController {
   @ApiBody({ type: CommonResult })
   @ApiResponse({ type: CommonResult, status: 100, description: '响应成功' })
   getEnum(@Query() user: CommonResult) {
-    return new CommonResult()
+    return new CommonResult();
   }
 }
