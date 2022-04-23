@@ -1,6 +1,8 @@
 import { IsString, IsInt } from 'class-validator';
+import { CommonResult } from '../../public/dto/common.dto';
+import { PartialType } from '@nestjs/swagger';
 
-export class UserSchemaDto {
+export class UserSchema {
   /**
    * 用户名
    */
@@ -20,4 +22,11 @@ export class UserSchemaDto {
     message: '年龄必须是数字',
   })
   age: number;
+}
+
+export class UserSchemaDto extends PartialType(CommonResult){
+  /**
+   * 用户结构
+   */
+  user: UserSchema
 }

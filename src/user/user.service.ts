@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UserSchemaDto } from './dto/user-schema.dto';
+import { UserSchemaDto, UserSchema } from './dto/user-schema.dto';
 import { SystemService } from '../system/system.service';
 import { AopLogger } from '../logger/aop.logger';
 
@@ -13,11 +13,16 @@ export class UserService {
   }
 
   getUser(username: string, password: string): UserSchemaDto {
-    const user = new UserSchemaDto();
+    const user = new UserSchema();
     user.username = username;
     user.password = password;
+    user.age = 12
     console.log(this.systemService.config());
     this.logger.log('哈哈Logger');
-    return user;
+
+    const resp = new UserSchemaDto()
+    resp.code = 100
+    resp.user = user
+    return resp;
   }
 }
