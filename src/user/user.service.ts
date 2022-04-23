@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UserSchemaDto } from './dto/user-schema.dto';
 import { SystemService } from '../system/system.service';
-import { AopLogger } from '../logger/AopLogger';
+import { AopLogger } from '../logger/aop.logger';
 
 @Injectable()
 export class UserService {

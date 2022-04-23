@@ -1,5 +1,5 @@
 import { Module, Global, Scope } from '@nestjs/common';
-import { AopLogger } from './AopLogger';
+import { AopLogger } from './aop.logger';
 
 @Global()
 @Module({

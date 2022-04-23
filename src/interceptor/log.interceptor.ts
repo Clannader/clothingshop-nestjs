@@ -1,5 +1,5 @@
 import { CallHandler, ExecutionContext, NestInterceptor, Injectable } from '@nestjs/common';
-import { AopLogger } from '../logger/AopLogger';
+import { AopLogger } from '../logger/aop.logger';
 import { tap } from 'rxjs/operators';
 
 @Injectable()
