@@ -1,9 +1,15 @@
-import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
-import { AopLogger } from '../logger/AopLogger';
+import {
+  CallHandler,
+  ExecutionContext,
+  NestInterceptor,
+  Injectable,
+} from '@nestjs/common';
+import { AopLogger } from '../logger/aop.logger';
 import { tap } from 'rxjs/operators';
 
+@Injectable()
 export class LogInterceptor implements NestInterceptor {
-  constructor(private aopLogger: AopLogger) {
+  constructor(private readonly aopLogger: AopLogger) {
     this.aopLogger.setContext('LogInterceptor');
   }
 

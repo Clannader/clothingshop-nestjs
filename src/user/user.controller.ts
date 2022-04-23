@@ -1,15 +1,16 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Get, Query } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiBody,
   ApiResponse,
-  ApiBearerAuth,
+  ApiOAuth2,
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { UserSchemaDto } from './entity/user-schema.dto';
+import { UserSchemaDto, UserSchema } from './dto/user-schema.dto';
+import { CommonResult } from '../public/dto/common.dto';
 
-@ApiBearerAuth()
+@ApiOAuth2(['pets:write'])
 @Controller('/cms/api/user')
 @ApiTags('UserController')
 export class UserController {
@@ -20,9 +21,21 @@ export class UserController {
     summary: '测试方法',
     description: '获取一个字符串',
   })
-  @ApiBody({ type: UserSchemaDto })
-  @ApiResponse({ type: UserSchemaDto, status: 1000 })
-  getUser(@Body() user: UserSchemaDto) {
+  @ApiBody({ type: UserSchema })
+  @ApiResponse({ type: UserSchemaDto, status: 100 })
+  getUser(@Body() user: UserSchema) {
+    console.log(user);
     return this.userService.getUser(user.username, user.password);
+  }
+
+  @Get('getEnum')
+  @ApiOperation({
+    summary: '测试swagger',
+    description: '测试类型',
+  })
+  @ApiBody({ type: CommonResult })
+  @ApiResponse({ type: CommonResult, status: 100 })
+  getEnum(@Query() user: CommonResult) {
+    return new CommonResult()
   }
 }
