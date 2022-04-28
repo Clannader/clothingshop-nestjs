@@ -1,5 +1,5 @@
 .swagger-ui .model-box {
-    display: block
+    /*display: block*/
 }
 .swagger-ui .parameters-col_description {
     width: auto;
