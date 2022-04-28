@@ -8,7 +8,7 @@ import { ApiHeaders, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
  * applyDecorators 这个是class和method都可以的修饰器
  * Bind 这个是method的修饰器
  * 所以这里写了一个只能是修饰class的修饰器
-*/
+ */
 export function BindClass(...decorators: any[]): ClassDecorator {
   return <TFunction extends Function>(target: TFunction | object) => {
     for (const decorator of decorators) {
@@ -27,11 +27,7 @@ export function BindMethod(...decorators: any[]): MethodDecorator {
     descriptor?: TypedPropertyDescriptor<Y>,
   ) => {
     for (const decorator of decorators) {
-      (decorator as MethodDecorator)(
-        target,
-        propertyKey,
-        descriptor,
-      );
+      (decorator as MethodDecorator)(target, propertyKey, descriptor);
     }
   };
 }
@@ -106,6 +102,6 @@ export function ApiCustomResponse(options: ApiResponseOptions) {
       status: HttpStatus.OK,
       description: '成功返回',
       ...options,
-    })
+    }),
   );
 }

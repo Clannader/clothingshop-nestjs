@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Get, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Query,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiOAuth2 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { UserSchemaDto, UserSchema } from './dto/user-schema.dto';
@@ -34,7 +42,7 @@ export class UserController {
     description: '测试类型',
   })
   @ApiCustomResponse({
-    type: CommonResult
+    type: CommonResult,
   })
   getEnum(@Query() user: CommonResult) {
     return user;
