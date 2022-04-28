@@ -4,7 +4,7 @@ export class CommonResult {
   /**
    * 响应代码
    */
-  code: number = CodeEnum.EMPTY;
+  code: number = CodeEnum.SUCCESS;
 
   /**
    * 错误信息

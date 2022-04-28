@@ -16,13 +16,13 @@ export class UserService {
     const user = new UserSchema();
     user.username = username;
     user.password = password;
-    user.age = 12
+    user.age = 12;
     console.log(this.systemService.config());
     this.logger.log('哈哈Logger');
 
-    const resp = new UserSchemaDto()
-    resp.code = 100
-    resp.user = user
+    const resp = new UserSchemaDto();
+    resp.code = 100;
+    resp.user = user;
     return resp;
   }
 }
