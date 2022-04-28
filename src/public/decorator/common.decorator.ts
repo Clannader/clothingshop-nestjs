@@ -1,6 +1,7 @@
-import { /*applyDecorators, */HttpStatus, HttpCode } from '@nestjs/common';
+//import { applyDecorators HttpStatus, HttpCode } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import { CodeEnum } from '../enum/common.enum';
-import { ApiHeaders, ApiResponse } from '@nestjs/swagger';
+import { ApiHeaders, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
 
 /**
  * 定义它是一个class的修饰器
@@ -97,9 +98,14 @@ export function ApiCommon() {
   );
 }
 
-export function ApiCustomStatus() {
+export function ApiCustomResponse(options: ApiResponseOptions) {
   return BindMethod(
     // HttpCode(HttpStatus.OK) // 这个状态码在POST请求时统一改不了成200,看了源代码,只认方法有名字为HttpCode的修饰器的值
     // 所以我换了一个名字,不写HttpCode的时候,取到的值是undefined,所以如果要改,只能每个post方法自己加上了,否则就默认是201
+    ApiResponse({
+      status: HttpStatus.OK,
+      description: '成功返回',
+      ...options,
+    })
   );
 }
