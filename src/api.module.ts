@@ -7,25 +7,33 @@ import { ValidationPipe } from './pipe/validation.pipe';
 import { LogInterceptor } from './interceptor/log.interceptor';
 
 import { UserModule } from './user/user.module';
+import { SystemModule } from './system/system.module';
 import { LoggerModule } from './logger/logger.module';
+import { LoginModule } from './login/login.module';
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
-  imports: [UserModule, LoggerModule],
+  imports: [
+    UserModule,
+    LoggerModule,
+    SystemModule,
+    LoginModule
+  ],
   controllers: [],
   providers: [
     {
       provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
+      useClass: HttpExceptionFilter
     },
     {
       provide: APP_PIPE,
-      useClass: ValidationPipe,
+      useClass: ValidationPipe
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: LogInterceptor,
-    },
-  ],
+      useClass: LogInterceptor
+    }
+  ]
 })
-export class ApiModule {}
+export class ApiModule {
+}
