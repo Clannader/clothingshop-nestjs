@@ -1,6 +1,6 @@
 //import { applyDecorators HttpStatus, HttpCode } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
-import { CodeEnum } from '../enum/common.enum';
+import { CodeEnum } from '../enum';
 import { ApiHeaders, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
 
 /**
@@ -50,12 +50,12 @@ export function ApiCommon() {
       },
       {
         name: 'credential',
-        description: '用户凭证',
+        description: '用户凭证,通过登录接口获得该凭证',
         required: true,
       },
       {
         name: 'language',
-        description: '用户语言',
+        description: '用户语言:(zh=中文,en=English)',
         enum: ['zh', 'en'],
       },
     ]),

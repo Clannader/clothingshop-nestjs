@@ -4,13 +4,14 @@ import {
   NestInterceptor,
   Injectable,
 } from '@nestjs/common';
-import { AopLogger } from '../logger/aop.logger';
+import { AopLogger } from '../logger';
 import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class LogInterceptor implements NestInterceptor {
-  constructor(private readonly aopLogger: AopLogger) {
-    this.aopLogger.setContext('LogInterceptor');
+  private readonly logger = new AopLogger()
+  constructor() {
+    this.logger.setContext('LogInterceptor');
   }
 
   intercept(context: ExecutionContext, next: CallHandler) {
@@ -19,7 +20,7 @@ export class LogInterceptor implements NestInterceptor {
     const now = Date.now();
     return next.handle().pipe(
       tap(() => {
-        this.aopLogger.log(
+        this.logger.log(
           `${request.method} ${request.url} ${Date.now() - now}ms`,
         );
       }),

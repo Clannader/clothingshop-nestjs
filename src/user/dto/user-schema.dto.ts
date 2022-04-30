@@ -1,32 +1,33 @@
-import { IsString, IsInt } from 'class-validator';
-import { CommonResult } from '../../public/dto/common.dto';
-import { PartialType } from '@nestjs/swagger';
+import { UserTypeEnum } from '../../common';
 
-export class UserSchema {
+export class UserSchemaDto {
+  /**
+   * 用户ID
+   */
+  adminId: string;
+
   /**
    * 用户名
    */
-  @IsString()
-  username: string;
+  adminName: string;
 
   /**
-   * 密码
+   *用户类型:(SYSTEM=系统用户,NORMAL=普通用户,3RD=第三方接口用户)
    */
-  @IsString()
-  password: string;
+  adminType: UserTypeEnum;
 
   /**
-   * 年龄
+   *用户所能访问的所有店铺集合
    */
-  @IsInt({
-    message: '年龄必须是数字',
-  })
-  age: number;
-}
+  shopId: string[];
 
-export class UserSchemaDto extends PartialType(CommonResult) {
   /**
-   * 用户结构
+   *用户权限列表
    */
-  user: UserSchema;
+  rights: string[];
+
+  /**
+   *用户邮箱
+   */
+  email: string;
 }

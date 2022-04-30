@@ -8,3 +8,28 @@ export enum CodeEnum {
   INVALID_SYS_SETUP = 1006, // 系统参数未开启时返回该响应码
   UNKNOWN = 9999, // 发生未知错误时返回该响应码
 }
+
+/**
+ * 用户类型
+ */
+export enum UserTypeEnum {
+  SYSTEM = 'SYSTEM',
+  NORMAL = 'NORMAL',
+  THIRD = '3RD',
+}
+
+/**
+ * 排序类型
+ */
+export enum SortEnum {
+  asc = 'asc',
+  desc = 'desc',
+}
+
+/**
+ * 用户状态
+ */
+export enum UserStatusEnum {
+  TRUE = 'T',
+  FALSE = 'F',
+}
