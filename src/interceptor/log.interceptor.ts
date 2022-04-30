@@ -9,7 +9,7 @@ import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class LogInterceptor implements NestInterceptor {
-  private readonly logger = new AopLogger()
+  private readonly logger = new AopLogger();
   constructor() {
     this.logger.setContext('LogInterceptor');
   }

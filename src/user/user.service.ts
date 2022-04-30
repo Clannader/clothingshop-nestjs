@@ -10,7 +10,7 @@ import {
 
 @Injectable()
 export class UserService {
-  private readonly logger = new AopLogger()
+  private readonly logger = new AopLogger();
   constructor() {
     this.logger.setContext('UserService');
   }

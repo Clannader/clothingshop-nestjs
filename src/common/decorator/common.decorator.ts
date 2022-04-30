@@ -1,7 +1,7 @@
-//import { applyDecorators HttpStatus, HttpCode } from '@nestjs/common';
+import { applyDecorators } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 import { CodeEnum } from '../enum';
-import { ApiHeaders, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
+import { ApiHeaders, ApiResponse, ApiResponseOptions, ApiHeaderOptions } from '@nestjs/swagger';
 
 /**
  * 定义它是一个class的修饰器
@@ -32,33 +32,36 @@ export function BindMethod(...decorators: any[]): MethodDecorator {
   };
 }
 
-export function ApiCommon() {
-  return BindClass(
-    ApiHeaders([
-      {
-        name: 'Content-Type',
-        description: '上下文协议',
-        required: true,
-        // 由于这个版本的swagger根本不支持default的值,只能使用enum写一个默认值上去了
-        enum: ['application/json'],
-      },
-      {
-        name: 'X-Requested-With',
-        description: '固定请求头',
-        required: true,
-        enum: ['XMLHttpRequest'],
-      },
-      {
-        name: 'credential',
-        description: '用户凭证,通过登录接口获得该凭证',
-        required: true,
-      },
-      {
-        name: 'language',
-        description: '用户语言:(zh=中文,en=English)',
-        enum: ['zh', 'en'],
-      },
-    ]),
+export function ApiCommon(showCredential: boolean = true) {
+  const headers: ApiHeaderOptions[] = [
+    {
+      name: 'Content-Type',
+      description: '上下文协议',
+      required: true,
+      // 由于这个版本的swagger根本不支持default的值,只能使用enum写一个默认值上去了
+      enum: ['application/json'],
+    },
+    {
+      name: 'X-Requested-With',
+      description: '固定请求头',
+      required: true,
+      enum: ['XMLHttpRequest'],
+    },
+    {
+      name: 'language',
+      description: '用户语言:(zh=中文,en=English)',
+      enum: ['zh', 'en'],
+    },
+  ]
+  if (showCredential) {
+    headers.push({
+      name: 'credential',
+      description: '用户凭证,通过登录接口获得该凭证',
+      required: true,
+    })
+  }
+  return applyDecorators(
+    ApiHeaders(headers),
     ApiResponse({
       status: CodeEnum.SUCCESS,
       description: '响应成功返回该响应码',
