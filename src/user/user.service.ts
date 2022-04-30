@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { AopLogger } from '../logger/aop.logger';
-import { CommonResult } from '../public/dto/common.dto';
-import { CodeEnum } from '../public/enum/common.enum';
-import { ReqUserLoginDto } from './dto/req/req-user-login.dto';
+import { AopLogger } from '../logger';
+import { CodeEnum, CommonResult } from '../common';
+import { ReqUserLoginDto, RespUserLoginDto } from './dto';
 
 @Injectable()
 export class UserService {
@@ -24,8 +23,10 @@ export class UserService {
     return resp;
   }
 
-  userLogin(params: ReqUserLoginDto):RespUserLoginDto {
-
+  userLogin(params: ReqUserLoginDto): RespUserLoginDto {
+    const resp = new RespUserLoginDto()
+    resp.code = CodeEnum.SUCCESS;
+    return resp;
   }
 
   userLogout(): CommonResult {

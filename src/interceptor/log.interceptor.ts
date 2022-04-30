@@ -4,7 +4,7 @@ import {
   NestInterceptor,
   Injectable,
 } from '@nestjs/common';
-import { AopLogger } from '../logger/aop.logger';
+import { AopLogger } from '../logger';
 import { tap } from 'rxjs/operators';
 
 @Injectable()

@@ -8,7 +8,7 @@ import {
   ApiCustomResponse,
 } from '../common';
 import { SystemService } from './system.service';
-import { RespWebConfigDto } from './dto/resp/resp-web-config.dto';
+import { RespWebConfigDto } from './dto';
 
 @ApiCommon()
 @Controller('/cms/api/system')

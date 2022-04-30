@@ -3,6 +3,7 @@ import {
   Post,
   HttpCode,
   HttpStatus,
+  Body,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import {
@@ -11,6 +12,7 @@ import {
   CommonResult,
 } from '../common';
 import { UserService } from '../user/user.service';
+import { ReqUserLoginDto, RespUserLoginDto } from '../user/dto';
 
 @ApiCommon()
 @Controller('/cms/api/user')
@@ -26,10 +28,10 @@ export class LoginController {
     description: '获取系统的凭证',
   })
   @ApiCustomResponse({
-    type: RespWebConfigDto,
+    type: RespUserLoginDto,
   })
-  userLogin() {
-    return this.userService.userLogin();
+  userLogin(@Body() params: ReqUserLoginDto) {
+    return this.userService.userLogin(params);
   }
 
   @Post('/logout')

@@ -1,6 +1,6 @@
 //import { applyDecorators HttpStatus, HttpCode } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
-import { CodeEnum } from '../enum/common.enum';
+import { CodeEnum } from '../enum';
 import { ApiHeaders, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
 
 /**

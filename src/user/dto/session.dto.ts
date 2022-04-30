@@ -1,4 +1,4 @@
-import { AdminType } from '../../public/enum/common.enum';
+import { AdminType } from '../../common';
 
 export class SessionDto {
   /**

@@ -9,12 +9,8 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiOAuth2 } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { UserSchemaDto, UserSchema } from './dto/user-schema.dto';
-import { CommonResult } from '../public/dto/common.dto';
-import {
-  ApiCommon,
-  ApiCustomResponse,
-} from '../public/decorator/common.decorator';
+import { UserSchemaDto, UserSchema } from './dto';
+import { CommonResult, ApiCommon, ApiCustomResponse, } from '../common';
 
 @ApiCommon()
 @ApiOAuth2(['pets:write'])

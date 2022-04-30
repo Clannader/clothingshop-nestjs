@@ -1,4 +1,4 @@
-import { CodeEnum } from '../enum/common.enum';
+import { CodeEnum } from '../enum';
 
 export class CommonResult {
   /**

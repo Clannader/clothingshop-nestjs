@@ -1,4 +1,4 @@
-import { CommonResult } from '../../../public/dto/common.dto';
+import { CommonResult } from '../../../common';
 import { SessionDto } from '../session.dto';
 
 export class RespUserLoginDto extends CommonResult{
