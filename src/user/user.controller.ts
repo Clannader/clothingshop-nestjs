@@ -1,16 +1,12 @@
 import {
-  Body,
   Controller,
-  Post,
   Get,
   Query,
-  HttpCode,
-  HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiOAuth2 } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { UserSchemaDto, UserSchema } from './dto';
-import { CommonResult, ApiCommon, ApiCustomResponse, } from '../common';
+import { ApiCommon, ApiCustomResponse, } from '../common';
+import {ReqUserSearchDto, RespUserSearchDto } from './dto';
 
 @ApiCommon()
 @ApiOAuth2(['pets:write'])
@@ -19,28 +15,15 @@ import { CommonResult, ApiCommon, ApiCustomResponse, } from '../common';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('getUser')
-  @HttpCode(HttpStatus.OK)
+  @Get('search')
   @ApiOperation({
-    summary: '测试方法',
-    description: '获取一个字符串',
+    summary: '返回用户列表',
+    description: '查询系统用户列表',
   })
   @ApiCustomResponse({
-    type: UserSchemaDto,
+    type: RespUserSearchDto,
   })
-  getUser(@Body() user: UserSchema) {
-    return this.userService.getUser(user.username, user.password);
-  }
-
-  @Get('getEnum')
-  @ApiOperation({
-    summary: '测试swagger',
-    description: '测试类型',
-  })
-  @ApiCustomResponse({
-    type: CommonResult,
-  })
-  getEnum(@Query() user: CommonResult) {
-    return user;
+  getEnum(@Query() params: ReqUserSearchDto) {
+    return this.userService.getUsersList(params);
   }
 }

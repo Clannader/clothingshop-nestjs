@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AopLogger } from '../logger';
 import { CodeEnum, CommonResult } from '../common';
-import { ReqUserLoginDto, RespUserLoginDto } from './dto';
+import { ReqUserLoginDto, RespUserLoginDto, ReqUserSearchDto, RespUserSearchDto } from './dto';
 
 @Injectable()
 export class UserService {
@@ -9,21 +9,15 @@ export class UserService {
     this.logger.setContext('UserService');
   }
 
-  getUsersList(username: string, password: string): UserSchemaDto {
-    const user = new UserSchema();
-    user.username = username;
-    user.password = password;
-    user.age = 12;
-    console.log(this.systemService.config());
-    this.logger.log('哈哈Logger');
-
-    const resp = new UserSchemaDto();
+  getUsersList(params: ReqUserSearchDto): RespUserSearchDto {
+    console.log(params)
+    const resp = new RespUserSearchDto();
     resp.code = 100;
-    resp.user = user;
     return resp;
   }
 
   userLogin(params: ReqUserLoginDto): RespUserLoginDto {
+    console.log(params)
     const resp = new RespUserLoginDto()
     resp.code = CodeEnum.SUCCESS;
     return resp;
