@@ -1,6 +1,6 @@
 import { UserTypeEnum } from '../../common';
 
-export class SessionDto {
+export class UserSessionDto {
   /**
    * 用户ID
    */

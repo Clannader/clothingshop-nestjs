@@ -1,5 +1,5 @@
 import { CommonResult } from '../../../common';
-import { SessionDto } from '../session.dto';
+import { UserSessionDto } from '../user-session.dto';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
 
 export class RespUserLoginDto extends PartialType(CommonResult) {
@@ -19,5 +19,5 @@ export class RespUserLoginDto extends PartialType(CommonResult) {
   @ApiProperty({
     description: 'session对象',
   })
-  session: SessionDto;
+  session: UserSessionDto;
 }
