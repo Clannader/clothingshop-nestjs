@@ -1,10 +1,9 @@
 import { Controller, Post, HttpCode, HttpStatus, Body } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiHeader } from '@nestjs/swagger';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse, CommonResult } from '../common';
 import { UserService } from '../user/user.service';
 import { ReqUserLoginDto, RespUserLoginDto } from '../user/dto';
 
-@ApiCommon()
 @Controller('/cms/api/user')
 @ApiTags('LoginController')
 export class LoginController {
@@ -19,6 +18,7 @@ export class LoginController {
   @ApiCustomResponse({
     type: RespUserLoginDto,
   })
+  @ApiCommon(false)
   userLogin(@Body() params: ReqUserLoginDto) {
     return this.userService.userLogin(params);
   }
@@ -32,6 +32,7 @@ export class LoginController {
   @ApiCustomResponse({
     type: CommonResult,
   })
+  @ApiCommon()
   userLogout() {
     return this.userService.userLogout();
   }
