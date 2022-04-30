@@ -8,3 +8,9 @@ export enum CodeEnum {
   INVALID_SYS_SETUP = 1006, // 系统参数未开启时返回该响应码
   UNKNOWN = 9999, // 发生未知错误时返回该响应码
 }
+
+export enum AdminType {
+  SYSTEM = 'SYSTEM',
+  NORMAL = 'NORMAL',
+  THIRD = '3RD'
+}

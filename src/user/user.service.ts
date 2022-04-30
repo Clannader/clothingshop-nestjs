@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UserSchemaDto, UserSchema } from './dto/user-schema.dto';
 import { AopLogger } from '../logger/aop.logger';
 import { CommonResult } from '../public/dto/common.dto';
 import { CodeEnum } from '../public/enum/common.enum';
+import { ReqUserLoginDto } from './dto/req/req-user-login.dto';
 
 @Injectable()
 export class UserService {
@@ -24,7 +24,7 @@ export class UserService {
     return resp;
   }
 
-  userLogin() {
+  userLogin(params: ReqUserLoginDto):RespUserLoginDto {
 
   }
 

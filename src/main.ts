@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
-import { AopLogger } from './logger/aop.logger';
+import { AopLogger } from './logger';
 import helmet from 'helmet';
 import { join } from 'path';
 import { renderFile } from 'ejs';
