@@ -19,7 +19,7 @@ export class UserController {
   @ApiCustomResponse({
     type: RespUserSearchDto,
   })
-  getEnum(@Query() params: ReqUserSearchDto) {
+  getUsersList(@Query() params: ReqUserSearchDto) {
     return this.userService.getUsersList(params);
   }
 }
