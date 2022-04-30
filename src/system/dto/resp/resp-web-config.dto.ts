@@ -1,5 +1,5 @@
 import { WebConfigDto } from '../web-config.dto';
-import { CommonResult } from '../../../public/dto/common.dto';
+import { CommonResult } from '../../../common';
 
 export class RespWebConfigDto extends CommonResult{
   /**

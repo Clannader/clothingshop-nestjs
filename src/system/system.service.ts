@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { RespWebConfigDto } from './dto/resp/resp-web-config.dto';
-import { WebConfigDto } from './dto/web-config.dto';
-import { CodeEnum } from '../public/enum/common.enum';
+import { RespWebConfigDto, WebConfigDto } from './dto';
+import { CodeEnum } from '../common';
 
 @Injectable()
 export class SystemService {

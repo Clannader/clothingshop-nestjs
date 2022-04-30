@@ -8,9 +8,9 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import {
   ApiCommon,
   ApiCustomResponse,
-} from '../public/decorator/common.decorator';
+  CommonResult,
+} from '../common';
 import { UserService } from '../user/user.service';
-import { CommonResult } from '../public/dto/common.dto';
 
 @ApiCommon()
 @Controller('/cms/api/user')
