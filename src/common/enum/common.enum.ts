@@ -22,8 +22,8 @@ export enum UserTypeEnum {
  * 排序类型
  */
 export enum SortEnum {
-  asc = 'asc',
-  desc = 'desc',
+  ASC = 'asc',
+  DESC = 'desc',
 }
 
 /**

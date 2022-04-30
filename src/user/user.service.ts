@@ -12,7 +12,7 @@ import {
 export class UserService {
   private readonly logger = new AopLogger();
   constructor() {
-    this.logger.setContext('UserService');
+    this.logger.setContext(this.constructor.name);
   }
 
   getUsersList(params: ReqUserSearchDto): RespUserSearchDto {
