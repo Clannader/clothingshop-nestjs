@@ -1,12 +1,6 @@
-import {
-  Controller,
-  Get,
-} from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import {
-  ApiCommon,
-  ApiCustomResponse,
-} from '../common';
+import { ApiCommon, ApiCustomResponse } from '../common';
 import { SystemService } from './system.service';
 import { RespWebConfigDto } from './dto';
 
@@ -14,7 +8,6 @@ import { RespWebConfigDto } from './dto';
 @Controller('/cms/api/system')
 @ApiTags('SystemController')
 export class SystemController {
-
   constructor(private readonly systemService: SystemService) {}
 
   @Get('/config/search')

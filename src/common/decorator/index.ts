@@ -1,1 +1,1 @@
-export * from './common.decorator'
+export * from './common.decorator';

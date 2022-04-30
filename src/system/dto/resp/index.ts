@@ -1,1 +1,1 @@
-export * from './resp-web-config.dto'
+export * from './resp-web-config.dto';

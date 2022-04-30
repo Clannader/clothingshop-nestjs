@@ -12,5 +12,5 @@ export enum CodeEnum {
 export enum AdminType {
   SYSTEM = 'SYSTEM',
   NORMAL = 'NORMAL',
-  THIRD = '3RD'
+  THIRD = '3RD',
 }

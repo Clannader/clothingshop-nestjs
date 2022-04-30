@@ -4,7 +4,6 @@ import { CodeEnum } from '../common';
 
 @Injectable()
 export class SystemService {
-
   getSystemConfig(): RespWebConfigDto {
     const resp = new RespWebConfigDto();
 

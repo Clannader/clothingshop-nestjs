@@ -1,7 +1,7 @@
 import { CommonResult } from '../../../common';
 import { SessionDto } from '../session.dto';
 
-export class RespUserLoginDto extends CommonResult{
+export class RespUserLoginDto extends CommonResult {
   /**
    * 系统凭证
    */

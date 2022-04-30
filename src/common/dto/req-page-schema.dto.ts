@@ -1,4 +1,3 @@
-
 export class ReqPageSchemaDto {
   /**
    * 查询条件,按空格分隔可查询多个条件
@@ -14,7 +13,7 @@ export class ReqPageSchemaDto {
   /**
    *
    */
-  pageSize: number = 30;
+  pageSize = 30;
 
   /**
    *

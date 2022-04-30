@@ -1,2 +1,2 @@
 export * from './aop.logger';
-export * from './logger.module'
+export * from './logger.module';

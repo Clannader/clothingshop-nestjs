@@ -1,4 +1,3 @@
-
 export class WebConfigDto {
   /**
    * 日期格式

@@ -1,16 +1,6 @@
-import {
-  Controller,
-  Post,
-  HttpCode,
-  HttpStatus,
-  Body,
-} from '@nestjs/common';
+import { Controller, Post, HttpCode, HttpStatus, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import {
-  ApiCommon,
-  ApiCustomResponse,
-  CommonResult,
-} from '../common';
+import { ApiCommon, ApiCustomResponse, CommonResult } from '../common';
 import { UserService } from '../user/user.service';
 import { ReqUserLoginDto, RespUserLoginDto } from '../user/dto';
 
@@ -18,7 +8,6 @@ import { ReqUserLoginDto, RespUserLoginDto } from '../user/dto';
 @Controller('/cms/api/user')
 @ApiTags('LoginController')
 export class LoginController {
-
   constructor(private readonly userService: UserService) {}
 
   @Post('/login')

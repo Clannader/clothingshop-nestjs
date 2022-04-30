@@ -1,2 +1,2 @@
-export * from './resp'
-export * from './web-config.dto'
+export * from './resp';
+export * from './web-config.dto';

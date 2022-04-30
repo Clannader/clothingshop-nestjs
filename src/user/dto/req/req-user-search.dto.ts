@@ -1,5 +1,3 @@
 import { ReqPageSchemaDto } from '../../../common';
 
-export class ReqUserSearchDto extends  ReqPageSchemaDto{
-
-}
+export class ReqUserSearchDto extends ReqPageSchemaDto {}

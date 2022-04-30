@@ -1,6 +1,6 @@
 import { CommonResult } from './common.dto';
 
-export class RespPageSchemaDto<T> extends CommonResult{
+export class RespPageSchemaDto<T> extends CommonResult {
   /**
    * 返回总数
    */

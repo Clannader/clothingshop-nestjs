@@ -13,27 +13,21 @@ import { LoginModule } from './login/login.module';
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
-  imports: [
-    UserModule,
-    LoggerModule,
-    SystemModule,
-    LoginModule
-  ],
+  imports: [UserModule, LoggerModule, SystemModule, LoginModule],
   controllers: [],
   providers: [
     {
       provide: APP_FILTER,
-      useClass: HttpExceptionFilter
+      useClass: HttpExceptionFilter,
     },
     {
       provide: APP_PIPE,
-      useClass: ValidationPipe
+      useClass: ValidationPipe,
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: LogInterceptor
-    }
-  ]
+      useClass: LogInterceptor,
+    },
+  ],
 })
-export class ApiModule {
-}
+export class ApiModule {}
