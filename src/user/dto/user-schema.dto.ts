@@ -1,4 +1,4 @@
-import { AdminType } from '../../common';
+import { UserTypeEnum } from '../../common';
 
 export class UserSchemaDto {
   /**
@@ -12,9 +12,9 @@ export class UserSchemaDto {
   adminName: string;
 
   /**
-   *用户类型
+   *用户类型:(SYSTEM=系统用户,NORMAL=普通用户,3RD=第三方接口用户)
    */
-  adminType: AdminType;
+  adminType: UserTypeEnum;
 
   /**
    *用户所能访问的所有店铺集合
