@@ -1,17 +1,15 @@
-import { Module, Global, Scope } from '@nestjs/common';
-import { AopLogger } from './aop.logger';
+import { Module, Global } from '@nestjs/common';
 
 @Global()
 @Module({
   imports: [],
   controllers: [],
   providers: [
-    {
-      provide: AopLogger,
-      useClass: AopLogger,
-      scope: Scope.TRANSIENT,
-    },
+    // {
+    //   provide: AopLogger,
+    //   useClass: AopLogger,
+    //   scope: Scope.TRANSIENT, // 单例导出范例
+    // },
   ],
-  exports: [AopLogger],
 })
 export class LoggerModule {}

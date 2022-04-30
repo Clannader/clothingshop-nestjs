@@ -10,19 +10,20 @@ import {
 
 @Injectable()
 export class UserService {
-  constructor(private readonly logger: AopLogger) {
+  private readonly logger = new AopLogger()
+  constructor() {
     this.logger.setContext('UserService');
   }
 
   getUsersList(params: ReqUserSearchDto): RespUserSearchDto {
-    console.log(params);
+    this.logger.log(params);
     const resp = new RespUserSearchDto();
     resp.code = 100;
     return resp;
   }
 
   userLogin(params: ReqUserLoginDto): RespUserLoginDto {
-    console.log(params);
+    this.logger.log(params);
     const resp = new RespUserLoginDto();
     resp.code = CodeEnum.SUCCESS;
     return resp;
