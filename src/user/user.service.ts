@@ -11,8 +11,6 @@ import {
 @Injectable()
 export class UserService {
   private readonly logger = new AopLogger(UserService.name);
-  constructor() {
-  }
 
   getUsersList(params: ReqUserSearchDto): RespUserSearchDto {
     this.logger.log(params);
