@@ -1,6 +1,11 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
 import { CodeEnum } from '../enum';
-import { ApiHeaders, ApiResponse, ApiResponseOptions, ApiHeaderOptions } from '@nestjs/swagger';
+import {
+  ApiHeaders,
+  ApiResponse,
+  ApiResponseOptions,
+  ApiHeaderOptions,
+} from '@nestjs/swagger';
 
 /**
  * 定义它是一个class的修饰器
@@ -13,7 +18,7 @@ export function BindClass(...decorators: any[]): ClassDecorator {
     for (const decorator of decorators) {
       if (target instanceof Function) {
         (decorator as ClassDecorator)(target);
-        continue;
+        // continue;
       }
     }
   };
@@ -31,7 +36,7 @@ export function BindMethod(...decorators: any[]): MethodDecorator {
   };
 }
 
-export function ApiCommon(showCredential: boolean = true) {
+export function ApiCommon(showCredential = true) {
   const headers: ApiHeaderOptions[] = [
     {
       name: 'Content-Type',
@@ -51,13 +56,13 @@ export function ApiCommon(showCredential: boolean = true) {
       description: '用户语言:(zh=中文,en=English)',
       enum: ['zh', 'en'],
     },
-  ]
+  ];
   if (showCredential) {
     headers.push({
       name: 'credential',
       description: '用户凭证,通过登录接口获得该凭证',
       required: true,
-    })
+    });
   }
   return applyDecorators(
     ApiHeaders(headers),
@@ -102,7 +107,7 @@ export function ApiCustomResponse(options: ApiResponseOptions) {
     // 所以我换了一个名字,不写HttpCode的时候,取到的值是undefined,所以如果要改,只能每个post方法自己加上了,否则就默认是201
     ApiResponse({
       status: HttpStatus.OK,
-      description: '成功返回',
+      description: '返回成功',
       ...options,
     }),
   );

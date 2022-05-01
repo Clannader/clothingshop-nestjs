@@ -1,6 +1,6 @@
 import { CommonResult } from '../../../common';
 import { UserSessionDto } from '../user-session.dto';
-import { /*PartialType, */ApiProperty } from '@nestjs/swagger';
+import { /*PartialType, */ ApiProperty } from '@nestjs/swagger';
 
 export class RespUserLoginDto extends CommonResult {
   @ApiProperty({
@@ -9,7 +9,7 @@ export class RespUserLoginDto extends CommonResult {
   credential: string;
 
   @ApiProperty({
-    description: '用户账号准备过期的提示信息',
+    description: '用户账号准备过期时的提示信息',
     required: false,
   })
   expireMsg?: string;

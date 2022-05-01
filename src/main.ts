@@ -9,7 +9,10 @@ import { renderFile } from 'ejs';
 // import * as fs from 'fs';
 
 async function bootstrap() {
-  const aopLogger = new AopLogger(); // 后期如果里面依赖了其他service,那么需要修改这个的注入方式
+  // 这里传null是为了不覆盖源代码里面的context,后面的参数是显示执行时间,源代码是有的,如果不加相当于覆盖了源代码的配置
+  const aopLogger = new AopLogger(null, {
+    timestamp: true,
+  }); // 后期如果里面依赖了其他service,那么需要修改这个的注入方式
   // 这里导入的是https的证书的方法,不过好像试了报错,不知道是不是证书的问题还是代码的问题
   // 这里不做太多的纠结,因为https可以有很多方法做到,不一定需要代码实现
   // const httpsOptions = {
@@ -52,8 +55,20 @@ async function bootstrap() {
     swaggerOptions: {
       persistAuthorization: true, // 这个参数好像是做持久化认证的
       filter: true,
+      displayOperationId: true, // 显示OperationId
+      displayRequestDuration: true, // 显示请求时间
+      // docExpansion=none为不展开
+      // docExpansion=list为展开
+      // docExpansion=full为全部展开,包括接口的详细信息
+      docExpansion: 'none', // 默认不展开标签
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+      // queryConfigEnabled: false, // 看不出有什么效果
+      // showExtensions: false, // 看不出有什么效果
+      // deepLinking: false, // 这个无效,源代码默认true
     },
-    explorer: true,
+    // swaggerUrl: 'http://localhost:3000/swagger-ui-json', // 感觉无效
+    // explorer: true,
     // customCss: '.swagger-ui .model-box { display:block }',
     customCssUrl: '/swagger-ui-override.css',
   });
