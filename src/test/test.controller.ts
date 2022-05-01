@@ -1,4 +1,12 @@
-import { Controller, Post, HttpCode, HttpStatus, Body, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  Body,
+  Get,
+  Query,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse, CodeEnum } from '../common';
 import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
@@ -37,6 +45,7 @@ export class TestController {
     const resp = new RespTestSchemaDto();
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
+    resp.schema = params.testObject;
     return resp;
   }
 }

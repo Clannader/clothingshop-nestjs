@@ -7,5 +7,8 @@ export class RespPageSchemaDto<T> extends CommonResult {
   })
   total: number;
 
+  @ApiProperty({
+    description: '结果集',
+  })
   results: T[];
 }
