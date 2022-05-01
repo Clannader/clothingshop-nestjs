@@ -102,7 +102,7 @@ export function ApiCustomResponse(options: ApiResponseOptions) {
     // 所以我换了一个名字,不写HttpCode的时候,取到的值是undefined,所以如果要改,只能每个post方法自己加上了,否则就默认是201
     ApiResponse({
       status: HttpStatus.OK,
-      description: '成功返回',
+      description: '返回成功',
       ...options,
     }),
   );
