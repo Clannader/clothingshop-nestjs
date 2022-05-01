@@ -1,6 +1,6 @@
 import { CommonResult } from '../../../common';
 import { UserSessionDto } from '../user-session.dto';
-import { /*PartialType, */ApiProperty } from '@nestjs/swagger';
+import { /*PartialType, */ ApiProperty } from '@nestjs/swagger';
 
 export class RespUserLoginDto extends CommonResult {
   @ApiProperty({

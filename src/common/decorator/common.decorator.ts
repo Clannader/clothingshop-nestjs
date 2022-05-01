@@ -1,6 +1,11 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
 import { CodeEnum } from '../enum';
-import { ApiHeaders, ApiResponse, ApiResponseOptions, ApiHeaderOptions } from '@nestjs/swagger';
+import {
+  ApiHeaders,
+  ApiResponse,
+  ApiResponseOptions,
+  ApiHeaderOptions,
+} from '@nestjs/swagger';
 
 /**
  * 定义它是一个class的修饰器
@@ -31,7 +36,7 @@ export function BindMethod(...decorators: any[]): MethodDecorator {
   };
 }
 
-export function ApiCommon(showCredential: boolean = true) {
+export function ApiCommon(showCredential = true) {
   const headers: ApiHeaderOptions[] = [
     {
       name: 'Content-Type',
@@ -51,13 +56,13 @@ export function ApiCommon(showCredential: boolean = true) {
       description: '用户语言:(zh=中文,en=English)',
       enum: ['zh', 'en'],
     },
-  ]
+  ];
   if (showCredential) {
     headers.push({
       name: 'credential',
       description: '用户凭证,通过登录接口获得该凭证',
       required: true,
-    })
+    });
   }
   return applyDecorators(
     ApiHeaders(headers),

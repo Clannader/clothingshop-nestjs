@@ -18,13 +18,11 @@ export class LogInterceptor implements NestInterceptor {
     const http = context.switchToHttp();
     const request = http.getRequest();
     const now = Date.now();
-    this.logger.log(`请求前:${request.method} ${request.url}`)
+    this.logger.log(`请求前:${request.method} ${request.url}`);
     return next.handle().pipe(
       tap(() => {
         // 测试发现这个拦截器是在执行业务之后,返回客户端时拦截的,而不是在请求前拦截的
-        this.logger.log(
-          `请求后:响应时间 ${Date.now() - now}ms`,
-        );
+        this.logger.log(`请求后:响应时间 ${Date.now() - now}ms`);
       }),
     );
   }
