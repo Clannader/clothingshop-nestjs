@@ -61,6 +61,8 @@ async function bootstrap() {
       // docExpansion=list为展开
       // docExpansion=full为全部展开,包括接口的详细信息
       docExpansion: 'none', // 默认不展开标签
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
       // queryConfigEnabled: false, // 看不出有什么效果
       // showExtensions: false, // 看不出有什么效果
       // deepLinking: false, // 这个无效,源代码默认true

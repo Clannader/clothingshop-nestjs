@@ -10,6 +10,7 @@ export class RespPageSchemaDto<T> extends CommonResult {
 
   /**
    * 这个泛型估计是无法实现的了,只能这样可以指定类型
+   * 确实有点无奈啊
    */
   @ApiProperty({
     description: '结果集',
