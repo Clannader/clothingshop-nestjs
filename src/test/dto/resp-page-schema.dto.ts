@@ -1,14 +1,11 @@
 import { CommonResult } from '../../common';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class RespPageSchemaDto<T> extends CommonResult{
-
-  /**
-   * 总数
-   */
+export class RespPageSchemaDto<T> extends CommonResult {
+  @ApiProperty({
+    description: '总数',
+  })
   total: number;
 
-  /**
-   * 结果集
-   */
-  results: T[];
+  // results: T[];
 }
