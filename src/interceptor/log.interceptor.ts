@@ -20,6 +20,7 @@ export class LogInterceptor implements NestInterceptor {
     const now = Date.now();
     return next.handle().pipe(
       tap(() => {
+        // 测试发现这个拦截器是在执行业务之后,返回客户端时拦截的,而不是在请求前拦截的
         this.logger.log(
           `${request.method} ${request.url} ${Date.now() - now}ms`,
         );
