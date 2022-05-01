@@ -1,6 +1,6 @@
 import { RespPageSchemaDto } from './resp-page-schema.dto';
 import { TestSchemaDto } from './test-schema.dto';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
 
 export class RespTestSchemaDto extends RespPageSchemaDto<TestSchemaDto> {
   /**
@@ -24,4 +24,11 @@ export class RespTestSchemaDto extends RespPageSchemaDto<TestSchemaDto> {
     description: '数据集合',
   })
   list: TestSchemaDto[];
+
+  @ApiProperty({
+    description: 'Map对象',
+    type: 'object',
+    additionalProperties: { $ref: getSchemaPath(TestSchemaDto) }
+  })
+  levelEntities: Map<string, TestSchemaDto>;
 }

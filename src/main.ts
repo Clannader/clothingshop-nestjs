@@ -55,8 +55,18 @@ async function bootstrap() {
     swaggerOptions: {
       persistAuthorization: true, // 这个参数好像是做持久化认证的
       filter: true,
+      displayOperationId: true, // 显示OperationId
+      displayRequestDuration: true, // 显示请求时间
+      // docExpansion=none为不展开。
+      // docExpansion=list为展开
+      // docExpansion=full为全部展开,包括接口的详细信息
+      docExpansion: 'none', // 默认不展开标签
+      // queryConfigEnabled: false, // 看不出有什么效果
+      // showExtensions: false, // 看不出有什么效果
+      // deepLinking: false, // 这个无效,源代码默认true
     },
-    explorer: true,
+    // swaggerUrl: 'http://localhost:3000/swagger-ui-json', // 感觉无效
+    // explorer: true,
     // customCss: '.swagger-ui .model-box { display:block }',
     customCssUrl: '/swagger-ui-override.css',
   });
