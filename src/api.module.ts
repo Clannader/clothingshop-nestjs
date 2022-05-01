@@ -8,7 +8,7 @@ import { LogInterceptor } from './interceptor';
 
 import { UserModule } from './user/user.module';
 import { SystemModule } from './system/system.module';
-import { LoggerModule } from './logger/logger.module';
+import { LoggerModule } from './logger';
 import { LoginModule } from './login/login.module';
 import { TestModule } from './test/test.module'
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';

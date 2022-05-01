@@ -18,7 +18,7 @@ export function BindClass(...decorators: any[]): ClassDecorator {
     for (const decorator of decorators) {
       if (target instanceof Function) {
         (decorator as ClassDecorator)(target);
-        continue;
+        // continue;
       }
     }
   };
