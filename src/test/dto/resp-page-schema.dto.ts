@@ -7,5 +7,5 @@ export class RespPageSchemaDto<T> extends CommonResult {
   })
   total: number;
 
-  // results: T[];
+  results: T[];
 }
