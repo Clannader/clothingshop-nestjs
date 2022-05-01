@@ -9,7 +9,9 @@ import { renderFile } from 'ejs';
 // import * as fs from 'fs';
 
 async function bootstrap() {
-  const aopLogger = new AopLogger(); // 后期如果里面依赖了其他service,那么需要修改这个的注入方式
+  const aopLogger = new AopLogger(null, {
+    timestamp: true
+  }); // 后期如果里面依赖了其他service,那么需要修改这个的注入方式
   // 这里导入的是https的证书的方法,不过好像试了报错,不知道是不是证书的问题还是代码的问题
   // 这里不做太多的纠结,因为https可以有很多方法做到,不一定需要代码实现
   // const httpsOptions = {

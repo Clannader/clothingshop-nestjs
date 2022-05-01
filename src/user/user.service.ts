@@ -10,9 +10,8 @@ import {
 
 @Injectable()
 export class UserService {
-  private readonly logger = new AopLogger();
+  private readonly logger = new AopLogger(UserService.name);
   constructor() {
-    this.logger.setContext(this.constructor.name);
   }
 
   getUsersList(params: ReqUserSearchDto): RespUserSearchDto {
