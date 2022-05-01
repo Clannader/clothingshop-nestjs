@@ -57,7 +57,7 @@ async function bootstrap() {
       filter: true,
       displayOperationId: true, // 显示OperationId
       displayRequestDuration: true, // 显示请求时间
-      // docExpansion=none为不展开。
+      // docExpansion=none为不展开
       // docExpansion=list为展开
       // docExpansion=full为全部展开,包括接口的详细信息
       docExpansion: 'none', // 默认不展开标签
