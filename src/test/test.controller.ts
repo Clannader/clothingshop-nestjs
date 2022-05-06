@@ -10,6 +10,7 @@ import {
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse, CodeEnum } from '../common';
 import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
+import i18n from '../common/i18n'
 
 @ApiCommon()
 @Controller('/cms/api/test')
@@ -26,6 +27,7 @@ export class TestController {
   })
   testingPost(@Body() params: ReqTestSchemaDto) {
     console.log(params);
+    console.log(i18n)
     const resp = new RespTestSchemaDto();
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
