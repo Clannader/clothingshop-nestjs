@@ -9,9 +9,8 @@ import {
   Inject,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { ApiCommon, ApiCustomResponse, CodeEnum, GlobalService } from '../common';
+import { ApiCommon, ApiCustomResponse, CodeEnum, GlobalService, i18n } from '../common';
 import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
-import i18n from '../common/i18n'
 
 @ApiCommon()
 @Controller('/cms/api/test')
