@@ -1,3 +1,3 @@
-export const user =  {
-  userName: 'Please input your user name'
+export const user = {
+  userName: 'Please input your user name',
 };

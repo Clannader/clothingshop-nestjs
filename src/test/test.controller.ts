@@ -9,7 +9,13 @@ import {
   Inject,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { ApiCommon, ApiCustomResponse, CodeEnum, GlobalService, i18n } from '../common';
+import {
+  ApiCommon,
+  ApiCustomResponse,
+  CodeEnum,
+  GlobalService,
+  i18n,
+} from '../common';
 import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
 
 @ApiCommon()
@@ -17,9 +23,7 @@ import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
 @ApiTags('TestController')
 export class TestController {
   @Inject()
-  private readonly globalService: GlobalService
-
-  constructor() {}
+  private readonly globalService: GlobalService;
 
   @Post('/post')
   @HttpCode(HttpStatus.OK)
@@ -32,9 +36,9 @@ export class TestController {
   })
   testingPost(@Body() params: ReqTestSchemaDto) {
     console.log(params);
-    console.log(i18n)
-    console.log(GlobalService.GlobalStatic)
-    console.log(this.globalService.lang())
+    console.log(i18n);
+    console.log(GlobalService.GlobalStatic);
+    console.log(this.globalService.lang());
     const resp = new RespTestSchemaDto();
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;

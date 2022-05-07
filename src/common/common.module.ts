@@ -6,6 +6,6 @@ import { GlobalService } from './utils';
   imports: [],
   controllers: [],
   providers: [GlobalService],
-  exports: [GlobalService]
+  exports: [GlobalService],
 })
 export class CommonModule {}

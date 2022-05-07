@@ -14,13 +14,7 @@ import { TestModule } from './test/test.module';
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
-  imports: [
-    CommonModule,
-    UserModule,
-    SystemModule,
-    LoginModule,
-    TestModule,
-  ],
+  imports: [CommonModule, UserModule, SystemModule, LoginModule, TestModule],
   controllers: [],
   providers: [
     {

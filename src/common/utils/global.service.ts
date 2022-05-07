@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import * as globalVariable from '../constants'
+import * as globalVariable from '../constants';
 
 @Injectable()
 export class GlobalService {
-  static GlobalStatic: object = globalVariable
+  static GlobalStatic: object = globalVariable;
 
   lang() {
-    return 'dsffsd'
+    return 'dsffsd';
   }
 }

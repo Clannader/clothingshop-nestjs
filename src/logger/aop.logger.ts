@@ -7,15 +7,16 @@ export class AopLogger extends ConsoleLogger {
 
     // 之前一直打印undefined的原因也找到了,是这个方法的调用问题,之前写的是一直调用的是log的两个参数,导致不传第二个参数也会传一个undefined进去了
     // 所以判断没传第二个参数的时候就调一个参数的log方法即可,目前只能这样解决了
-    // if (context) {
+    if (context) {
       // 这个log的调用我懂什么意思了
       // 1.只传message的时候,如果设置了context,那么就用构造里面的context
       // 2.如果传message, context的时候,就会修改context的值,忽略构造里面的context
       // 3.如果传message, ...any, string三个参数的时候,就相当于传入了多个message,就会打印多次,并且以最后一个参数作为context打印输出
-    //   super.log(message, context);
-    // } else {
-    //   super.log(message);
-    // }
-    super.log.apply(this, arguments)
+      super.log(message, context);
+    } else {
+      super.log(message);
+    }
+    // 也可以使用下面的这种方式传参,但是eslink会提示报错,还是用上面的方式调用吧,这样更好的理解
+    // super.log.apply(this, arguments);
   }
 }

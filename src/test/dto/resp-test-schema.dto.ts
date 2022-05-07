@@ -28,7 +28,7 @@ export class RespTestSchemaDto extends RespPageSchemaDto<TestSchemaDto> {
   @ApiProperty({
     description: 'Map对象',
     type: 'object',
-    additionalProperties: { $ref: getSchemaPath(TestSchemaDto) }
+    additionalProperties: { $ref: getSchemaPath(TestSchemaDto) },
   })
   levelEntities: Map<string, TestSchemaDto>;
 }
