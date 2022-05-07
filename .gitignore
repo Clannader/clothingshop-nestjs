@@ -5,6 +5,10 @@
 /config
 /documentation
 /certs
+/fileLogs
+/logs
+.env.development
+.env.production
 
 # Logs
 logs
