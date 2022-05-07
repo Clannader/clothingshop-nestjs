@@ -33,3 +33,11 @@ export enum UserStatusEnum {
   TRUE = 'T',
   FALSE = 'F',
 }
+
+/**
+ * 语言类型
+ */
+export enum LanguageEnum {
+  EN = 'EN',
+  ZH = 'ZH',
+}

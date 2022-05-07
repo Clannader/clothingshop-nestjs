@@ -14,7 +14,6 @@ import {
   ApiCustomResponse,
   CodeEnum,
   GlobalService,
-  i18n,
 } from '../common';
 import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
 
@@ -36,9 +35,16 @@ export class TestController {
   })
   testingPost(@Body() params: ReqTestSchemaDto) {
     console.log(params);
-    console.log(i18n);
-    console.log(GlobalService.GlobalStatic);
-    console.log(this.globalService.lang());
+    console.log(this.globalService.lang('ZH', '用户名', 'user.userName'));
+    console.log(this.globalService.lang('EN', '用户名', 'user.user', '哈哈'));
+    console.log(
+      this.globalService.lang('ZH', '用户名3333{0}', 'user.user3', '哈哈'),
+    );
+    console.log(this.globalService.replaceArgs('adfd{0}fdsf', '哈哈'));
+    console.log(this.globalService.replaceArgs('adfd{0}fdsf{1}', '哈哈'));
+    console.log(
+      this.globalService.replaceArgs('adfd{0}fdsf{1}', '哈哈', 'ASS'),
+    );
     const resp = new RespTestSchemaDto();
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
