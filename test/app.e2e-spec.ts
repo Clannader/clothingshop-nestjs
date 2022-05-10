@@ -17,7 +17,7 @@ describe('AppController (e2e)', () => {
 
     app = moduleFixture.createNestApplication<NestExpressApplication>();
     // 他只是重新创建了一个新的app,并不是使用我的main.ts里面的app去设置
-    // 所以后期看看如何声明的时候可以使用我配置的app,否则这个app还得复制从main.ts里面复制一堆配置代码过来声明
+    // 所以后期看看如何声明的时候可以使用我配置的app,否则这个app还得复制main.ts里面的代码过来声明
     // 很不是方便
     app.useStaticAssets(join(__dirname, '..', 'public'));
     app.setBaseViewsDir(join(__dirname, '..', 'views'));
