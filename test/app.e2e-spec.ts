@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 // import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '../src/app.module';
 import { readFileSync } from 'fs';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
