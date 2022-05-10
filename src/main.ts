@@ -6,7 +6,6 @@ import { AopLogger } from './logger';
 import helmet from 'helmet';
 import { join } from 'path';
 import { renderFile } from 'ejs';
-import './logger/log4js.logger'
 // import * as fs from 'fs';
 
 async function bootstrap() {

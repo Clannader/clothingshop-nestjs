@@ -17,34 +17,49 @@ describe('GlobalService', () => {
   });
 
   it('测试英文翻译', () => {
-    expect(service.lang('EN', '测试', 'user.userTest')).toBe('Testing')
+    expect(service.lang('EN', '测试', 'user.userTest')).toBe('Testing');
   });
 
   it('测试中文翻译', () => {
-    expect(service.lang('ZH', '测试', 'user.userTest')).toBe('测试')
+    expect(service.lang('ZH', '测试', 'user.userTest')).toBe('测试');
   });
 
   it('测试中文带参数翻译', () => {
-    expect(service.lang('ZH', '测试 {0}', 'user.userTestArgs', '哈哈')).toBe('测试 哈哈')
+    expect(service.lang('ZH', '测试 {0}', 'user.userTestArgs', '哈哈')).toBe(
+      '测试 哈哈',
+    );
   });
 
   it('测试未定义翻译', () => {
-    expect(service.lang('ZH', '测试你好', 'user.userHello')).toBe('测试你好')
+    expect(service.lang('ZH', '测试你好', 'user.userHello')).toBe('测试你好');
   });
 
   it('测试未定义带参数翻译', () => {
-    expect(service.lang('ZH', '测试{0}你好', 'user.userHello', '哈哈')).toBe('测试哈哈你好')
+    expect(service.lang('ZH', '测试{0}你好', 'user.userHello', '哈哈')).toBe(
+      '测试哈哈你好',
+    );
   });
 
   it('测试未定义带3个参数翻译', () => {
-    expect(service.lang('ZH', '测试{0}你好:{1},年龄:{2}', 'user.userHello', '哈哈', 'Oliver', 28)).toBe('测试哈哈你好:Oliver,年龄:28')
+    expect(
+      service.lang(
+        'ZH',
+        '测试{0}你好:{1},年龄:{2}',
+        'user.userHello',
+        '哈哈',
+        'Oliver',
+        28,
+      ),
+    ).toBe('测试哈哈你好:Oliver,年龄:28');
   });
 
   it('测试langKey不存在', () => {
-    expect(service.lang('ZH', '测试', 'user.userHello.hehe')).toBe('测试')
+    expect(service.lang('ZH', '测试', 'user.userHello.hehe')).toBe('测试');
   });
 
   it('测试langKey不存在,带参数', () => {
-    expect(service.lang('ZH', '测试{0}', 'user.userHello.hehe', 10)).toBe('测试10')
+    expect(service.lang('ZH', '测试{0}', 'user.userHello.hehe', 10)).toBe(
+      '测试10',
+    );
   });
 });

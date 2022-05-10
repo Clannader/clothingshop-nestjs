@@ -30,14 +30,18 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/index')
       .expect(200)
-      .expect(readFileSync(join(__dirname, '..', 'views/index.html')).toString())
+      .expect(
+        readFileSync(join(__dirname, '..', 'views/index.html')).toString(),
+      );
   });
 
   it('/index/testing (GET)', () => {
     return request(app.getHttpServer())
       .get('/index/testing')
       .expect(200)
-      .expect(readFileSync(join(__dirname, '..', 'views/index.html')).toString())
+      .expect(
+        readFileSync(join(__dirname, '..', 'views/index.html')).toString(),
+      );
   });
 
   afterAll(async () => {

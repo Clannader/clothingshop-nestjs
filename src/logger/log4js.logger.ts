@@ -3,13 +3,13 @@ import * as Log4js from 'log4js';
 function replaceConsole(logger) {
   function replaceWith(fn) {
     return function () {
-      fn.apply(logger, arguments)
-    }
+      fn.apply(logger, arguments);
+    };
   }
 
   ['log', 'debug', 'info', 'warn', 'error'].forEach(function (item) {
-    console[item] = replaceWith(item === 'log' ? logger.info : logger[item])
-  })
+    console[item] = replaceWith(item === 'log' ? logger.info : logger[item]);
+  });
 }
 
 Log4js.configure({
@@ -32,8 +32,8 @@ Log4js.configure({
        */
       layout: {
         type: 'pattern',
-        pattern: '%d{yyyy-MM-dd hh:mm:ss,SSS} [%z] %p %c - %m'
-      }
+        pattern: '%d{yyyy-MM-dd hh:mm:ss,SSS} [%z] %p %c - %m',
+      },
     },
     serverLogs: {
       type: 'dateFile',
@@ -44,7 +44,8 @@ Log4js.configure({
       alwaysIncludePattern: true,
       layout: {
         type: 'pattern',
-        pattern: '%d{yyyy-MM-dd hh:mm:ss,SSS} %x{author} %X{appName} %p %c - %m',
+        pattern:
+          '%d{yyyy-MM-dd hh:mm:ss,SSS} %x{author} %X{appName} %p %c - %m',
         tokens: {
           author: function (logEvent) {
             // logEvent =>
@@ -58,10 +59,10 @@ Log4js.configure({
             // }
             // 这里面的data节点可以通过info的传参传进来
             // 例如: console.info('xxxx', {type: 'xxxx'})
-            return 'oliver'
-          }
-        }
-      }
+            return 'oliver';
+          },
+        },
+      },
     },
     console: {
       type: 'console',
@@ -69,23 +70,23 @@ Log4js.configure({
         type: 'pattern',
         //%[ %]标志从哪到哪需要加颜色显示
         pattern: '%[[%d{yyyy-MM-dd hh:mm:ss,SSS}] %p %c -%] %m',
-      }
-    }
+      },
+    },
   },
   categories: {
     default: {
       appenders: ['serverLogs', 'console'],
-      level: 'all'
+      level: 'all',
     },
     fileLogs: {
       appenders: ['fileLogs', 'console'],
       //appenders: ['fileLogs', 'console']这样配置可以在控制台输出
       //appenders: ['fileLogs']不需要在控制台输出
-      level: 'all'
-    }
-  }
-})
+      level: 'all',
+    },
+  },
+});
 
-const consoleLogger = Log4js.getLogger('console')
-replaceConsole(consoleLogger)
-consoleLogger.addContext('appName', 'cmsServer')
+const consoleLogger = Log4js.getLogger('console');
+replaceConsole(consoleLogger);
+consoleLogger.addContext('appName', 'cmsServer');
