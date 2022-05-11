@@ -2,13 +2,10 @@
 /dist
 /node_modules
 /public/static
-/config
 /documentation
 /certs
 /fileLogs
 /logs
-.env.development
-.env.production
 
 # Logs
 logs

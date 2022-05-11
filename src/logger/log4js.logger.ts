@@ -1,4 +1,12 @@
 import * as Log4js from 'log4js';
+import { resolve } from 'path';
+import { Utils } from '../common';
+
+export class Log4jsLogger {
+
+}
+
+const baseLogPath = resolve(__dirname, '')
 
 function replaceConsole(logger) {
   function replaceWith(fn) {
