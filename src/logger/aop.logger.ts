@@ -7,7 +7,7 @@ const logger = Log4js.getLogger('serverLogs')
 logger.addContext('appName', 'cmsServer')
 
 export class AopLogger extends ConsoleLogger {
-
+  // private static timestampAt?: number;
   log(message: any, context?: string) {
     // 把这个logger加入了app里面,就不打印执行时间了,不知道为什么
     // 我现在知道为什么不打印时间了,是要设置logger参数才可以的,设置{timestamp: true}这个参数即可,因为覆盖了源代码的logger的配置
@@ -39,4 +39,15 @@ export class AopLogger extends ConsoleLogger {
     const baseName: string = basename(fileName);
     return `${baseName}(line: ${lineNumber}, column: ${columNumber}):`
   }
+
+  // 感觉不准确
+  // private getTimestampDiff(): string {
+  //   const includeTimestamp =
+  //     AopLogger.timestampAt && this.options?.timestamp;
+  //   const result = includeTimestamp
+  //     ? ` +${Date.now() - AopLogger.timestampAt}ms`
+  //     : '';
+  //   AopLogger.timestampAt = Date.now();
+  //   return result;
+  // }
 }
