@@ -1,2 +1,2 @@
 export * from './global.service';
-export * from './Utils'
+export * from './Utils';

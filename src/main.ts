@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import './logger/log4js.logger';
 import { AppModule } from './app.module';
 import { AopLogger } from './logger';
 import helmet from 'helmet';

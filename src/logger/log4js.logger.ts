@@ -1,17 +1,13 @@
 import * as Log4js from 'log4js';
-import { resolve } from 'path';
-import { Utils } from '../common';
+import { join } from 'path';
 
-export class Log4jsLogger {
-
-}
-
-const baseLogPath = resolve(__dirname, '')
+const baseLogPath = join(__dirname, '/../../logs/server.log');
+const baseFileLogPath = join(__dirname, '/../../fileLogs/fileLog.log');
 
 function replaceConsole(logger) {
   function replaceWith(fn) {
-    return function () {
-      fn.apply(logger, arguments);
+    return function (...args) {
+      fn.apply(logger, args);
     };
   }
 
@@ -24,7 +20,7 @@ Log4js.configure({
   appenders: {
     fileLogs: {
       type: 'file',
-      filename: __dirname + '\\..\\..\\fileLogs\\fileLog.log',
+      filename: baseFileLogPath,
       maxLogSize: 10 * 1024 * 1024, // = 10Mb
       numBackups: 5, // keep five backup files
       alwaysIncludePattern: true,
@@ -45,7 +41,7 @@ Log4js.configure({
     },
     serverLogs: {
       type: 'dateFile',
-      filename: __dirname + '\\..\\..\\logs\\server.log',
+      filename: baseLogPath,
       pattern: 'yyyy-MM-dd',
       level: 'all',
       // daysToKeep: 10, //删除10天前的日志,感觉没什么用
@@ -55,7 +51,7 @@ Log4js.configure({
         pattern:
           '%d{yyyy-MM-dd hh:mm:ss,SSS} %x{author} %X{appName} %p %c - %m',
         tokens: {
-          author: function (logEvent) {
+          author: function (/*logEvent*/) {
             // logEvent =>
             // let _logEvent = {
             //     "startTime": "2019-09-13T06:18:02.679Z",
