@@ -49,7 +49,7 @@ Log4js.configure({
       layout: {
         type: 'pattern',
         pattern:
-          '%d{yyyy-MM-dd hh:mm:ss,SSS} %x{author} %X{appName} %p %c - %m',
+          '%d{yyyy-MM-dd hh:mm:ss,SSS} %x{author} %X{appName} %p [%x{originalContext}] %c - %m',
         tokens: {
           author: function (/*logEvent*/) {
             // logEvent =>
@@ -65,6 +65,9 @@ Log4js.configure({
             // 例如: console.info('xxxx', {type: 'xxxx'})
             return 'oliver';
           },
+          originalContext: function(logEvent: Log4js.LoggingEvent) {
+            return logEvent.context['originalContext'] || 'Console';
+          }
         },
       },
     },
