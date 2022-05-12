@@ -6,15 +6,15 @@ import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
 import { LogInterceptor } from './interceptor';
 
+import { CommonModule } from './common';
 import { UserModule } from './user/user.module';
 import { SystemModule } from './system/system.module';
-import { LoggerModule } from './logger';
 import { LoginModule } from './login/login.module';
 import { TestModule } from './test/test.module';
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
-  imports: [UserModule, LoggerModule, SystemModule, LoginModule, TestModule],
+  imports: [CommonModule, UserModule, SystemModule, LoginModule, TestModule],
   controllers: [],
   providers: [
     {

@@ -2,9 +2,10 @@
 /dist
 /node_modules
 /public/static
-/config
 /documentation
 /certs
+/fileLogs
+/logs
 
 # Logs
 logs

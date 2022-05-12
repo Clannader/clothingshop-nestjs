@@ -16,8 +16,8 @@ export class RespPageSchemaDto<T> extends CommonResult {
     description: '结果集',
     type: 'array',
     items: {
-      $ref: getSchemaPath(TestSchemaDto)
-    }
+      $ref: getSchemaPath(TestSchemaDto),
+    },
   })
   results: T[];
 }
