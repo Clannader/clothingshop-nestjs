@@ -65,9 +65,9 @@ Log4js.configure({
             // 例如: console.info('xxxx', {type: 'xxxx'})
             return 'oliver';
           },
-          originalContext: function(logEvent: Log4js.LoggingEvent) {
+          originalContext: function (logEvent: Log4js.LoggingEvent) {
             return logEvent.context['originalContext'] || 'Console';
-          }
+          },
         },
       },
     },
@@ -76,11 +76,12 @@ Log4js.configure({
       layout: {
         type: 'pattern',
         //%[ %]标志从哪到哪需要加颜色显示
-        pattern: '%[[%d{yyyy-MM-dd hh:mm:ss,SSS}] %z %p [%x{originalContext}] %c -%] %m',
+        pattern:
+          '%[[%d{yyyy-MM-dd hh:mm:ss,SSS}] %z %p [%x{originalContext}] %c -%] %m',
         tokens: {
-          originalContext: function(logEvent: Log4js.LoggingEvent) {
+          originalContext: function (logEvent: Log4js.LoggingEvent) {
             return logEvent.context['originalContext'] || 'Console';
-          }
+          },
         },
       },
     },
