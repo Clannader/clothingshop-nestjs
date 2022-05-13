@@ -7,6 +7,9 @@ import { AopLogger } from './logger';
 import helmet from 'helmet';
 import { join } from 'path';
 import { renderFile } from 'ejs';
+import * as session from 'express-session'
+import { sessionName, sessionSecret } from './common';
+
 // import * as fs from 'fs';
 
 async function bootstrap() {
@@ -37,6 +40,14 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.engine('html', renderFile);
   app.setViewEngine('html');
+  app.use(
+    session({
+      name: sessionName,
+      secret: sessionSecret,
+      saveUninitialized: false,
+      resave: true
+    })
+  )
 
   const port = 3000;
   const options = new DocumentBuilder()
