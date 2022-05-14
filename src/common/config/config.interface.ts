@@ -10,6 +10,11 @@ export interface ConfigServiceOptions {
   envFilePath?: string;
 
   /**
+   * Environment file encoding.
+   */
+  encoding?: string;
+
+  /**
    * 监控文件有变化时重新加载配置文件
    */
   isWatch?: boolean;

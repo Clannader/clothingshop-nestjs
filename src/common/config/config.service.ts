@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { CONFIG_OPTIONS } from './config.constants';
-import * as dotenv from 'dotenv';
+// import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import { resolve } from 'path';
 import { ConfigServiceOptions } from './config.interface';
@@ -29,14 +29,53 @@ export class ConfigService<
   }
 
   private loadEnvFile(): void {
-    let config: ReturnType<typeof dotenv.parse> = {};
+    let config: Record<string, any> = {};
     if (fs.existsSync(this.envFilePath)) {
+      // config = Object.assign(
+      //   // 其实用dotenv这个包就可以直接格式化数据,但是由于要重新写入文件,这样会丢失注释的内容,所以还是得自己来格式化了
+      //   // dotenv.parse(fs.readFileSync(this.envFilePath)),
+      //   config,
+      // );
+      const sourceString = fs.readFileSync(this.envFilePath, 'utf-8');
       config = Object.assign(
-        dotenv.parse(fs.readFileSync(this.envFilePath)),
-        config,
-      );
+        this.parse(sourceString)
+      )
     }
     this.internalConfig = config;
+  }
+
+  private parse(src: string | Buffer, sep?: string, eq?: string): Record<string, any> {
+    let obj = {},
+      _sep = sep || '\r\n',
+      _eq = eq || '=',
+      regex = new RegExp('^(.+)(?<!=)' + _eq + '(?!=)(.+)$');// 由于部分配置进行了加密,正则需要匹配
+    // 第一个等号的分隔
+    const qs = src.toString()
+    if (qs.length === 0) {
+      return obj;
+    }
+    let strArray = qs.split(_sep);
+    strArray.forEach((value, index) => {
+      this.parseRows(obj, regex, index, value)
+    })
+
+    return obj;
+  }
+
+  private parseRows(obj: Record<string, any>, regex: RegExp, i: number, str: string):void {
+    let matches = str.match(regex);
+    if (matches) {
+      const value = matches[2].trim()
+      if (/^-?\d+(\.\d+)?$/.test(value)) {
+        obj[matches[1].trim()] = parseFloat(value);
+      } else if (/^(true|false)$/.test(value)) {
+        obj[matches[1].trim()] = value === 'true';
+      } else {
+        obj[matches[1].trim()] = value;
+      }
+    } else {
+      obj['#' + i] = str;
+    }
   }
 
   private watchConfig(): void {

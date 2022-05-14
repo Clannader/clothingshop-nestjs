@@ -41,14 +41,17 @@ export class TestController {
     const resp = new RespTestSchemaDto();
     const dbUser: string = this.configService.get<string>('dbUser');
     console.log(dbUser);
+    console.log(typeof dbUser);
     const httpPort: number = this.configService.get<number>('httpPort');
     console.log(httpPort);
+    console.log(typeof httpPort);
     const printUrl: boolean = this.configService.get<boolean>(
-      'printUrl3',
+      'printUrl',
       false,
     );
     console.log(printUrl);
-    console.log(this.configService.getInternalConfig());
+    console.log(typeof printUrl);
+    console.log(this.configService.getInternalConfig())
     // this.configService.set<boolean>('boolean', false)
     // this.configService.set<number>('number', 120)
     // this.configService.set<string>('string', '4578')
