@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 // import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../../src/app.module';
 import { readFileSync } from 'fs';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
@@ -19,8 +19,8 @@ describe('AppController (e2e)', () => {
     // 他只是重新创建了一个新的app,并不是使用我的main.ts里面的app去设置
     // 所以后期看看如何声明的时候可以使用我配置的app,否则这个app还得复制main.ts里面的代码过来声明
     // 很不是方便
-    app.useStaticAssets(join(__dirname, '..', 'public'));
-    app.setBaseViewsDir(join(__dirname, '..', 'views'));
+    app.useStaticAssets(join(__dirname, '../..', 'public'));
+    app.setBaseViewsDir(join(__dirname, '../..', 'views'));
     app.engine('html', renderFile);
     app.setViewEngine('html');
     await app.init();
@@ -31,7 +31,7 @@ describe('AppController (e2e)', () => {
       .get('/index')
       .expect(200)
       .expect(
-        readFileSync(join(__dirname, '..', 'views/index.html')).toString(),
+        readFileSync(join(__dirname, '../..', 'views/index.html')).toString(),
       );
   });
 
@@ -40,7 +40,7 @@ describe('AppController (e2e)', () => {
       .get('/index/testing')
       .expect(200)
       .expect(
-        readFileSync(join(__dirname, '..', 'views/index.html')).toString(),
+        readFileSync(join(__dirname, '../..', 'views/index.html')).toString(),
       );
   });
 
