@@ -82,4 +82,8 @@ export class Utils {
   static isUndefined(obj: any): obj is undefined {
     return typeof obj === 'undefined';
   }
+
+  static isEmpty(obj: any): boolean {
+    return obj == null || obj === '' || obj === 'undefined';
+  }
 }

@@ -39,19 +39,25 @@ export class TestController {
   })
   testingPost(@Body() params: ReqTestSchemaDto) {
     const resp = new RespTestSchemaDto();
-    const dbUser: string = this.configService.get<string>('dbUser');
-    console.log(dbUser);
-    console.log(typeof dbUser);
-    const httpPort: number = this.configService.get<number>('httpPort');
-    console.log(httpPort);
-    console.log(typeof httpPort);
-    const printUrl: boolean = this.configService.get<boolean>(
-      'printUrl',
-      false,
-    );
-    console.log(printUrl);
-    console.log(typeof printUrl);
-    console.log(this.configService.getInternalConfig())
+    // const dbUser: string = this.configService.get<string>('dbUser');
+    // console.log(dbUser);
+    // console.log(typeof dbUser);
+    // console.log(this.configService.getSecurityConfig('dbUrl'))
+    // console.log(this.configService.getSecurityConfig('mailPws'))
+    // const httpPort: number = this.configService.get<number>('httpPort');
+    // console.log(httpPort);
+    // console.log(typeof httpPort);
+    // const printUrl: boolean = this.configService.get<boolean>(
+    //   'printUrl',
+    //   false,
+    // );
+    // console.log(printUrl);
+    // console.log(typeof printUrl);
+    this.configService.set('aaa', 8989)
+    this.configService.set('aaa2', '4324rer')
+    this.configService.set('aaa4', false)
+    console.log(this.configService.get<string>('aaa2'))
+    // console.log(this.configService.getInternalConfig())
     // this.configService.set<boolean>('boolean', false)
     // this.configService.set<number>('number', 120)
     // this.configService.set<string>('string', '4578')

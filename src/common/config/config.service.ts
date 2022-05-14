@@ -6,7 +6,7 @@ import { resolve } from 'path';
 import { ConfigServiceOptions } from './config.interface';
 import { NoInferType, ExcludeUndefinedIf, KeyOf } from '../common.type';
 import { Utils } from '../utils';
-import { get } from 'lodash';
+import { get, set, unset, isPlainObject, forEach } from 'lodash';
 
 @Injectable()
 export class ConfigService<
@@ -14,7 +14,7 @@ export class ConfigService<
   WasValidated extends boolean = false,
 > {
   private internalConfig: Record<string, any> = {};
-  private envFilePath: string = resolve(process.cwd(), 'config.ini');
+  private readonly envFilePath: string = resolve(process.cwd(), 'config.ini');
 
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: ConfigServiceOptions,
@@ -97,7 +97,7 @@ export class ConfigService<
   get<T = any>(propertyPath: KeyOf<K>): ExcludeUndefinedIf<WasValidated, T>;
   get<T = any>(propertyPath: KeyOf<K>, defaultValue: NoInferType<T>): T;
   get<T = any>(propertyPath: KeyOf<K>, defaultValue?: T): T | undefined {
-    const internalValue = this.getFromInternalConfig(propertyPath);
+    const internalValue = get(this.internalConfig, propertyPath);
     if (!Utils.isUndefined(internalValue)) {
       return internalValue;
     }
@@ -105,14 +105,54 @@ export class ConfigService<
     return defaultValue as T;
   }
 
-  private getFromInternalConfig<T = any>(
-    propertyPath: KeyOf<K>,
-  ): T | undefined {
-    const internalValue = get(this.internalConfig, propertyPath);
-    return internalValue;
+  getSecurityConfig(propertyPath: string): string {
+    const internalValue = get(this.internalConfig, propertyPath)
+    const isSecurity = get(this.internalConfig, 'security')
+    return (!Utils.isUndefined(internalValue) && isSecurity)
+      ? Utils.tripleDESdecrypt(internalValue)
+      : internalValue;
   }
 
-  getInternalConfig() {
-    return this.internalConfig;
+  set(key: string, value: string | number | boolean) {
+    if (Utils.isEmpty(key)) {
+      return
+    }
+    if (value == null || value === '') {
+      unset(this.internalConfig, key)
+    } else {
+      set(this.internalConfig, key, value)
+    }
+    fs.writeFileSync(this.envFilePath, this.getMapToString());
   }
+
+  private getMapToString(sep?: string, eq?: string): string {
+    let temp = [],
+      _sep = sep || '\r\n',
+      _eq = eq || '=';
+    if (!isPlainObject(this.internalConfig) || Object.keys(this.internalConfig).length === 0) {
+      return '';
+    }
+
+    forEach(this.internalConfig, (value, key) => {
+      if (!Utils.isEmpty(value)) {
+        if (/^#\d+$/.test(key)) {
+          temp.push(value);//-->value\r\n
+        } else {
+          temp.push(key + _eq + value);//-->key=value\r\n
+        }
+      }
+    })
+
+    return temp.join(_sep);
+  }
+
+  // private getFromInternalConfig<T = any>(
+  //   propertyPath: KeyOf<K>,
+  // ): T | undefined {
+  //   return get(this.internalConfig, propertyPath);
+  // }
+
+  // getInternalConfig() {
+  //   return this.internalConfig;
+  // }
 }
