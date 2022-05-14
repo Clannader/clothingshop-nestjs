@@ -5,4 +5,4 @@ export * from './constants';
 export * from './common.module';
 export * from './utils';
 export * from './i18n';
-export * from './config'
+export * from './config';

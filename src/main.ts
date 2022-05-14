@@ -7,7 +7,7 @@ import { AopLogger } from './logger';
 import helmet from 'helmet';
 import { join } from 'path';
 import { renderFile } from 'ejs';
-import * as session from 'express-session'
+import * as session from 'express-session';
 import { sessionName, sessionSecret } from './common';
 
 // import * as fs from 'fs';
@@ -47,8 +47,8 @@ async function bootstrap() {
       saveUninitialized: false,
       resave: true,
       // store: '',  这里缺少引用数据库的store
-    })
-  )
+    }),
+  );
 
   const port = 3000;
   const options = new DocumentBuilder()
