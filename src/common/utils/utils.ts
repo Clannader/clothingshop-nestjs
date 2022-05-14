@@ -1,5 +1,6 @@
 import * as CryptoJS from 'crypto-js';
 import { tripleDES } from '../constants';
+import { get, isPlainObject, has } from 'lodash';
 
 /**
  * 系统工具类
@@ -40,6 +41,11 @@ export class Utils {
     return CryptoJS.SHA1(str).toString();
   }
 
+  /**
+   * 3DES加密算法
+   * @param str 加密的内容
+   * @param tripleKey 加密的key
+   */
   static tripleDESencrypt(str = '', tripleKey?: string) {
     // 3DES加密算法
     const key = CryptoJS.enc.Utf8.parse(tripleKey || tripleDES.key);
@@ -51,6 +57,11 @@ export class Utils {
     return encryptAction.toString();
   }
 
+  /**
+   * 3DES解密算法
+   * @param str 解密内容
+   * @param tripleKey 解密的key
+   */
   static tripleDESdecrypt(str = '', tripleKey?: string) {
     // 3DES解密算法
     const key = CryptoJS.enc.Utf8.parse(tripleKey || tripleDES.key);
@@ -62,14 +73,27 @@ export class Utils {
     return decryptAction.toString(CryptoJS.enc.Utf8);
   }
 
+  /**
+   * 字符串转base64
+   * @param str
+   */
   static stringToBase64(str = ''): string {
     return Buffer.from(str).toString('base64');
   }
 
+  /**
+   * base64转字符串
+   * @param base64
+   */
   static base64ToString(base64 = ''): string {
     return Buffer.from(base64, 'base64').toString();
   }
 
+  /**
+   * 返回文件大小
+   * @param size 文件的字节大小
+   * @param fixed 保留几位小数
+   */
   static getFileSize(size: number, fixed?: number): string {
     if (size === 0) return '0B';
     const k = 1024;
@@ -79,11 +103,36 @@ export class Utils {
     return (fixed ? result.toFixed(fixed) : result) + sizes[i];
   }
 
+  /**
+   * 判断对象是否undefined
+   * @param obj
+   */
   static isUndefined(obj: any): obj is undefined {
     return typeof obj === 'undefined';
   }
 
+  /**
+   * 判断对象是否为空
+   * @param obj
+   */
   static isEmpty(obj: any): boolean {
     return obj == null || obj === '' || obj === 'undefined';
+  }
+
+  static replaceArgsFromJson(str: string = '', obj: Record<string, any> = {}): string {
+    if (this.isEmpty(str) || !isPlainObject(obj)) {
+      return str
+    }
+    const exp = /\{[A-Za-z\.]+\}/g
+    let message = ''
+    message += str.replace(exp, match => {
+      const index = match.slice(1, -1)
+      if (!has(obj, index)) {
+        return match
+      }
+      return get(obj, index)
+    })
+
+    return message
   }
 }

@@ -14,7 +14,7 @@ export interface ConfigServiceOptions {
   /**
    * Environment file encoding.
    */
-  encoding?: string;
+  encoding?: BufferEncoding;
 
   /**
    * 监控文件有变化时重新加载配置文件

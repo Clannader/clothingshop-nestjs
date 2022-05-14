@@ -8,7 +8,7 @@ import { registerAs } from '../common/config/register-as.util';
     ConfigModule.register({
       envFilePath: './config/config2.ini',
       isWatch: true,
-      factory: registerAs('TEST_CONFIG', () => ({})),
+      factory: registerAs('TEST_CONFIG', () => ({mas: 'fd'})),
     }),
   ],
   controllers: [TestController],

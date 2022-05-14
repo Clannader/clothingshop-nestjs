@@ -19,9 +19,9 @@ export class ConfigService<
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: ConfigServiceOptions,
   ) {
-    this.envFilePath = options.envFilePath
-      ? options.envFilePath
-      : this.envFilePath;
+    this.envFilePath = Utils.isEmpty(options.envFilePath)
+      ? this.envFilePath
+      : options.envFilePath;
     this.loadEnvFile();
     if (options.isWatch) {
       this.watchConfig();
@@ -36,7 +36,9 @@ export class ConfigService<
       //   // dotenv.parse(fs.readFileSync(this.envFilePath)),
       //   config,
       // );
-      const sourceString = fs.readFileSync(this.envFilePath, 'utf-8');
+      const sourceString = fs.readFileSync(this.envFilePath, {
+        encoding: this.options.encoding || 'utf-8'
+      });
       config = Object.assign(this.parse(sourceString));
     }
     this.internalConfig = config;

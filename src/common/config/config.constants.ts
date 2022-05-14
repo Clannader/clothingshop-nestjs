@@ -1,4 +1,3 @@
-// ConfigServiceProvide
 export const CONFIG_OPTIONS = 'CONFIG_OPTIONS';
 export const AS_PROVIDER_METHOD_KEY = 'asProvider';
 export const PARTIAL_CONFIGURATION_KEY = 'PARTIAL_CONFIGURATION_KEY';
