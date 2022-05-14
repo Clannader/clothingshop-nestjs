@@ -12,8 +12,9 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import {
   ApiCommon,
   ApiCustomResponse,
-  CodeEnum, ConfigService,
-  GlobalService
+  CodeEnum,
+  ConfigService,
+  GlobalService,
 } from '../common';
 import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
 
@@ -38,7 +39,7 @@ export class TestController {
   })
   testingPost(@Body() params: ReqTestSchemaDto) {
     const resp = new RespTestSchemaDto();
-    console.log(this.configService)
+    console.log(this.configService);
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
     return resp;
