@@ -40,6 +40,22 @@ describe('Utils', () => {
   it('3DES加解密 "a"', () => {
     const encrypt = Utils.tripleDESencrypt('a')
     expect(Utils.tripleDESdecrypt(encrypt)).toBe('a');
+
+    const key = 'ClothingShopClothingShopClothingShopClothingShopClothingShopBBBB'
+    const encrypt2 = Utils.tripleDESencrypt('a', key)
+    expect(Utils.tripleDESdecrypt(encrypt2, key)).toBe('a');
   });
 
+  it('base64加解密 "a"', () => {
+    const base64 = Utils.stringToBase64('a')
+    expect(Utils.base64ToString(base64)).toBe('a');
+  });
+
+  it('文件大小测试', () => {
+    expect(Utils.getFileSize(256)).toBe('0.25B');
+    expect(Utils.getFileSize(256 * 1024)).toBe('0.25KB');
+    expect(Utils.getFileSize(256 * 1024 * 1024)).toBe('0.25MB');
+    expect(Utils.getFileSize(256 * 1024 * 1024 * 1024)).toBe('0.25GB');
+    expect(Utils.getFileSize(256 * 1024 * 1024 * 1024 * 1024)).toBe('0.25TB');
+  });
 });

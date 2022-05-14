@@ -61,4 +61,20 @@ export class Utils {
     })
     return decryptAction.toString(CryptoJS.enc.Utf8)
   }
+
+  static stringToBase64(str: string = ''): string {
+    return Buffer.from(str).toString('base64')
+  }
+
+  static base64ToString(base64: string = ''): string {
+    return Buffer.from(base64, 'base64').toString()
+  }
+
+  static getFileSize(size: number): string {
+    if (size === 0) return '0B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+    const i = Math.floor(Math.log(size) / Math.log(k))
+    return (size / Math.pow(k, i)).toFixed(2) + sizes[i]
+  }
 }
