@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import * as globalVariable from '../constants';
 import { i18n } from '../i18n';
+import { get } from 'lodash';
 
 @Injectable()
 export class GlobalService {
-  static GlobalStatic: object = globalVariable;
+  static GlobalStatic: Record<string, any> = globalVariable;
 
   /**
    * 判断对象是否为空
@@ -31,10 +32,11 @@ export class GlobalService {
     if (this.isEmpty(properties)) {
       return this.replaceArgs(orgin, ...args);
     }
-    const langKey = this.parseProperties(properties, key);
-    if (typeof langKey !== 'string') {
-      return this.replaceArgs(orgin, ...args);
-    }
+    // const langKey = this.parseProperties(properties, key);
+    const langKey = get(properties, key, orgin);
+    // if (typeof langKey !== 'string') {
+    //   return this.replaceArgs(orgin, ...args);
+    // }
     return this.replaceArgs(langKey, ...args);
   }
 

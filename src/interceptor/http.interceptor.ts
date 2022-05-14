@@ -8,8 +8,8 @@ import { AopLogger } from '../logger';
 import { tap } from 'rxjs/operators';
 
 @Injectable()
-export class LogInterceptor implements NestInterceptor {
-  private readonly logger = new AopLogger(LogInterceptor.name);
+export class HttpInterceptor implements NestInterceptor {
+  private readonly logger = new AopLogger(HttpInterceptor.name);
   constructor() {
     // this.logger.setContext(this.constructor.name);
   }
