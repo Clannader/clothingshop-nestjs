@@ -6,7 +6,7 @@ import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
 import { HttpInterceptor } from './interceptor';
 
-import { CommonModule } from './common';
+import { CommonModule, ConfigModule } from './common';
 import { UserModule } from './user/user.module';
 import { SystemModule } from './system/system.module';
 import { LoginModule } from './login/login.module';
@@ -14,7 +14,17 @@ import { TestModule } from './test/test.module';
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
-  imports: [CommonModule, UserModule, SystemModule, LoginModule, TestModule],
+  imports: [
+    CommonModule,
+    UserModule,
+    SystemModule,
+    LoginModule,
+    TestModule,
+    ConfigModule.register({
+      envFilePath: './config/config.ini',
+      isGlobal: true
+    })
+  ],
   controllers: [],
   providers: [
     {
