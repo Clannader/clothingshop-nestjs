@@ -45,7 +45,8 @@ async function bootstrap() {
       name: sessionName,
       secret: sessionSecret,
       saveUninitialized: false,
-      resave: true
+      resave: true,
+      // store: '',  这里缺少引用数据库的store
     })
   )
 
@@ -73,7 +74,7 @@ async function bootstrap() {
       // docExpansion=list为展开
       // docExpansion=full为全部展开,包括接口的详细信息
       docExpansion: 'none', // 默认不展开标签
-      tagsSorter: 'alpha',
+      tagsSorter: 'alpha', // 可能有alpha beta stable选择,但是没测试过
       operationsSorter: 'alpha',
       // queryConfigEnabled: false, // 看不出有什么效果
       // showExtensions: false, // 看不出有什么效果

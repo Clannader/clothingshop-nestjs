@@ -4,7 +4,7 @@
 import { Module } from '@nestjs/common';
 import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
-import { LogInterceptor } from './interceptor';
+import { HttpInterceptor } from './interceptor';
 
 import { CommonModule } from './common';
 import { UserModule } from './user/user.module';
@@ -27,7 +27,7 @@ import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: LogInterceptor,
+      useClass: HttpInterceptor,
     },
   ],
 })
