@@ -4,7 +4,7 @@ import { i18n } from '../i18n';
 
 @Injectable()
 export class GlobalService {
-  static GlobalStatic: object = globalVariable;
+  static GlobalStatic: Record<string, any> = globalVariable;
 
   /**
    * 判断对象是否为空

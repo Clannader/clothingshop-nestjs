@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GlobalService } from './global.service';
+import { dateSdf, dbSession_Expires, Supervisor_Rights, userNameExp, tripleDES } from '../constants';
 
 describe('GlobalService', () => {
   let service: GlobalService;
@@ -61,5 +62,26 @@ describe('GlobalService', () => {
     expect(service.lang('ZH', '测试{0}', 'user.userHello.hehe', 10)).toBe(
       '测试10',
     );
+  });
+
+  it('测试获取全局静态参数 日期格式化格式', () => {
+    expect(GlobalService.GlobalStatic.dateSdf).toBe(dateSdf)
+  });
+
+  it('测试获取全局静态参数 session过期时间', () => {
+    expect(GlobalService.GlobalStatic.dbSession_Expires).toBe(dbSession_Expires)
+  });
+
+  it('测试获取全局静态参数 用户名正则', () => {
+    expect(GlobalService.GlobalStatic.userNameExp).toBe(userNameExp)
+  });
+
+  it('测试获取全局静态参数 权限组', () => {
+    expect(GlobalService.GlobalStatic.Supervisor_Rights).toBe(Supervisor_Rights)
+  });
+
+  it('测试获取全局静态参数 3DES参数', () => {
+    expect(GlobalService.GlobalStatic.tripleDES).toBe(tripleDES)
+    expect(GlobalService.GlobalStatic.tripleDES.key).toBe(tripleDES.key)
   });
 });
