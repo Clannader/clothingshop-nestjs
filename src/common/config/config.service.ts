@@ -37,35 +37,42 @@ export class ConfigService<
       //   config,
       // );
       const sourceString = fs.readFileSync(this.envFilePath, 'utf-8');
-      config = Object.assign(
-        this.parse(sourceString)
-      )
+      config = Object.assign(this.parse(sourceString));
     }
     this.internalConfig = config;
   }
 
-  private parse(src: string | Buffer, sep?: string, eq?: string): Record<string, any> {
-    let obj = {},
+  private parse(
+    src: string | Buffer,
+    sep?: string,
+    eq?: string,
+  ): Record<string, any> {
+    const obj = {},
       _sep = sep || '\r\n',
       _eq = eq || '=',
-      regex = new RegExp('^(.+)(?<!=)' + _eq + '(?!=)(.+)$');// 由于部分配置进行了加密,正则需要匹配
+      regex = new RegExp('^(.+)(?<!=)' + _eq + '(?!=)(.+)$'); // 由于部分配置进行了加密,正则需要匹配
     // 第一个等号的分隔
-    const qs = src.toString()
+    const qs = src.toString();
     if (qs.length === 0) {
       return obj;
     }
-    let strArray = qs.split(_sep);
+    const strArray = qs.split(_sep);
     strArray.forEach((value, index) => {
-      this.parseRows(obj, regex, index, value)
-    })
+      ConfigService.parseRows(obj, regex, index, value);
+    });
 
     return obj;
   }
 
-  private parseRows(obj: Record<string, any>, regex: RegExp, i: number, str: string):void {
-    let matches = str.match(regex);
+  private static parseRows(
+    obj: Record<string, any>,
+    regex: RegExp,
+    i: number,
+    str: string,
+  ): void {
+    const matches = str.match(regex);
     if (matches) {
-      const value = matches[2].trim()
+      const value = matches[2].trim();
       if (/^-?\d+(\.\d+)?$/.test(value)) {
         obj[matches[1].trim()] = parseFloat(value);
       } else if (/^(true|false)$/.test(value)) {
@@ -106,42 +113,45 @@ export class ConfigService<
   }
 
   getSecurityConfig(propertyPath: string): string {
-    const internalValue = get(this.internalConfig, propertyPath)
-    const isSecurity = get(this.internalConfig, 'security')
-    return (!Utils.isUndefined(internalValue) && isSecurity)
+    const internalValue = get(this.internalConfig, propertyPath);
+    const isSecurity = get(this.internalConfig, 'security');
+    return !Utils.isUndefined(internalValue) && isSecurity
       ? Utils.tripleDESdecrypt(internalValue)
       : internalValue;
   }
 
   set(key: string, value: string | number | boolean) {
     if (Utils.isEmpty(key)) {
-      return
+      return;
     }
     if (value == null || value === '') {
-      unset(this.internalConfig, key)
+      unset(this.internalConfig, key);
     } else {
-      set(this.internalConfig, key, value)
+      set(this.internalConfig, key, value);
     }
     fs.writeFileSync(this.envFilePath, this.getMapToString());
   }
 
   private getMapToString(sep?: string, eq?: string): string {
-    let temp = [],
+    const temp = [],
       _sep = sep || '\r\n',
       _eq = eq || '=';
-    if (!isPlainObject(this.internalConfig) || Object.keys(this.internalConfig).length === 0) {
+    if (
+      !isPlainObject(this.internalConfig) ||
+      Object.keys(this.internalConfig).length === 0
+    ) {
       return '';
     }
 
     forEach(this.internalConfig, (value, key) => {
       if (!Utils.isEmpty(value)) {
         if (/^#\d+$/.test(key)) {
-          temp.push(value);//-->value\r\n
+          temp.push(value); //-->value\r\n
         } else {
-          temp.push(key + _eq + value);//-->key=value\r\n
+          temp.push(key + _eq + value); //-->key=value\r\n
         }
       }
-    })
+    });
 
     return temp.join(_sep);
   }

@@ -53,10 +53,10 @@ export class TestController {
     // );
     // console.log(printUrl);
     // console.log(typeof printUrl);
-    this.configService.set('aaa', 8989)
-    this.configService.set('aaa2', '4324rer')
-    this.configService.set('aaa4', false)
-    console.log(this.configService.get<string>('aaa2'))
+    this.configService.set('aaa', 8989);
+    this.configService.set('aaa2', '4324rer');
+    this.configService.set('aaa4', false);
+    console.log(this.configService.get<string>('aaa2'));
     // console.log(this.configService.getInternalConfig())
     // this.configService.set<boolean>('boolean', false)
     // this.configService.set<number>('number', 120)
