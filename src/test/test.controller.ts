@@ -62,9 +62,8 @@ export class TestController {
     // console.log(this.configService.get<string>('aaa2'));
     // console.log(this.configService.getInternalConfig())
 
-
-    console.log(this.config2Service.get<string>('aaa2'))
-    console.log(this.config2Service.getInternalConfig())
+    console.log(this.config2Service.get<string>('aaa2'));
+    console.log(this.config2Service.getInternalConfig());
     // console.log(this.configService.getInternalConfig())
     // this.configService.set<boolean>('boolean', false)
     // this.configService.set<number>('number', 120)

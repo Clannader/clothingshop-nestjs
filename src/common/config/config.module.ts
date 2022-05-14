@@ -14,10 +14,14 @@ import { ConfigFactoryKeyHost } from './register-as.util';
 export class ConfigModule {
   static register(options: ConfigServiceOptions = {}): DynamicModule {
     const providers = options.factory
-      ? [createConfigProvider(options.factory as ConfigFactory & ConfigFactoryKeyHost)] as FactoryProvider[]
+      ? ([
+          createConfigProvider(
+            options.factory as ConfigFactory & ConfigFactoryKeyHost,
+          ),
+        ] as FactoryProvider[])
       : [];
-    console.log(providers)
-    const configProviderTokens = providers.map(item => item.provide);
+    console.log(providers);
+    const configProviderTokens = providers.map((item) => item.provide);
     return {
       module: ConfigModule,
       global: options.isGlobal,
@@ -27,7 +31,7 @@ export class ConfigModule {
           useValue: options,
         },
         ConfigService,
-        ...providers
+        ...providers,
       ],
       exports: [ConfigService, ...configProviderTokens],
     };
@@ -45,10 +49,7 @@ export class ConfigModule {
 
     return {
       module: ConfigModule,
-      providers: [
-        configProvider,
-        serviceProvider,
-      ],
+      providers: [configProvider, serviceProvider],
       exports: [ConfigService, configProvider.provide],
     };
   }

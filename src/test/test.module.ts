@@ -8,11 +8,10 @@ import { registerAs } from '../common/config/register-as.util';
     ConfigModule.register({
       envFilePath: './config/config2.ini',
       isWatch: true,
-      factory: registerAs('TEST_CONFIG', () => ({}))
-    })
+      factory: registerAs('TEST_CONFIG', () => ({})),
+    }),
   ],
   controllers: [TestController],
-  providers: []
+  providers: [],
 })
-export class TestModule {
-}
+export class TestModule {}

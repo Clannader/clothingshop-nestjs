@@ -21,7 +21,7 @@ export interface ConfigFactoryKeyHost<T = unknown> {
 export function registerAs<
   TConfig extends ConfigObject,
   TFactory extends ConfigFactory = ConfigFactory<TConfig>,
-  >(
+>(
   token: string,
   configFactory: TFactory,
 ): TFactory & ConfigFactoryKeyHost<ReturnType<TFactory>> {
