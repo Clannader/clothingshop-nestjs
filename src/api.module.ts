@@ -23,6 +23,7 @@ import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
     ConfigModule.register({
       envFilePath: './config/config.ini',
       isGlobal: true,
+      isWatch: true,
     }),
   ],
   controllers: [],

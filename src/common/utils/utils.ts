@@ -78,4 +78,8 @@ export class Utils {
     const result = size / Math.pow(k, i);
     return (fixed ? result.toFixed(fixed) : result) + sizes[i];
   }
+
+  static isUndefined(obj: any): obj is undefined {
+    return typeof obj === 'undefined';
+  }
 }
