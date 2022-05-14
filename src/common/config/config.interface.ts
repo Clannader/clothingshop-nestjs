@@ -1,3 +1,5 @@
+import { ConfigFactory } from './config.types';
+
 export interface ConfigServiceOptions {
   /**
    * If "true", registers `ConfigModule` as a global module.
@@ -18,6 +20,11 @@ export interface ConfigServiceOptions {
    * 监控文件有变化时重新加载配置文件
    */
   isWatch?: boolean;
+
+  /**
+   * 服务的工厂
+   */
+  factory?: ConfigFactory;
 
   /**
    * Custom function to validate environment variables. It takes an object containing environment

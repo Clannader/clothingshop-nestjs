@@ -162,7 +162,7 @@ export class ConfigService<
   //   return get(this.internalConfig, propertyPath);
   // }
 
-  // getInternalConfig() {
-  //   return this.internalConfig;
-  // }
+  getInternalConfig() {
+    return this.internalConfig;
+  }
 }
