@@ -76,6 +76,6 @@ export class Utils {
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(size) / Math.log(k));
     const result = size / Math.pow(k, i);
-    return fixed ? result.toFixed(fixed) : result + sizes[i];
+    return (fixed ? result.toFixed(fixed) : result) + sizes[i];
   }
 }
