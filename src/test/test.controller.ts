@@ -96,11 +96,11 @@ export class TestController {
     // }
     // console.log(this.globalService.serverLang('测试', 'user.userTest'))
     // const isColorAllowed = () => !process.env.NO_COLOR;
-    console.log(this.configService.getSecurityConfig('dbUrl'))
-    console.log(typeof process.env['NO_COLOR'])
-    console.log(process.env['NO_COLOR'])
+    // console.log(this.configService.getSecurityConfig('dbUrl'))
+    // console.log(typeof process.env['NO_COLOR'])
+    // console.log(process.env['NO_COLOR'])
     // console.log(isColorAllowed() ? 'true' : 'false')
-    console.log(process.env['NODE_ENV'])
+    // console.log(process.env['NODE_ENV'])
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
     return resp;

@@ -27,7 +27,7 @@ export class AopLogger extends ConsoleLogger {
     //   super.log(message);
     // }
     // 也可以使用下面的这种方式传参,但是eslink会提示报错,还是用上面的方式调用吧,这样更好的理解
-    super.log.apply(this, arguments);
+    // super.log.apply(this, arguments);
   }
 
   warn(message: any, context?: string) {
