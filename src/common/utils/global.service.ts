@@ -11,6 +11,11 @@ type langType = 'EN' | 'ZH'
 export class GlobalService {
   static GlobalStatic: Record<string, any> = globalVariable;
 
+  /**
+   * 使用这样的注入方式,确实可以每个请求独立开来,这样翻译并发的时候也不会串,但是
+   * 有一点就是使用了这样的注入,导致了这个类每个请求进来的时候都是实例化的,请求
+   * 完成以后估计就被回收
+   */
   @Inject(REQUEST)
   private readonly request: Request;
 

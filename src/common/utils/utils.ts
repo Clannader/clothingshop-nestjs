@@ -123,7 +123,7 @@ export class Utils {
     if (this.isEmpty(str) || !isPlainObject(obj)) {
       return str
     }
-    const exp = /\{[A-Za-z\.]+\}/g
+    const exp = /\{[A-Za-z0-9\.\[\]]+\}/g
     let message = ''
     message += str.replace(exp, match => {
       const index = match.slice(1, -1)
