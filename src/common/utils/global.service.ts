@@ -5,7 +5,7 @@ import { get } from 'lodash';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 
-type langType = 'EN' | 'ZH'
+type langType = 'EN' | 'ZH';
 
 @Injectable()
 export class GlobalService {
@@ -53,11 +53,15 @@ export class GlobalService {
   }
 
   serverLang(orgin: string, key: string, ...args: Array<string | number>) {
-    const headerLanguage = this.request.headers['language']
+    const headerLanguage = this.request.headers['language'];
     const type: langType = this.isEmpty(headerLanguage)
       ? 'ZH'
-      : ['ZH', 'EN'].includes(typeof headerLanguage === 'string' ? headerLanguage : 'ZH') ? headerLanguage as langType : 'ZH'
-    return this.lang(type, orgin, key, ...args)
+      : ['ZH', 'EN'].includes(
+          typeof headerLanguage === 'string' ? headerLanguage : 'ZH',
+        )
+      ? (headerLanguage as langType)
+      : 'ZH';
+    return this.lang(type, orgin, key, ...args);
   }
 
   private parseProperties(properties: object, key: string): string | undefined {

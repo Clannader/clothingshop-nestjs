@@ -37,7 +37,7 @@ export class ConfigService<
       //   config,
       // );
       const sourceString = fs.readFileSync(this.envFilePath, {
-        encoding: this.options.encoding || 'utf-8'
+        encoding: this.options.encoding || 'utf-8',
       });
       config = Object.assign(this.parse(sourceString));
     }
