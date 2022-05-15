@@ -81,11 +81,25 @@ describe('Utils', () => {
     expect(Utils.replaceArgsFromJson('AA', { msg: 'BB' })).toBe('AA');
     expect(Utils.replaceArgsFromJson('AA{msg}')).toBe('AA{msg}');
     expect(Utils.replaceArgsFromJson('AA{msg}', { msg: 'BB' })).toBe('AABB');
-    expect(Utils.replaceArgsFromJson('AA{msg}', { msg2: 'BB' })).toBe('AA{msg}');
-    expect(Utils.replaceArgsFromJson('AA{msg}BB{msg2}', { msg: 'CC', msg2: 'OO' })).toBe('AACCBBOO');
-    expect(Utils.replaceArgsFromJson('AA{msg.age}', { msg: { age: 'BB' } })).toBe('AABB');
-    expect(Utils.replaceArgsFromJson('AA{msg.age}', { msg2: { age: 'BB' } })).toBe('AA{msg.age}');
-    expect(Utils.replaceArgsFromJson('AA{msg[0].age}', { msg: [{ age: 'BB' }] })).toBe('AABB');
-    expect(Utils.replaceArgsFromJson('AA{msg[0].age}BB{msg[1].age}', { msg: [{ age: 'BB' }, { age: 'CC'}] })).toBe('AABBBBCC');
+    expect(Utils.replaceArgsFromJson('AA{msg}', { msg2: 'BB' })).toBe(
+      'AA{msg}',
+    );
+    expect(
+      Utils.replaceArgsFromJson('AA{msg}BB{msg2}', { msg: 'CC', msg2: 'OO' }),
+    ).toBe('AACCBBOO');
+    expect(
+      Utils.replaceArgsFromJson('AA{msg.age}', { msg: { age: 'BB' } }),
+    ).toBe('AABB');
+    expect(
+      Utils.replaceArgsFromJson('AA{msg.age}', { msg2: { age: 'BB' } }),
+    ).toBe('AA{msg.age}');
+    expect(
+      Utils.replaceArgsFromJson('AA{msg[0].age}', { msg: [{ age: 'BB' }] }),
+    ).toBe('AABB');
+    expect(
+      Utils.replaceArgsFromJson('AA{msg[0].age}BB{msg[1].age}', {
+        msg: [{ age: 'BB' }, { age: 'CC' }],
+      }),
+    ).toBe('AABBBBCC');
   });
 });

@@ -7,7 +7,7 @@ import {
   Get,
   Query,
   Inject,
-  Headers
+  Headers,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import {
@@ -45,7 +45,10 @@ export class TestController {
   @ApiCustomResponse({
     type: RespTestSchemaDto,
   })
-  async testingPost(@Body() params: ReqTestSchemaDto, @Headers('language') lang: string) {
+  async testingPost(
+    @Body() params: ReqTestSchemaDto,
+    @Headers('language') lang: string,
+  ) {
     const resp = new RespTestSchemaDto();
     // const dbUser: string = this.configService.get<string>('dbUser');
     // console.log(dbUser);
@@ -65,10 +68,10 @@ export class TestController {
     // this.configService.set('aaa2', '4324rer');
     // this.configService.set('aaa4', false);
     console.log(this.configService.get<boolean>('monitorLog'));
-    console.log(this.configService.getInternalConfig())
+    console.log(this.configService.getInternalConfig());
 
     console.log(this.config2Service.get<boolean>('monitorLog'));
-    this.config2Service.set('config2', '成功了')
+    this.config2Service.set('config2', '成功了');
     console.log(this.config2Service.getInternalConfig());
     // console.log(this.configService.getInternalConfig())
     // this.configService.set<boolean>('boolean', false)

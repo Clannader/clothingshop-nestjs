@@ -11,13 +11,15 @@ import { Utils } from '../utils';
 })
 export class ConfigModule {
   static register(options: ConfigServiceOptions = {}): DynamicModule {
-    const isToken = !Utils.isEmpty(options.token)
-    const providers = isToken ? [
-      {
-        provide: options.token,
-        useClass: ConfigService
-      }
-    ] : [];
+    const isToken = !Utils.isEmpty(options.token);
+    const providers = isToken
+      ? [
+          {
+            provide: options.token,
+            useClass: ConfigService,
+          },
+        ]
+      : [];
     const configProviderTokens = isToken ? [options.token] : [];
     return {
       module: ConfigModule,
@@ -33,5 +35,4 @@ export class ConfigModule {
       exports: [ConfigService, ...configProviderTokens],
     };
   }
-
 }

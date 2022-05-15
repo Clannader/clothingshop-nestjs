@@ -1,4 +1,3 @@
-
 export interface ConfigServiceOptions {
   /**
    * If "true", registers `ConfigModule` as a global module.

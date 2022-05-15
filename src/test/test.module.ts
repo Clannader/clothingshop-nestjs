@@ -10,7 +10,7 @@ import { UserModule } from '../user/user.module';
       isWatch: true,
       token: 'TEST_CONFIG',
     }),
-    UserModule
+    UserModule,
   ],
   controllers: [TestController],
   providers: [],
