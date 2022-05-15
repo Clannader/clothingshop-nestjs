@@ -53,8 +53,8 @@ export function ApiCommon(showCredential = true) {
     },
     {
       name: 'language',
-      description: '用户语言:(zh=中文,en=English)',
-      enum: ['zh', 'en'],
+      description: '用户语言:(ZH=中文,EN=English)',
+      enum: ['ZH', 'EN'],
     },
   ];
   if (showCredential) {

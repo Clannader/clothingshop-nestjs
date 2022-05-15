@@ -7,7 +7,7 @@ import {
   Get,
   Query,
   Inject,
-  Headers,
+  // Headers,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import {
@@ -18,7 +18,7 @@ import {
   GlobalService,
 } from '../common';
 import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
-import { UserService } from '../user/user.service';
+// import { UserService } from '../user/user.service';
 
 @ApiCommon()
 @Controller('/cms/api/test')
@@ -27,14 +27,14 @@ export class TestController {
   @Inject()
   private readonly globalService: GlobalService;
 
-  @Inject()
-  private readonly userService: UserService;
+  // @Inject()
+  // private readonly userService: UserService;
 
   @Inject()
   private readonly configService: ConfigService;
 
-  @Inject('TEST_CONFIG')
-  private readonly config2Service: ConfigService;
+  // @Inject('TEST_CONFIG')
+  // private readonly config2Service: ConfigService;
 
   @Post('/post')
   @HttpCode(HttpStatus.OK)
@@ -46,8 +46,8 @@ export class TestController {
     type: RespTestSchemaDto,
   })
   async testingPost(
-    @Body() params: ReqTestSchemaDto,
-    @Headers('language') lang: string,
+    @Body() params: ReqTestSchemaDto
+    // @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();
     // const dbUser: string = this.configService.get<string>('dbUser');
@@ -67,12 +67,12 @@ export class TestController {
     // this.configService.set('aaa', 8989);
     // this.configService.set('aaa2', '4324rer');
     // this.configService.set('aaa4', false);
-    console.log(this.configService.get<boolean>('monitorLog'));
-    console.log(this.configService.getInternalConfig());
-
-    console.log(this.config2Service.get<boolean>('monitorLog'));
-    this.config2Service.set('config2', '成功了');
-    console.log(this.config2Service.getInternalConfig());
+    // console.log(this.configService.get<boolean>('monitorLog'));
+    // console.log(this.configService.getInternalConfig());
+    //
+    // console.log(this.config2Service.get<boolean>('monitorLog'));
+    // this.config2Service.set('config2', '成功了');
+    // console.log(this.config2Service.getInternalConfig());
     // console.log(this.configService.getInternalConfig())
     // this.configService.set<boolean>('boolean', false)
     // this.configService.set<number>('number', 120)
@@ -95,7 +95,12 @@ export class TestController {
     //   this.userService.userLogout()
     // }
     // console.log(this.globalService.serverLang('测试', 'user.userTest'))
-
+    // const isColorAllowed = () => !process.env.NO_COLOR;
+    // console.log(this.configService.getSecurityConfig('dbUrl'))
+    // console.log(typeof process.env['NO_COLOR'])
+    // console.log(process.env['NO_COLOR'])
+    // console.log(isColorAllowed() ? 'true' : 'false')
+    // console.log(process.env['NODE_ENV'])
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
     return resp;

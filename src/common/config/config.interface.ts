@@ -10,6 +10,11 @@ export interface ConfigServiceOptions {
   envFilePath?: string;
 
   /**
+   * ini文件路径
+   */
+  iniFilePath?: string;
+
+  /**
    * Environment file encoding.
    */
   encoding?: BufferEncoding;

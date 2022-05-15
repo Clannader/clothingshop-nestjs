@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { CONFIG_OPTIONS } from './config.constants';
-// import * as dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import { resolve } from 'path';
 import { ConfigServiceOptions } from './config.interface';
@@ -14,33 +14,39 @@ export class ConfigService<
   WasValidated extends boolean = false,
 > {
   private internalConfig: Record<string, any> = {};
-  private readonly envFilePath: string = resolve(process.cwd(), 'config.ini');
+  private readonly iniFilePath: string = resolve(process.cwd(), 'config.ini');
+  private readonly envFilePath: string = resolve(process.cwd(), '.env');
 
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: ConfigServiceOptions,
   ) {
+    this.iniFilePath = Utils.isEmpty(options.iniFilePath)
+      ? this.iniFilePath
+      : options.iniFilePath;
     this.envFilePath = Utils.isEmpty(options.envFilePath)
       ? this.envFilePath
       : options.envFilePath;
+    this.loadIniFile();
     this.loadEnvFile();
     if (options.isWatch) {
       this.watchConfig();
     }
   }
 
-  private loadEnvFile(): void {
+  private loadIniFile(): void {
     let config: Record<string, any> = {};
-    if (fs.existsSync(this.envFilePath)) {
+    if (fs.existsSync(this.iniFilePath)) {
       // config = Object.assign(
       //   // 其实用dotenv这个包就可以直接格式化数据,但是由于要重新写入文件,这样会丢失注释的内容,所以还是得自己来格式化了
-      //   // dotenv.parse(fs.readFileSync(this.envFilePath)),
+      //   // dotenv.parse(fs.readFileSync(this.iniFilePath)),
       //   config,
       // );
-      const sourceString = fs.readFileSync(this.envFilePath, {
+      const sourceString = fs.readFileSync(this.iniFilePath, {
         encoding: this.options.encoding || 'utf-8',
       });
       config = Object.assign(this.parse(sourceString));
     }
+    this.validateConfig(config);
     this.internalConfig = config;
   }
 
@@ -74,33 +80,38 @@ export class ConfigService<
   ): void {
     const matches = str.match(regex);
     if (matches) {
-      const value = matches[2].trim();
-      if (/^-?\d+(\.\d+)?$/.test(value)) {
-        obj[matches[1].trim()] = parseFloat(value);
-      } else if (/^(true|false)$/.test(value)) {
-        obj[matches[1].trim()] = value === 'true';
-      } else {
-        obj[matches[1].trim()] = value;
-      }
+      obj[matches[1].trim()] = ConfigService.transformTypeof(matches[2].trim())
     } else {
       obj['#' + i] = str;
     }
   }
 
+  private static transformTypeof(value: string): string | number | boolean {
+    if (/^-?\d+(\.\d+)?$/.test(value)) {
+      return parseFloat(value);
+    } else if (/^(true|false)$/.test(value)) {
+      return value === 'true';
+    } else {
+      return value;
+    }
+  }
+
   private watchConfig(): void {
     //触发这个要保存文件才能立刻触发,如果用Nodejs自动检测会很慢
-    fs.watchFile(
-      this.envFilePath,
-      {
-        persistent: true,
-        interval: 1000,
-      },
-      (current, prev) => {
-        if (current.mtime > prev.mtime) {
-          this.loadEnvFile();
-        }
-      },
-    );
+    if (fs.existsSync(this.iniFilePath)) {
+      fs.watchFile(
+        this.iniFilePath,
+        {
+          persistent: true,
+          interval: 1000,
+        },
+        (current, prev) => {
+          if (current.mtime > prev.mtime) {
+            this.loadIniFile();
+          }
+        },
+      );
+    }
   }
 
   get<T = any>(propertyPath: KeyOf<K>): ExcludeUndefinedIf<WasValidated, T>;
@@ -117,7 +128,7 @@ export class ConfigService<
   getSecurityConfig(propertyPath: string): string {
     const internalValue = get(this.internalConfig, propertyPath);
     const isSecurity = get(this.internalConfig, 'security');
-    return !Utils.isUndefined(internalValue) && isSecurity
+    return !Utils.isUndefined(internalValue) && (typeof isSecurity === 'boolean' && isSecurity)
       ? Utils.tripleDESdecrypt(internalValue)
       : internalValue;
   }
@@ -131,7 +142,7 @@ export class ConfigService<
     } else {
       set(this.internalConfig, key, value);
     }
-    fs.writeFileSync(this.envFilePath, this.getMapToString());
+    fs.writeFileSync(this.iniFilePath, this.getMapToString());
   }
 
   private getMapToString(sep?: string, eq?: string): string {
@@ -166,5 +177,30 @@ export class ConfigService<
 
   getInternalConfig() {
     return this.internalConfig;
+  }
+
+  private loadEnvFile() {
+    let config: Record<string, any> = {};
+    if (fs.existsSync(this.envFilePath)) {
+      config = Object.assign(
+        // 其实用dotenv这个包就可以直接格式化数据,但是由于要重新写入文件,这样会丢失注释的内容,所以还是得自己来格式化了
+        dotenv.parse(fs.readFileSync(this.envFilePath, {
+          encoding: this.options.encoding || 'utf-8',
+        })),
+        config,
+      );
+    }
+    if (!isPlainObject(config)) {
+      return;
+    }
+    this.validateConfig(config);
+    const keys = Object.keys(config).filter(key => !(key in process.env));
+    keys.forEach(
+      key => (process.env[key] = (config as Record<string, any>)[key]),
+    );
+  }
+
+  private validateConfig(config: Record<string, any>): void {
+    // TODO
   }
 }
