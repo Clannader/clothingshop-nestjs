@@ -1,11 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import * as globalVariable from '../constants';
 import { i18n } from '../i18n';
 import { get } from 'lodash';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
+
+type langType = 'EN' | 'ZH'
 
 @Injectable()
 export class GlobalService {
   static GlobalStatic: Record<string, any> = globalVariable;
+
+  @Inject(REQUEST)
+  private readonly request: Request;
 
   /**
    * 判断对象是否为空
@@ -23,7 +30,7 @@ export class GlobalService {
    * @param args 其他占位符参数
    */
   lang(
-    languageType: 'EN' | 'ZH',
+    languageType: langType,
     orgin: string,
     key: string,
     ...args: Array<string | number>
@@ -38,6 +45,14 @@ export class GlobalService {
     //   return this.replaceArgs(orgin, ...args);
     // }
     return this.replaceArgs(langKey, ...args);
+  }
+
+  serverLang(orgin: string, key: string, ...args: Array<string | number>) {
+    const headerLanguage = this.request.headers['language']
+    const type: langType = this.isEmpty(headerLanguage)
+      ? 'ZH'
+      : ['ZH', 'EN'].includes(typeof headerLanguage === 'string' ? headerLanguage : 'ZH') ? headerLanguage as langType : 'ZH'
+    return this.lang(type, orgin, key, ...args)
   }
 
   private parseProperties(properties: object, key: string): string | undefined {

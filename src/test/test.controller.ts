@@ -7,6 +7,7 @@ import {
   Get,
   Query,
   Inject,
+  Headers
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import {
@@ -40,7 +41,7 @@ export class TestController {
   @ApiCustomResponse({
     type: RespTestSchemaDto,
   })
-  testingPost(@Body() params: ReqTestSchemaDto) {
+  testingPost(@Body() params: ReqTestSchemaDto, @Headers('language') lang: string) {
     const resp = new RespTestSchemaDto();
     // const dbUser: string = this.configService.get<string>('dbUser');
     // console.log(dbUser);
@@ -59,11 +60,11 @@ export class TestController {
     // this.configService.set('aaa', 8989);
     // this.configService.set('aaa2', '4324rer');
     // this.configService.set('aaa4', false);
-    console.log(this.configService.get<boolean>('monitorLog'));
-    console.log(this.configService.getInternalConfig())
+    // console.log(this.configService.get<boolean>('monitorLog'));
+    // console.log(this.configService.getInternalConfig())
 
-    console.log(this.config2Service);
-    console.log(this.config2Service.getInternalConfig());
+    // console.log(this.config2Service);
+    // console.log(this.config2Service.getInternalConfig());
     // console.log(this.configService.getInternalConfig())
     // this.configService.set<boolean>('boolean', false)
     // this.configService.set<number>('number', 120)
@@ -71,6 +72,10 @@ export class TestController {
     // this.configService.set('boolean2', false)
     // this.configService.set('number2', 120)
     // this.configService.set('string2', 'trtgfsgf')
+
+    console.log(this.globalService.serverLang('测试', 'user.userTest'))
+    console.log(this.globalService.serverLang('测试', 'user.userTest'))
+
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
     return resp;
