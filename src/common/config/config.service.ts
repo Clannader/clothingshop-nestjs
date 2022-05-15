@@ -119,7 +119,7 @@ export class ConfigService<
   getSecurityConfig(propertyPath: string): string {
     const internalValue = get(this.internalConfig, propertyPath);
     const isSecurity = get(this.internalConfig, 'security');
-    return !Utils.isUndefined(internalValue) && isSecurity
+    return !Utils.isUndefined(internalValue) && (typeof isSecurity === 'boolean' && isSecurity)
       ? Utils.tripleDESdecrypt(internalValue)
       : internalValue;
   }
