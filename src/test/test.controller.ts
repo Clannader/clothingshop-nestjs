@@ -18,6 +18,7 @@ import {
   GlobalService,
 } from '../common';
 import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
+import { UserService } from '../user/user.service';
 
 @ApiCommon()
 @Controller('/cms/api/test')
@@ -25,6 +26,9 @@ import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
 export class TestController {
   @Inject()
   private readonly globalService: GlobalService;
+
+  @Inject()
+  private readonly userService: UserService;
 
   @Inject()
   private readonly configService: ConfigService;
@@ -41,7 +45,7 @@ export class TestController {
   @ApiCustomResponse({
     type: RespTestSchemaDto,
   })
-  testingPost(@Body() params: ReqTestSchemaDto, @Headers('language') lang: string) {
+  async testingPost(@Body() params: ReqTestSchemaDto, @Headers('language') lang: string) {
     const resp = new RespTestSchemaDto();
     // const dbUser: string = this.configService.get<string>('dbUser');
     // console.log(dbUser);
@@ -73,7 +77,19 @@ export class TestController {
     // this.configService.set('number2', 120)
     // this.configService.set('string2', 'trtgfsgf')
 
+    const fun = function() {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          // this.userService.userLogout()
+          resolve('123')
+        }, 3000)
+      })
+    }
     console.log(this.globalService.serverLang('测试', 'user.userTest'))
+    if (lang === 'EN') {
+      await fun()
+      this.userService.userLogout()
+    }
     console.log(this.globalService.serverLang('测试', 'user.userTest'))
 
     resp.code = CodeEnum.SUCCESS;

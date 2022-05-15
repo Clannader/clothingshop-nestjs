@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { AopLogger } from '../logger';
-import { CodeEnum, CommonResult } from '../common';
+import { CodeEnum, CommonResult, GlobalService } from '../common';
 import {
   ReqUserLoginDto,
   RespUserLoginDto,
@@ -11,6 +11,9 @@ import {
 @Injectable()
 export class UserService {
   private readonly logger = new AopLogger(UserService.name);
+
+  @Inject()
+  private readonly globalService: GlobalService;
 
   getUsersList(params: ReqUserSearchDto): RespUserSearchDto {
     this.logger.log(params);
@@ -27,6 +30,7 @@ export class UserService {
   }
 
   userLogout(): CommonResult {
+    console.log(this.globalService.serverLang('Testing {0}', 'user.userTestArgs', 'userService'));
     const resp = new CommonResult();
     resp.code = CodeEnum.SUCCESS;
     return resp;

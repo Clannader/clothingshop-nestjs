@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TestController } from './test.controller';
 import { ConfigModule } from '../common';
 import { registerAs } from '../common/config/register-as.util';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { registerAs } from '../common/config/register-as.util';
       isWatch: true,
       factory: registerAs('TEST_CONFIG', () => ({mas: 'fd'})),
     }),
+    UserModule
   ],
   controllers: [TestController],
   providers: [],
