@@ -89,18 +89,20 @@ export class ConfigService<
 
   private watchConfig(): void {
     //触发这个要保存文件才能立刻触发,如果用Nodejs自动检测会很慢
-    fs.watchFile(
-      this.envFilePath,
-      {
-        persistent: true,
-        interval: 1000,
-      },
-      (current, prev) => {
-        if (current.mtime > prev.mtime) {
-          this.loadEnvFile();
-        }
-      },
-    );
+    if (fs.existsSync(this.envFilePath)) {
+      fs.watchFile(
+        this.envFilePath,
+        {
+          persistent: true,
+          interval: 1000,
+        },
+        (current, prev) => {
+          if (current.mtime > prev.mtime) {
+            this.loadEnvFile();
+          }
+        },
+      );
+    }
   }
 
   get<T = any>(propertyPath: KeyOf<K>): ExcludeUndefinedIf<WasValidated, T>;
