@@ -80,16 +80,19 @@ export class ConfigService<
   ): void {
     const matches = str.match(regex);
     if (matches) {
-      const value = matches[2].trim();
-      if (/^-?\d+(\.\d+)?$/.test(value)) {
-        obj[matches[1].trim()] = parseFloat(value);
-      } else if (/^(true|false)$/.test(value)) {
-        obj[matches[1].trim()] = value === 'true';
-      } else {
-        obj[matches[1].trim()] = value;
-      }
+      obj[matches[1].trim()] = ConfigService.transformTypeof(matches[2].trim())
     } else {
       obj['#' + i] = str;
+    }
+  }
+
+  private static transformTypeof(value: string): string | number | boolean {
+    if (/^-?\d+(\.\d+)?$/.test(value)) {
+      return parseFloat(value);
+    } else if (/^(true|false)$/.test(value)) {
+      return value === 'true';
+    } else {
+      return value;
     }
   }
 
