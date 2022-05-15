@@ -64,11 +64,12 @@ export class TestController {
     // this.configService.set('aaa', 8989);
     // this.configService.set('aaa2', '4324rer');
     // this.configService.set('aaa4', false);
-    // console.log(this.configService.get<boolean>('monitorLog'));
-    // console.log(this.configService.getInternalConfig())
+    console.log(this.configService.get<boolean>('monitorLog'));
+    console.log(this.configService.getInternalConfig())
 
-    // console.log(this.config2Service);
-    // console.log(this.config2Service.getInternalConfig());
+    console.log(this.config2Service.get<boolean>('monitorLog'));
+    this.config2Service.set('config2', '成功了')
+    console.log(this.config2Service.getInternalConfig());
     // console.log(this.configService.getInternalConfig())
     // this.configService.set<boolean>('boolean', false)
     // this.configService.set<number>('number', 120)
@@ -77,20 +78,20 @@ export class TestController {
     // this.configService.set('number2', 120)
     // this.configService.set('string2', 'trtgfsgf')
 
-    const fun = function() {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          // this.userService.userLogout()
-          resolve('123')
-        }, 3000)
-      })
-    }
-    console.log(this.globalService.serverLang('测试', 'user.userTest'))
-    if (lang === 'EN') {
-      await fun()
-      this.userService.userLogout()
-    }
-    console.log(this.globalService.serverLang('测试', 'user.userTest'))
+    // const fun = function() {
+    //   return new Promise(resolve => {
+    //     setTimeout(() => {
+    //       // this.userService.userLogout()
+    //       resolve('123')
+    //     }, 3000)
+    //   })
+    // }
+    // console.log(this.globalService.serverLang('测试', 'user.userTest'))
+    // if (lang === 'EN') {
+    //   await fun()
+    //   this.userService.userLogout()
+    // }
+    // console.log(this.globalService.serverLang('测试', 'user.userTest'))
 
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;

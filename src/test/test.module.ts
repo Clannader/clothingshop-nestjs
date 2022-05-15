@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TestController } from './test.controller';
 import { ConfigModule } from '../common';
-import { registerAs } from '../common/config/register-as.util';
 import { UserModule } from '../user/user.module';
 
 @Module({
@@ -9,7 +8,7 @@ import { UserModule } from '../user/user.module';
     ConfigModule.register({
       envFilePath: './config/config2.ini',
       isWatch: true,
-      factory: registerAs('TEST_CONFIG', () => ({mas: 'fd'})),
+      token: 'TEST_CONFIG',
     }),
     UserModule
   ],
