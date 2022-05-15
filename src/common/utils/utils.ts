@@ -10,7 +10,7 @@ export class Utils {
    * 转义32位和64位系统时的斜杠
    * @param path 需要转义的路径
    */
-  static escapePath(path = ''): string {
+  static escapePath(path: string): string {
     if (process.platform === 'win32') return path.replace(/\/+/g, '\\');
     else return path.replace(/\\+/g, '//');
   }
@@ -19,7 +19,7 @@ export class Utils {
    * 转义特殊字符
    * @param str 需要转义的字符串
    */
-  static escapeString(str = ''): string {
+  static escapeString(str: string): string {
     return str.replace(/([.*+?^=!${}()|\[\]\/\\])/g, '\\$1');
   }
 
@@ -46,9 +46,9 @@ export class Utils {
    * @param str 加密的内容
    * @param tripleKey 加密的key
    */
-  static tripleDESencrypt(str = '', tripleKey?: string) {
+  static tripleDESencrypt(str: string, tripleKey: string = tripleDES.key) {
     // 3DES加密算法
-    const key = CryptoJS.enc.Utf8.parse(tripleKey || tripleDES.key);
+    const key = CryptoJS.enc.Utf8.parse(tripleKey);
     const encryptAction = CryptoJS.TripleDES.encrypt(str, key, {
       iv: CryptoJS.enc.Utf8.parse(tripleDES.iv),
       mode: CryptoJS.mode.CBC,
@@ -62,9 +62,9 @@ export class Utils {
    * @param str 解密内容
    * @param tripleKey 解密的key
    */
-  static tripleDESdecrypt(str = '', tripleKey?: string) {
+  static tripleDESdecrypt(str: string, tripleKey: string = tripleDES.key) {
     // 3DES解密算法
-    const key = CryptoJS.enc.Utf8.parse(tripleKey || tripleDES.key);
+    const key = CryptoJS.enc.Utf8.parse(tripleKey);
     const decryptAction = CryptoJS.TripleDES.decrypt(str, key, {
       iv: CryptoJS.enc.Utf8.parse(tripleDES.iv),
       mode: CryptoJS.mode.CBC,
@@ -77,7 +77,7 @@ export class Utils {
    * 字符串转base64
    * @param str
    */
-  static stringToBase64(str = ''): string {
+  static stringToBase64(str: string): string {
     return Buffer.from(str).toString('base64');
   }
 
@@ -85,7 +85,7 @@ export class Utils {
    * base64转字符串
    * @param base64
    */
-  static base64ToString(base64 = ''): string {
+  static base64ToString(base64: string): string {
     return Buffer.from(base64, 'base64').toString();
   }
 

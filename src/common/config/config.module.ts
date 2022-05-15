@@ -20,8 +20,9 @@ export class ConfigModule {
           ),
         ] as FactoryProvider[])
       : [];
-    console.log(providers);
     const configProviderTokens = providers.map((item) => item.provide);
+    console.log(configProviderTokens)
+    console.log(providers)
     return {
       module: ConfigModule,
       global: options.isGlobal,

@@ -8,7 +8,7 @@ import helmet from 'helmet';
 import { join } from 'path';
 import { renderFile } from 'ejs';
 import * as session from 'express-session';
-import { sessionName, sessionSecret } from './common';
+import { sessionName, sessionSecret, ConfigService } from './common';
 
 // import * as fs from 'fs';
 
@@ -30,16 +30,18 @@ async function bootstrap() {
     logger: aopLogger, // 这里应该是修改了底层代码用到的logger函数的调用
     // httpsOptions
   });
+
+  const config: ConfigService = app.get<ConfigService>(ConfigService)
+  const port = config.get<number>('httpPort', 3000);
+  const hostName = config.get<string>('hostName', 'localhost')
+
   app.use(helmet());
   app.disable('x-powered-by'); // 还是有效果的,一旦用了helmet,框架自动帮去掉这个头了
   // app.enableCors() // 允许开启CORS,不过不满足需求,这里是全局定义的CORS,可能需要部分开启而已
   // app.useGlobalInterceptors(new LogInterceptor(aopLogger));
   // app.setGlobalPrefix('cms'); // 这里类似于设置context-path,设置全局的路由前缀,不影响swagger的地址路由
   // 也就是说swagger的路由访问是不用加上前缀的
-  app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.engine('html', renderFile);
-  app.setViewEngine('html');
+
   app.use(
     session({
       name: sessionName,
@@ -50,7 +52,11 @@ async function bootstrap() {
     }),
   );
 
-  const port = 3000;
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.engine('html', renderFile);
+  app.setViewEngine('html');
+
   const options = new DocumentBuilder()
     .setTitle('Clothingshop System API')
     .setDescription('The clothingshop restful api')
@@ -59,7 +65,7 @@ async function bootstrap() {
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
     .setContact(
       'oliver.wu',
-      `http://localhost:${port}/index`,
+      `http://${hostName}:${port}/index`,
       '294473343@qq.com',
     )
     .build();
@@ -88,4 +94,5 @@ async function bootstrap() {
 
   await app.listen(port);
 }
+
 bootstrap();

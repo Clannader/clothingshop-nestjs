@@ -25,8 +25,8 @@ export class TestController {
   @Inject()
   private readonly globalService: GlobalService;
 
-  // @Inject()
-  // private readonly configService: ConfigService;
+  @Inject()
+  private readonly configService: ConfigService;
 
   @Inject('TEST_CONFIG')
   private readonly config2Service: ConfigService;
@@ -59,8 +59,8 @@ export class TestController {
     // this.configService.set('aaa', 8989);
     // this.configService.set('aaa2', '4324rer');
     // this.configService.set('aaa4', false);
-    // console.log(this.configService.get<string>('aaa2'));
-    // console.log(this.configService.getInternalConfig())
+    console.log(this.configService.get<boolean>('monitorLog'));
+    console.log(this.configService.getInternalConfig())
 
     console.log(this.config2Service);
     console.log(this.config2Service.getInternalConfig());
