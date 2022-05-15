@@ -14,7 +14,7 @@ import {
   ApiCommon,
   ApiCustomResponse,
   CodeEnum,
-  // ConfigService,
+  ConfigService,
   GlobalService,
 } from '../common';
 import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
@@ -30,8 +30,8 @@ export class TestController {
   // @Inject()
   // private readonly userService: UserService;
 
-  // @Inject()
-  // private readonly configService: ConfigService;
+  @Inject()
+  private readonly configService: ConfigService;
 
   // @Inject('TEST_CONFIG')
   // private readonly config2Service: ConfigService;
@@ -95,7 +95,11 @@ export class TestController {
     //   this.userService.userLogout()
     // }
     // console.log(this.globalService.serverLang('测试', 'user.userTest'))
-
+    console.log(this.configService.getSecurityConfig('dbUrl'))
+    console.log(process.env['NO_COLOR'])
+    console.log(process.env['AA'])
+    console.log(process.env['BB'])
+    console.log(process.env['NODE_ENV'])
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
     return resp;
