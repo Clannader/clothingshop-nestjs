@@ -97,8 +97,6 @@ export class TestController {
     // console.log(this.globalService.serverLang('测试', 'user.userTest'))
     console.log(this.configService.getSecurityConfig('dbUrl'))
     console.log(process.env['NO_COLOR'])
-    console.log(process.env['AA'])
-    console.log(process.env['BB'])
     console.log(process.env['NODE_ENV'])
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;

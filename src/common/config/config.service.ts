@@ -46,6 +46,7 @@ export class ConfigService<
       });
       config = Object.assign(this.parse(sourceString));
     }
+    this.validateConfig(config);
     this.internalConfig = config;
   }
 
@@ -189,9 +190,14 @@ export class ConfigService<
     if (!isPlainObject(config)) {
       return;
     }
+    this.validateConfig(config);
     const keys = Object.keys(config).filter(key => !(key in process.env));
     keys.forEach(
       key => (process.env[key] = (config as Record<string, any>)[key]),
     );
+  }
+
+  private validateConfig(config: Record<string, any>): void {
+    // TODO
   }
 }
