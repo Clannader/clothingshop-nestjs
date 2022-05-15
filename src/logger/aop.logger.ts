@@ -15,7 +15,7 @@ export class AopLogger extends ConsoleLogger {
     // 之前一直打印undefined的原因也找到了,是这个方法的调用问题,之前写的是一直调用的是log的两个参数,导致不传第二个参数也会传一个undefined进去了
     // 所以判断没传第二个参数的时候就调一个参数的log方法即可,目前只能这样解决了
     logger.addContext('originalContext', context || this.context);
-    logger.info(AopLogger.getStackTrace(), message);
+    logger.info(this.getStackTrace(), message);
     // if (context) {
     // 这个log的调用我懂什么意思了
     // 1.只传message的时候,如果设置了context,那么就用构造里面的context
@@ -32,20 +32,20 @@ export class AopLogger extends ConsoleLogger {
 
   warn(message: any, context?: string) {
     logger.addContext('originalContext', context || this.context);
-    logger.warn(AopLogger.getStackTrace(), message);
+    logger.warn(this.getStackTrace(), message);
   }
 
   debug(message: any, context?: string) {
     logger.addContext('originalContext', context || this.context);
-    logger.debug(AopLogger.getStackTrace(), message);
+    logger.debug(this.getStackTrace(), message);
   }
 
   error(message: any, stack?: string, context?: string) {
     logger.addContext('originalContext', context || this.context);
-    logger.error(AopLogger.getStackTrace(), message);
+    logger.error(this.getStackTrace(), message);
   }
 
-  private static getStackTrace(deep = 2): string {
+  private getStackTrace(deep = 2): string {
     const stackList: StackTrace.StackFrame[] = StackTrace.getSync();
     const stackInfo: StackTrace.StackFrame = stackList[deep];
     const lineNumber: number = stackInfo.lineNumber;

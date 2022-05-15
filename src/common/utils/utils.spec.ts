@@ -75,4 +75,17 @@ describe('Utils', () => {
     expect(Utils.getFileSize(1.233 * 1024 * 1024, 2)).toBe('1.23MB');
     expect(Utils.getFileSize(1.71 * 1024 * 1024 * 1024, 1)).toBe('1.7GB');
   });
+
+  it('测试替换参数JSON', () => {
+    expect(Utils.replaceArgsFromJson('AA')).toBe('AA');
+    expect(Utils.replaceArgsFromJson('AA', { msg: 'BB' })).toBe('AA');
+    expect(Utils.replaceArgsFromJson('AA{msg}')).toBe('AA{msg}');
+    expect(Utils.replaceArgsFromJson('AA{msg}', { msg: 'BB' })).toBe('AABB');
+    expect(Utils.replaceArgsFromJson('AA{msg}', { msg2: 'BB' })).toBe('AA{msg}');
+    expect(Utils.replaceArgsFromJson('AA{msg}BB{msg2}', { msg: 'CC', msg2: 'OO' })).toBe('AACCBBOO');
+    expect(Utils.replaceArgsFromJson('AA{msg.age}', { msg: { age: 'BB' } })).toBe('AABB');
+    expect(Utils.replaceArgsFromJson('AA{msg.age}', { msg2: { age: 'BB' } })).toBe('AA{msg.age}');
+    expect(Utils.replaceArgsFromJson('AA{msg[0].age}', { msg: [{ age: 'BB' }] })).toBe('AABB');
+    expect(Utils.replaceArgsFromJson('AA{msg[0].age}BB{msg[1].age}', { msg: [{ age: 'BB' }, { age: 'CC'}] })).toBe('AABBBBCC');
+  });
 });
