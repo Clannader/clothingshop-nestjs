@@ -119,20 +119,20 @@ export class Utils {
     return obj == null || obj === '' || obj === 'undefined';
   }
 
-  static replaceArgsFromJson(str: string = '', obj: Record<string, any> = {}): string {
+  static replaceArgsFromJson(str = '', obj: Record<string, any> = {}): string {
     if (this.isEmpty(str) || !isPlainObject(obj)) {
-      return str
+      return str;
     }
-    const exp = /\{[A-Za-z0-9\.\[\]]+\}/g
-    let message = ''
-    message += str.replace(exp, match => {
-      const index = match.slice(1, -1)
+    const exp = /\{[A-Za-z0-9\.\[\]]+\}/g;
+    let message = '';
+    message += str.replace(exp, (match) => {
+      const index = match.slice(1, -1);
       if (!has(obj, index)) {
-        return match
+        return match;
       }
-      return get(obj, index)
-    })
+      return get(obj, index);
+    });
 
-    return message
+    return message;
   }
 }

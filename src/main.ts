@@ -31,9 +31,9 @@ async function bootstrap() {
     // httpsOptions
   });
 
-  const config: ConfigService = app.get<ConfigService>(ConfigService)
+  const config: ConfigService = app.get<ConfigService>(ConfigService);
   const port = config.get<number>('httpPort', 3000);
-  const hostName = config.get<string>('hostName', 'localhost')
+  const hostName = config.get<string>('hostName', 'localhost');
 
   app.use(helmet());
   app.disable('x-powered-by'); // 还是有效果的,一旦用了helmet,框架自动帮去掉这个头了

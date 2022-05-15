@@ -30,7 +30,13 @@ export class UserService {
   }
 
   userLogout(): CommonResult {
-    console.log(this.globalService.serverLang('Testing {0}', 'user.userTestArgs', 'userService'));
+    console.log(
+      this.globalService.serverLang(
+        'Testing {0}',
+        'user.userTestArgs',
+        'userService',
+      ),
+    );
     const resp = new CommonResult();
     resp.code = CodeEnum.SUCCESS;
     return resp;
