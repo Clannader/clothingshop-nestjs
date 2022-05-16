@@ -135,4 +135,24 @@ export class Utils {
 
     return message;
   }
+
+  /**
+   * 替换占位符
+   */
+  static replaceArgs(str: string, ...args: Array<string | number>): string {
+    let message = '';
+    if (typeof str !== 'string') {
+      return '';
+    }
+    message += str.replace(/\{\d+\}/g, function (match: string): string {
+      const index = +match.slice(1, -1), //==>\d是什么数字,还有+match是什么意思
+        shiftedIndex = index; //==>替换字符的参数位置
+
+      if (shiftedIndex < args.length) {
+        return args[shiftedIndex] + '';
+      }
+      return match;
+    });
+    return message;
+  }
 }
