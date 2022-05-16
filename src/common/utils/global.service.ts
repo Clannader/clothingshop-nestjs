@@ -74,5 +74,4 @@ export class GlobalService {
     }
     return temp && temp.toString();
   }
-
 }
