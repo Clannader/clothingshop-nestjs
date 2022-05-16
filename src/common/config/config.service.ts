@@ -220,6 +220,34 @@ export class ConfigService<
   // }
 
   private validateConfig(config: Record<string, any>): void {
-    // TODO
+    if (this.options.validate) {
+      const validatedConfig = this.options.validate(config);
+      // 到时候看看这个如何使用再说吧
+      console.log(validatedConfig)
+      // validatedEnvConfig = validatedConfig;
+    } else if (this.options.validationSchema) {
+      const validationOptions = this.getSchemaValidationOptions(this.options);
+      const { error, value: validatedConfig } =
+        this.options.validationSchema.validate(config, validationOptions);
+
+      if (error) {
+        throw new Error(`Config validation error: ${error.message}`);
+      }
+      console.log(validatedConfig)
+      // validatedEnvConfig = validatedConfig;
+    }
+  }
+
+  private getSchemaValidationOptions(options: ConfigServiceOptions) {
+    if (options.validationOptions) {
+      if (typeof options.validationOptions.allowUnknown === 'undefined') {
+        options.validationOptions.allowUnknown = true;
+      }
+      return options.validationOptions;
+    }
+    return {
+      abortEarly: false,
+      allowUnknown: true,
+    };
   }
 }

@@ -17,6 +17,11 @@ export interface ConfigServiceOptions {
   ignoreEnvVars?: boolean;
 
   /**
+   * If "true", environment files (`.env`) will be ignored.
+   */
+  ignoreEnvFile?: boolean;
+
+  /**
    * ini文件路径
    */
   iniFilePath?: string;
