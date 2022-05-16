@@ -1,12 +1,13 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { CONFIG_OPTIONS } from './config.constants';
-import * as dotenv from 'dotenv';
+// import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import { resolve } from 'path';
+import { get, set, unset, isPlainObject, forEach, cloneDeep } from 'lodash';
+import { DotenvExpandOptions, expand } from 'dotenv-expand';
 import { ConfigServiceOptions } from './config.interface';
 import { NoInferType, ExcludeUndefinedIf, KeyOf } from '../common.type';
 import { Utils } from '../utils';
-import { get, set, unset, isPlainObject, forEach } from 'lodash';
+import { CONFIG_OPTIONS, CONFIG_ENV_TOKEN } from './config.constants';
 
 @Injectable()
 export class ConfigService<
@@ -14,20 +15,22 @@ export class ConfigService<
   WasValidated extends boolean = false,
 > {
   private internalConfig: Record<string, any> = {};
+  private orgInternalConfig: Record<string, any> = {};
   private readonly iniFilePath: string = resolve(process.cwd(), 'config.ini');
-  private readonly envFilePath: string = resolve(process.cwd(), '.env');
+  // private readonly envFilePath: string = resolve(process.cwd(), '.env');
 
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: ConfigServiceOptions,
+    @Inject(CONFIG_ENV_TOKEN) private readonly envConfig: Record<string, any>,
   ) {
     this.iniFilePath = Utils.isEmpty(options.iniFilePath)
       ? this.iniFilePath
       : options.iniFilePath;
-    this.envFilePath = Utils.isEmpty(options.envFilePath)
-      ? this.envFilePath
-      : options.envFilePath;
+    // this.envFilePath = Utils.isEmpty(options.envFilePath)
+    //   ? this.envFilePath
+    //   : options.envFilePath;
     this.loadIniFile();
-    this.loadEnvFile();
+    // this.loadEnvFile();
     if (options.isWatch) {
       this.watchConfig();
     }
@@ -44,7 +47,17 @@ export class ConfigService<
       const sourceString = fs.readFileSync(this.iniFilePath, {
         encoding: this.options.encoding || 'utf-8',
       });
-      config = Object.assign(this.parse(sourceString));
+      const orgIniConfig = this.parse(sourceString)
+      this.orgInternalConfig = cloneDeep(orgIniConfig)
+      if (!this.options.ignoreEnvVars) {
+        config = Object.assign(orgIniConfig, this.envConfig)
+      } else {
+        config = orgIniConfig;
+      }
+      if (this.options.expandVariables) {
+        const expandOptions: DotenvExpandOptions = typeof this.options.expandVariables === 'object' ? this.options.expandVariables : {};
+        config = expand({ ...expandOptions, parsed: config }).parsed || config;
+      }
     }
     this.validateConfig(config);
     this.internalConfig = config;
@@ -141,8 +154,10 @@ export class ConfigService<
     }
     if (value == null || value === '') {
       unset(this.internalConfig, key);
+      unset(this.orgInternalConfig, key);
     } else {
       set(this.internalConfig, key, value);
+      set(this.orgInternalConfig, key, value)
     }
     fs.writeFileSync(this.iniFilePath, this.getMapToString());
   }
@@ -152,13 +167,13 @@ export class ConfigService<
       _sep = sep || '\r\n',
       _eq = eq || '=';
     if (
-      !isPlainObject(this.internalConfig) ||
-      Object.keys(this.internalConfig).length === 0
+      !isPlainObject(this.orgInternalConfig) ||
+      Object.keys(this.orgInternalConfig).length === 0
     ) {
       return '';
     }
 
-    forEach(this.internalConfig, (value, key) => {
+    forEach(this.orgInternalConfig, (value, key) => {
       if (!Utils.isEmpty(value)) {
         if (/^#\d+$/.test(key)) {
           temp.push(value); //-->value\r\n
@@ -181,28 +196,28 @@ export class ConfigService<
     return this.internalConfig;
   }
 
-  private loadEnvFile() {
-    let config: Record<string, any> = {};
-    if (fs.existsSync(this.envFilePath)) {
-      config = Object.assign(
-        // 其实用dotenv这个包就可以直接格式化数据,但是由于要重新写入文件,这样会丢失注释的内容,所以还是得自己来格式化了
-        dotenv.parse(
-          fs.readFileSync(this.envFilePath, {
-            encoding: this.options.encoding || 'utf-8',
-          }),
-        ),
-        config,
-      );
-    }
-    if (!isPlainObject(config)) {
-      return;
-    }
-    this.validateConfig(config);
-    const keys = Object.keys(config).filter((key) => !(key in process.env));
-    keys.forEach(
-      (key) => (process.env[key] = (config as Record<string, any>)[key]),
-    );
-  }
+  // private loadEnvFile() {
+  //   let config: Record<string, any> = {};
+  //   if (fs.existsSync(this.envFilePath)) {
+  //     config = Object.assign(
+  //       // 其实用dotenv这个包就可以直接格式化数据,但是由于要重新写入文件,这样会丢失注释的内容,所以还是得自己来格式化了
+  //       dotenv.parse(
+  //         fs.readFileSync(this.envFilePath, {
+  //           encoding: this.options.encoding || 'utf-8',
+  //         }),
+  //       ),
+  //       config,
+  //     );
+  //   }
+  //   if (!isPlainObject(config)) {
+  //     return;
+  //   }
+  //   this.validateConfig(config);
+  //   const keys = Object.keys(config).filter((key) => !(key in process.env));
+  //   keys.forEach(
+  //     (key) => (process.env[key] = (config as Record<string, any>)[key]),
+  //   );
+  // }
 
   private validateConfig(config: Record<string, any>): void {
     // TODO
