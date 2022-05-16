@@ -25,14 +25,14 @@ export class ConfigModule {
     const providers = [
       {
         provide: ConfigService,
-        useClass: ConfigService
-      }
+        useClass: ConfigService,
+      },
     ] as ClassProvider[];
     if (isToken) {
       providers.push({
         provide: options.token,
         useClass: ConfigService,
-      })
+      });
     }
     const configProviderTokens = isToken ? [options.token] : [];
     return {
@@ -67,7 +67,10 @@ export class ConfigModule {
         config,
       );
       if (options.expandVariables) {
-        const expandOptions: DotenvExpandOptions = typeof options.expandVariables === 'object' ? options.expandVariables : {};
+        const expandOptions: DotenvExpandOptions =
+          typeof options.expandVariables === 'object'
+            ? options.expandVariables
+            : {};
         config = expand({ ...expandOptions, parsed: config }).parsed || config;
       }
     }
@@ -80,7 +83,7 @@ export class ConfigModule {
     }
     const keys = Object.keys(config).filter((key) => !(key in process.env));
     keys.forEach(
-      (key) => (process.env[key] = (config as Record<string, any>)[key])
+      (key) => (process.env[key] = (config as Record<string, any>)[key]),
     );
   }
 }

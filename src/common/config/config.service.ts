@@ -46,15 +46,18 @@ export class ConfigService {
       const sourceString = fs.readFileSync(this.iniFilePath, {
         encoding: this.options.encoding || 'utf-8',
       });
-      const orgIniConfig = this.parse(sourceString)
-      this.orgInternalConfig = cloneDeep(orgIniConfig)
+      const orgIniConfig = this.parse(sourceString);
+      this.orgInternalConfig = cloneDeep(orgIniConfig);
       if (!this.options.ignoreEnvVars) {
-        config = Object.assign(orgIniConfig, this.envConfig)
+        config = Object.assign(orgIniConfig, this.envConfig);
       } else {
         config = orgIniConfig;
       }
       if (this.options.expandVariables) {
-        const expandOptions: DotenvExpandOptions = typeof this.options.expandVariables === 'object' ? this.options.expandVariables : {};
+        const expandOptions: DotenvExpandOptions =
+          typeof this.options.expandVariables === 'object'
+            ? this.options.expandVariables
+            : {};
         config = expand({ ...expandOptions, parsed: config }).parsed || config;
       }
     }
@@ -156,7 +159,7 @@ export class ConfigService {
       unset(this.orgInternalConfig, key);
     } else {
       set(this.internalConfig, key, value);
-      set(this.orgInternalConfig, key, value)
+      set(this.orgInternalConfig, key, value);
     }
     fs.writeFileSync(this.iniFilePath, this.getMapToString());
   }
@@ -222,17 +225,19 @@ export class ConfigService {
     if (this.options.validate) {
       const validatedConfig = this.options.validate(config);
       // 到时候看看这个如何使用再说吧
-      console.log(validatedConfig)
+      console.log(validatedConfig);
       // validatedEnvConfig = validatedConfig;
     } else if (this.options.validationSchema) {
-      const validationOptions = ConfigService.getSchemaValidationOptions(this.options);
+      const validationOptions = ConfigService.getSchemaValidationOptions(
+        this.options,
+      );
       const { error, value: validatedConfig } =
         this.options.validationSchema.validate(config, validationOptions);
 
       if (error) {
         throw new Error(`Config validation error: ${error.message}`);
       }
-      console.log(validatedConfig)
+      console.log(validatedConfig);
       // validatedEnvConfig = validatedConfig;
     }
   }
