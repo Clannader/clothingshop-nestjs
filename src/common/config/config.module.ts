@@ -56,7 +56,7 @@ export class ConfigModule {
   private static loadEnvFile(
     options: ConfigServiceOptions,
   ): Record<string, any> {
-    const envFilePath = Utils.isEmpty(options.iniFilePath)
+    const envFilePath = Utils.isEmpty(options.envFilePath)
       ? resolve(process.cwd(), '.env')
       : options.envFilePath;
 

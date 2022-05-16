@@ -28,6 +28,7 @@ import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
           : './config/.env.production',
       isGlobal: true,
       isWatch: true,
+      expandVariables: true,
     }),
   ],
   controllers: [],

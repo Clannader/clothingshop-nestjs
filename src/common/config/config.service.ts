@@ -5,15 +5,14 @@ import { resolve } from 'path';
 import { get, set, unset, isPlainObject, forEach, cloneDeep } from 'lodash';
 import { DotenvExpandOptions, expand } from 'dotenv-expand';
 import { ConfigServiceOptions } from './config.interface';
-import { NoInferType, ExcludeUndefinedIf, KeyOf } from '../common.type';
+// import { NoInferType, ExcludeUndefinedIf, KeyOf } from '../common.type';
 import { Utils } from '../utils';
 import { CONFIG_OPTIONS, CONFIG_ENV_TOKEN } from './config.constants';
 
+type GetOf = string | boolean | number;
+
 @Injectable()
-export class ConfigService<
-  K = Record<string, unknown>,
-  WasValidated extends boolean = false,
-> {
+export class ConfigService {
   private internalConfig: Record<string, any> = {};
   private orgInternalConfig: Record<string, any> = {};
   private readonly iniFilePath: string = resolve(process.cwd(), 'config.ini');
@@ -93,13 +92,13 @@ export class ConfigService<
   ): void {
     const matches = str.match(regex);
     if (matches) {
-      obj[matches[1].trim()] = ConfigService.transformTypeof(matches[2].trim());
+      obj[matches[1].trim()] = matches[2].trim();
     } else {
       obj['#' + i] = str;
     }
   }
 
-  private static transformTypeof(value: string): string | number | boolean {
+  private static transformTypeof(value: string): GetOf {
     if (/^-?\d+(\.\d+)?$/.test(value)) {
       return parseFloat(value);
     } else if (/^(true|false)$/.test(value)) {
@@ -127,15 +126,15 @@ export class ConfigService<
     }
   }
 
-  get<T = any>(propertyPath: KeyOf<K>): ExcludeUndefinedIf<WasValidated, T>;
-  get<T = any>(propertyPath: KeyOf<K>, defaultValue: NoInferType<T>): T;
-  get<T = any>(propertyPath: KeyOf<K>, defaultValue?: T): T | undefined {
+  get<GetOf>(propertyPath: string): GetOf;
+  get<GetOf>(propertyPath: string, defaultValue: GetOf): GetOf;
+  get<GetOf>(propertyPath: string, defaultValue?: GetOf): any {
     const internalValue = get(this.internalConfig, propertyPath);
     if (!Utils.isUndefined(internalValue)) {
-      return internalValue;
+      return ConfigService.transformTypeof(internalValue);
     }
 
-    return defaultValue as T;
+    return defaultValue as GetOf;
   }
 
   getSecurityConfig(propertyPath: string): string {
