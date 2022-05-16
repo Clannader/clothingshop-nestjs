@@ -226,7 +226,7 @@ export class ConfigService<
       console.log(validatedConfig)
       // validatedEnvConfig = validatedConfig;
     } else if (this.options.validationSchema) {
-      const validationOptions = this.getSchemaValidationOptions(this.options);
+      const validationOptions = ConfigService.getSchemaValidationOptions(this.options);
       const { error, value: validatedConfig } =
         this.options.validationSchema.validate(config, validationOptions);
 
@@ -238,7 +238,7 @@ export class ConfigService<
     }
   }
 
-  private getSchemaValidationOptions(options: ConfigServiceOptions) {
+  private static getSchemaValidationOptions(options: ConfigServiceOptions) {
     if (options.validationOptions) {
       if (typeof options.validationOptions.allowUnknown === 'undefined') {
         options.validationOptions.allowUnknown = true;
