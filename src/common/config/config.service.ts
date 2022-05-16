@@ -9,7 +9,7 @@ import { ConfigServiceOptions } from './config.interface';
 import { Utils } from '../utils';
 import { CONFIG_OPTIONS, CONFIG_ENV_TOKEN } from './config.constants';
 
-type GetOf = string | boolean | number;
+type ReturnValueOf = string | boolean | number;
 
 @Injectable()
 export class ConfigService {
@@ -101,7 +101,7 @@ export class ConfigService {
     }
   }
 
-  private static transformTypeof(value: string): GetOf {
+  private static transformTypeof(value: string): ReturnValueOf {
     if (/^-?\d+(\.\d+)?$/.test(value)) {
       return parseFloat(value);
     } else if (/^(true|false)$/.test(value)) {
@@ -129,15 +129,15 @@ export class ConfigService {
     }
   }
 
-  get<GetOf>(propertyPath: string): GetOf;
-  get<GetOf>(propertyPath: string, defaultValue: GetOf): GetOf;
-  get<GetOf>(propertyPath: string, defaultValue?: GetOf): any {
+  get<ReturnValueOf = any>(propertyPath: string): ReturnValueOf;
+  get<ReturnValueOf = any>(propertyPath: string, defaultValue: ReturnValueOf): ReturnValueOf;
+  get<ReturnValueOf = any>(propertyPath: string, defaultValue?: ReturnValueOf): any {
     const internalValue = get(this.internalConfig, propertyPath);
     if (!Utils.isUndefined(internalValue)) {
       return ConfigService.transformTypeof(internalValue);
     }
 
-    return defaultValue as GetOf;
+    return defaultValue as ReturnValueOf;
   }
 
   getSecurityConfig(propertyPath: string): string {
