@@ -46,7 +46,7 @@ export class TestController {
     type: RespTestSchemaDto,
   })
   async testingPost(
-    @Body() params: ReqTestSchemaDto
+    @Body() params: ReqTestSchemaDto,
     // @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();

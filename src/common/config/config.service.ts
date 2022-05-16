@@ -80,7 +80,7 @@ export class ConfigService<
   ): void {
     const matches = str.match(regex);
     if (matches) {
-      obj[matches[1].trim()] = ConfigService.transformTypeof(matches[2].trim())
+      obj[matches[1].trim()] = ConfigService.transformTypeof(matches[2].trim());
     } else {
       obj['#' + i] = str;
     }
@@ -128,7 +128,9 @@ export class ConfigService<
   getSecurityConfig(propertyPath: string): string {
     const internalValue = get(this.internalConfig, propertyPath);
     const isSecurity = get(this.internalConfig, 'security');
-    return !Utils.isUndefined(internalValue) && (typeof isSecurity === 'boolean' && isSecurity)
+    return !Utils.isUndefined(internalValue) &&
+      typeof isSecurity === 'boolean' &&
+      isSecurity
       ? Utils.tripleDESdecrypt(internalValue)
       : internalValue;
   }
@@ -184,9 +186,11 @@ export class ConfigService<
     if (fs.existsSync(this.envFilePath)) {
       config = Object.assign(
         // 其实用dotenv这个包就可以直接格式化数据,但是由于要重新写入文件,这样会丢失注释的内容,所以还是得自己来格式化了
-        dotenv.parse(fs.readFileSync(this.envFilePath, {
-          encoding: this.options.encoding || 'utf-8',
-        })),
+        dotenv.parse(
+          fs.readFileSync(this.envFilePath, {
+            encoding: this.options.encoding || 'utf-8',
+          }),
+        ),
         config,
       );
     }
@@ -194,9 +198,9 @@ export class ConfigService<
       return;
     }
     this.validateConfig(config);
-    const keys = Object.keys(config).filter(key => !(key in process.env));
+    const keys = Object.keys(config).filter((key) => !(key in process.env));
     keys.forEach(
-      key => (process.env[key] = (config as Record<string, any>)[key]),
+      (key) => (process.env[key] = (config as Record<string, any>)[key]),
     );
   }
 
