@@ -130,8 +130,14 @@ export class ConfigService {
   }
 
   get<ReturnValueOf = any>(propertyPath: string): ReturnValueOf;
-  get<ReturnValueOf = any>(propertyPath: string, defaultValue: ReturnValueOf): ReturnValueOf;
-  get<ReturnValueOf = any>(propertyPath: string, defaultValue?: ReturnValueOf): any {
+  get<ReturnValueOf = any>(
+    propertyPath: string,
+    defaultValue: ReturnValueOf,
+  ): ReturnValueOf;
+  get<ReturnValueOf = any>(
+    propertyPath: string,
+    defaultValue?: ReturnValueOf,
+  ): any {
     const internalValue = get(this.internalConfig, propertyPath);
     if (!Utils.isUndefined(internalValue)) {
       return ConfigService.transformTypeof(internalValue);
