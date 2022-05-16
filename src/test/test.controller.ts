@@ -46,7 +46,7 @@ export class TestController {
     type: RespTestSchemaDto,
   })
   async testingPost(
-    @Body() params: ReqTestSchemaDto
+    @Body() params: ReqTestSchemaDto,
     // @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();
@@ -70,9 +70,11 @@ export class TestController {
     // console.log(this.configService.get<boolean>('monitorLog'));
     // console.log(this.configService.getInternalConfig());
     //
-    // console.log(this.config2Service.get<boolean>('monitorLog'));
+    // console.log(this.configService.get<boolean>('monitorLog'));
     // this.config2Service.set('config2', '成功了');
     // console.log(this.config2Service.getInternalConfig());
+    // console.log(this.configService.get<number>('fsd'));
+    // this.configService.set('HH', 'ahdhfdf')
     // console.log(this.configService.getInternalConfig())
     // this.configService.set<boolean>('boolean', false)
     // this.configService.set<number>('number', 120)

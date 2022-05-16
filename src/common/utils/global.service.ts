@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import * as globalVariable from '../constants';
 import { i18n } from '../i18n';
+import { Utils } from './utils';
 import { get } from 'lodash';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
@@ -20,14 +21,6 @@ export class GlobalService {
   private readonly request: Request;
 
   /**
-   * 判断对象是否为空
-   * @param obj
-   */
-  isEmpty(obj: any): boolean {
-    return obj == null || obj === '' || obj === 'undefined';
-  }
-
-  /**
    * 系统的翻译函数
    * @param languageType 语言类型
    * @param orgin 原始的中文翻译
@@ -41,20 +34,20 @@ export class GlobalService {
     ...args: Array<string | number>
   ): string {
     const properties = i18n[languageType];
-    if (this.isEmpty(properties)) {
-      return this.replaceArgs(orgin, ...args);
+    if (Utils.isEmpty(properties)) {
+      return Utils.replaceArgs(orgin, ...args);
     }
     // const langKey = this.parseProperties(properties, key);
-    const langKey = get(properties, key, orgin);
+    const langKey = get(properties, key, orgin) as string;
     // if (typeof langKey !== 'string') {
     //   return this.replaceArgs(orgin, ...args);
     // }
-    return this.replaceArgs(langKey, ...args);
+    return Utils.replaceArgs(langKey, ...args);
   }
 
   serverLang(orgin: string, key: string, ...args: Array<string | number>) {
     const headerLanguage = this.request.headers['language'];
-    const type: langType = this.isEmpty(headerLanguage)
+    const type: langType = Utils.isEmpty(headerLanguage)
       ? 'ZH'
       : ['ZH', 'EN'].includes(
           typeof headerLanguage === 'string' ? headerLanguage : 'ZH',
@@ -71,7 +64,7 @@ export class GlobalService {
       keyList.forEach((k) => {
         try {
           temp = temp[k];
-          if (this.isEmpty(temp)) {
+          if (Utils.isEmpty(temp)) {
             return false;
           }
         } catch (e) {
@@ -80,25 +73,5 @@ export class GlobalService {
       });
     }
     return temp && temp.toString();
-  }
-
-  /**
-   * 替换占位符
-   */
-  replaceArgs(str: string, ...args: Array<string | number>): string {
-    let message = '';
-    if (typeof str !== 'string') {
-      return '';
-    }
-    message += str.replace(/\{\d+\}/g, function (match: string): string {
-      const index = +match.slice(1, -1), //==>\d是什么数字,还有+match是什么意思
-        shiftedIndex = index; //==>替换字符的参数位置
-
-      if (shiftedIndex < args.length) {
-        return args[shiftedIndex] + '';
-      }
-      return match;
-    });
-    return message;
   }
 }

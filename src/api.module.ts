@@ -22,11 +22,13 @@ import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
     TestModule,
     ConfigModule.register({
       iniFilePath: './config/config.ini',
-      envFilePath: process.env.NODE_ENV === 'development'
-        ? './config/.env.development'
-        : './config/.env.production',
+      envFilePath:
+        process.env.NODE_ENV === 'development'
+          ? './config/.env.development'
+          : './config/.env.production',
       isGlobal: true,
       isWatch: true,
+      expandVariables: true,
     }),
   ],
   controllers: [],

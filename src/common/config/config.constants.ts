@@ -1,1 +1,2 @@
 export const CONFIG_OPTIONS = 'CONFIG_OPTIONS';
+export const CONFIG_ENV_TOKEN = 'CONFIG_ENV_TOKEN';
