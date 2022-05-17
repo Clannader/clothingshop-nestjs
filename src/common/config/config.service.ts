@@ -51,11 +51,12 @@ export class ConfigService {
       });
       const orgIniConfig = this.parse(sourceString);
       this.orgInternalConfig = cloneDeep(orgIniConfig);
-      if (!this.options.ignoreEnvVars) {
-        config = Object.assign(orgIniConfig, this.envConfig);
-      } else {
-        config = orgIniConfig;
-      }
+      // if (!this.options.ignoreEnvVars) {
+      //   config = Object.assign(orgIniConfig, this.envConfig);
+      // } else {
+      //   config = orgIniConfig;
+      // }
+      config = orgIniConfig;
       if (this.options.expandVariables) {
         const expandOptions: DotenvExpandOptions =
           typeof this.options.expandVariables === 'object'
@@ -65,7 +66,12 @@ export class ConfigService {
       }
     }
     this.validateConfig(config);
-    this.internalConfig = config;
+    this.internalConfig = this.options.ignoreEnvVars
+      ? config
+      : {
+          ...config,
+          ...this.envConfig,
+        };
   }
 
   private parse(

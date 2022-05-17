@@ -74,7 +74,12 @@ export class ConfigModule {
         config = expand({ ...expandOptions, parsed: config }).parsed || config;
       }
     }
-    return config;
+    return options.ignoreEnvVars
+      ? config
+      : {
+          ...config,
+          ...process.env,
+        };
   }
 
   private static assignVariablesToProcess(config: Record<string, any>) {
