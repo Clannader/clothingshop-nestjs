@@ -101,5 +101,20 @@ describe('Utils', () => {
         msg: [{ age: 'BB' }, { age: 'CC' }],
       }),
     ).toBe('AABBBBCC');
+    const newReg = /\$\{[A-Za-z0-9\.\[\]]+\}/g;
+    expect(
+      Utils.replaceArgsFromJson(
+        'My name is ${myName}',
+        { myName: 'oliver' },
+        newReg,
+      ),
+    ).toBe('My name is oliver');
+    expect(
+      Utils.replaceArgsFromJson(
+        'My name is ${myName}, 年龄是: ${info.age}',
+        { myName: 'oliver', info: { age: 28 } },
+        newReg,
+      ),
+    ).toBe('My name is oliver, 年龄是: 28');
   });
 });

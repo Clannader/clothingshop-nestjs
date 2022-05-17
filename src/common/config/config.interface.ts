@@ -1,4 +1,4 @@
-import { DotenvExpandOptions } from 'dotenv-expand'
+import { DotenvExpandOptions } from 'dotenv-expand';
 
 export interface ConfigServiceOptions {
   /**

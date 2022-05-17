@@ -9,7 +9,7 @@ import { ConfigServiceOptions } from './config.interface';
 import { Utils } from '../utils';
 import { CONFIG_OPTIONS, CONFIG_ENV_TOKEN } from './config.constants';
 
-type GetOf = string | boolean | number;
+type ReturnValueOf = string | boolean | number;
 
 @Injectable()
 export class ConfigService {
@@ -22,9 +22,12 @@ export class ConfigService {
     @Inject(CONFIG_OPTIONS) private readonly options: ConfigServiceOptions,
     @Inject(CONFIG_ENV_TOKEN) private readonly envConfig: Record<string, any>,
   ) {
-    this.iniFilePath = Utils.isEmpty(options.iniFilePath)
-      ? this.iniFilePath
-      : options.iniFilePath;
+    if (!Utils.isEmpty(options.iniFilePath)) {
+      this.iniFilePath = options.iniFilePath;
+    }
+    // this.iniFilePath = Utils.isEmpty(options.iniFilePath)
+    //   ? this.iniFilePath
+    //   : options.iniFilePath;
     // this.envFilePath = Utils.isEmpty(options.envFilePath)
     //   ? this.envFilePath
     //   : options.envFilePath;
@@ -46,15 +49,18 @@ export class ConfigService {
       const sourceString = fs.readFileSync(this.iniFilePath, {
         encoding: this.options.encoding || 'utf-8',
       });
-      const orgIniConfig = this.parse(sourceString)
-      this.orgInternalConfig = cloneDeep(orgIniConfig)
+      const orgIniConfig = this.parse(sourceString);
+      this.orgInternalConfig = cloneDeep(orgIniConfig);
       if (!this.options.ignoreEnvVars) {
-        config = Object.assign(orgIniConfig, this.envConfig)
+        config = Object.assign(orgIniConfig, this.envConfig);
       } else {
         config = orgIniConfig;
       }
       if (this.options.expandVariables) {
-        const expandOptions: DotenvExpandOptions = typeof this.options.expandVariables === 'object' ? this.options.expandVariables : {};
+        const expandOptions: DotenvExpandOptions =
+          typeof this.options.expandVariables === 'object'
+            ? this.options.expandVariables
+            : {};
         config = expand({ ...expandOptions, parsed: config }).parsed || config;
       }
     }
@@ -98,7 +104,7 @@ export class ConfigService {
     }
   }
 
-  private static transformTypeof(value: string): GetOf {
+  private static transformTypeof(value: string): ReturnValueOf {
     if (/^-?\d+(\.\d+)?$/.test(value)) {
       return parseFloat(value);
     } else if (/^(true|false)$/.test(value)) {
@@ -126,20 +132,28 @@ export class ConfigService {
     }
   }
 
-  get<GetOf>(propertyPath: string): GetOf;
-  get<GetOf>(propertyPath: string, defaultValue: GetOf): GetOf;
-  get<GetOf>(propertyPath: string, defaultValue?: GetOf): any {
+  get<ReturnValueOf = any>(propertyPath: string): ReturnValueOf;
+  get<ReturnValueOf = any>(
+    propertyPath: string,
+    defaultValue: ReturnValueOf,
+  ): ReturnValueOf;
+  get<ReturnValueOf = any>(
+    propertyPath: string,
+    defaultValue?: ReturnValueOf,
+  ): any {
     const internalValue = get(this.internalConfig, propertyPath);
     if (!Utils.isUndefined(internalValue)) {
       return ConfigService.transformTypeof(internalValue);
     }
 
-    return defaultValue as GetOf;
+    return defaultValue as ReturnValueOf;
   }
 
   getSecurityConfig(propertyPath: string): string {
     const internalValue = get(this.internalConfig, propertyPath);
-    const isSecurity = get(this.internalConfig, 'security');
+    const isSecurity = ConfigService.transformTypeof(
+      get(this.internalConfig, 'security'),
+    ) as boolean;
     return !Utils.isUndefined(internalValue) &&
       typeof isSecurity === 'boolean' &&
       isSecurity
@@ -155,8 +169,16 @@ export class ConfigService {
       unset(this.internalConfig, key);
       unset(this.orgInternalConfig, key);
     } else {
-      set(this.internalConfig, key, value);
-      set(this.orgInternalConfig, key, value)
+      set(
+        this.internalConfig,
+        key,
+        Utils.replaceArgsFromJson(
+          value + '',
+          this.internalConfig,
+          /\$\{[A-Za-z0-9\.\[\]]+\}/g,
+        ),
+      );
+      set(this.orgInternalConfig, key, value);
     }
     fs.writeFileSync(this.iniFilePath, this.getMapToString());
   }
@@ -222,17 +244,19 @@ export class ConfigService {
     if (this.options.validate) {
       const validatedConfig = this.options.validate(config);
       // 到时候看看这个如何使用再说吧
-      console.log(validatedConfig)
+      console.log(validatedConfig);
       // validatedEnvConfig = validatedConfig;
     } else if (this.options.validationSchema) {
-      const validationOptions = ConfigService.getSchemaValidationOptions(this.options);
+      const validationOptions = ConfigService.getSchemaValidationOptions(
+        this.options,
+      );
       const { error, value: validatedConfig } =
         this.options.validationSchema.validate(config, validationOptions);
 
       if (error) {
         throw new Error(`Config validation error: ${error.message}`);
       }
-      console.log(validatedConfig)
+      console.log(validatedConfig);
       // validatedEnvConfig = validatedConfig;
     }
   }
