@@ -22,9 +22,12 @@ export class ConfigService {
     @Inject(CONFIG_OPTIONS) private readonly options: ConfigServiceOptions,
     @Inject(CONFIG_ENV_TOKEN) private readonly envConfig: Record<string, any>,
   ) {
-    this.iniFilePath = Utils.isEmpty(options.iniFilePath)
-      ? this.iniFilePath
-      : options.iniFilePath;
+    if (!Utils.isEmpty(options.iniFilePath)) {
+      this.iniFilePath = options.iniFilePath;
+    }
+    // this.iniFilePath = Utils.isEmpty(options.iniFilePath)
+    //   ? this.iniFilePath
+    //   : options.iniFilePath;
     // this.envFilePath = Utils.isEmpty(options.envFilePath)
     //   ? this.envFilePath
     //   : options.envFilePath;
@@ -148,7 +151,7 @@ export class ConfigService {
 
   getSecurityConfig(propertyPath: string): string {
     const internalValue = get(this.internalConfig, propertyPath);
-    const isSecurity = get(this.internalConfig, 'security');
+    const isSecurity = ConfigService.transformTypeof(get(this.internalConfig, 'security')) as boolean;
     return !Utils.isUndefined(internalValue) &&
       typeof isSecurity === 'boolean' &&
       isSecurity
