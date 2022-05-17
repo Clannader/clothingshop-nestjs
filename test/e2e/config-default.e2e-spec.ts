@@ -31,6 +31,7 @@ describe('ConfigService 默认加载', () => {
     expect(service.getSecurityConfig('dbUrl')).toBe(
       'mongodb://127.0.0.1:27018/clothingshop',
     );
+    expect(service.get<string>('JAVA_HOME')).not.toBe('D:\\java1.8\\jdk\\bin');
   });
 
   afterEach(async () => {

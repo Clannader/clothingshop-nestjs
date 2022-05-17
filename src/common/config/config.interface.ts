@@ -4,17 +4,17 @@ export interface ConfigServiceOptions {
   /**
    * If "true", registers `ConfigModule` as a global module.
    */
-  isGlobal?: boolean;
+  readonly isGlobal?: boolean;
 
   /**
    * Path to the environment file(s) to be loaded.
    */
-  envFilePath?: string;
+  readonly envFilePath?: string;
 
   /**
    * If "true", predefined environment variables will not be validated.
    */
-  ignoreEnvVars?: boolean;
+  readonly ignoreEnvVars?: boolean;
 
   /**
    * If "true", environment files (`.env`) will be ignored.
@@ -24,22 +24,22 @@ export interface ConfigServiceOptions {
   /**
    * ini文件路径
    */
-  iniFilePath?: string;
+  readonly iniFilePath?: string;
 
   /**
    * Environment file encoding.
    */
-  encoding?: BufferEncoding;
+  readonly encoding?: BufferEncoding;
 
   /**
    * 监控文件有变化时重新加载配置文件
    */
-  isWatch?: boolean;
+  readonly isWatch?: boolean;
 
   /**
    * 服务的令牌
    */
-  token?: string;
+  readonly token?: string;
 
   /**
    * A boolean value indicating the use of expanded variables, or object
@@ -47,7 +47,7 @@ export interface ConfigServiceOptions {
    * If .env contains expanded variables, they'll only be parsed if
    * this property is set to true.
    */
-  expandVariables?: boolean | DotenvExpandOptions;
+  readonly expandVariables?: boolean | DotenvExpandOptions;
 
   /**
    * Custom function to validate environment variables. It takes an object containing environment
@@ -56,15 +56,15 @@ export interface ConfigServiceOptions {
    * Also, environment variables can be edited through this function, changes
    * will be reflected in the process.env object.
    */
-  validate?: (config: Record<string, any>) => Record<string, any>;
+  readonly validate?: (config: Record<string, any>) => Record<string, any>;
 
   /**
    * Environment variables validation schema (Joi).
    */
-  validationSchema?: any;
+  readonly validationSchema?: any;
 
   /**
    * Schema validation options.
    */
-  validationOptions?: Record<string, any>;
+  readonly validationOptions?: Record<string, any>;
 }
