@@ -14,4 +14,16 @@ export class AppModule {
       ],
     };
   }
+
+  static loadExpandVar(): DynamicModule {
+    return {
+      module: AppModule,
+      imports: [
+        ConfigModule.register({
+          iniFilePath: join(__dirname, 'config.expand.ini'),
+          expandVariables: true,
+        }),
+      ],
+    };
+  }
 }

@@ -18,10 +18,13 @@ describe('ConfigService 默认加载', () => {
 
   it(`ConfigService初始化`, () => {
     expect(service).toBeDefined();
-    expect(service.get<number>('PORT')).toBe(5000);
     expect(service.get<string>('undefined')).toBe(undefined);
+    expect(service.get<number>('PORT')).toBe(5000);
     expect(service.get<boolean>('isShow')).toBe(true);
     expect(service.get<string>('isString')).toBe('Hello');
+    expect(typeof service.get<number>('PORT')).toBe('number');
+    expect(typeof service.get<boolean>('isShow')).toBe('boolean');
+    expect(typeof service.get<string>('isString')).toBe('string');
   });
 
   afterEach(async () => {
