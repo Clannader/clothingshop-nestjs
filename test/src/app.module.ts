@@ -72,6 +72,7 @@ export class AppModule {
       imports: [
         ConfigModule.register({
           envFilePath: join(__dirname, '.env'),
+          iniFilePath: join(__dirname, 'config.ini'),
         }),
       ],
     };

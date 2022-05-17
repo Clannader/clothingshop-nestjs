@@ -32,6 +32,7 @@ describe('ConfigService 忽略环境变量', () => {
     expect(typeof service.get<boolean>('isShow')).toBe('boolean');
     expect(typeof service.get<string>('isString')).toBe('string');
     expect(service.get<string>('ENV_APP_HOME')).toBe(undefined);
+    expect(service.get<string>('ENV_PORT')).toBe(undefined);
     expect(service.get<string>('JAVA_HOME')).toBe(undefined);
     expect(process.env['ENV_PORT']).toBe('5000');
     expect(process.env['ENV_isShow']).toBe('true');
