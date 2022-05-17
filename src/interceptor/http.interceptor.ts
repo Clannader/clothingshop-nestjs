@@ -10,9 +10,6 @@ import { tap } from 'rxjs/operators';
 @Injectable()
 export class HttpInterceptor implements NestInterceptor {
   private readonly logger = new AopLogger(HttpInterceptor.name);
-  constructor() {
-    // this.logger.setContext(this.constructor.name);
-  }
 
   intercept(context: ExecutionContext, next: CallHandler) {
     const http = context.switchToHttp();
