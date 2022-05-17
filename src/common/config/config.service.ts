@@ -164,7 +164,15 @@ export class ConfigService {
       unset(this.internalConfig, key);
       unset(this.orgInternalConfig, key);
     } else {
-      set(this.internalConfig, key, value);
+      set(
+        this.internalConfig,
+        key,
+        Utils.replaceArgsFromJson(
+          value + '',
+          this.internalConfig,
+          /\$\{[A-Za-z0-9\.\[\]]+\}/g,
+        ),
+      );
       set(this.orgInternalConfig, key, value);
     }
     fs.writeFileSync(this.iniFilePath, this.getMapToString());

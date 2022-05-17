@@ -119,15 +119,24 @@ export class Utils {
     return obj == null || obj === '' || obj === 'undefined';
   }
 
-  static replaceArgsFromJson(str = '', obj: Record<string, any> = {}): string {
+  static replaceArgsFromJson(
+    str = '',
+    obj: Record<string, any> = {},
+    exp = /\{[A-Za-z0-9\.\[\]]+\}/g,
+  ): string {
     if (this.isEmpty(str) || !isPlainObject(obj)) {
       return str;
     }
-    const exp = /\{[A-Za-z0-9\.\[\]]+\}/g;
     let message = '';
     message += str.replace(exp, (match) => {
-      const index = match.slice(1, -1);
-      if (!has(obj, index)) {
+      // 这里的正则表达式必须含有{}否则取不出key出来的
+      // 由于正则中都包含{},但是有可能正则还含有其他字符,导致不一定是去头去尾,所以下面的代码不适用所有情况
+      // const index = match.slice(1, -1);
+      // 小节:排除{}以外字符都可以,可以写成[^\{\}],这里不需要加.
+      const regex = new RegExp(/\{([^\{\}]*)\}/g);
+      const isMatch = regex.test(match);
+      const index = RegExp.$1;
+      if (!isMatch || !has(obj, index)) {
         return match;
       }
       return get(obj, index);
