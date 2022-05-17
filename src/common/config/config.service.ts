@@ -151,7 +151,9 @@ export class ConfigService {
 
   getSecurityConfig(propertyPath: string): string {
     const internalValue = get(this.internalConfig, propertyPath);
-    const isSecurity = ConfigService.transformTypeof(get(this.internalConfig, 'security')) as boolean;
+    const isSecurity = ConfigService.transformTypeof(
+      get(this.internalConfig, 'security'),
+    ) as boolean;
     return !Utils.isUndefined(internalValue) &&
       typeof isSecurity === 'boolean' &&
       isSecurity

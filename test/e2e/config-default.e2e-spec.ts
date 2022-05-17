@@ -25,6 +25,12 @@ describe('ConfigService 默认加载', () => {
     expect(typeof service.get<number>('PORT')).toBe('number');
     expect(typeof service.get<boolean>('isShow')).toBe('boolean');
     expect(typeof service.get<string>('isString')).toBe('string');
+    expect(service.get<string>('dbUrl')).toBe(
+      'M9kB1vUOFHzgzHa2VeIUkgeMZJ/4SQzeJ6ehKlLZPTz6fmy7SBEY2A==',
+    );
+    expect(service.getSecurityConfig('dbUrl')).toBe(
+      'mongodb://127.0.0.1:27018/clothingshop',
+    );
   });
 
   afterEach(async () => {
