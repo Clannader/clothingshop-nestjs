@@ -16,7 +16,7 @@ describe('ConfigService 默认加载', () => {
     service = app.get<ConfigService>(ConfigService);
   });
 
-  it(`ConfigService初始化`, () => {
+  it(`ConfigService测试`, () => {
     expect(service).toBeDefined(); // 测试初始化
     expect(service.get<string>('undefined')).toBe(undefined);
     expect(service.get<number>('PORT')).toBe(5000); // 测试获取值是否正确
@@ -31,6 +31,7 @@ describe('ConfigService 默认加载', () => {
     expect(service.getSecurityConfig('dbUrl')).toBe(
       'mongodb://127.0.0.1:27018/clothingshop',
     );
+    expect(service.get<string>('JAVA_HOME')).not.toBe('D:\\java1.8\\jdk\\bin');
   });
 
   afterEach(async () => {

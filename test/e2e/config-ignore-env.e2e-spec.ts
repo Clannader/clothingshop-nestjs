@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { ConfigService } from '../../src/common/config';
 
-describe('ConfigService 忽略环境变量', () => {
+describe('ConfigService 忽略环境变量值', () => {
   let service: ConfigService;
   let app: INestApplication;
   let envBackup: NodeJS.ProcessEnv;
@@ -21,7 +21,7 @@ describe('ConfigService 忽略环境变量', () => {
     service = app.get<ConfigService>(ConfigService);
   });
 
-  it(`ConfigService初始化`, () => {
+  it(`ConfigService测试`, () => {
     expect(service).toBeDefined();
     // 忽略env的值,相当于get不到env的值,但是环境变量里面有这个值
     expect(service.get<string>('undefined')).toBe(undefined);

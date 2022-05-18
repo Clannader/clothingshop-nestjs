@@ -19,6 +19,9 @@ export class ConfigModule {
     /**
      * 因为这里如果加载env的配置,需要在实例化ConfigService前就得读取文件了,否则不能生效
      */
+    if (Utils.isEmpty(options.envFilePath)) {
+      options.ignoreEnvFile = true
+    }
     const envConfig = options.ignoreEnvFile ? {} : this.loadEnvFile(options);
     this.assignVariablesToProcess(envConfig);
     const isToken = !Utils.isEmpty(options.token);

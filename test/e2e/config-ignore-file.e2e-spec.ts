@@ -21,7 +21,7 @@ describe('ConfigService 忽略环境变量文件', () => {
     service = app.get<ConfigService>(ConfigService);
   });
 
-  it(`ConfigService初始化`, () => {
+  it(`ConfigService测试`, () => {
     expect(service).toBeDefined();
     // 忽略env的文件,相当于get不到env的值,但是环境变量里面也没有有这个值
     expect(service.get<string>('undefined')).toBe(undefined);

@@ -6,6 +6,11 @@ import { ConfigService } from '../../src/common/config';
 describe('ConfigService 同时加载env和ini', () => {
   let service: ConfigService;
   let app: INestApplication;
+  let envBackup: NodeJS.ProcessEnv;
+
+  beforeAll(() => {
+    envBackup = process.env;
+  });
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -16,7 +21,7 @@ describe('ConfigService 同时加载env和ini', () => {
     service = app.get<ConfigService>(ConfigService);
   });
 
-  it(`ConfigService初始化`, () => {
+  it(`ConfigService测试`, () => {
     expect(service.get<string>('PORT')).toBe(5000);
     expect(service.get<string>('isShow')).toBe(true);
     expect(service.get<string>('isString')).toBe('Hello');
@@ -35,6 +40,7 @@ describe('ConfigService 同时加载env和ini', () => {
   });
 
   afterEach(async () => {
+    process.env = envBackup;
     await app.close();
   });
 });

@@ -21,7 +21,7 @@ describe('ConfigService 默认加载环境变量文件', () => {
     service = app.get<ConfigService>(ConfigService);
   });
 
-  it(`ConfigService初始化`, () => {
+  it(`ConfigService测试`, () => {
     expect(service).toBeDefined();
     expect(service.get<string>('undefined')).toBe(undefined);
     expect(service.get<number>('ENV_PORT')).toBe(5000);
