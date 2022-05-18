@@ -28,16 +28,9 @@ describe('ConfigService 观察ini文件', () => {
     const setIniContent = readFileSync(iniPath, 'utf-8').toString()
     expect(setIniContent).toBe(iniContent + 'AA=Hello')
 
-    writeFileSync(iniPath, setIniContent + '\r\nBB=Oiver')
-    console.time('kk')
-    jest.setTimeout(1000)
-    console.timeEnd('kk')
-    expect(service.get<string>('BB')).toBe('Oliver')
-
-    service.set('BB', '');
     service.set('AA', '');
     const setIniContent2 = readFileSync(iniPath, 'utf-8').toString()
-    expect(setIniContent2).toBe(iniContent)
+    expect(setIniContent2).toBe(iniContent.substring(0, iniContent.length - 4))
   });
 
   afterEach(async () => {
