@@ -21,7 +21,7 @@ describe('ConfigService 观察ini文件', () => {
     service = app.get<ConfigService>(ConfigService);
   });
 
-  it(`ConfigService测试`, async () => {
+  it(`ConfigService测试`, () => {
     const iniPath = join(__dirname, '..', 'src/config.ini')
     const iniContent = readFileSync(iniPath, 'utf-8').toString()
     service.set('AA', 'Hello')
@@ -32,6 +32,17 @@ describe('ConfigService 观察ini文件', () => {
     const setIniContent2 = readFileSync(iniPath, 'utf-8').toString()
     expect(setIniContent2).toBe(iniContent)// 这里由于写入文件的时候没有\r\n所以和之前的对比要删掉
     // 并且\r\n只是占了2个字符的长度
+  });
+
+  it(`ConfigService测试文件写入`, (cb) => {
+    const iniPath = join(__dirname, '..', 'src/config.ini')
+    const iniContent = readFileSync(iniPath, 'utf-8').toString()
+    writeFileSync(iniPath, iniContent.endsWith('\r\n') ? iniContent + 'AA=Hello' : iniContent + '\r\nAA=Hello')
+    setTimeout(() => {
+      expect(service.get('AA')).toBe('Hello')
+      service.set('AA', '')
+      cb()
+    }, 1000)
   });
 
   afterEach(async () => {
