@@ -21,7 +21,7 @@ describe('ConfigService 同时加载env和ini', () => {
     service = app.get<ConfigService>(ConfigService);
   });
 
-  it(`ConfigService初始化`, () => {
+  it(`ConfigService测试`, () => {
     expect(service.get<string>('PORT')).toBe(5000);
     expect(service.get<string>('isShow')).toBe(true);
     expect(service.get<string>('isString')).toBe('Hello');

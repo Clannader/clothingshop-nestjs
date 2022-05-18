@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { ConfigService } from '../../src/common/config';
 
-describe('ConfigService 加载带参', () => {
+describe('ConfigService 加载带参变量', () => {
   let service: ConfigService;
   let app: INestApplication;
 
@@ -16,7 +16,7 @@ describe('ConfigService 加载带参', () => {
     service = app.get<ConfigService>(ConfigService);
   });
 
-  it(`ConfigService初始化`, () => {
+  it(`ConfigService测试`, () => {
     service.set('myName', 'oliver');
     service.set('age', 28);
     service.set('myTitle', 'My name is ${myName}');

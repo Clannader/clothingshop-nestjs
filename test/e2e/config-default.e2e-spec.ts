@@ -16,7 +16,7 @@ describe('ConfigService 默认加载', () => {
     service = app.get<ConfigService>(ConfigService);
   });
 
-  it(`ConfigService初始化`, () => {
+  it(`ConfigService测试`, () => {
     expect(service).toBeDefined(); // 测试初始化
     expect(service.get<string>('undefined')).toBe(undefined);
     expect(service.get<number>('PORT')).toBe(5000); // 测试获取值是否正确
