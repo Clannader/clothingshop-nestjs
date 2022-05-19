@@ -1,6 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { join } from 'path';
 import { ConfigModule } from '../../src/common/config';
+import { TestConfigModule } from './test.config.module';
+import { TestConfigTokenController } from './test.config.token.controller';
 
 @Module({})
 export class AppModule {
@@ -90,5 +92,41 @@ export class AppModule {
     };
   }
 
+  static watchFalseIniFile(): DynamicModule {
+    return {
+      module: AppModule,
+      imports: [
+        ConfigModule.register({
+          iniFilePath: join(__dirname, 'config.ini')
+        }),
+      ],
+    };
+  }
+
   // 还有一个token的令牌测试,需要测试全局实例化,全局后,可单独实例化,每一个实例都是单独的内存值,需要测试是否互相干扰
+  static getGlobalIni(): DynamicModule {
+    return {
+      module: AppModule,
+      imports: [
+        ConfigModule.register({
+          iniFilePath: join(__dirname, 'config.ini'),
+          isGlobal: true
+        }),
+        TestConfigModule
+      ],
+    };
+  }
+
+  static getTokenIni(): DynamicModule {
+    return {
+      module: AppModule,
+      imports: [
+        ConfigModule.register({
+          iniFilePath: join(__dirname, 'config.ini'),
+          token: 'TOKEN'
+        })
+      ],
+      controllers: [TestConfigTokenController]
+    };
+  }
 }
