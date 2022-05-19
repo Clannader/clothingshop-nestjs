@@ -25,7 +25,7 @@ describe('ConfigService token测试', () => {
     return request(app.getHttpServer())
       .get('/api/test/search')
       .expect(200)
-      .expect(5000);
+      .expect('5000');
   });
 
 

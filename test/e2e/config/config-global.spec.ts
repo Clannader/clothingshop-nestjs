@@ -21,7 +21,7 @@ describe('ConfigService 测试全局初始化', () => {
     return request(app.getHttpServer())
       .get('/api/test/search')
       .expect(200)
-      .expect(5000);
+      .expect('5000');
   });
 
 

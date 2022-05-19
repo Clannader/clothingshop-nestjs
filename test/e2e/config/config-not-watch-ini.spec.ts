@@ -23,7 +23,7 @@ describe('ConfigService 测试不开启watch Ini文件', () => {
   });
 
   it(`ConfigService测试`, () => {
-    const iniPath = join(__dirname, '..', 'src/config.ini')
+    const iniPath = join(__dirname, '../..', 'src/config/config.ini')
     const iniContent = readFileSync(iniPath, 'utf-8').toString()
     service.set('AA', 'Hello')
     const setIniContent = readFileSync(iniPath, 'utf-8').toString()
@@ -36,7 +36,7 @@ describe('ConfigService 测试不开启watch Ini文件', () => {
   });
 
   it(`ConfigService测试文件写入2`, async () => {
-    const iniPath = join(__dirname, '..', 'src/config.ini')
+    const iniPath = join(__dirname, '../..', 'src/config/config.ini')
     const iniContent = readFileSync(iniPath, 'utf-8').toString()
     writeFileSync(iniPath, iniContent.endsWith('\r\n') ? iniContent + 'AA=Hello' : iniContent + '\r\nAA=Hello')
     await delay(1000)
