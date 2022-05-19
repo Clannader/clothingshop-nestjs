@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
-import { ConfigService } from '../../src/common/config';
+import { AppModule } from '../../src/config/app.module';
+import { ConfigService } from '../../../src/common/config';
 
 describe('ConfigService 加载带参变量', () => {
   let service: ConfigService;
