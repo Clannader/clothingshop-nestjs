@@ -11,6 +11,7 @@ import { join } from 'path';
 describe('ConfigService 观察ini文件', () => {
   let service: ConfigService;
   let app: INestApplication;
+  const delay = (time: number) => new Promise(resolve => setTimeout(() => resolve(''), time));
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -43,6 +44,15 @@ describe('ConfigService 观察ini文件', () => {
       service.set('AA', '')
       cb()
     }, 1000)
+  });
+
+  it(`ConfigService测试文件写入2`, async () => {
+    const iniPath = join(__dirname, '..', 'src/config.ini')
+    const iniContent = readFileSync(iniPath, 'utf-8').toString()
+    writeFileSync(iniPath, iniContent.endsWith('\r\n') ? iniContent + 'AA=Hello' : iniContent + '\r\nAA=Hello')
+    await delay(1000)
+    expect(service.get('AA')).toBe('Hello')
+    service.set('AA', '')
   });
 
   afterEach(async () => {
