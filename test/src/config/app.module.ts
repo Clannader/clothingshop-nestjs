@@ -3,6 +3,8 @@ import { join } from 'path';
 import { ConfigModule } from '../../../src/common/config';
 import { TestConfigModule } from './test.config.module';
 import { TestConfigTokenController } from './test.config.token.controller';
+import { TestConfig2Controller } from './test.config2.controller';
+import { TestConfig2Module } from './test.config2.module';
 
 @Module({})
 export class AppModule {
@@ -127,6 +129,20 @@ export class AppModule {
         })
       ],
       controllers: [TestConfigTokenController]
+    };
+  }
+
+  static getTokenAndGlobal(): DynamicModule {
+    return {
+      module: AppModule,
+      imports: [
+        ConfigModule.register({
+          iniFilePath: join(__dirname, 'config.ini'),
+          isGlobal: true
+        }),
+        TestConfig2Module
+      ],
+      controllers: [TestConfig2Controller]
     };
   }
 }

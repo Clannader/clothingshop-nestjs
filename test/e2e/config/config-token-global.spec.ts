@@ -4,29 +4,36 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../../src/config/app.module';
-import { ConfigService } from '../../../src/common/config';
+// import { ConfigService } from '../../../src/common/config';
 import * as request from 'supertest';
 
 describe('ConfigService token测试', () => {
-  let service: ConfigService;
+  // let service: ConfigService;
   let app: INestApplication;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [AppModule.getTokenIni()],
+      imports: [AppModule.getTokenAndGlobal()],
     }).compile();
     app = module.createNestApplication();
     await app.init();
-    service = app.get<ConfigService>('TOKEN');
   });
 
-  it(`ConfigService 获取ini`, () => {
-    expect(service).toBeDefined();
-    expect(app.get<ConfigService>(ConfigService)).toBeDefined()
+  it(`ConfigService 获取全局`, () => {
     return request(app.getHttpServer())
       .get('/api/test/search')
       .expect(200)
       .expect('5000');
+  });
+
+  it(`ConfigService 获取token`, () => {
+    return request(app.getHttpServer())
+      .get('/api/test/token')
+      .expect(200)
+      .expect({
+        token: '5000',
+        token2: '4000'
+      });
   });
 
 
