@@ -22,13 +22,15 @@ describe('ConfigService token测试', () => {
 
   it(`ConfigService 获取ini`, () => {
     expect(service).toBeDefined();
-    expect(app.get<ConfigService>(ConfigService)).toBeDefined()
+    expect(app.get<ConfigService>(ConfigService)).toBeDefined();
     return request(app.getHttpServer())
-      .get('/api/test/search')
+      .get('/api/test/token')
       .expect(200)
-      .expect('5000');
+      .expect({
+        token: 5000,
+        global: 5000,
+      });
   });
-
 
   afterEach(async () => {
     await app.close();

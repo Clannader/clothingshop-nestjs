@@ -3,8 +3,7 @@ import { join } from 'path';
 import { ConfigModule } from '../../../src/common/config';
 import { TestConfigModule } from './test.config.module';
 import { TestConfigTokenController } from './test.config.token.controller';
-import { TestConfig2Controller } from './test.config2.controller';
-import { TestConfig2Module } from './test.config2.module';
+import { TestConfigController } from './test.config.controller';
 
 @Module({})
 export class AppModule {
@@ -88,7 +87,7 @@ export class AppModule {
       imports: [
         ConfigModule.register({
           iniFilePath: join(__dirname, 'config-watch.ini'),
-          isWatch: true
+          isWatch: true,
         }),
       ],
     };
@@ -99,7 +98,7 @@ export class AppModule {
       module: AppModule,
       imports: [
         ConfigModule.register({
-          iniFilePath: join(__dirname, 'config.ini')
+          iniFilePath: join(__dirname, 'config.ini'),
         }),
       ],
     };
@@ -112,9 +111,9 @@ export class AppModule {
       imports: [
         ConfigModule.register({
           iniFilePath: join(__dirname, 'config.ini'),
-          isGlobal: true
+          isGlobal: true,
         }),
-        TestConfigModule
+        TestConfigModule,
       ],
     };
   }
@@ -125,10 +124,10 @@ export class AppModule {
       imports: [
         ConfigModule.register({
           iniFilePath: join(__dirname, 'config.ini'),
-          token: 'TOKEN'
-        })
+          token: 'TOKEN',
+        }),
       ],
-      controllers: [TestConfigTokenController]
+      controllers: [TestConfigTokenController],
     };
   }
 
@@ -138,11 +137,11 @@ export class AppModule {
       imports: [
         ConfigModule.register({
           iniFilePath: join(__dirname, 'config.ini'),
-          isGlobal: true
+          isGlobal: true,
         }),
-        TestConfig2Module
+        TestConfigModule,
       ],
-      controllers: [TestConfig2Controller]
+      controllers: [TestConfigController],
     };
   }
 }

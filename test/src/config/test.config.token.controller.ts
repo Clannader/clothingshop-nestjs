@@ -4,10 +4,16 @@ import { ConfigService } from '../../../src/common/config';
 @Controller('/api/test')
 export class TestConfigTokenController {
   @Inject('TOKEN')
-  private readonly configService: ConfigService;
+  private readonly tokenConfigService: ConfigService;
 
-  @Get('search')
+  @Inject()
+  private readonly globalConfigService: ConfigService;
+
+  @Get('token')
   getTokenContent() {
-    return this.configService.get<string>('PORT')
+    return {
+      token: this.tokenConfigService.get<string>('PORT'),
+      global: this.globalConfigService.get<string>('PORT'),
+    };
   }
 }

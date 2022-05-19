@@ -8,6 +8,6 @@ export class TestConfigController {
 
   @Get('search')
   getIniContent() {
-    return this.configService.get<number>('PORT')
+    return this.configService.get<number>('PORT');
   }
 }

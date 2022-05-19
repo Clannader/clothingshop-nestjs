@@ -24,7 +24,6 @@ describe('ConfigService 测试全局初始化', () => {
       .expect('5000');
   });
 
-
   afterEach(async () => {
     await app.close();
   });
