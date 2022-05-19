@@ -12,8 +12,8 @@ export class TestConfigTokenController {
   @Get('token')
   getTokenContent() {
     return {
-      token: this.tokenConfigService.get<string>('PORT'),
-      global: this.globalConfigService.get<string>('PORT'),
+      token: this.tokenConfigService.get<number>('PORT'),
+      global: this.globalConfigService.get<number>('PORT'),
     };
   }
 }
