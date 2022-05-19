@@ -17,10 +17,11 @@ describe('ConfigService token测试', () => {
     }).compile();
     app = module.createNestApplication();
     await app.init();
-    service = app.get<ConfigService>(ConfigService);
+    service = app.get<ConfigService>('TOKEN');
   });
 
   it(`ConfigService 获取ini`, () => {
+    expect(service).toBeDefined();
     return request(app.getHttpServer())
       .get('/api/test/search')
       .expect(200)
