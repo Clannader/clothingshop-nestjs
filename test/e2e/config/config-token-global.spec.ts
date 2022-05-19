@@ -26,13 +26,15 @@ describe('ConfigService token测试', () => {
       .expect('5000');
   });
 
-  it(`ConfigService 获取token`, () => {
+  it(`ConfigService 获取token`, async () => {
+    await request(app.getHttpServer())
+      .get('/api/test/search');
     return request(app.getHttpServer())
       .get('/api/test/token')
       .expect(200)
       .expect({
-        token: '5000',
-        token2: '4000'
+        token: 4000,
+        token2: 5000
       });
   });
 
