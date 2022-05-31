@@ -15,6 +15,18 @@ Nest将只发送值,而不尝试序列化它.这使响应处理变得简单:只�
 你将不会得到你想要的结果。如果需要在某个处理函数上同时使用这两种方法（
 例如，通过注入响应对象，单独设置 cookie / header，但把其余部分留给框架），
 你必须在装饰器 @Res({ passthrough: true }) 中将 passthrough 选项设为 true
+2022-06-01
+    关于webstorm和eclipse提交github项目时,合并代码发现差异不一致的问题.首先是当你修改一个文件
+一点内容时,使用webstorm和eclipse两种不同的编译器提交时,合并代码发现对比的差异不一致,使用eclipse
+提交时,差异就是你修改的内容,但是使用webstorm提交时,显示的差异是整个文件,具体看地址
+https://blog.csdn.net/weixin_44000238/article/details/108399817
+    查出原因是两种不同的编译器提交代码时的commit有区别,push代码时没有区别.eclipse commit代码时,
+如果git的config文件没有配置core.autocrlf会默认false,本人猜测webstorm没有配置core.autocrlf时,默认了true
+这样就能解释为什么使用eclipse提交代码时,合并并没有显示那么多差异的原因,使用webstorm提交时,默认了true,导致整个
+文件的换行符改变了,所以才会合并时显示整个文件都有了修改
+    如果发现webstorm提交代码有问题时,配置git config --global core.autocrlf true这个就可以解决了,可能本地项目
+一开始就使用了webstorm提交代码,导致如果使用eclipse提交时也没有去修改换行符,所以估计这种情况的提交代码是没有区别的,如果
+一开始使用了eclipse提交代码,可能就有区别了
 ```
 ####异步代码
 ```bash
