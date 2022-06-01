@@ -2,6 +2,9 @@
  * 这里是cms系统的api模块
  */
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
+
 import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
 import { HttpInterceptor } from './interceptor';
@@ -11,7 +14,8 @@ import { UserModule } from './user/user.module';
 import { SystemModule } from './system/system.module';
 import { LoginModule } from './login/login.module';
 import { TestModule } from './test/test.module';
-import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
+
+import { MongooseConfigService } from './dao/mongoose.config.service';
 
 @Module({
   imports: [
@@ -30,6 +34,9 @@ import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
       isWatch: true,
       expandVariables: true,
     }),
+    MongooseModule.forRootAsync({
+      useClass: MongooseConfigService
+    })
   ],
   controllers: [],
   providers: [
