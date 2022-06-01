@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
-const MongoStore = require('connect-mongo')
+import MongoStore from 'connect-mongo';
 import './logger/log4js.logger';
 import { AppModule } from './app.module';
 import { AopLogger } from './logger';
@@ -9,7 +9,12 @@ import helmet from 'helmet';
 import { join } from 'path';
 import { renderFile } from 'ejs';
 import * as session from 'express-session';
-import { sessionName, sessionSecret, ConfigService, dbSession_Expires } from './common';
+import {
+  sessionName,
+  sessionSecret,
+  ConfigService,
+  dbSession_Expires,
+} from './common';
 import { MongooseConfigService } from './dao/mongoose.config.service';
 
 // import * as fs from 'fs';
@@ -53,7 +58,7 @@ async function bootstrap() {
       resave: true,
       store: MongoStore.create({
         client: mongooseService.getConnection().getClient(),
-        ttl: dbSession_Expires
+        ttl: dbSession_Expires,
       }),
     }),
   );

@@ -35,8 +35,8 @@ import { MongooseConfigService } from './dao/mongoose.config.service';
       expandVariables: true,
     }),
     MongooseModule.forRootAsync({
-      useClass: MongooseConfigService
-    })
+      useClass: MongooseConfigService,
+    }),
   ],
   controllers: [],
   providers: [
