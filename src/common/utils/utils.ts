@@ -1,6 +1,8 @@
 import * as CryptoJS from 'crypto-js';
-import { tripleDES } from '../constants';
-import { get, isPlainObject, has } from 'lodash';
+import { tripleDES, ipExp } from '../constants';
+import { get, isPlainObject, has, forEach } from 'lodash';
+import { Request } from 'express';
+import * as os from 'os';
 
 /**
  * 系统工具类
@@ -163,5 +165,29 @@ export class Utils {
       return match;
     });
     return message;
+  }
+
+  /**
+   * 获取请求ip地址
+   */
+  static getRequestIP(req: Request) {
+    let ip = req.socket.remoteAddress;
+    if (ip && typeof ip === 'string') {
+      ip = ip.substring(ip.lastIndexOf(':') + 1);
+    }
+    if (!ipExp.test(ip)) {
+      const interfaces = os.networkInterfaces();
+      ip = null; //置null
+      forEach(interfaces, function (value) {
+        if (ip) return false; //ip有值就跳出循环
+        forEach(value, function (v) {
+          if (v.family === 'IPv4') {
+            ip = v.address;
+            return false;
+          }
+        });
+      });
+    }
+    return ip || '127.0.0.1';
   }
 }

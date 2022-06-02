@@ -1,6 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
+
+// 我真的是醉了,官网没有@types的包,使用import运行时又报错
+// 使用require时,使用lint解析又报错,只能忽略这个错误了,以后再说了,坑爹
+/* eslint-disable @typescript-eslint/no-var-requires */
+// const MongoStore = require('connect-mongo');
+import MongoStore from 'connect-mongo/build/main/lib/MongoStore';
+
 import './logger/log4js.logger';
 import { AppModule } from './app.module';
 import { AopLogger } from './logger';
@@ -8,7 +15,13 @@ import helmet from 'helmet';
 import { join } from 'path';
 import { renderFile } from 'ejs';
 import * as session from 'express-session';
-import { sessionName, sessionSecret, ConfigService } from './common';
+import {
+  sessionName,
+  sessionSecret,
+  ConfigService,
+  dbSession_Expires,
+} from './common';
+import { MongooseConfigService } from './dao/mongoose.config.service';
 
 // import * as fs from 'fs';
 
@@ -34,6 +47,7 @@ async function bootstrap() {
   const config: ConfigService = app.get<ConfigService>(ConfigService);
   const port = config.get<number>('httpPort', 3000);
   const hostName = config.get<string>('hostName', 'localhost');
+  const mongooseService = app.get<MongooseConfigService>(MongooseConfigService);
 
   app.use(helmet());
   app.disable('x-powered-by'); // 还是有效果的,一旦用了helmet,框架自动帮去掉这个头了
@@ -48,7 +62,10 @@ async function bootstrap() {
       secret: sessionSecret,
       saveUninitialized: false,
       resave: true,
-      // store: '',  这里缺少引用数据库的store
+      store: MongoStore.create({
+        client: mongooseService.getConnection().getClient(),
+        ttl: dbSession_Expires,
+      }),
     }),
   );
 
