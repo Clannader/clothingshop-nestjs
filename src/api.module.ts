@@ -15,7 +15,7 @@ import { LoginModule } from './login/login.module';
 import { TestModule } from './test/test.module';
 import { HttpInterceptorModule } from './interceptor';
 
-import { MongooseConfigService } from './dao/mongoose.config.service';
+import { MongooseConfigService } from './dao';
 
 @Module({
   imports: [
