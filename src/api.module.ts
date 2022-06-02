@@ -3,17 +3,17 @@
  */
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
 import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
-import { HttpInterceptor } from './interceptor';
 
 import { CommonModule, ConfigModule } from './common';
 import { UserModule } from './user/user.module';
 import { SystemModule } from './system/system.module';
 import { LoginModule } from './login/login.module';
 import { TestModule } from './test/test.module';
+import { HttpInterceptorModule } from './interceptor';
 
 import { MongooseConfigService } from './dao/mongoose.config.service';
 
@@ -37,8 +37,8 @@ import { MongooseConfigService } from './dao/mongoose.config.service';
     MongooseModule.forRootAsync({
       useClass: MongooseConfigService,
     }),
+    HttpInterceptorModule,
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_FILTER,
@@ -47,10 +47,6 @@ import { MongooseConfigService } from './dao/mongoose.config.service';
     {
       provide: APP_PIPE,
       useClass: ValidationPipe,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: HttpInterceptor,
     },
   ],
 })
