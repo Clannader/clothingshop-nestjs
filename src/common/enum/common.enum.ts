@@ -14,7 +14,7 @@ export enum CodeEnum {
  */
 export enum UserTypeEnum {
   SYSTEM = 'SYSTEM',
-  NORMAL = 'NORMAL',
+  // NORMAL = 'NORMAL',
   THIRD = '3RD',
 }
 
@@ -40,4 +40,28 @@ export enum UserStatusEnum {
 export enum LanguageEnum {
   EN = 'EN',
   ZH = 'ZH',
+}
+
+/**
+ * 日志类型
+ */
+export enum LogTypeEnum {
+  Right = 'Right',
+  Config = 'Config',
+  Browser = 'Browser',
+  Interface = 'Interface',
+  ServerLog = 'ServerLog',
+  User = 'User',
+}
+
+/**
+ * 请求类型
+ */
+export enum RequestMethod {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE',
+  PATCH = 'PATCH',
+  OPTIONS = 'OPTIONS',
 }
