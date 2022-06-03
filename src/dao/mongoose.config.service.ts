@@ -8,6 +8,7 @@ import {
 } from '@nestjs/mongoose';
 import { ConfigService } from '../common';
 import { Connection } from 'mongoose';
+import { monitorPlugin } from './plugin'
 
 @Injectable()
 export class MongooseConfigService implements MongooseOptionsFactory {
@@ -23,7 +24,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       retryAttempts: 30, // 重连次数
       user: this.configService.getSecurityConfig('dbUser'),
       pass: this.configService.getSecurityConfig('dbPws'),
-      connectionFactory: (connection) => {
+      connectionFactory: (connection: Connection) => {
         //数据库连接错误时报错
         connection.on('error', function (err) {
           console.log('数据库出错');
@@ -42,6 +43,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
         connection.on('reconnected', function () {
           console.log('数据库重连成功');
         });
+        connection.plugin(monitorPlugin)
         this.connection = connection;
         return connection;
       },

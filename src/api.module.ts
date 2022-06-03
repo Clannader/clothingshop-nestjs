@@ -62,8 +62,10 @@ export class ApiModule implements NestModule {
       .apply(ApiMiddleware)
       .exclude({
         path: '/cms/api/user/login',
-        method: RequestMethod.POST,
+        method: RequestMethod.ALL,
       })
+      // 这里会有个bug,那就是/cms/api/开头的地址如果不存在时也会进入到这个中间件中
+      // 这时候就会报中间件的错误信息而不是404
       .forRoutes('/cms/api/*');
   }
 }
