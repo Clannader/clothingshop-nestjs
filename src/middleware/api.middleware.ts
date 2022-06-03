@@ -4,7 +4,13 @@
  */
 import { Injectable, NestMiddleware, Inject } from '@nestjs/common';
 import { Response, NextFunction } from 'express';
-import { CodeEnum, GlobalService, Utils, Session_Expires, RequestSession } from '../common';
+import {
+  CodeEnum,
+  GlobalService,
+  Utils,
+  Session_Expires,
+  RequestSession,
+} from '../common';
 
 @Injectable()
 export class ApiMiddleware implements NestMiddleware {
