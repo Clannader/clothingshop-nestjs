@@ -8,7 +8,7 @@ import {
 } from '@nestjs/mongoose';
 import { ConfigService } from '../common';
 import { Connection } from 'mongoose';
-import { monitorPlugin } from './plugin'
+import { monitorPlugin } from './plugin';
 
 @Injectable()
 export class MongooseConfigService implements MongooseOptionsFactory {
@@ -43,7 +43,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
         connection.on('reconnected', function () {
           console.log('数据库重连成功');
         });
-        connection.plugin(monitorPlugin)
+        connection.plugin(monitorPlugin);
         this.connection = connection;
         return connection;
       },
