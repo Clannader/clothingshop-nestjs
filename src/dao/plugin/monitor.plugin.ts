@@ -16,12 +16,15 @@ export const monitorPlugin = function (schema: Schema): void {
     logger.info('创建后:%s', JSON.stringify(result)); // 这里的result只是加多了一个__v字段
   });
 
-  schema.pre('find', function () {
+  schema.pre('find', async function () {
     logger.info('find前');
-    this.mongooseOptions({
-      lean: true, // TODO 测试是不是全部查询都生效
-    });
+    // this.mongooseOptions({
+    //   // lean: true, // 测试发现确实是这里使用中间件可以设置全部查询都是使用这个参数了
+    // });
     this.set('time', new Date().getTime());
+    const fun = () =>
+      new Promise((resolve) => setTimeout(() => resolve(1), 300));
+    await fun();
     // pre里面传什么方法,外部调用就是什么方法名
     // console.log(this.model.modelName) // 表名
     // console.log(this.getQuery()) // 查询语句
