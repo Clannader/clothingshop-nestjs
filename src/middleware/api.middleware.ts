@@ -3,15 +3,15 @@
  * api接口的全局中间件
  */
 import { Injectable, NestMiddleware, Inject } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import { CodeEnum, GlobalService, Utils, Session_Expires } from '../common';
+import { Response, NextFunction } from 'express';
+import { CodeEnum, GlobalService, Utils, Session_Expires, RequestSession } from '../common';
 
 @Injectable()
 export class ApiMiddleware implements NestMiddleware {
   @Inject()
   private globalService: GlobalService;
 
-  async use(req: Request, res: Response, next: NextFunction) {
+  async use(req: RequestSession, res: Response, next: NextFunction) {
     if (!Utils.isHasJsonHeader(req)) {
       return res.send({
         code: CodeEnum.INVALID_HEADERS,
@@ -63,7 +63,7 @@ export class ApiMiddleware implements NestMiddleware {
     next();
   }
 
-  private deleteSession(req: Request): Promise<void> {
+  private deleteSession(req: RequestSession): Promise<void> {
     delete req.session;
     return new Promise((resolve) => {
       req.sessionStore.destroy(req.sessionID, () => {
