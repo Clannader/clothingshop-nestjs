@@ -1,7 +1,12 @@
 /**
  * 这里是cms系统的api模块
  */
-import { Module } from '@nestjs/common';
+import {
+  Module,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
@@ -14,6 +19,7 @@ import { SystemModule } from './system/system.module';
 import { LoginModule } from './login/login.module';
 import { TestModule } from './test/test.module';
 import { HttpInterceptorModule } from './interceptor';
+import { ApiMiddleware } from './middleware';
 
 import { MongooseConfigService } from './dao';
 
@@ -50,4 +56,14 @@ import { MongooseConfigService } from './dao';
     },
   ],
 })
-export class ApiModule {}
+export class ApiModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(ApiMiddleware)
+      .exclude({
+        path: '/cms/api/user/login',
+        method: RequestMethod.POST,
+      })
+      .forRoutes('/cms/api/*');
+  }
+}

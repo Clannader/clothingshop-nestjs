@@ -21,7 +21,7 @@ import {
   ConfigService,
   dbSession_Expires,
 } from './common';
-import { MongooseConfigService } from './dao/mongoose.config.service';
+import { MongooseConfigService } from './dao';
 
 // import * as fs from 'fs';
 
