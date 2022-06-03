@@ -190,4 +190,14 @@ export class Utils {
     }
     return ip || '127.0.0.1';
   }
+
+  static isHasJsonHeader(req: Request) {
+    return req.headers && req.headers['content-type']
+      && req.headers['content-type'] === 'application/json';
+  }
+
+  static isHasRequestedHeader(req: Request) {
+    return req.headers && req.headers['content-type']
+      && req.headers['x-requested-with'] === 'XMLHttpRequest';
+  }
 }

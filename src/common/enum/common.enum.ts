@@ -6,6 +6,9 @@ export enum CodeEnum {
   NO_RIGHTS = 1004, // 没有权限时返回该响应码
   EXCEPTION = 1005, // 发生异常时返回该响应码
   INVALID_SYS_SETUP = 1006, // 系统参数未开启时返回该响应码
+  INVALID_HEADERS = 1007, // 请求头错误时返回该响应码
+  SESSION_EXPIRED = 1008, // 凭证过期返回该响应码
+  FIRST_LOGIN = 1009, // 第一次登录需要修改密码
   UNKNOWN = 9999, // 发生未知错误时返回该响应码
 }
 
