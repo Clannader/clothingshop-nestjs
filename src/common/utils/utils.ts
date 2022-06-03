@@ -192,12 +192,18 @@ export class Utils {
   }
 
   static isHasJsonHeader(req: Request) {
-    return req.headers && req.headers['content-type']
-      && req.headers['content-type'] === 'application/json';
+    return (
+      req.headers &&
+      req.headers['content-type'] &&
+      req.headers['content-type'] === 'application/json'
+    );
   }
 
   static isHasRequestedHeader(req: Request) {
-    return req.headers && req.headers['content-type']
-      && req.headers['x-requested-with'] === 'XMLHttpRequest';
+    return (
+      req.headers &&
+      req.headers['content-type'] &&
+      req.headers['x-requested-with'] === 'XMLHttpRequest'
+    );
   }
 }
