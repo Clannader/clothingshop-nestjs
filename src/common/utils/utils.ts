@@ -190,4 +190,60 @@ export class Utils {
     }
     return ip || '127.0.0.1';
   }
+
+  static isHasJsonHeader(req: Request) {
+    return (
+      req.headers &&
+      req.headers['content-type'] &&
+      req.headers['content-type'] === 'application/json'
+    );
+  }
+
+  static isHasRequestedHeader(req: Request) {
+    return (
+      req.headers &&
+      req.headers['content-type'] &&
+      req.headers['x-requested-with'] === 'XMLHttpRequest'
+    );
+  }
+
+  static stringifyParams(
+    obj: Record<string, string>,
+    sep = '&',
+    eq = '=',
+  ): string {
+    const temp = JSON.stringify(obj);
+    if (!isPlainObject(obj) || Object.keys(obj).length === 0) {
+      return temp;
+    }
+    const arr = [];
+    this.appendParams(arr, obj, eq);
+    const returnArr = [];
+    forEach(arr, (value) => {
+      returnArr.push(value);
+    });
+    return returnArr.join(sep);
+  }
+
+  private static appendParams(
+    arr: string[],
+    obj: Record<string, any>,
+    eq: string,
+    prefix?: string,
+  ) {
+    forEach(obj, (value, key) => {
+      if (prefix) key = prefix + '.' + key;
+      let row = JSON.stringify(value);
+      if (!isPlainObject(value) || row === '{}') {
+        //值不是对象,或者是数组处理
+        if (row === 'null' || row === undefined) {
+          row = '';
+        }
+        arr.push(key + eq + row);
+      } else {
+        //值是一个对象处理
+        this.appendParams(arr, value, eq, key);
+      }
+    });
+  }
 }

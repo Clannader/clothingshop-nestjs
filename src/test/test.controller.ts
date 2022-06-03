@@ -21,7 +21,7 @@ import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
 // import { UserService } from '../user/user.service';
 
 @ApiCommon()
-@Controller('/cms/api/test')
+@Controller('/cms')
 @ApiTags('TestController')
 export class TestController {
   @Inject()
@@ -36,7 +36,7 @@ export class TestController {
   // @Inject('TEST_CONFIG')
   // private readonly config2Service: ConfigService;
 
-  @Post('/post')
+  @Post('/api/test/post')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '测试 POST 泛型接口',
@@ -108,7 +108,7 @@ export class TestController {
     return resp;
   }
 
-  @Get('/get')
+  @Get('/api/test/get')
   @ApiOperation({
     summary: '测试 GET 泛型接口',
     description: '测试泛型接口',
@@ -117,6 +117,23 @@ export class TestController {
     type: RespTestSchemaDto,
   })
   testingGet(@Query() params: ReqTestSchemaDto) {
+    console.log(params);
+    const resp = new RespTestSchemaDto();
+    resp.code = CodeEnum.SUCCESS;
+    resp.rows = 23;
+    resp.schema = params.testObject;
+    return resp;
+  }
+
+  @Get('/gateway/test/get')
+  @ApiOperation({
+    summary: '测试 GET gateway接口',
+    description: '测试gateway接口',
+  })
+  @ApiCustomResponse({
+    type: RespTestSchemaDto,
+  })
+  gatewayGet(@Query() params: ReqTestSchemaDto) {
     console.log(params);
     const resp = new RespTestSchemaDto();
     resp.code = CodeEnum.SUCCESS;

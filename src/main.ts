@@ -7,6 +7,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 /* eslint-disable @typescript-eslint/no-var-requires */
 // const MongoStore = require('connect-mongo');
 import MongoStore from 'connect-mongo/build/main/lib/MongoStore';
+import * as cookieParser from 'cookie-parser';
 
 import './logger/log4js.logger';
 import { AppModule } from './app.module';
@@ -21,7 +22,8 @@ import {
   ConfigService,
   dbSession_Expires,
 } from './common';
-import { MongooseConfigService } from './dao/mongoose.config.service';
+import { MongooseConfigService } from './dao';
+import { SessionMiddleware } from './middleware';
 
 // import * as fs from 'fs';
 
@@ -55,7 +57,8 @@ async function bootstrap() {
   // app.useGlobalInterceptors(new LogInterceptor(aopLogger));
   // app.setGlobalPrefix('cms'); // 这里类似于设置context-path,设置全局的路由前缀,不影响swagger的地址路由
   // 也就是说swagger的路由访问是不用加上前缀的
-
+  app.use(cookieParser());
+  app.use(SessionMiddleware);
   app.use(
     session({
       name: sessionName,

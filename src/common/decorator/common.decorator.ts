@@ -95,6 +95,18 @@ export function ApiCommon(showCredential = true) {
       description: '系统参数未开启时返回该响应码',
     }),
     ApiResponse({
+      status: CodeEnum.INVALID_HEADERS,
+      description: '请求头错误时返回该响应码',
+    }),
+    ApiResponse({
+      status: CodeEnum.SESSION_EXPIRED,
+      description: '凭证过期返回该响应码',
+    }),
+    ApiResponse({
+      status: CodeEnum.FIRST_LOGIN,
+      description: '第一次登录需要修改密码',
+    }),
+    ApiResponse({
       status: CodeEnum.UNKNOWN,
       description: '发生未知错误时返回该响应码',
     }),
