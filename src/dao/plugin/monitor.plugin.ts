@@ -31,7 +31,7 @@ export const monitorPlugin = function (schema: Schema): void {
     // post()时的get(key)是get不出来的。如果key等于了schema里面的值时,就会覆盖外层调用设置的值,所以不可取
     // 还有一种方法就是直接this.xxx=xxx,然后post()时,result.xxx可以获取到值,但是如果xxx等于了schema里面某个
     // 字段的值时会修改外层调用时的对于的key的值
-
+    // 这里相当于创建的时候加入了_lastTime这个字段,但是由于schema里面没有声明这个字段,所以不会存库
     this._lastTime = new Date().getTime()
   });
   schema.post('save', function (result) {
@@ -39,7 +39,7 @@ export const monitorPlugin = function (schema: Schema): void {
     const { _id, __v, ...params } = JSON.parse(JSON.stringify(result))
     const logJSON = {
       methodName: 'create',
-      modelName: this.model.modelName,
+      modelName: schema.statics['getAliasName'].call(this),
       result: JSON.stringify({ _id, ...params }),
       params: JSON.stringify(params),
       diffTime: new Date().getTime() - result._lastTime
