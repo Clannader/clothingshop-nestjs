@@ -100,10 +100,10 @@ export const AdminAccessSchema = SchemaFactory.createForClass(AdminAccess);
  * 给所有的表起一个别名,这个是获取表的别名的一个方法
  * 所以所有的表都需要加上这个同名的方法才能在插件中获得这个别名
  */
-AdminAccessSchema.statics.getAliasName = function() {
- return 'AccessLog'
-}
+AdminAccessSchema.statics.getAliasName = function () {
+  return 'AccessLog';
+};
 
 export interface AdminAccessModel extends Model<AdminAccess> {
   getAliasName(): string;
-};
+}

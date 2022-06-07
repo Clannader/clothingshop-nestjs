@@ -121,23 +121,31 @@ export class Utils {
     return obj == null || obj === '' || obj === 'undefined';
   }
 
-  static replaceArgsFromJson(str: string): string
-  static replaceArgsFromJson(str: string, obj: Record<string, any>): string
-  static replaceArgsFromJson(str: string, obj: Record<string, any>, exp: RegExp): string
-  static replaceArgsFromJson(str: string, obj: Record<string, any>, isReturnNull: boolean): string
+  static replaceArgsFromJson(str: string): string;
+  static replaceArgsFromJson(str: string, obj: Record<string, any>): string;
+  static replaceArgsFromJson(
+    str: string,
+    obj: Record<string, any>,
+    exp: RegExp,
+  ): string;
+  static replaceArgsFromJson(
+    str: string,
+    obj: Record<string, any>,
+    isReturnNull: boolean,
+  ): string;
   static replaceArgsFromJson(
     str = '',
     obj: Record<string, any> = {},
     exp: RegExp | boolean = /\{[A-Za-z0-9\.\[\]]+\}/g,
-    isReturnNull: boolean = false
+    isReturnNull = false,
   ): string {
     if (this.isEmpty(str) || !isPlainObject(obj)) {
       return str;
     }
     let message = '';
     if (typeof exp === 'boolean') {
-      isReturnNull = exp
-      exp = /\{[A-Za-z0-9\.\[\]]+\}/g
+      isReturnNull = exp;
+      exp = /\{[A-Za-z0-9\.\[\]]+\}/g;
     }
     message += str.replace(exp, (match) => {
       // 这里的正则表达式必须含有{}否则取不出key出来的

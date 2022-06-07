@@ -55,22 +55,7 @@ export class HttpInterceptor implements NestInterceptor {
         cookie: request.cookies,
       }),
     };
-    // this.adminAccessService.getModel().create(createParams);
-    this.adminAccessService
-      .getModel()
-      .find({ adminId: '01' }, { ip: 1 }, (err, result) => {
-        // console.log(result)
-        result.forEach((v) => {
-          v.id = v._id;
-        });
-        console.log(result);
-      })
-      .lean();
-    this.adminAccessService
-      .getModel()
-      .findOne({ adminId: '01' }, { adminId: 1 }, (err, result) => {
-        // console.log(result)
-      });
+    this.adminAccessService.getModel().create(createParams);
     return next.handle().pipe(
       tap(() => {
         // 测试发现这个拦截器是在执行业务之后,返回客户端时拦截的,而不是在请求前拦截的

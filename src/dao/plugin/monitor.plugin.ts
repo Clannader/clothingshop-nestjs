@@ -3,10 +3,11 @@
  */
 import { Schema } from 'mongoose';
 import * as Log4js from 'log4js';
-import { Utils } from '../../common'
+import { Utils } from '../../common';
 
 const logger = Log4js.getLogger('fileLogs');
-const parserLog = '[{methodName}]-[{modelName}]-[{result}]-[{query}]-[{projection}]-[{options}]-[{params}]-[{diffTime}]'
+const parserLog =
+  '[{methodName}]-[{modelName}]-[{result}]-[{query}]-[{projection}]-[{options}]-[{params}]-[{diffTime}]';
 
 export const monitorPlugin = function (schema: Schema): void {
   // 中间件主要还是看mongoose的文档可以了解得更多
@@ -32,19 +33,19 @@ export const monitorPlugin = function (schema: Schema): void {
     // 还有一种方法就是直接this.xxx=xxx,然后post()时,result.xxx可以获取到值,但是如果xxx等于了schema里面某个
     // 字段的值时会修改外层调用时的对于的key的值
     // 这里相当于创建的时候加入了_lastTime这个字段,但是由于schema里面没有声明这个字段,所以不会存库
-    this._lastTime = new Date().getTime()
+    this._lastTime = new Date().getTime();
   });
   schema.post('save', function (result) {
     // logger.info('创建后:%s', JSON.stringify(result)); // 这里的result只是加多了一个__v字段
-    const { _id, __v, ...params } = JSON.parse(JSON.stringify(result))
+    const { _id, __v, ...params } = JSON.parse(JSON.stringify(result));
     const logJSON = {
       methodName: 'create',
       modelName: schema.statics['getAliasName'].call(this),
       result: JSON.stringify({ _id, ...params }),
       params: JSON.stringify(params),
-      diffTime: new Date().getTime() - result._lastTime
-    }
-    logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true))
+      diffTime: new Date().getTime() - result._lastTime,
+    };
+    logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
   });
 
   schema.pre('find', async function () {
@@ -59,27 +60,27 @@ export const monitorPlugin = function (schema: Schema): void {
     // console.log(this.getOptions()) // 其他参数
   });
   schema.post('find', function (result) {
-    writeFileLog.call(this, schema, 'find', result)
+    writeFileLog.call(this, schema, 'find', result);
   });
 
   schema.pre('findOne', function () {
     this.set('_lastTime', new Date().getTime());
   });
   schema.post('findOne', function (result) {
-    writeFileLog.call(this, schema, 'findOne', result)
+    writeFileLog.call(this, schema, 'findOne', result);
   });
 };
 
-const writeFileLog = function(schema, methodName, result) {
+const writeFileLog = function (schema, methodName, result) {
   const lastTime = this.get('_lastTime');
   const logJSON = {
     methodName,
     modelName: schema.statics['getAliasName'].call(this),
-    result: JSON.stringify(result || {}), // result有可能是空的,因为查询可能是null的
+    result: result ? JSON.stringify(result) : '', // result有可能是空的,因为查询可能是null的
     query: JSON.stringify(this.getQuery()),
     projection: JSON.stringify(this.projection()),
     options: JSON.stringify(this.getOptions()),
-    diffTime: new Date().getTime() - lastTime
-  }
-  logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true))
-}
+    diffTime: new Date().getTime() - lastTime,
+  };
+  logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
+};
