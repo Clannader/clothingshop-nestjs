@@ -48,14 +48,10 @@ export const monitorPlugin = function (schema: Schema): void {
   });
 
   schema.pre('find', async function () {
-    logger.info('find前');
     // this.mongooseOptions({
     //   // lean: true, // 测试发现确实是这里使用中间件可以设置全部查询都是使用这个参数了
     // });
-    this.set('time', new Date().getTime());
-    const fun = () =>
-      new Promise((resolve) => setTimeout(() => resolve(1), 300));
-    await fun();
+    this.set('_lastTime', new Date().getTime());
     // pre里面传什么方法,外部调用就是什么方法名
     // console.log(this.model.modelName) // 表名
     // console.log(this.getQuery()) // 查询语句
@@ -63,22 +59,27 @@ export const monitorPlugin = function (schema: Schema): void {
     // console.log(this.getOptions()) // 其他参数
   });
   schema.post('find', function (result) {
-    const lastTime = this.get('time');
-    logger.info('find后: %s ms', new Date().getTime() - lastTime);
-    // console.log(this._mongooseOptions)
-    // console.log(result) // 返回数据
+    writeFileLog.call(this, schema, 'find', result)
   });
 
   schema.pre('findOne', function () {
-    logger.info('findOne前');
-    this.set('time', new Date().getTime());
-    // console.log(this.getQuery())
-    // console.log(this.getOptions())
-    // console.log(this.projection())
+    this.set('_lastTime', new Date().getTime());
   });
   schema.post('findOne', function (result) {
-    const lastTime = this.get('time');
-    logger.info('findOne后: %s ms', new Date().getTime() - lastTime);
-    // console.log(result)
+    writeFileLog.call(this, schema, 'findOne', result)
   });
 };
+
+const writeFileLog = function(schema, methodName, result) {
+  const lastTime = this.get('_lastTime');
+  const logJSON = {
+    methodName,
+    modelName: schema.statics['getAliasName'].call(this),
+    result: JSON.stringify(result || {}), // result有可能是空的,因为查询可能是null的
+    query: JSON.stringify(this.getQuery()),
+    projection: JSON.stringify(this.projection()),
+    options: JSON.stringify(this.getOptions()),
+    diffTime: new Date().getTime() - lastTime
+  }
+  logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true))
+}
