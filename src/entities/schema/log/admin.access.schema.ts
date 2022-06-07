@@ -89,6 +89,7 @@ export class AdminAccess extends Document {
   @Prop({
     required: true,
     type: Object,
+    // alias: '字段别名'
   })
   headers: Record<string, any>; // 请求头内容
 }

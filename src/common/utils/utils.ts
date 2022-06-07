@@ -121,15 +121,24 @@ export class Utils {
     return obj == null || obj === '' || obj === 'undefined';
   }
 
+  static replaceArgsFromJson(str: string): string
+  static replaceArgsFromJson(str: string, obj: Record<string, any>): string
+  static replaceArgsFromJson(str: string, obj: Record<string, any>, exp: RegExp): string
+  static replaceArgsFromJson(str: string, obj: Record<string, any>, isReturnNull: boolean): string
   static replaceArgsFromJson(
     str = '',
     obj: Record<string, any> = {},
-    exp = /\{[A-Za-z0-9\.\[\]]+\}/g,
+    exp: RegExp | boolean = /\{[A-Za-z0-9\.\[\]]+\}/g,
+    isReturnNull: boolean = false
   ): string {
     if (this.isEmpty(str) || !isPlainObject(obj)) {
       return str;
     }
     let message = '';
+    if (typeof exp === 'boolean') {
+      isReturnNull = exp
+      exp = /\{[A-Za-z0-9\.\[\]]+\}/g
+    }
     message += str.replace(exp, (match) => {
       // 这里的正则表达式必须含有{}否则取不出key出来的
       // 由于正则中都包含{},但是有可能正则还含有其他字符,导致不一定是去头去尾,所以下面的代码不适用所有情况
@@ -139,7 +148,7 @@ export class Utils {
       const isMatch = regex.test(match);
       const index = RegExp.$1;
       if (!isMatch || !has(obj, index)) {
-        return match;
+        return isReturnNull ? '' : match;
       }
       return get(obj, index);
     });

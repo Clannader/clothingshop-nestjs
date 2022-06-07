@@ -3,17 +3,48 @@
  */
 import { Schema } from 'mongoose';
 import * as Log4js from 'log4js';
+import { Utils } from '../../common'
 
 const logger = Log4js.getLogger('fileLogs');
+const parserLog = '[{methodName}]-[{modelName}]-[{result}]-[{query}]-[{projection}]-[{options}]-[{params}]-[{diffTime}]'
 
 export const monitorPlugin = function (schema: Schema): void {
+  // 中间件主要还是看mongoose的文档可以了解得更多
+  // 中间件分4种:document 中间件,model 中间件,aggregate 中间件,和 query 中间件
+  // 每种中间件有对应的方法
+  // document操作对应 init validate save remove
+  // query 中间件对应 count find findOne findOneAndRemove findOneAndUpdate update
+  // aggregate 中间件对应 aggregate
+  // model 中间件对应 insertMany
+  // 注意query是没有remove钩子的,只有document有,所以设定了remove的钩子,将会在doc.remove()调用而不是model.remove()
+  // 中调用。并且create()函数触发的是save()钩子
+  // 钩子一般分串行和并行两种,但是这里一般使用的是串行了
+
+  // 注意2：save()函数触发validate()钩子,mongoose validate()其实就是pre('save')钩子,这意味着pre('validate')和
+  // post('validate')都会在pre('save')钩子之前调用
   schema.pre('save', function () {
     // save和create是一样的
     // console.log(this) // 这个this似乎是创建的参数,并且里面包含了_id
-    logger.info('创建前:%s', JSON.stringify(this));
+    // const { _id, ...params } = JSON.parse(JSON.stringify(this))
+
+    // 这里的this.set(key, value) 其实是设置创建参数的,设置schema里面的字段值,如果设置的key不在schema里面时,
+    // post()时的get(key)是get不出来的。如果key等于了schema里面的值时,就会覆盖外层调用设置的值,所以不可取
+    // 还有一种方法就是直接this.xxx=xxx,然后post()时,result.xxx可以获取到值,但是如果xxx等于了schema里面某个
+    // 字段的值时会修改外层调用时的对于的key的值
+
+    this._lastTime = new Date().getTime()
   });
-  schema.post('save', (result) => {
-    logger.info('创建后:%s', JSON.stringify(result)); // 这里的result只是加多了一个__v字段
+  schema.post('save', function (result) {
+    // logger.info('创建后:%s', JSON.stringify(result)); // 这里的result只是加多了一个__v字段
+    const { _id, __v, ...params } = JSON.parse(JSON.stringify(result))
+    const logJSON = {
+      methodName: 'create',
+      modelName: this.model.modelName,
+      result: JSON.stringify({ _id, ...params }),
+      params: JSON.stringify(params),
+      diffTime: new Date().getTime() - result._lastTime
+    }
+    logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true))
   });
 
   schema.pre('find', async function () {
