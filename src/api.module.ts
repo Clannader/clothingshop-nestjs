@@ -38,7 +38,7 @@ import { MongooseConfigService } from './dao';
           : './config/.env.production',
       isGlobal: true,
       isWatch: true,
-      expandVariables: true,
+      // expandVariables: true, // 有bug,暂时去掉
     }),
     MongooseModule.forRootAsync({
       useClass: MongooseConfigService,

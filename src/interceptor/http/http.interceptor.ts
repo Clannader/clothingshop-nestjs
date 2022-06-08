@@ -79,11 +79,13 @@ export class HttpInterceptor implements NestInterceptor {
             cookie: request.cookies,
           }),
         };
-        this.adminAccessService
-          .getModel()
-          .create(createParams)
-          .then()
-          .catch((err) => console.error(err));
+        if (this.configService.get<boolean>('monitorLog', true)) {
+          this.adminAccessService
+            .getModel()
+            .create(createParams)
+            .then()
+            .catch((err) => console.error(err));
+        }
       }),
     );
   }

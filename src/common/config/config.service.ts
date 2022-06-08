@@ -62,6 +62,8 @@ export class ConfigService {
           typeof this.options.expandVariables === 'object'
             ? this.options.expandVariables
             : {};
+        // 2022-06-08 真是又无语了,不知道为什么watch文件时,明明重新加载了,但是经过这个折叠方法
+        // 之后,修改过的值还是旧值,只能暂时把这个参数关闭了
         config = expand({ ...expandOptions, parsed: config }).parsed || config;
       }
     }
