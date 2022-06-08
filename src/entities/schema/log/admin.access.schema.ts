@@ -17,7 +17,7 @@ export class AdminAccess extends Document {
 
   @Prop({
     required: true,
-    enum: [UserTypeEnum.SYSTEM, UserTypeEnum.THIRD],
+    enum: [UserTypeEnum.SYSTEM, UserTypeEnum.THIRD, UserTypeEnum.OTHER],
   })
   adminType: string; // 用户类型
 

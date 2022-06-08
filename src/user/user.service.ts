@@ -1,6 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AopLogger } from '../logger';
-import { CodeEnum, CommonResult, GlobalService } from '../common';
+import {
+  CodeEnum,
+  CommonResult,
+  GlobalService,
+  RequestSession,
+} from '../common';
 import {
   ReqUserLoginDto,
   RespUserLoginDto,
@@ -29,16 +34,19 @@ export class UserService {
     return resp;
   }
 
-  userLogout(): CommonResult {
-    console.log(
-      this.globalService.serverLang(
-        'Testing {0}',
-        'user.userTestArgs',
-        'userService',
-      ),
-    );
+  async userLogout(req: RequestSession): Promise<CommonResult> {
+    await this.deleteSession(req);
     const resp = new CommonResult();
     resp.code = CodeEnum.SUCCESS;
     return resp;
+  }
+
+  deleteSession(req: RequestSession): Promise<void> {
+    delete req.session;
+    return new Promise((resolve) => {
+      req.sessionStore.destroy(req.sessionID, () => {
+        resolve();
+      });
+    });
   }
 }

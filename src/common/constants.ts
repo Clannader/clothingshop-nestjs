@@ -27,3 +27,4 @@ export const tripleDES = {
   key: 'ClothingShopClothingShopClothingShopClothingShopClothingShopAAAA',
   iv: '8890880',
 };
+export const baseUrl = '/index';

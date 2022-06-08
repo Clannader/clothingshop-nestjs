@@ -1,12 +1,16 @@
 import { Request } from 'express';
 import { Session, Store } from 'express-session';
 
+export interface CmsSession {
+  readonly adminId: string;
+  readonly shopId: string;
+  readonly adminType: string;
+  readonly isFirstLogin?: boolean;
+  expires?: number;
+}
+
 export interface AdminSession {
-  adminSession: {
-    adminId: string;
-    isFirstLogin: boolean;
-    expires: number;
-  };
+  adminSession: CmsSession;
 }
 
 export interface RequestSession extends Request {
