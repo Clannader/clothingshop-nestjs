@@ -23,7 +23,10 @@ export const monitorPlugin = function (schema: Schema): void {
 
   // 注意2：save()函数触发validate()钩子,mongoose validate()其实就是pre('save')钩子,这意味着pre('validate')和
   // post('validate')都会在pre('save')钩子之前调用
+
+  // 获取更新版本的字段名'__v'
   const versionKey: string = schema.get('versionKey') as string;
+
   schema.pre('save', function () {
     // save和create是一样的
     // console.log(this) // 这个this似乎是创建的参数,并且里面包含了_id
@@ -47,13 +50,14 @@ export const monitorPlugin = function (schema: Schema): void {
       ...this.$where,
       [versionKey]: this[versionKey],
     };
-    this.increment(); // 这里就是抛出版本号异常
+    this.increment(); // 这里就是抛出版本号异常,但是查看源码好像是开启doIncrement这个参数,可以给版本号自动加1
+    // 源代码路径mongoose/lib/model 418行
   });
   schema.post('save', function (result) {
     // logger.info('创建后:%s', JSON.stringify(result)); // 这里的result只是加多了一个__v字段
     const { _id, __v, ...params } = JSON.parse(JSON.stringify(result));
     const logJSON = {
-      methodName: this.$op,
+      methodName: this.$op, // 要不然写死create|save,要么写this.$op
       modelName: schema.statics['getAliasName'].call(this),
       result: JSON.stringify({ _id, ...params }),
       params: JSON.stringify(params),
@@ -82,7 +86,7 @@ export const monitorPlugin = function (schema: Schema): void {
     // console.log(this.getOptions()) // 其他参数
   });
   schema.post('find', function (result) {
-    writeFileLog.call(this, schema, 'find', result);
+    writeFileLog.call(this, schema, result);
   });
 
   schema.pre('findOne', function () {
@@ -91,25 +95,33 @@ export const monitorPlugin = function (schema: Schema): void {
     });
   });
   schema.post('findOne', function (result) {
-    writeFileLog.call(this, schema, 'findOne', result);
+    writeFileLog.call(this, schema, result);
   });
 
   schema.pre('updateOne', function () {
     this.setOptions({
       _lastTime: new Date().getTime(),
     });
+    const $where = this.getUpdate()
+    // 更新时版本号自动加1
+    this.setUpdate({
+      ...$where,
+      $inc: {
+        [versionKey]: 1
+      }
+    })
     // 这里由于是更新的方法,所以下面的设置更新条件是没有用的,因为外层传过来的条件会直接覆盖
     // this.set('_lastTime', new Date().getTime());
   });
   schema.post('updateOne', function (result) {
-    writeFileLog.call(this, schema, 'updateOne', result);
+    writeFileLog.call(this, schema, result);
   });
 };
 
-const writeFileLog = function (schema, methodName, result) {
+const writeFileLog = function (schema, result) {
   const { _lastTime, ...options } = this.getOptions();
   const logJSON = {
-    methodName,
+    methodName: this.op,
     modelName: schema.statics['getAliasName'].call(this),
     result: result ? JSON.stringify(result) : '', // result有可能是空的,因为查询可能是null的
     query: JSON.stringify(this.getQuery()),
