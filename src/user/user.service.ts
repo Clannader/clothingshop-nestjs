@@ -5,6 +5,7 @@ import {
   CommonResult,
   GlobalService,
   RequestSession,
+  LoginResult,
 } from '@/common';
 import {
   ReqUserLoginDto,
@@ -34,16 +35,19 @@ export class UserService {
   async userLogin(params: ReqUserLoginDto): Promise<RespUserLoginDto> {
     const adminId = params.adminId;
     const password = params.adminPws;
-    const [err, result] = await this.adminSchemaService
+    const loginResult = await this.adminSchemaService
       .loginSystem(adminId)
       .then((result) => [null, result])
       .catch((err) => [err]);
+    const err = loginResult[0]
+    const result: LoginResult = loginResult[1]
     const resp = new RespUserLoginDto();
     if (err) {
       resp.msg = err.message;
       resp.code = err.code;
       return resp;
     }
+    console.log(result)
     resp.code = CodeEnum.SUCCESS;
     return Promise.resolve(resp);
   }
