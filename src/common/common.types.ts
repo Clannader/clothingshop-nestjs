@@ -1,6 +1,5 @@
 import { Request } from 'express';
 import { Session, Store } from 'express-session';
-import { Admin } from '@/entities';
 
 export interface CmsSession {
   readonly adminId: string;
@@ -10,6 +9,11 @@ export interface CmsSession {
   readonly isFirstLogin?: boolean;
   readonly orgRights?: string[];
   readonly orgShopId?: string[];
+  readonly mobile?: boolean;
+  readonly loginTime?: Date;
+  readonly lastTime?: Date;
+  readonly requestIP?: string;
+  readonly requestHost?: string;
   expires?: number;
 }
 
@@ -31,9 +35,3 @@ export type ExcludeUndefinedIf<
 > = ExcludeUndefined extends true ? Exclude<T, undefined> : T | undefined;
 
 export type KeyOf<T> = keyof T extends never ? string : keyof T;
-
-export type LoginResult = {
-  message?: string;
-  code: number;
-  adminInfo: Admin;
-};

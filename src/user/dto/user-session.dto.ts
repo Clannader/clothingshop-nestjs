@@ -19,7 +19,7 @@ export class UserSessionDto {
   /**
    * 上次登录时间
    */
-  lastTime: string;
+  lastTime: Date;
 
   /**
    * 是否第一次登录

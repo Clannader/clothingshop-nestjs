@@ -1,9 +1,9 @@
 import * as CryptoJS from 'crypto-js';
-import { tripleDES, ipExp } from '../constants';
+import { tripleDES, ipExp, Supervisor_Rights } from '../constants';
 import { get, isPlainObject, has, forEach } from 'lodash';
 import { Request } from 'express';
 import * as os from 'os';
-import { CmsSession, Supervisor_Rights } from '@/common';
+import { CmsSession } from '../common.types';
 
 /**
  * 系统工具类
@@ -260,17 +260,19 @@ export class Utils {
     });
   }
 
-  static getIgnoreCase(fieldName: string, mode: boolean = false) {
+  static getIgnoreCase(fieldName: string, mode = false) {
     if (mode) {
       // mode=true就是模糊查询
-      return { $regex: fieldName, $options: 'i' }
+      return { $regex: fieldName, $options: 'i' };
     }
-    return { $regex: '^' + fieldName + '$', $options: 'i' }
+    return { $regex: '^' + fieldName + '$', $options: 'i' };
   }
 
   static isSupervisor(session: CmsSession) {
-    return 'SUPERVISOR' === session.adminId.toUpperCase()
-      || (session.orgRights.length === 1 && session.orgRights[0] === 'SUPERVISOR')
+    return (
+      'SUPERVISOR' === session.adminId.toUpperCase() ||
+      (session.orgRights.length === 1 && session.orgRights[0] === 'SUPERVISOR')
+    );
   }
 
   static getSuper() {
@@ -285,7 +287,7 @@ export class Utils {
       email: '294473343@qq.com',
       createUser: 'SYSTEM',
       createDate: new Date(),
-      isFirstLogin: true
-    }
+      isFirstLogin: true,
+    };
   }
 }
