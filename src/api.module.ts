@@ -13,7 +13,7 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
 
-import { CommonModule, ConfigModule } from './common';
+import { CommonModule, ConfigModule, loginUrl } from './common';
 import { UserModule } from './user';
 import { SystemModule } from './system';
 import { LoginModule } from './login';
@@ -61,7 +61,7 @@ export class ApiModule implements NestModule {
     consumer
       .apply(ApiMiddleware)
       .exclude({
-        path: '/cms/api/user/login',
+        path: loginUrl,
         method: RequestMethod.ALL,
       })
       // 这里会有个bug,那就是/cms/api/开头的地址如果不存在时也会进入到这个中间件中

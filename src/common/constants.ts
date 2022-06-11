@@ -28,3 +28,5 @@ export const tripleDES = {
   iv: '8890880',
 };
 export const baseUrl = '/index';
+export const loginUrl = '/cms/api/user/login';
+export const logoutUrl = '/cms/api/user/logout';
