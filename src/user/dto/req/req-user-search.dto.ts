@@ -1,8 +1,4 @@
-import {
-  ReqPageSchemaDto,
-  UserStatusEnum,
-  UserTypeEnum,
-} from '@/common';
+import { ReqPageSchemaDto, UserStatusEnum, UserTypeEnum } from '@/common';
 
 export class ReqUserSearchDto extends ReqPageSchemaDto {
   /**

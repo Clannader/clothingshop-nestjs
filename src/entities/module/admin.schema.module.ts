@@ -8,9 +8,7 @@ import { AdminSchemaService } from '../service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Admin.name, schema: AdminSchema },
-    ]),
+    MongooseModule.forFeature([{ name: Admin.name, schema: AdminSchema }]),
   ],
   providers: [AdminSchemaService],
   exports: [AdminSchemaService],

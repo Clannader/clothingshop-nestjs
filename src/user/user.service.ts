@@ -22,7 +22,7 @@ export class UserService {
   private readonly globalService: GlobalService;
 
   @Inject()
-  private readonly adminSchemaService: AdminSchemaService
+  private readonly adminSchemaService: AdminSchemaService;
 
   getUsersList(params: ReqUserSearchDto): RespUserSearchDto {
     this.logger.log(params);
@@ -34,8 +34,10 @@ export class UserService {
   async userLogin(params: ReqUserLoginDto): Promise<RespUserLoginDto> {
     const adminId = params.adminId;
     const password = params.adminPws;
-    const [err, result] = await this.adminSchemaService.loginSystem(adminId).then(result => [null, result])
-      .catch(err => [err])
+    const [err, result] = await this.adminSchemaService
+      .loginSystem(adminId)
+      .then((result) => [null, result])
+      .catch((err) => [err]);
     const resp = new RespUserLoginDto();
     if (err) {
       resp.msg = err.message;
