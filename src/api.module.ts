@@ -14,9 +14,9 @@ import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
 
 import { CommonModule, ConfigModule } from './common';
-import { UserModule } from './user/user.module';
-import { SystemModule } from './system/system.module';
-import { LoginModule } from './login/login.module';
+import { UserModule } from './user';
+import { SystemModule } from './system';
+import { LoginModule } from './login';
 import { TestModule } from './test/test.module';
 import { HttpInterceptorModule } from './interceptor';
 import { ApiMiddleware } from './middleware';

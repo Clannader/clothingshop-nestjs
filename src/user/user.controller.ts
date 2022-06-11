@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiOAuth2 } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { ApiCommon, ApiCustomResponse } from '../common';
+import { ApiCommon, ApiCustomResponse } from '@/common';
 import { ReqUserSearchDto, RespUserSearchDto } from './dto';
 
 @ApiCommon()

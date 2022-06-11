@@ -5,9 +5,9 @@ import {
   Injectable,
   Inject,
 } from '@nestjs/common';
-import { AopLogger } from '../../logger';
+import { AopLogger } from '@/logger';
 import { tap } from 'rxjs/operators';
-import { AdminAccessService } from '../../entities';
+import { AdminAccessService } from '@/entities';
 import {
   ConfigService,
   Utils,
@@ -16,7 +16,7 @@ import {
   UserTypeEnum,
   baseUrl,
   LogTypeEnum,
-} from '../../common';
+} from '@/common';
 
 @Injectable()
 export class HttpInterceptor implements NestInterceptor {

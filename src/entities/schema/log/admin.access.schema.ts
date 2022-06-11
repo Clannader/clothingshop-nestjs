@@ -8,7 +8,7 @@ import {
   ipExp,
   LogTypeEnum,
   RequestMethod,
-} from '../../../common';
+} from '@/common';
 
 @Schema()
 export class AdminAccess extends Document {

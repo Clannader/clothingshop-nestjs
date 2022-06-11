@@ -2,7 +2,7 @@ import {
   ReqPageSchemaDto,
   UserStatusEnum,
   UserTypeEnum,
-} from '../../../common';
+} from '@/common';
 
 export class ReqUserSearchDto extends ReqPageSchemaDto {
   /**

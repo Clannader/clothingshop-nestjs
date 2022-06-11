@@ -1,4 +1,4 @@
-import { CommonResult } from '../../../common';
+import { CommonResult } from '@/common';
 import { UserSessionDto } from '../user-session.dto';
 import { /*PartialType, */ ApiProperty } from '@nestjs/swagger';
 

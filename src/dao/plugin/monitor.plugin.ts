@@ -3,7 +3,7 @@
  */
 import { Schema } from 'mongoose';
 import * as Log4js from 'log4js';
-import { Utils } from '../../common';
+import { Utils } from '@/common';
 
 const logger = Log4js.getLogger('fileLogs');
 const parserLog =

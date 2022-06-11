@@ -3,7 +3,7 @@
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Model } from 'mongoose';
-import { UserTypeEnum } from '../../../common';
+import { UserTypeEnum } from '@/common';
 
 @Schema()
 export class Admin extends Document {

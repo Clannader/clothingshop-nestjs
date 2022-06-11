@@ -1,18 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AopLogger } from '../logger';
+import { AopLogger } from '@/logger';
 import {
   CodeEnum,
   CommonResult,
   GlobalService,
   RequestSession,
-} from '../common';
+} from '@/common';
 import {
   ReqUserLoginDto,
   RespUserLoginDto,
   ReqUserSearchDto,
   RespUserSearchDto,
 } from './dto';
-import { AdminSchemaService } from '../entities';
+import { AdminSchemaService } from '@/entities';
 
 @Injectable()
 export class UserService {

@@ -10,8 +10,8 @@ import {
   Utils,
   Session_Expires,
   RequestSession,
-} from '../common';
-import { UserService } from '../user/user.service';
+} from '@/common';
+import { UserService } from '@/user';
 
 @Injectable()
 export class ApiMiddleware implements NestMiddleware {

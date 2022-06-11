@@ -12,9 +12,8 @@ import {
   ApiCustomResponse,
   CommonResult,
   RequestSession,
-} from '../common';
-import { UserService } from '../user/user.service';
-import { ReqUserLoginDto, RespUserLoginDto } from '../user/dto';
+} from '@/common';
+import { UserService, ReqUserLoginDto, RespUserLoginDto } from '@/user';
 
 @Controller('/cms/api/user')
 @ApiTags('LoginController')

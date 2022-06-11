@@ -5,7 +5,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { AdminModel, Admin } from '../../schema';
-import { GlobalService, Utils, CodeEnum } from '../../../common';
+import { GlobalService, Utils, CodeEnum } from '@/common';
 
 type LoginResult = {
   message?: string,
