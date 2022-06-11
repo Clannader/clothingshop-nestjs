@@ -10,12 +10,16 @@ import {
   Utils,
   Session_Expires,
   RequestSession,
-} from '../common';
+} from '@/common';
+import { UserService } from '@/user';
 
 @Injectable()
 export class ApiMiddleware implements NestMiddleware {
   @Inject()
   private globalService: GlobalService;
+
+  @Inject()
+  private userService: UserService;
 
   async use(req: RequestSession, res: Response, next: NextFunction) {
     if (!Utils.isHasJsonHeader(req)) {
@@ -38,7 +42,7 @@ export class ApiMiddleware implements NestMiddleware {
     }
     const adminSession = req.session.adminSession;
     if (!adminSession) {
-      await this.deleteSession(req);
+      await this.userService.deleteSession(req);
       return res.send({
         code: CodeEnum.INVALID_SESSION,
         msg: this.globalService.serverLang('无效的凭证', 'user.invSession'),
@@ -47,7 +51,7 @@ export class ApiMiddleware implements NestMiddleware {
     const currentDate = new Date();
     //这里不整合这2个判断条件是因为第一个条件不满足时,第二个条件无法获取expires值
     if (currentDate.getTime() - adminSession.expires > Session_Expires) {
-      await this.deleteSession(req);
+      await this.userService.deleteSession(req);
       return res.send({
         code: CodeEnum.SESSION_EXPIRED,
         msg: this.globalService.serverLang('凭证过期', 'user.sessionExp'),
@@ -67,14 +71,5 @@ export class ApiMiddleware implements NestMiddleware {
     // 每次访问延长用户有效期时间
     req.session.adminSession.expires = currentDate.getTime() + Session_Expires;
     next();
-  }
-
-  private deleteSession(req: RequestSession): Promise<void> {
-    delete req.session;
-    return new Promise((resolve) => {
-      req.sessionStore.destroy(req.sessionID, () => {
-        resolve();
-      });
-    });
   }
 }

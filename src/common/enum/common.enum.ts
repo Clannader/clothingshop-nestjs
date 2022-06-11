@@ -19,6 +19,7 @@ export enum UserTypeEnum {
   SYSTEM = 'SYSTEM',
   // NORMAL = 'NORMAL',
   THIRD = '3RD',
+  OTHER = 'OTHER', // 针对没有登录时的用户记录行为时的类型
 }
 
 /**

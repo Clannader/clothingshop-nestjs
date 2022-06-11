@@ -5,11 +5,18 @@ import {
   Injectable,
   Inject,
 } from '@nestjs/common';
-import { AopLogger } from '../../logger';
+import { AopLogger } from '@/logger';
 import { tap } from 'rxjs/operators';
-import { AdminAccessService } from '../../entities';
-import { ConfigService, Utils } from '../../common';
-import { Request } from 'express';
+import { AdminAccessService } from '@/entities';
+import {
+  ConfigService,
+  Utils,
+  RequestSession,
+  CmsSession,
+  UserTypeEnum,
+  baseUrl,
+  LogTypeEnum,
+} from '@/common';
 
 @Injectable()
 export class HttpInterceptor implements NestInterceptor {
@@ -23,7 +30,7 @@ export class HttpInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler) {
     const http = context.switchToHttp();
-    const request: Request = http.getRequest();
+    const request: RequestSession = http.getRequest();
     const now = new Date();
     const url = request.url;
     const method = request.method;
@@ -39,28 +46,46 @@ export class HttpInterceptor implements NestInterceptor {
       this.logger.log(`请求:${request.method} ${request.url}`);
     }
 
-    const createParams = {
-      date: now,
-      ip,
-      url,
-      method: method.toUpperCase(),
-      params,
-      shopId: 'SYSTEM',
-      adminId: '01',
-      adminType: 'SYSTEM',
-      type: 'Interface',
-      timestamp: 120,
-      send: {},
-      headers: Object.assign(request.headers, {
-        cookie: request.cookies,
-      }),
-    };
-    this.adminAccessService.getModel().create(createParams);
-
     return next.handle().pipe(
-      tap(() => {
-        // 测试发现这个拦截器是在执行业务之后,返回客户端时拦截的,而不是在请求前拦截的
-        this.logger.log(`请求后:响应时间 ${Date.now() - now.getTime()}ms`);
+      tap((value) => {
+        const diffTime = Date.now() - now.getTime();
+        // this.logger.log(`请求响应时间: ${diffTime}ms`);
+
+        let session: CmsSession = request.session.adminSession;
+        if (!session) {
+          session = {
+            adminId:
+              (request.headers['adminid'] as string) ||
+              request.body['adminId'] ||
+              'NULL',
+            shopId: (request.headers['shopid'] as string) || 'SYSTEM',
+            adminType: UserTypeEnum.OTHER,
+          };
+        }
+        const isIndex = url.indexOf(baseUrl) !== -1; //如果url含有index,说明是网页进来的
+        const createParams = {
+          date: now,
+          ip,
+          url,
+          method: method.toUpperCase(),
+          params,
+          shopId: session.shopId,
+          adminId: session.adminId,
+          adminType: session.adminType,
+          type: isIndex ? LogTypeEnum.Browser : LogTypeEnum.Interface,
+          timestamp: diffTime,
+          send: value,
+          headers: Object.assign(request.headers, {
+            cookie: request.cookies,
+          }),
+        };
+        if (this.configService.get<boolean>('monitorLog', true)) {
+          this.adminAccessService
+            .getModel()
+            .create(createParams)
+            .then()
+            .catch((err) => console.error(err));
+        }
       }),
     );
   }

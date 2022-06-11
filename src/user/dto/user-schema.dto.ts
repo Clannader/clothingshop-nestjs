@@ -1,4 +1,4 @@
-import { UserTypeEnum } from '../../common';
+import { UserTypeEnum } from '@/common';
 // import { ApiProperty } from '@nestjs/swagger';
 
 export class UserSchemaDto {

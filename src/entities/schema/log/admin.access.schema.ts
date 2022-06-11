@@ -8,7 +8,7 @@ import {
   ipExp,
   LogTypeEnum,
   RequestMethod,
-} from '../../../common';
+} from '@/common';
 
 @Schema()
 export class AdminAccess extends Document {
@@ -17,7 +17,7 @@ export class AdminAccess extends Document {
 
   @Prop({
     required: true,
-    enum: [UserTypeEnum.SYSTEM, UserTypeEnum.THIRD],
+    enum: [UserTypeEnum.SYSTEM, UserTypeEnum.THIRD, UserTypeEnum.OTHER],
   })
   adminType: string; // 用户类型
 
@@ -89,10 +89,21 @@ export class AdminAccess extends Document {
   @Prop({
     required: true,
     type: Object,
+    // alias: '字段别名'
   })
   headers: Record<string, any>; // 请求头内容
 }
 
 export const AdminAccessSchema = SchemaFactory.createForClass(AdminAccess);
 
-export type AdminAccessModel = Model<AdminAccess>;
+/**
+ * 给所有的表起一个别名,这个是获取表的别名的一个方法
+ * 所以所有的表都需要加上这个同名的方法才能在插件中获得这个别名
+ */
+AdminAccessSchema.statics.getAliasName = function () {
+  return 'AccessLog';
+};
+
+export interface AdminAccessModel extends Model<AdminAccess> {
+  getAliasName(): string;
+}
