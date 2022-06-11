@@ -125,8 +125,9 @@ const writeFileLog = function (schema, result) {
     modelName: schema.statics['getAliasName'].call(this),
     result: result ? JSON.stringify(result) : '', // result有可能是空的,因为查询可能是null的
     query: JSON.stringify(this.getQuery()),
-    projection: JSON.stringify(this.projection() || this.getUpdate()),
+    projection: this.projection() ? JSON.stringify(this.projection()) : '',
     options: JSON.stringify(options),
+    params: this.getUpdate() ? JSON.stringify(this.getUpdate()) : '',
     diffTime: new Date().getTime() - _lastTime,
   };
   logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
