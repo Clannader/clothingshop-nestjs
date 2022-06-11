@@ -12,6 +12,7 @@ import {
   ReqUserSearchDto,
   RespUserSearchDto,
 } from './dto';
+import { AdminSchemaService } from '../entities';
 
 @Injectable()
 export class UserService {
@@ -20,6 +21,9 @@ export class UserService {
   @Inject()
   private readonly globalService: GlobalService;
 
+  @Inject()
+  private readonly adminSchemaService: AdminSchemaService
+
   getUsersList(params: ReqUserSearchDto): RespUserSearchDto {
     this.logger.log(params);
     const resp = new RespUserSearchDto();
@@ -27,11 +31,19 @@ export class UserService {
     return resp;
   }
 
-  userLogin(params: ReqUserLoginDto): RespUserLoginDto {
-    this.logger.log(params);
+  async userLogin(params: ReqUserLoginDto): Promise<RespUserLoginDto> {
+    const adminId = params.adminId;
+    const password = params.adminPws;
+    const [err, result] = await this.adminSchemaService.loginSystem(adminId).then(result => [null, result])
+      .catch(err => [err])
     const resp = new RespUserLoginDto();
+    if (err) {
+      resp.msg = err.message;
+      resp.code = err.code;
+      return resp;
+    }
     resp.code = CodeEnum.SUCCESS;
-    return resp;
+    return Promise.resolve(resp);
   }
 
   async userLogout(req: RequestSession): Promise<CommonResult> {

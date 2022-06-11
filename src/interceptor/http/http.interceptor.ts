@@ -49,7 +49,7 @@ export class HttpInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap((value) => {
         const diffTime = Date.now() - now.getTime();
-        this.logger.log(`请求响应时间: ${diffTime}ms`);
+        // this.logger.log(`请求响应时间: ${diffTime}ms`);
 
         let session: CmsSession = request.session.adminSession;
         if (!session) {
