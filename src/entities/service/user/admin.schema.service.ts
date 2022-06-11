@@ -8,10 +8,10 @@ import { AdminModel, Admin } from '../../schema';
 import { GlobalService, Utils, CodeEnum } from '@/common';
 
 type LoginResult = {
-  message?: string,
-  code: number,
-  adminInfo: Admin,
-}
+  message?: string;
+  code: number;
+  adminInfo: Admin;
+};
 
 @Injectable()
 export class AdminSchemaService {
@@ -28,9 +28,12 @@ export class AdminSchemaService {
   loginSystem(adminId: string): Promise<LoginResult> {
     if (Utils.isEmpty(adminId)) {
       return Promise.reject({
-        message: this.globalService.serverLang('用户名不能为空', 'admin.invUserName'),
+        message: this.globalService.serverLang(
+          '用户名不能为空',
+          'admin.invUserName',
+        ),
         code: CodeEnum.EMPTY,
-      })
+      });
     }
   }
 }
