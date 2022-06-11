@@ -3,7 +3,7 @@
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Model } from 'mongoose';
-import { UserTypeEnum } from '@/common';
+import { UpdateLoginWhere, UserTypeEnum } from '@/common';
 
 @Schema()
 export class Admin extends Document {
@@ -69,6 +69,9 @@ export class Admin extends Document {
   retryNumber: number; // 密码错误次数
 
   @Prop()
+  lockTime: Date; // 用户被锁定时间
+
+  @Prop()
   expireTime: Date; // 用户有效期
 
   @Prop({
@@ -88,6 +91,18 @@ AdminSchema.statics.getAliasName = function () {
   return 'CmsUser';
 };
 
+AdminSchema.statics.updateLoginInfo = function (
+  id: string,
+  update: UpdateLoginWhere,
+) {
+  return this.updateOne({ _id: id }, { $set: update });
+};
+
+// AdminSchema.virtual('id').get(function() {
+//   return this._id.toString()
+// })
+
 export interface AdminModel extends Model<Admin> {
   getAliasName(): string;
+  updateLoginInfo(id: string, update: UpdateLoginWhere);
 }

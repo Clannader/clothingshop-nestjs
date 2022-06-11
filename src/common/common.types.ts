@@ -3,9 +3,17 @@ import { Session, Store } from 'express-session';
 
 export interface CmsSession {
   readonly adminId: string;
-  readonly shopId: string;
-  readonly adminType: string;
+  readonly adminName?: string;
+  readonly shopId?: string;
+  readonly adminType?: string;
   readonly isFirstLogin?: boolean;
+  readonly orgRights?: string[];
+  readonly orgShopId?: string[];
+  readonly mobile?: boolean;
+  readonly loginTime?: Date;
+  readonly lastTime?: Date;
+  readonly requestIP?: string;
+  readonly requestHost?: string;
   expires?: number;
 }
 

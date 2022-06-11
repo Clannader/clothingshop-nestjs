@@ -50,6 +50,7 @@ export class TestController {
     // @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();
+    console.log(params);
     // const dbUser: string = this.configService.get<string>('dbUser');
     // console.log(dbUser);
     // console.log(typeof dbUser);
