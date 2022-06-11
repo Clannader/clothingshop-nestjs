@@ -32,11 +32,16 @@ export class HttpInterceptor implements NestInterceptor {
     const http = context.switchToHttp();
     const request: RequestSession = http.getRequest();
     const now = new Date();
-    const url = request.url;
+    const orgUrl = request.url;
+    const url =
+      orgUrl.indexOf('?') !== -1
+        ? orgUrl.substring(0, orgUrl.indexOf('?'))
+        : orgUrl;
     const method = request.method;
     const ip = Utils.getRequestIP(request);
     const body = request.body;
     const query = request.query;
+    let session: CmsSession = request.session.adminSession;
     const params = {
       ...query,
       ...body,
@@ -50,8 +55,6 @@ export class HttpInterceptor implements NestInterceptor {
       tap((value) => {
         const diffTime = Date.now() - now.getTime();
         // this.logger.log(`请求响应时间: ${diffTime}ms`);
-
-        let session: CmsSession = request.session.adminSession;
         if (!session) {
           session = {
             adminId:
@@ -84,7 +87,7 @@ export class HttpInterceptor implements NestInterceptor {
             .getModel()
             .create(createParams)
             .then()
-            .catch((err) => console.error(err));
+            .catch((err) => this.logger.error(err));
         }
       }),
     );

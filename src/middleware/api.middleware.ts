@@ -10,6 +10,7 @@ import {
   Utils,
   Session_Expires,
   RequestSession,
+  logoutUrl,
 } from '@/common';
 import { UserService } from '@/user';
 
@@ -57,7 +58,7 @@ export class ApiMiddleware implements NestMiddleware {
         msg: this.globalService.serverLang('凭证过期', 'user.sessionExp'),
       });
     }
-    if (adminSession.isFirstLogin) {
+    if (adminSession.isFirstLogin && req.baseUrl !== logoutUrl) {
       // 如果用户第一次登录,但是没有去修改密码,所有接口都不能使用
       // 考虑前端的调用roles接口看看是否有问题
       return res.send({

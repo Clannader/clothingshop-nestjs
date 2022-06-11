@@ -66,7 +66,7 @@ export class UserService {
     let retryNumber = admin.retryNumber || 0;
     let lockTime = admin.lockTime;
     const expireTime = admin.expireTime;
-    let expireMsg = undefined; // 用户准备过期时返回提示
+    let expireMsg: string = undefined; // 用户准备过期时返回提示
 
     if (!Utils.isEmpty(lockTime)) {
       if (moment().isBefore(moment(lockTime))) {
@@ -215,7 +215,7 @@ export class UserService {
     };
     resp.code = CodeEnum.SUCCESS;
     resp.credential = 's:' + sign(req.sessionID, sessionSecret);
-    resp.session = this.getTemplateSession(req.session.adminSession);
+    resp.session = UserService.getTemplateSession(req.session.adminSession);
     resp.expireMsg = expireMsg;
     return resp;
   }
@@ -236,7 +236,7 @@ export class UserService {
     });
   }
 
-  private getTemplateSession(session: CmsSession): UserSessionDto {
+  private static getTemplateSession(session: CmsSession): UserSessionDto {
     const result = new UserSessionDto();
     result.adminId = session.adminId;
     result.adminName = session.adminName;
