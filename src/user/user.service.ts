@@ -215,7 +215,7 @@ export class UserService {
     };
     resp.code = CodeEnum.SUCCESS;
     resp.credential = 's:' + sign(req.sessionID, sessionSecret);
-    resp.session = this.getTemplateSession(req.session.adminSession);
+    resp.session = UserService.getTemplateSession(req.session.adminSession);
     resp.expireMsg = expireMsg;
     return resp;
   }
@@ -236,7 +236,7 @@ export class UserService {
     });
   }
 
-  private getTemplateSession(session: CmsSession): UserSessionDto {
+  private static getTemplateSession(session: CmsSession): UserSessionDto {
     const result = new UserSessionDto();
     result.adminId = session.adminId;
     result.adminName = session.adminName;
