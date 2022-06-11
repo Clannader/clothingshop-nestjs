@@ -11,8 +11,6 @@ export class AdminAccessService {
   @InjectModel(AdminAccess.name)
   private adminAccessModel: AdminAccessModel;
 
-  // create() {}
-
   getModel() {
     return this.adminAccessModel;
   }

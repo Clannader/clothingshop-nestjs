@@ -5,18 +5,18 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { AdminModel, Admin } from '../../schema';
-import {
-  GlobalService,
-  Utils,
-  CodeEnum,
-  LoginResult,
-  userNameExp,
-  mailExp,
-} from '@/common';
+import { GlobalService, Utils, CodeEnum, userNameExp, mailExp } from '@/common';
 
 type LoginWhere = {
   email?: string;
   adminId?: object;
+};
+
+export type LoginResult = {
+  message?: string;
+  code: number;
+  adminInfo: Admin;
+  shopInfo: object; // 暂时这样定义,后期改
 };
 
 @Injectable()

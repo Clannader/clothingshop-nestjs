@@ -1,10 +1,9 @@
 import * as CryptoJS from 'crypto-js';
-import { tripleDES, ipExp } from '../constants';
+import { tripleDES, ipExp, Supervisor_Rights } from '../constants';
 import { get, isPlainObject, has, forEach } from 'lodash';
 import { Request } from 'express';
 import * as os from 'os';
-import { CmsSession, Supervisor_Rights, UserTypeEnum } from '@/common';
-import { UserSessionDto } from '@/user';
+import { CmsSession } from '../common.types';
 
 /**
  * 系统工具类
@@ -290,16 +289,5 @@ export class Utils {
       createDate: new Date(),
       isFirstLogin: true,
     };
-  }
-
-  static getTemplateSession(session: CmsSession): UserSessionDto {
-    const result = new UserSessionDto();
-    result.adminId = session.adminId;
-    result.adminName = session.adminName;
-    result.adminType = UserTypeEnum[session.adminType];
-    result.lastTime = session.lastTime;
-    result.isFirstLogin = session.isFirstLogin;
-    result.mobile = session.mobile;
-    return result;
   }
 }
