@@ -33,7 +33,10 @@ export class HttpInterceptor implements NestInterceptor {
     const request: RequestSession = http.getRequest();
     const now = new Date();
     const orgUrl = request.url;
-    const url = orgUrl.indexOf('?') !== -1 ? orgUrl.substring(0, orgUrl.indexOf('?')) : orgUrl;
+    const url =
+      orgUrl.indexOf('?') !== -1
+        ? orgUrl.substring(0, orgUrl.indexOf('?'))
+        : orgUrl;
     const method = request.method;
     const ip = Utils.getRequestIP(request);
     const body = request.body;
