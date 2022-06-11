@@ -54,8 +54,8 @@ export const monitorPlugin = function (schema: Schema): void {
     // });
 
     this.setOptions({
-      _lastTime: new Date().getTime()
-    })
+      _lastTime: new Date().getTime(),
+    });
 
     // 查询使用下面的方法其实是设置更新的条件,也就是this.getUpdate()=this.set(xxx, value)里面的值
     // 但是又由于查询的时候用不到更新的条件,所以是可以计算查询的时间差的
@@ -73,8 +73,8 @@ export const monitorPlugin = function (schema: Schema): void {
 
   schema.pre('findOne', function () {
     this.setOptions({
-      _lastTime: new Date().getTime()
-    })
+      _lastTime: new Date().getTime(),
+    });
   });
   schema.post('findOne', function (result) {
     writeFileLog.call(this, schema, 'findOne', result);
@@ -82,8 +82,8 @@ export const monitorPlugin = function (schema: Schema): void {
 
   schema.pre('updateOne', function () {
     this.setOptions({
-      _lastTime: new Date().getTime()
-    })
+      _lastTime: new Date().getTime(),
+    });
     // 这里由于是更新的方法,所以下面的设置更新条件是没有用的,因为外层传过来的条件会直接覆盖
     // this.set('_lastTime', new Date().getTime());
   });

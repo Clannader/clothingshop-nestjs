@@ -18,10 +18,10 @@ export type LoginResult = {
   adminInfo: Admin;
   shopInfo: object | string; //TODO 暂时这样定义,后期改
   otherInfo: {
-    rights?: string[],
-    shopList?: string[],
-    currentShop: string,
-  }
+    rights?: string[];
+    shopList?: string[];
+    currentShop: string;
+  };
 };
 
 @Injectable()
@@ -109,8 +109,8 @@ export class AdminSchemaService {
       shopInfo: 'SYSTEM', //TODO 暂时写死
       code: CodeEnum.SUCCESS,
       otherInfo: {
-        currentShop: 'SYSTEM'
-      }
+        currentShop: 'SYSTEM',
+      },
     });
   }
 }

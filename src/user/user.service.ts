@@ -203,7 +203,7 @@ export class UserService {
       // activeDate: currentDate.getTime(),//活跃时间
       lastTime: admin.loginTime || currentDate, //上次登录时间
       // language: CGlobal.GlobalLangType,//语言
-      shopId: otherInfo.currentShop,//当前登录的店铺ID,如果没有@店铺,那么永远都是SYSTEM,如果@了那就是@的那个值
+      shopId: otherInfo.currentShop, //当前登录的店铺ID,如果没有@店铺,那么永远都是SYSTEM,如果@了那就是@的那个值
       // shopList: otherInfo.shopList,//该用户能够操作的店铺ID
       // selfShop: otherInfo.selfShop,//用户自己的店铺ID
       // userImg: '/img/default.jpg',
