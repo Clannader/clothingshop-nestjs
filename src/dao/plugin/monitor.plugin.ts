@@ -52,7 +52,15 @@ export const monitorPlugin = function (schema: Schema): void {
     // this.mongooseOptions({
     //   // lean: true, // 测试发现确实是这里使用中间件可以设置全部查询都是使用这个参数了
     // });
-    this.set('_lastTime', new Date().getTime());
+
+    this.setOptions({
+      _lastTime: new Date().getTime()
+    })
+
+    // 查询使用下面的方法其实是设置更新的条件,也就是this.getUpdate()=this.set(xxx, value)里面的值
+    // 但是又由于查询的时候用不到更新的条件,所以是可以计算查询的时间差的
+    // this.set('_lastTime', new Date().getTime());
+
     // pre里面传什么方法,外部调用就是什么方法名
     // console.log(this.model.modelName) // 表名
     // console.log(this.getQuery()) // 查询语句
@@ -64,23 +72,36 @@ export const monitorPlugin = function (schema: Schema): void {
   });
 
   schema.pre('findOne', function () {
-    this.set('_lastTime', new Date().getTime());
+    this.setOptions({
+      _lastTime: new Date().getTime()
+    })
   });
   schema.post('findOne', function (result) {
     writeFileLog.call(this, schema, 'findOne', result);
   });
+
+  schema.pre('updateOne', function () {
+    this.setOptions({
+      _lastTime: new Date().getTime()
+    })
+    // 这里由于是更新的方法,所以下面的设置更新条件是没有用的,因为外层传过来的条件会直接覆盖
+    // this.set('_lastTime', new Date().getTime());
+  });
+  schema.post('updateOne', function (result) {
+    writeFileLog.call(this, schema, 'updateOne', result);
+  });
 };
 
 const writeFileLog = function (schema, methodName, result) {
-  const lastTime = this.get('_lastTime');
+  const { _lastTime, ...options } = this.getOptions();
   const logJSON = {
     methodName,
     modelName: schema.statics['getAliasName'].call(this),
     result: result ? JSON.stringify(result) : '', // result有可能是空的,因为查询可能是null的
     query: JSON.stringify(this.getQuery()),
-    projection: JSON.stringify(this.projection()),
-    options: JSON.stringify(this.getOptions()),
-    diffTime: new Date().getTime() - lastTime,
+    projection: JSON.stringify(this.projection() || this.getUpdate()),
+    options: JSON.stringify(options),
+    diffTime: new Date().getTime() - _lastTime,
   };
   logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
 };

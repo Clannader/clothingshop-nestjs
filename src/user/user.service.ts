@@ -59,7 +59,8 @@ export class UserService {
     }
 
     const admin: Admin = result.adminInfo;
-    const shop = result.shopInfo;
+    const shop = result.shopInfo; // 以后如果@店铺进来的话,这个shopInfo就是@的店铺信息
+    const otherInfo = result.otherInfo; // 这个其他信息就是展开权限和展开店铺组的其他额外计算信息
     let isUpdate = false; // 判断是否更新用户信息
     const updateWhere: UpdateLoginWhere = {}; // 用户更新条件
     let retryNumber = admin.retryNumber || 0;
@@ -160,7 +161,6 @@ export class UserService {
     }
 
     const currentDate = new Date();
-
     if (isUpdate) {
       if (Utils.isEmpty(resp.msg)) {
         // 没有错误信息,才是登录成功,才会记录登录的时间
@@ -168,7 +168,7 @@ export class UserService {
       }
       await this.adminSchemaService
         .getModel()
-        .updateLoginInfo(admin.id, updateWhere);
+        .updateLoginInfo(admin._id.toString(), updateWhere);
     }
 
     if (!Utils.isEmpty(resp.msg)) {
@@ -203,12 +203,13 @@ export class UserService {
       // activeDate: currentDate.getTime(),//活跃时间
       lastTime: admin.loginTime || currentDate, //上次登录时间
       // language: CGlobal.GlobalLangType,//语言
-      // shopId: otherInfo.shopId,//当前登录的店铺ID,如果没有@店铺,那么永远都是SYSTEM,如果@了那就是@的那个值
+      shopId: otherInfo.currentShop,//当前登录的店铺ID,如果没有@店铺,那么永远都是SYSTEM,如果@了那就是@的那个值
       // shopList: otherInfo.shopList,//该用户能够操作的店铺ID
       // selfShop: otherInfo.selfShop,//用户自己的店铺ID
       // userImg: '/img/default.jpg',
       requestIP: Utils.getRequestIP(req),
       requestHost: req.headers['host'],
+      isFirstLogin: admin.isFirstLogin,
       // supplierCode: admin.supplierCode || '',//集团代码
       // shopName: otherInfo.shopName //店铺名,没有@shopId那么就是没有值
     };

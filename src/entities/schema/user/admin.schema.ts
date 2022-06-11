@@ -98,6 +98,10 @@ AdminSchema.statics.updateLoginInfo = function (
   return this.updateOne({ _id: id }, { $set: update });
 };
 
+// AdminSchema.virtual('id').get(function() {
+//   return this._id.toString()
+// })
+
 export interface AdminModel extends Model<Admin> {
   getAliasName(): string;
   updateLoginInfo(id: string, update: UpdateLoginWhere);

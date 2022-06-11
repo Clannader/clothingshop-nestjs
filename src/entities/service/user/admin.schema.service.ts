@@ -16,7 +16,12 @@ export type LoginResult = {
   message?: string;
   code: number;
   adminInfo: Admin;
-  shopInfo: object; // 暂时这样定义,后期改
+  shopInfo: object | string; //TODO 暂时这样定义,后期改
+  otherInfo: {
+    rights?: string[],
+    shopList?: string[],
+    currentShop: string,
+  }
 };
 
 @Injectable()
@@ -101,8 +106,11 @@ export class AdminSchemaService {
     }
     return Promise.resolve({
       adminInfo,
-      shopInfo: null,
+      shopInfo: 'SYSTEM', //TODO 暂时写死
       code: CodeEnum.SUCCESS,
+      otherInfo: {
+        currentShop: 'SYSTEM'
+      }
     });
   }
 }
