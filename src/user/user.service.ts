@@ -47,7 +47,7 @@ export class UserService {
       resp.code = err.code;
       return resp;
     }
-    console.log(result)
+    // console.log(result)
     resp.code = CodeEnum.SUCCESS;
     return Promise.resolve(resp);
   }

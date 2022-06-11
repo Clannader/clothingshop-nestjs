@@ -285,7 +285,7 @@ export class Utils {
       email: '294473343@qq.com',
       createUser: 'SYSTEM',
       createDate: new Date(),
-      isFirstLogin: false
+      isFirstLogin: true
     }
   }
 }

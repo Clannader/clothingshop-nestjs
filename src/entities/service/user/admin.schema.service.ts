@@ -7,6 +7,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { AdminModel, Admin } from '../../schema';
 import { GlobalService, Utils, CodeEnum, LoginResult, userNameExp, mailExp } from '@/common';
 
+type LoginWhere = {
+  email?: string,
+  adminId?: object
+}
+
 @Injectable()
 export class AdminSchemaService {
   @InjectModel(Admin.name)
@@ -40,10 +45,7 @@ export class AdminSchemaService {
     }
     const matches = adminId.match('^(.+)@(.+)$')
     let loginShop = ''
-    const where = {
-      email: undefined,
-      adminId: undefined
-    }
+    const where: LoginWhere = {}
     if (adminId.match(mailExp)) {
       where.email = adminId
     } else if (matches) {
