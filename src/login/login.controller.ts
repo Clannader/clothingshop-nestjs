@@ -30,8 +30,8 @@ export class LoginController {
     type: RespUserLoginDto,
   })
   @ApiCommon(false)
-  userLogin(@Body() params: ReqUserLoginDto) {
-    return this.userService.userLogin(params);
+  userLogin(@Body() params: ReqUserLoginDto, @Req() req: RequestSession) {
+    return this.userService.userLogin(params, req);
   }
 
   @Post('/logout')
