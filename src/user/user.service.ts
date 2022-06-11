@@ -66,7 +66,7 @@ export class UserService {
     let retryNumber = admin.retryNumber || 0;
     let lockTime = admin.lockTime;
     const expireTime = admin.expireTime;
-    let expireMsg = undefined; // 用户准备过期时返回提示
+    let expireMsg: string = undefined; // 用户准备过期时返回提示
 
     if (!Utils.isEmpty(lockTime)) {
       if (moment().isBefore(moment(lockTime))) {

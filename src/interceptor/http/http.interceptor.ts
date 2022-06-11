@@ -84,7 +84,7 @@ export class HttpInterceptor implements NestInterceptor {
             .getModel()
             .create(createParams)
             .then()
-            .catch((err) => console.error(err));
+            .catch((err) => this.logger.error(err));
         }
       }),
     );
