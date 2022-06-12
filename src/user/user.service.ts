@@ -32,10 +32,22 @@ export class UserService {
   @Inject()
   private readonly adminSchemaService: AdminSchemaService;
 
-  getUsersList(params: ReqUserSearchDto): RespUserSearchDto {
+  async getUsersList(params: ReqUserSearchDto): Promise<RespUserSearchDto> {
     this.logger.log(params);
     const resp = new RespUserSearchDto();
     resp.code = 100;
+
+    const super1 = await this.adminSchemaService.getModel().findById('62a46159b04b9fce2c1123d9')
+    const super2 = await this.adminSchemaService.getModel().findById('62a46159b04b9fce2c1123d9')
+    super1.retryNumber = super1.retryNumber + 1;
+    await super1.save().catch(err => console.log(err))
+    // super2.retryNumber = super2.retryNumber + 2;
+    // const super2 = await this.adminSchemaService.getModel().findById('62a46159b04b9fce2c1123d9')
+    // await this.adminSchemaService.getModel().updateOne({_id: super2._id.toString()}, {retryNumber: super2.retryNumber + 2}).catch(err => console.log(err))
+    // await super2.updateOne({retryNumber: super2.retryNumber + 2}).catch(err => console.log(err))
+    // super2.retryNumber = super2.retryNumber + 1;
+    await super2.save().catch(err => console.log(err))
+
     return resp;
   }
 
@@ -124,10 +136,10 @@ export class UserService {
           '用户未激活',
           'user.invStatus',
         );
-      } else if (!admin.adminType || admin.adminType === UserTypeEnum.THIRD) {
+      } else if (admin.adminType === UserTypeEnum.THIRD) {
         resp.msg = this.globalService.serverLang(
           '第三方用户不能登录系统',
-          'user.invUser',
+          'user.thirdUser',
         );
       } else if (shop === null) {
         // 这里判断是否@店铺,是判断shop这个值是不是undefined还是null,undefined就是没有@,null就是@了店铺的

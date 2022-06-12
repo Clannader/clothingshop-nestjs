@@ -55,15 +55,22 @@ export const monitorPlugin = function (schema: Schema): void {
   });
   schema.post('save', function (result) {
     // logger.info('创建后:%s', JSON.stringify(result)); // 这里的result只是加多了一个__v字段
-    const { _id, __v, ...params } = JSON.parse(JSON.stringify(result));
-    const logJSON = {
-      methodName: this.$op, // 要不然写死create|save,要么写this.$op
-      modelName: schema.statics['getAliasName'].call(this),
-      result: JSON.stringify({ _id, ...params }),
-      params: JSON.stringify(params),
-      diffTime: new Date().getTime() - this.$locals.lastTime,
+    writeDocumentLog.call(this, schema, result);
+  });
+
+  schema.pre('remove', function () {
+    this.$locals.lastTime = new Date().getTime();
+    this.$where = {
+      ...this.$where,
+      [versionKey]: this[versionKey],
     };
-    logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
+    console.log(this[versionKey])
+    console.log(this.get('__v'))
+    console.log(this.version)
+    console.log(this.schema.options)
+  });
+  schema.post('remove', function (result) {
+    writeDocumentLog.call(this, schema, result);
   });
 
   schema.pre('find', async function () {
@@ -86,7 +93,7 @@ export const monitorPlugin = function (schema: Schema): void {
     // console.log(this.getOptions()) // 其他参数
   });
   schema.post('find', function (result) {
-    writeFileLog.call(this, schema, result);
+    writeQueryLog.call(this, schema, result);
   });
 
   schema.pre('findOne', function () {
@@ -95,7 +102,7 @@ export const monitorPlugin = function (schema: Schema): void {
     });
   });
   schema.post('findOne', function (result) {
-    writeFileLog.call(this, schema, result);
+    writeQueryLog.call(this, schema, result);
   });
 
   schema.pre('updateOne', function () {
@@ -114,17 +121,17 @@ export const monitorPlugin = function (schema: Schema): void {
     // this.set('_lastTime', new Date().getTime());
   });
   schema.post('updateOne', function (result) {
-    writeFileLog.call(this, schema, result);
+    writeQueryLog.call(this, schema, result);
   });
 };
 
-const writeFileLog = function (schema, result) {
+const writeQueryLog = function (schema, result) {
   const { _lastTime, ...options } = this.getOptions();
   const logJSON = {
     methodName: this.op,
     modelName: schema.statics['getAliasName'].call(this),
     result: result ? JSON.stringify(result) : '', // result有可能是空的,因为查询可能是null的
-    query: JSON.stringify(this.getQuery()),
+    query: this.getQuery() ? JSON.stringify(this.getQuery()) : '',
     projection: this.projection() ? JSON.stringify(this.projection()) : '',
     options: JSON.stringify(options),
     params: this.getUpdate() ? JSON.stringify(this.getUpdate()) : '',
@@ -132,3 +139,15 @@ const writeFileLog = function (schema, result) {
   };
   logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
 };
+
+const writeDocumentLog = function(schema, result) {
+  const { _id, ...params } = JSON.parse(JSON.stringify(result));
+  const logJSON = {
+    methodName: this.$op, // 要不然写死create|save,要么写this.$op
+    modelName: schema.statics['getAliasName'].call(this),
+    result: JSON.stringify({ _id, ...params }),
+    params: JSON.stringify(params),
+    diffTime: new Date().getTime() - this.$locals.lastTime,
+  };
+  logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
+}

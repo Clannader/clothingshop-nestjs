@@ -1,4 +1,4 @@
-import { CommonResult } from '../../common';
+import { CommonResult } from '@/common';
 import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
 import { TestSchemaDto } from './test-schema.dto';
 
