@@ -60,14 +60,11 @@ export const monitorPlugin = function (schema: Schema): void {
 
   schema.pre('remove', function () {
     this.$locals.lastTime = new Date().getTime();
-    this.$where = {
-      ...this.$where,
-      [versionKey]: this[versionKey],
-    };
-    console.log(this[versionKey])
-    console.log(this.get('__v'))
-    console.log(this.version)
-    console.log(this.schema.options)
+    // 删除时没办法判断版本是否更新了,感觉这个版本只有编辑数据时才有用
+    // this.$where = {
+    //   ...this.$where,
+    //   [versionKey]: this[versionKey],
+    // };
   });
   schema.post('remove', function (result) {
     writeDocumentLog.call(this, schema, result);
@@ -121,6 +118,15 @@ export const monitorPlugin = function (schema: Schema): void {
     // this.set('_lastTime', new Date().getTime());
   });
   schema.post('updateOne', function (result) {
+    writeQueryLog.call(this, schema, result);
+  });
+
+  schema.pre('deleteOne', function () {
+    this.setOptions({
+      _lastTime: new Date().getTime(),
+    });
+  });
+  schema.post('deleteOne', function (result) {
     writeQueryLog.call(this, schema, result);
   });
 };
