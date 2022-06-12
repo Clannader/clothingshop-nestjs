@@ -97,6 +97,14 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
+    "globals": {
+      "ts-jest": {
+        "tsconfig": "tsconfig.jest.json"
+      }
+    },
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1"
+    },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }

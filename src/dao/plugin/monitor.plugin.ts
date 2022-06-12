@@ -23,29 +23,51 @@ export const monitorPlugin = function (schema: Schema): void {
 
   // 注意2：save()函数触发validate()钩子,mongoose validate()其实就是pre('save')钩子,这意味着pre('validate')和
   // post('validate')都会在pre('save')钩子之前调用
+
+  // 获取更新版本的字段名'__v'
+  const versionKey: string = schema.get('versionKey') as string;
+
   schema.pre('save', function () {
     // save和create是一样的
     // console.log(this) // 这个this似乎是创建的参数,并且里面包含了_id
     // const { _id, ...params } = JSON.parse(JSON.stringify(this))
 
+    // 这里的this指针指向的是document
+
     // 这里的this.set(key, value) 其实是设置创建参数的,设置schema里面的字段值,如果设置的key不在schema里面时,
     // post()时的get(key)是get不出来的。如果key等于了schema里面的值时,就会覆盖外层调用设置的值,所以不可取
+
     // 还有一种方法就是直接this.xxx=xxx,然后post()时,result.xxx可以获取到值,但是如果xxx等于了schema里面某个
     // 字段的值时会修改外层调用时的对于的key的值
+
     // 这里相当于创建的时候加入了_lastTime这个字段,但是由于schema里面没有声明这个字段,所以不会存库
-    this._lastTime = new Date().getTime();
+    // this._lastTime = new Date().getTime(); // 可以在post的时候的result._lastTime取值
+
+    // 不过这个方法更好
+    this.$locals.lastTime = new Date().getTime(); // 可以参考mongoose/types/document.d.ts的Document(第47行)
+    // 这里加入save时加入版本号的校验,避免拿回来的数据已经被更新过了
+    this.$where = {
+      ...this.$where,
+      [versionKey]: this[versionKey],
+    };
+    this.increment(); // 这里就是抛出版本号异常,但是查看源码好像是开启doIncrement这个参数,可以给版本号自动加1
+    // 源代码路径mongoose/lib/model 418行
   });
   schema.post('save', function (result) {
     // logger.info('创建后:%s', JSON.stringify(result)); // 这里的result只是加多了一个__v字段
-    const { _id, __v, ...params } = JSON.parse(JSON.stringify(result));
-    const logJSON = {
-      methodName: 'create',
-      modelName: schema.statics['getAliasName'].call(this),
-      result: JSON.stringify({ _id, ...params }),
-      params: JSON.stringify(params),
-      diffTime: new Date().getTime() - result._lastTime,
-    };
-    logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
+    writeDocumentLog.call(this, schema, result);
+  });
+
+  schema.pre('remove', function () {
+    this.$locals.lastTime = new Date().getTime();
+    // 删除时没办法判断版本是否更新了,感觉这个版本只有编辑数据时才有用
+    // this.$where = {
+    //   ...this.$where,
+    //   [versionKey]: this[versionKey],
+    // };
+  });
+  schema.post('remove', function (result) {
+    writeDocumentLog.call(this, schema, result);
   });
 
   schema.pre('find', async function () {
@@ -68,7 +90,7 @@ export const monitorPlugin = function (schema: Schema): void {
     // console.log(this.getOptions()) // 其他参数
   });
   schema.post('find', function (result) {
-    writeFileLog.call(this, schema, 'find', result);
+    writeQueryLog.call(this, schema, result);
   });
 
   schema.pre('findOne', function () {
@@ -77,31 +99,61 @@ export const monitorPlugin = function (schema: Schema): void {
     });
   });
   schema.post('findOne', function (result) {
-    writeFileLog.call(this, schema, 'findOne', result);
+    writeQueryLog.call(this, schema, result);
   });
 
   schema.pre('updateOne', function () {
     this.setOptions({
       _lastTime: new Date().getTime(),
     });
+    const $where = this.getUpdate();
+    // 更新时版本号自动加1
+    this.setUpdate({
+      ...$where,
+      $inc: {
+        [versionKey]: 1,
+      },
+    });
     // 这里由于是更新的方法,所以下面的设置更新条件是没有用的,因为外层传过来的条件会直接覆盖
     // this.set('_lastTime', new Date().getTime());
   });
   schema.post('updateOne', function (result) {
-    writeFileLog.call(this, schema, 'updateOne', result);
+    writeQueryLog.call(this, schema, result);
+  });
+
+  schema.pre('deleteOne', function () {
+    this.setOptions({
+      _lastTime: new Date().getTime(),
+    });
+  });
+  schema.post('deleteOne', function (result) {
+    writeQueryLog.call(this, schema, result);
   });
 };
 
-const writeFileLog = function (schema, methodName, result) {
+const writeQueryLog = function (schema, result) {
   const { _lastTime, ...options } = this.getOptions();
   const logJSON = {
-    methodName,
+    methodName: this.op,
     modelName: schema.statics['getAliasName'].call(this),
     result: result ? JSON.stringify(result) : '', // result有可能是空的,因为查询可能是null的
-    query: JSON.stringify(this.getQuery()),
-    projection: JSON.stringify(this.projection() || this.getUpdate()),
+    query: this.getQuery() ? JSON.stringify(this.getQuery()) : '',
+    projection: this.projection() ? JSON.stringify(this.projection()) : '',
     options: JSON.stringify(options),
+    params: this.getUpdate() ? JSON.stringify(this.getUpdate()) : '',
     diffTime: new Date().getTime() - _lastTime,
+  };
+  logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
+};
+
+const writeDocumentLog = function (schema, result) {
+  const { _id, ...params } = JSON.parse(JSON.stringify(result));
+  const logJSON = {
+    methodName: this.$op, // 要不然写死create|save,要么写this.$op
+    modelName: schema.statics['getAliasName'].call(this),
+    result: JSON.stringify({ _id, ...params }),
+    params: JSON.stringify(params),
+    diffTime: new Date().getTime() - this.$locals.lastTime,
   };
   logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
 };

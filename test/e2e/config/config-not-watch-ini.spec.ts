@@ -3,8 +3,8 @@
  */
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '../../src/config/app.module';
-import { ConfigService } from '../../../src/common/config';
+import { AppModule } from '@T/config/app.module';
+import { ConfigService } from '@/common';
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TestConfigController } from './test.config.controller';
-import { ConfigModule } from '../../../src/common/config';
+import { ConfigModule } from '@/common';
 import { join } from 'path';
 import { TestConfigTokenController } from './test.config.token.controller';
 

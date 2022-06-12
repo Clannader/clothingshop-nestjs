@@ -16,7 +16,7 @@ import {
   CodeEnum,
   ConfigService,
   GlobalService,
-} from '../common';
+} from '@/common';
 import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
 // import { UserService } from '../user/user.service';
 

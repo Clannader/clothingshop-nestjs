@@ -98,7 +98,7 @@ export class AdminSchemaService {
         return Promise.reject({
           message: this.globalService.serverLang(
             '用户名或密码错误',
-            'user.invPws',
+            'user.invPassword',
           ),
           code: CodeEnum.FAIL,
         });
