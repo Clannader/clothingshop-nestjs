@@ -3,7 +3,7 @@
  */
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '../../src/config/app.module';
+import { AppModule } from '@T/config/app.module';
 import * as request from 'supertest';
 
 describe('ConfigService 测试全局初始化', () => {
