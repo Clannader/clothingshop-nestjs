@@ -106,14 +106,14 @@ export const monitorPlugin = function (schema: Schema): void {
     this.setOptions({
       _lastTime: new Date().getTime(),
     });
-    const $where = this.getUpdate()
+    const $where = this.getUpdate();
     // 更新时版本号自动加1
     this.setUpdate({
       ...$where,
       $inc: {
-        [versionKey]: 1
-      }
-    })
+        [versionKey]: 1,
+      },
+    });
     // 这里由于是更新的方法,所以下面的设置更新条件是没有用的,因为外层传过来的条件会直接覆盖
     // this.set('_lastTime', new Date().getTime());
   });
@@ -146,7 +146,7 @@ const writeQueryLog = function (schema, result) {
   logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
 };
 
-const writeDocumentLog = function(schema, result) {
+const writeDocumentLog = function (schema, result) {
   const { _id, ...params } = JSON.parse(JSON.stringify(result));
   const logJSON = {
     methodName: this.$op, // 要不然写死create|save,要么写this.$op
@@ -156,4 +156,4 @@ const writeDocumentLog = function(schema, result) {
     diffTime: new Date().getTime() - this.$locals.lastTime,
   };
   logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
-}
+};

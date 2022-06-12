@@ -39,7 +39,9 @@ export class UserService {
 
     const delay = (time: number) =>
       new Promise((resolve) => setTimeout(() => resolve(''), time));
-    const super1 = await this.adminSchemaService.getModel().findById('62a46159b04b9fce2c1123d9')
+    const super1 = await this.adminSchemaService
+      .getModel()
+      .findById('62a46159b04b9fce2c1123d9');
     // const super2 = await this.adminSchemaService.getModel().findById('62a46159b04b9fce2c1123d9')
     // super1.retryNumber = super1.retryNumber + 1;
     // await super1.save().catch(err => console.log(err))
@@ -53,16 +55,16 @@ export class UserService {
     //   console.log(result)
     // });
 
-    const offset = params.offset
+    const offset = params.offset;
 
     if (offset < 10) {
-      await delay(1000)
+      await delay(1000);
     } else {
-      await delay(2000)
+      await delay(2000);
     }
     super1.retryNumber = super1.retryNumber + 1;
-    await super1.save().catch(err => console.log(err))
-    resp.code = offset
+    await super1.save().catch((err) => console.log(err));
+    resp.code = offset;
     return resp;
   }
 
