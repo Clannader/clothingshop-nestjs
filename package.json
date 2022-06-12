@@ -97,6 +97,11 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
+    "globals": {
+      "ts-jest": {
+        "tsconfig": "tsconfig.jest.json"
+      }
+    },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
