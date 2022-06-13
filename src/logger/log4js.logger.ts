@@ -5,8 +5,9 @@ import { join } from 'path';
  * 这个文件是在main.ts中第一个导入的,所以这个文件如果需要一些配置信息可能不知道能不能获取到
  * 这个也是一个问题
  */
-const baseLogPath = join(__dirname, '/../../logs/server.log');
-const baseFileLogPath = join(__dirname, '/../../fileLogs/fileLog.log');
+// 由于打包后的代码是在dist下面而已,所以使用的是/../,而不是以项目的路径为基准的
+const baseLogPath = join(__dirname, '/../logs/server.log');
+const baseFileLogPath = join(__dirname, '/../fileLogs/fileLog.log');
 
 function replaceConsole(logger) {
   function replaceWith(fn) {

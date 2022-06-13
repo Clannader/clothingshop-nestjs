@@ -7,6 +7,8 @@
       "options": {
         "introspectComments": true
       }
-    }]
+    }],
+    "webpack": true,
+    "tsConfigPath": "tsconfig.build.json"
   }
 }
