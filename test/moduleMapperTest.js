@@ -10,7 +10,7 @@ const mapper = pathsToModuleNameMapper(
   },
   {
     // prefix: '<rootDir>/..', // 如果是test的运行使用这个前缀
-    // prefix: '<rootDir>/' // 如果是主代码的运行使用这个前缀
+    // prefix: '<rootDir>/' // 如果是主代码的运行使用这个前缀<rootDir>=src,所以不需要加src
   }
 );
 console.log(mapper);
