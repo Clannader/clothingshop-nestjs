@@ -1,6 +1,6 @@
 import { CommonResult } from '@/common';
-import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
-import { TestSchemaDto } from './test-schema.dto';
+import { ApiProperty/*, getSchemaPath*/ } from '@nestjs/swagger';
+// import { TestSchemaDto } from './test-schema.dto';
 
 export class RespPageSchemaDto<T> extends CommonResult {
   @ApiProperty({
@@ -14,10 +14,19 @@ export class RespPageSchemaDto<T> extends CommonResult {
    */
   @ApiProperty({
     description: '结果集',
-    type: 'array',
-    items: {
-      $ref: getSchemaPath(TestSchemaDto),
-    },
+    // type: 'array',
+    // items: {
+    //   $ref: getSchemaPath(TestSchemaDto),
+    // },
   })
   results: T[];
+
+  @ApiProperty({
+    description: '泛型',
+    // allOf: [{
+    //   $ref: getSchemaPath(TestSchemaDto),
+    // }]
+  })
+  factory: T;
+
 }
