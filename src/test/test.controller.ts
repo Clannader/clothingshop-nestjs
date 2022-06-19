@@ -3,7 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiCommon, CodeEnum, ConfigService, GlobalService, ApiGenericsResponse } from '@/common';
 import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
 import { TestSchemaDto } from './dto/test-schema.dto';
-import { cloneClass } from './utils/test.utils'
+import { cloneClass, getModelProperties } from './utils/test.utils'
 
 // import { UserService } from '../user/user.service';
 
@@ -35,9 +35,10 @@ export class TestController {
     // @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();
-    resp.factory = new TestSchemaDto()
+    resp.result = new TestSchemaDto()
     console.log(params);
-    console.log(cloneClass(RespTestSchemaDto));
+    const clone = cloneClass(RespTestSchemaDto);
+    console.log(getModelProperties(clone))
     // const dbUser: string = this.configService.get<string>('dbUser');
     // console.log(dbUser);
     // console.log(typeof dbUser);

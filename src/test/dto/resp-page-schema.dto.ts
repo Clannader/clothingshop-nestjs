@@ -27,6 +27,6 @@ export class RespPageSchemaDto<T> extends CommonResult {
     //   $ref: getSchemaPath(TestSchemaDto),
     // }]
   })
-  factory: T;
+  result: T;
 
 }
