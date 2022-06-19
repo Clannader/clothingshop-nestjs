@@ -1,6 +1,6 @@
 import { RespPageSchemaDto } from './resp-page-schema.dto';
 import { TestSchemaDto } from './test-schema.dto';
-import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
+import { ApiProperty/*, getSchemaPath*/ } from '@nestjs/swagger';
 
 export class RespTestSchemaDto extends RespPageSchemaDto<TestSchemaDto> {
   /**

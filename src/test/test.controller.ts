@@ -1,23 +1,10 @@
-import {
-  Controller,
-  Post,
-  HttpCode,
-  HttpStatus,
-  Body,
-  Get,
-  Query,
-  Inject,
-  // Headers,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import {
-  ApiCommon,
-  ApiCustomResponse,
-  CodeEnum,
-  ConfigService,
-  GlobalService,
-} from '@/common';
+import { Body, Controller, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiCommon, CodeEnum, ConfigService, GlobalService, ApiGenericsResponse } from '@/common';
 import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
+import { TestSchemaDto } from './dto/test-schema.dto';
+import { cloneClass } from './utils/test.utils'
+
 // import { UserService } from '../user/user.service';
 
 @ApiCommon()
@@ -36,21 +23,21 @@ export class TestController {
   // @Inject('TEST_CONFIG')
   // private readonly config2Service: ConfigService;
 
-  @Post('/api/test/post')
+  @Post('/gateway/test/post')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '测试 POST 泛型接口',
     description: '测试泛型接口',
   })
-  @ApiCustomResponse({
-    type: RespTestSchemaDto,
-  })
+  @ApiGenericsResponse(RespTestSchemaDto, TestSchemaDto)
   async testingPost(
     @Body() params: ReqTestSchemaDto,
     // @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();
+    resp.factory = new TestSchemaDto()
     console.log(params);
+    console.log(cloneClass(RespTestSchemaDto));
     // const dbUser: string = this.configService.get<string>('dbUser');
     // console.log(dbUser);
     // console.log(typeof dbUser);
@@ -109,37 +96,37 @@ export class TestController {
     return resp;
   }
 
-  @Get('/api/test/get')
-  @ApiOperation({
-    summary: '测试 GET 泛型接口',
-    description: '测试泛型接口',
-  })
-  @ApiCustomResponse({
-    type: RespTestSchemaDto,
-  })
-  testingGet(@Query() params: ReqTestSchemaDto) {
-    console.log(params);
-    const resp = new RespTestSchemaDto();
-    resp.code = CodeEnum.SUCCESS;
-    resp.rows = 23;
-    resp.schema = params.testObject;
-    return resp;
-  }
+  // @Get('/api/test/get')
+  // @ApiOperation({
+  //   summary: '测试 GET 泛型接口',
+  //   description: '测试泛型接口',
+  // })
+  // @ApiCustomResponse({
+  //   type: RespTestSchemaDto,
+  // })
+  // testingGet(@Query() params: ReqTestSchemaDto) {
+  //   console.log(params);
+  //   const resp = new RespTestSchemaDto();
+  //   resp.code = CodeEnum.SUCCESS;
+  //   resp.rows = 23;
+  //   resp.schema = params.testObject;
+  //   return resp;
+  // }
 
-  @Get('/gateway/test/get')
-  @ApiOperation({
-    summary: '测试 GET gateway接口',
-    description: '测试gateway接口',
-  })
-  @ApiCustomResponse({
-    type: RespTestSchemaDto,
-  })
-  gatewayGet(@Query() params: ReqTestSchemaDto) {
-    console.log(params);
-    const resp = new RespTestSchemaDto();
-    resp.code = CodeEnum.SUCCESS;
-    resp.rows = 23;
-    resp.schema = params.testObject;
-    return resp;
-  }
+  // @Get('/gateway/test/get')
+  // @ApiOperation({
+  //   summary: '测试 GET gateway接口',
+  //   description: '测试gateway接口',
+  // })
+  // @ApiCustomResponse({
+  //   type: RespTestSchemaDto,
+  // })
+  // gatewayGet(@Query() params: ReqTestSchemaDto) {
+  //   console.log(params);
+  //   const resp = new RespTestSchemaDto();
+  //   resp.code = CodeEnum.SUCCESS;
+  //   resp.rows = 23;
+  //   resp.schema = params.testObject;
+  //   return resp;
+  // }
 }
