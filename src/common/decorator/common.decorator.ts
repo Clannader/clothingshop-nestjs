@@ -6,7 +6,7 @@ import {
   ApiResponseOptions,
   ApiHeaderOptions,
   getSchemaPath,
-  ApiExtraModels
+  ApiExtraModels,
 } from '@nestjs/swagger';
 import { API_MODEL_PROPERTIES } from '../constants';
 
@@ -133,28 +133,49 @@ export function ApiCustomResponse(options: ApiResponseOptions) {
  * @param targetModel 接口响应类
  * @param subModel 泛型类
  */
-export const ApiGenericsResponse = <TModel extends Type, SModel extends Type>(targetModel: TModel, subModel: SModel) => {
+export const ApiGenericsResponse = <TModel extends Type, SModel extends Type>(
+  targetModel: TModel,
+  subModel: SModel,
+) => {
   // 这里写死了泛型的固定字段是results
-  const fieldResults = 'results'
-  const prototype = targetModel.prototype
+  const fieldResults = 'results';
+  const prototype = targetModel.prototype;
   if (Reflect.hasMetadata(API_MODEL_PROPERTIES, prototype, fieldResults)) {
-    const metadataResult = Reflect.getMetadata(API_MODEL_PROPERTIES, prototype, fieldResults)
-    metadataResult.type = 'array'
+    const metadataResult = Reflect.getMetadata(
+      API_MODEL_PROPERTIES,
+      prototype,
+      fieldResults,
+    );
+    metadataResult.type = 'array';
     metadataResult.items = {
-      $ref: getSchemaPath(subModel)
-    }
-    Reflect.defineMetadata(API_MODEL_PROPERTIES, metadataResult, prototype, fieldResults)
+      $ref: getSchemaPath(subModel),
+    };
+    Reflect.defineMetadata(
+      API_MODEL_PROPERTIES,
+      metadataResult,
+      prototype,
+      fieldResults,
+    );
   }
 
-  const fieldObject = 'result'
+  const fieldObject = 'result';
   if (Reflect.hasMetadata(API_MODEL_PROPERTIES, prototype, fieldObject)) {
-    const metadataResult = Reflect.getMetadata(API_MODEL_PROPERTIES, prototype, fieldObject)
+    const metadataResult = Reflect.getMetadata(
+      API_MODEL_PROPERTIES,
+      prototype,
+      fieldObject,
+    );
     metadataResult.allOf = [
       {
-        $ref: getSchemaPath(subModel)
-      }
-    ]
-    Reflect.defineMetadata(API_MODEL_PROPERTIES, metadataResult, prototype, fieldObject)
+        $ref: getSchemaPath(subModel),
+      },
+    ];
+    Reflect.defineMetadata(
+      API_MODEL_PROPERTIES,
+      metadataResult,
+      prototype,
+      fieldObject,
+    );
   }
 
   return BindMethod(
@@ -163,8 +184,8 @@ export const ApiGenericsResponse = <TModel extends Type, SModel extends Type>(ta
       status: HttpStatus.OK,
       description: '返回成功',
       schema: {
-        $ref: getSchemaPath(targetModel)
+        $ref: getSchemaPath(targetModel),
       },
     }),
   );
-}
+};

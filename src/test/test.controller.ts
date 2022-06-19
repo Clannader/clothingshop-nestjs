@@ -1,9 +1,29 @@
-import { Body, Controller, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Inject,
+  Post,
+  Get,
+  Query,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ApiCommon, CodeEnum, ConfigService, GlobalService, ApiGenericsResponse } from '@/common';
-import { ReqTestSchemaDto, RespTestSchemaDto } from './dto';
-import { TestSchemaDto } from './dto/test-schema.dto';
-import { cloneClass, getModelProperties } from './utils/test.utils'
+import {
+  ApiCommon,
+  CodeEnum,
+  ConfigService,
+  GlobalService,
+  ApiGenericsResponse,
+} from '@/common';
+import {
+  ReqTestSchemaDto,
+  RespTestSchemaDto,
+  TestSchemaDto,
+  RespObjectDto,
+} from './dto';
+import { cloneClass, getModelProperties } from './utils/test.utils';
+import { UserSessionDto } from '@/user';
 
 // import { UserService } from '../user/user.service';
 
@@ -35,10 +55,10 @@ export class TestController {
     // @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();
-    resp.result = new TestSchemaDto()
+    resp.result = new TestSchemaDto();
     console.log(params);
     const clone = cloneClass(RespTestSchemaDto);
-    console.log(getModelProperties(clone))
+    console.log(Reflect.getMetadataKeys(clone));
     // const dbUser: string = this.configService.get<string>('dbUser');
     // console.log(dbUser);
     // console.log(typeof dbUser);
@@ -114,20 +134,17 @@ export class TestController {
   //   return resp;
   // }
 
-  // @Get('/gateway/test/get')
-  // @ApiOperation({
-  //   summary: '测试 GET gateway接口',
-  //   description: '测试gateway接口',
-  // })
-  // @ApiCustomResponse({
-  //   type: RespTestSchemaDto,
-  // })
-  // gatewayGet(@Query() params: ReqTestSchemaDto) {
-  //   console.log(params);
-  //   const resp = new RespTestSchemaDto();
-  //   resp.code = CodeEnum.SUCCESS;
-  //   resp.rows = 23;
-  //   resp.schema = params.testObject;
-  //   return resp;
-  // }
+  @Get('/gateway/test/get')
+  @ApiOperation({
+    summary: '测试 GET gateway接口',
+    description: '测试gateway接口',
+  })
+  @ApiGenericsResponse(RespObjectDto, UserSessionDto)
+  gatewayGet(@Query() params: ReqTestSchemaDto) {
+    console.log(params);
+    const resp = new RespObjectDto();
+    resp.code = CodeEnum.SUCCESS;
+    resp.rows = 23;
+    return resp;
+  }
 }
