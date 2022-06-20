@@ -20,9 +20,9 @@ import {
   ReqTestSchemaDto,
   RespTestSchemaDto,
   TestSchemaDto,
-  RespObjectDto,
+  RespObjectDto
 } from './dto';
-import { cloneClass, getModelProperties } from './utils/test.utils';
+import { cloneClass } from './utils/test.utils';
 import { UserSessionDto } from '@/user';
 
 // import { UserService } from '../user/user.service';

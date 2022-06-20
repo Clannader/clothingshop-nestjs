@@ -1,9 +1,9 @@
 /**
  * Create by CC on 2022/6/19
  */
-import { RespPageSchemaDto } from './resp-page-schema.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserSessionDto } from '@/user';
+import { RespPageSchemaDto } from './resp-page-schema.dto';
 
 export class RespObjectDto extends RespPageSchemaDto<UserSessionDto> {
   /**
