@@ -30,3 +30,6 @@ export const tripleDES = {
 export const baseUrl = '/index';
 export const loginUrl = '/cms/api/user/login';
 export const logoutUrl = '/cms/api/user/logout';
+// 以下常量抄自@nest/swagger,因为要使用泛型,需要修改里面的内置元数据的值
+export const API_MODEL_PROPERTIES = 'swagger/apiModelProperties';
+export const API_MODEL_PROPERTIES_ARRAY = 'swagger/apiModelPropertiesArray';

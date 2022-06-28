@@ -8,7 +8,8 @@
         "introspectComments": true
       }
     }],
-    "webpack": true,
+    "webpack": false,
+    "webpackConfigPath": "webpack.config.js",
     "tsConfigPath": "tsconfig.build.json"
   }
 }
