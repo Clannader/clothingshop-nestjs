@@ -11,16 +11,15 @@ import {
   UserTypeEnum,
   UpdateLoginWhere,
   sessionSecret,
-  CmsSession,
 } from '@/common';
 import {
   ReqUserLoginDto,
   RespUserLoginDto,
   ReqUserSearchDto,
   RespUserSearchDto,
-  UserSessionDto,
 } from './dto';
 import { AdminSchemaService, Admin, LoginResult } from '@/entities';
+import { UserMapper } from './user.mapper';
 
 @Injectable()
 export class UserService {
@@ -244,7 +243,7 @@ export class UserService {
     };
     resp.code = CodeEnum.SUCCESS;
     resp.credential = 's:' + sign(req.sessionID, sessionSecret);
-    resp.session = UserService.getTemplateSession(req.session.adminSession);
+    resp.session = UserMapper.getTemplateSession(req.session.adminSession);
     resp.expireMsg = expireMsg;
     return resp;
   }
@@ -265,14 +264,4 @@ export class UserService {
     });
   }
 
-  private static getTemplateSession(session: CmsSession): UserSessionDto {
-    const result = new UserSessionDto();
-    result.adminId = session.adminId;
-    result.adminName = session.adminName;
-    result.adminType = UserTypeEnum[session.adminType];
-    result.lastTime = session.lastTime;
-    result.isFirstLogin = session.isFirstLogin;
-    result.mobile = session.mobile;
-    return result;
-  }
 }
