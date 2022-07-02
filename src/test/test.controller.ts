@@ -20,7 +20,7 @@ import {
   ReqTestSchemaDto,
   RespTestSchemaDto,
   TestSchemaDto,
-  RespObjectDto
+  RespObjectDto,
 } from './dto';
 import { cloneClass } from './utils/test.utils';
 import { UserSessionDto } from '@/user';

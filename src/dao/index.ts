@@ -3,3 +3,4 @@
  */
 export * from './mongoose.config.service';
 export * from './plugin';
+export * from './session';
