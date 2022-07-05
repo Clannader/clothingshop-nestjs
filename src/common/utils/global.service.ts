@@ -46,7 +46,16 @@ export class GlobalService {
   }
 
   serverLang(orgin: string, key: string, ...args: Array<string | number>) {
-    const headerLanguage = this.request.headers['language'];
+    return this.lang(
+      this.getHeadersLanguage(this.request),
+      orgin,
+      key,
+      ...args,
+    );
+  }
+
+  getHeadersLanguage(request: Request) {
+    const headerLanguage = request.headers['language'];
     const type: langType = Utils.isEmpty(headerLanguage)
       ? 'ZH'
       : ['ZH', 'EN'].includes(
@@ -54,7 +63,7 @@ export class GlobalService {
         )
       ? (headerLanguage as langType)
       : 'ZH';
-    return this.lang(type, orgin, key, ...args);
+    return type;
   }
 
   private parseProperties(properties: object, key: string): string | undefined {

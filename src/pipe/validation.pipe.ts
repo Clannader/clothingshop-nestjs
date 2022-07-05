@@ -1,11 +1,7 @@
-import {
-  PipeTransform,
-  Injectable,
-  ArgumentMetadata,
-  BadRequestException,
-} from '@nestjs/common';
-import { validate } from 'class-validator';
+import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
+import { validate, ValidationError } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
+import { ValidateException } from '@/common';
 
 @Injectable()
 export class ValidationPipe<T> implements PipeTransform<T> {
@@ -14,10 +10,12 @@ export class ValidationPipe<T> implements PipeTransform<T> {
       return value;
     }
     const object = plainToInstance(metatype, value);
-    const errors = await validate(object);
-    // console.log(errors);
+    const errors: ValidationError[] = await validate(object);
     if (errors.length > 0) {
-      throw new BadRequestException('Validation failed');
+      // 如果报错,取第一个提示
+      const constraints = errors[0].constraints;
+      const content = constraints[Object.keys(constraints)[0]];
+      throw new ValidateException(content);
     }
     return value;
   }
