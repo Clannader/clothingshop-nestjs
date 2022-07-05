@@ -1,5 +1,7 @@
 export const user = {
   isEmptyUserName: 'Please input your user name',
+  isEmptyPassword: 'Please input your password',
+  invUserName: 'Username contains illegal characters',
   userTest: 'Testing',
   userTestArgs: 'Testing {0}',
   sessionExp: 'Credential expired',

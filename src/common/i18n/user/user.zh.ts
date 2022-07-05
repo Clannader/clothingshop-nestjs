@@ -1,5 +1,7 @@
 export const user = {
   isEmptyUserName: '用户名不能为空',
+  isEmptyPassword: '密码不能为空',
+  invUserName: '用户名含有非法字符',
   userTest: '测试',
   userTestArgs: '测试 {0}',
   sessionExp: '凭证过期',
