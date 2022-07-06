@@ -1,6 +1,6 @@
 import { IsNotEmpty, Matches, IsString } from 'class-validator';
 import { Expose } from 'class-transformer';
-import { userNameExp } from '@/common'
+import { userNameExp } from '@/common';
 
 export class ReqUserLoginDto {
   /**

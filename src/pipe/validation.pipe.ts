@@ -2,7 +2,7 @@ import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
 import { validate, ValidationError } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { ValidateException } from '@/common';
-import { has, get, forEach } from 'lodash'
+import { has, get, forEach } from 'lodash';
 
 @Injectable()
 export class ValidationPipe<T> implements PipeTransform<T> {
@@ -10,7 +10,9 @@ export class ValidationPipe<T> implements PipeTransform<T> {
     if (!metatype || !ValidationPipe.toValidate(metatype)) {
       return value;
     }
-    const object = plainToInstance(metatype, value, { excludeExtraneousValues: true });
+    const object = plainToInstance(metatype, value, {
+      excludeExtraneousValues: true,
+    });
     const errors: ValidationError[] = await validate(object);
     if (errors.length > 0) {
       // 如果报错,取第一个提示
@@ -29,11 +31,11 @@ export class ValidationPipe<T> implements PipeTransform<T> {
 
   private static getErrorContent(constraints): string {
     const keys = ['isString', 'isNotEmpty', 'matches'];
-    let content = 'Validation failed'
-    forEach(keys, v => {
+    let content = 'Validation failed';
+    forEach(keys, (v) => {
       if (has(constraints, v)) {
         content = get(constraints, v);
-        return false
+        return false;
       }
     });
     return content;
