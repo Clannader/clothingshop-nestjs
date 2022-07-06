@@ -145,11 +145,11 @@ export const ApiGenericsResponse = <TModel extends Type, SModel extends Type>(
   // 放弃了,不搞了,以后学到其他高阶知识再回来弄了,思路就是可以复制新的元数据的值丢回给swagger的修饰器中
   if (Reflect.hasMetadata(API_MODEL_PROPERTIES, prototype, fieldResults)) {
     // 因为这个results是在原型链上的,所以使用getOwnMetadata是获取不到它的,它是父类的字段值
-    console.log(Reflect.getOwnMetadata(
-      API_MODEL_PROPERTIES,
-      prototype,
-      fieldResults,
-    ))
+    // console.log(Reflect.getOwnMetadata(
+    //   API_MODEL_PROPERTIES,
+    //   prototype,
+    //   fieldResults,
+    // ))
     const metadataResult = Reflect.getMetadata(
       API_MODEL_PROPERTIES,
       prototype,
@@ -160,29 +160,29 @@ export const ApiGenericsResponse = <TModel extends Type, SModel extends Type>(
       $ref: getSchemaPath(subModel),
     };
     // 这里获取自己字段的元数据值
-    console.log(Reflect.getMetadata(
-      API_MODEL_PROPERTIES,
-      prototype,
-      'rows',
-    ))
+    // console.log(Reflect.getMetadata(
+    //   API_MODEL_PROPERTIES,
+    //   prototype,
+    //   'rows',
+    // ))
     // 删除自己的字段对应的元数据
-    console.log(Reflect.deleteMetadata(
-      API_MODEL_PROPERTIES,
-      prototype,
-      'rows',
-    ))
+    // console.log(Reflect.deleteMetadata(
+    //   API_MODEL_PROPERTIES,
+    //   prototype,
+    //   'rows',
+    // ))
     // 删除父类字段的元数据,发现删除不成功,返回false
-    console.log(Reflect.deleteMetadata(
-      API_MODEL_PROPERTIES,
-      prototype,
-      fieldResults,
-    ))
+    // console.log(Reflect.deleteMetadata(
+    //   API_MODEL_PROPERTIES,
+    //   prototype,
+    //   fieldResults,
+    // ))
     // 删除自己字段元数据后,获取看看是否还存在,返回undefined
-    console.log(Reflect.getMetadata(
-      API_MODEL_PROPERTIES,
-      prototype,
-      'rows',
-    ))
+    // console.log(Reflect.getMetadata(
+    //   API_MODEL_PROPERTIES,
+    //   prototype,
+    //   'rows',
+    // ))
     // 修改泛型类的元数据的值
     Reflect.defineMetadata(
       API_MODEL_PROPERTIES,

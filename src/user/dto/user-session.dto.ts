@@ -12,7 +12,7 @@ export class UserSessionDto {
   adminName: string;
 
   /**
-   * 用户类型:(SYSTEM=系统用户,NORMAL=普通用户,3RD=第三方接口用户)
+   * 用户类型:(SYSTEM=系统用户,3RD=第三方接口用户,OTHER=其他用户)
    */
   adminType: UserTypeEnum;
 

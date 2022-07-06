@@ -7,7 +7,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 // 使用require时,使用lint解析又报错,只能忽略这个错误了,以后再说了,坑爹
 /* eslint-disable @typescript-eslint/no-var-requires */
 // const MongoStore = require('connect-mongo');
-import MongoStore from 'connect-mongo/build/main/lib/MongoStore';
+import { SessionMongoStore } from './dao';
 import * as cookieParser from 'cookie-parser';
 
 import './logger/log4js.logger';
@@ -66,7 +66,7 @@ async function bootstrap() {
       secret: sessionSecret,
       saveUninitialized: false,
       resave: true,
-      store: MongoStore.create({
+      store: SessionMongoStore.create({
         client: mongooseService.getConnection().getClient(),
         ttl: dbSession_Expires,
       }),

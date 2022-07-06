@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as globalVariable from '../constants';
 import { i18n } from '../i18n';
 import { Utils } from './utils';
@@ -46,15 +46,23 @@ export class GlobalService {
   }
 
   serverLang(orgin: string, key: string, ...args: Array<string | number>) {
-    const headerLanguage = this.request.headers['language'];
-    const type: langType = Utils.isEmpty(headerLanguage)
+    return this.lang(
+      this.getHeadersLanguage(this.request),
+      orgin,
+      key,
+      ...args,
+    );
+  }
+
+  getHeadersLanguage(request: Request) {
+    const headerLanguage = request.headers['language'];
+    return Utils.isEmpty(headerLanguage)
       ? 'ZH'
       : ['ZH', 'EN'].includes(
           typeof headerLanguage === 'string' ? headerLanguage : 'ZH',
         )
       ? (headerLanguage as langType)
       : 'ZH';
-    return this.lang(type, orgin, key, ...args);
   }
 
   private parseProperties(properties: object, key: string): string | undefined {

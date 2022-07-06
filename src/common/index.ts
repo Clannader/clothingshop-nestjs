@@ -2,6 +2,7 @@ export * from './config';
 export * from './decorator';
 export * from './dto';
 export * from './enum';
+export * from './exceptions';
 export * from './i18n';
 export * from './types';
 export * from './utils';

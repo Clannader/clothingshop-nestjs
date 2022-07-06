@@ -5,7 +5,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { AdminModel, Admin } from '../../schema';
-import { GlobalService, Utils, CodeEnum, userNameExp, mailExp } from '@/common';
+import { GlobalService, Utils, CodeEnum, userNameExp } from '@/common';
+import validator from 'validator';
 
 type LoginWhere = {
   email?: string;
@@ -58,7 +59,7 @@ export class AdminSchemaService {
     const matches = adminId.match('^(.+)@(.+)$');
     // let loginShop = '';
     const where: LoginWhere = {};
-    if (adminId.match(mailExp)) {
+    if (validator.isEmail(adminId)) {
       where.email = adminId;
     } else if (matches) {
       where.adminId = Utils.getIgnoreCase(matches[1]);
