@@ -71,6 +71,7 @@ export class UserService {
     params: ReqUserLoginDto,
     req: RequestSession,
   ): Promise<RespUserLoginDto> {
+    console.log(params)
     const adminId = params.adminId;
     const password = params.adminPws;
     const loginResult = await this.adminSchemaService

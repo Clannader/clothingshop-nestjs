@@ -27,7 +27,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       code: status,
       msg: this.globalService.lang(
         this.globalService.getHeadersLanguage(request),
-        'Validation failed',
+        message,
         message,
       ),
       timestamp: new Date().toISOString(),

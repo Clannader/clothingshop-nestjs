@@ -1,4 +1,5 @@
-import { IsNotEmpty, Matches } from 'class-validator';
+import { IsNotEmpty, Matches, IsString } from 'class-validator';
+import { Expose } from 'class-transformer';
 import { userNameExp } from '@/common'
 
 export class ReqUserLoginDto {
@@ -9,6 +10,8 @@ export class ReqUserLoginDto {
     message: 'user.isEmptyUserName',
   })
   @Matches(userNameExp, { message: 'user.invUserName' })
+  @IsString()
+  @Expose()
   adminId: string;
 
   /**
@@ -17,5 +20,7 @@ export class ReqUserLoginDto {
   @IsNotEmpty({
     message: 'user.isEmptyPassword',
   })
+  @IsString()
+  @Expose()
   adminPws: string;
 }
