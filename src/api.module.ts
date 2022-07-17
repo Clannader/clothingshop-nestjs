@@ -3,9 +3,9 @@
  */
 import {
   Module,
-  NestModule,
-  MiddlewareConsumer,
-  RequestMethod,
+  // NestModule,
+  // MiddlewareConsumer,
+  // RequestMethod,
 } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
@@ -13,13 +13,13 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
 
-import { CommonModule, ConfigModule, loginUrl } from './common';
+import { CommonModule, ConfigModule /*, loginUrl*/ } from './common';
 import { UserModule } from './user';
 import { SystemModule } from './system';
 import { LoginModule } from './login';
 import { TestModule } from './test/test.module';
 import { HttpInterceptorModule } from './interceptor';
-import { ApiMiddleware } from './middleware';
+// import { ApiMiddleware } from './middleware';
 
 import { MongooseConfigService } from './dao';
 
@@ -56,20 +56,21 @@ import { MongooseConfigService } from './dao';
     },
   ],
 })
-export class ApiModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(ApiMiddleware)
-      .exclude({
-        path: loginUrl,
-        method: RequestMethod.ALL,
-      })
-      // 这里会有个bug,那就是/cms/api/开头的地址如果不存在时也会进入到这个中间件中
-      // 这时候就会报中间件的错误信息而不是404
-      .forRoutes('/cms/api/*');
-    // 可以按照下面的写法,按照不同的路由写不同的中间件
-    // consumer
-    //   .apply(ApiMiddleware)
-    //   .forRoutes('/cms/gateway/*')
-  }
-}
+export class ApiModule {}
+// export class ApiModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer
+//       .apply(ApiMiddleware)
+//       .exclude({
+//         path: loginUrl,
+//         method: RequestMethod.ALL,
+//       })
+//       // 这里会有个bug,那就是/cms/api/开头的地址如果不存在时也会进入到这个中间件中
+//       // 这时候就会报中间件的错误信息而不是404
+//       .forRoutes('/cms/api/*');
+//     // 可以按照下面的写法,按照不同的路由写不同的中间件
+//     // consumer
+//     //   .apply(ApiMiddleware)
+//     //   .forRoutes('/cms/gateway/*')
+//   }
+// }
