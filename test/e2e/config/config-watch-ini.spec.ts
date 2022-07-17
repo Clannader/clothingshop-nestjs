@@ -3,7 +3,7 @@
  */
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '@T/config/app.module';
+import { ConfigTestModule } from '@T/config/config.test.module';
 import { ConfigService } from '@/common';
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
@@ -16,7 +16,7 @@ describe('ConfigService 观察ini文件', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [AppModule.watchIniFile()],
+      imports: [ConfigTestModule.watchIniFile()],
     }).compile();
     app = module.createNestApplication();
     await app.init();

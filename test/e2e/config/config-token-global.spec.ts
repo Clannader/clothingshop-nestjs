@@ -3,7 +3,7 @@
  */
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '@T/config/app.module';
+import { ConfigTestModule } from '@T/config/config.test.module';
 // import { ConfigService } from '../../../src/common/config';
 import * as request from 'supertest';
 
@@ -13,7 +13,7 @@ describe('ConfigService token测试', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [AppModule.getTokenAndGlobal()],
+      imports: [ConfigTestModule.getTokenAndGlobal()],
     }).compile();
     app = module.createNestApplication();
     await app.init();
