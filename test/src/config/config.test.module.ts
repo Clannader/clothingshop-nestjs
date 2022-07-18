@@ -6,10 +6,10 @@ import { TestConfigTokenController } from './test.config.token.controller';
 import { TestConfigController } from './test.config.controller';
 
 @Module({})
-export class AppModule {
+export class ConfigTestModule {
   static loadDefault(): DynamicModule {
     return {
-      module: AppModule,
+      module: ConfigTestModule,
       imports: [
         ConfigModule.register({
           iniFilePath: join(__dirname, 'config.ini'),
@@ -20,7 +20,7 @@ export class AppModule {
 
   static loadExpandVar(): DynamicModule {
     return {
-      module: AppModule,
+      module: ConfigTestModule,
       imports: [
         ConfigModule.register({
           iniFilePath: join(__dirname, 'config.expand.ini'),
@@ -32,7 +32,7 @@ export class AppModule {
 
   static loadEnvFile(): DynamicModule {
     return {
-      module: AppModule,
+      module: ConfigTestModule,
       imports: [
         ConfigModule.register({
           envFilePath: join(__dirname, '.env'),
@@ -44,7 +44,7 @@ export class AppModule {
 
   static ignoreEnvVars(): DynamicModule {
     return {
-      module: AppModule,
+      module: ConfigTestModule,
       imports: [
         ConfigModule.register({
           envFilePath: join(__dirname, '.env'),
@@ -58,7 +58,7 @@ export class AppModule {
 
   static ignoreEnvFile(): DynamicModule {
     return {
-      module: AppModule,
+      module: ConfigTestModule,
       imports: [
         ConfigModule.register({
           envFilePath: join(__dirname, '.env'),
@@ -71,7 +71,7 @@ export class AppModule {
 
   static loadIniAndEnv(): DynamicModule {
     return {
-      module: AppModule,
+      module: ConfigTestModule,
       imports: [
         ConfigModule.register({
           envFilePath: join(__dirname, '.env'),
@@ -83,7 +83,7 @@ export class AppModule {
 
   static watchIniFile(): DynamicModule {
     return {
-      module: AppModule,
+      module: ConfigTestModule,
       imports: [
         ConfigModule.register({
           iniFilePath: join(__dirname, 'config-watch.ini'),
@@ -95,7 +95,7 @@ export class AppModule {
 
   static watchFalseIniFile(): DynamicModule {
     return {
-      module: AppModule,
+      module: ConfigTestModule,
       imports: [
         ConfigModule.register({
           iniFilePath: join(__dirname, 'config.ini'),
@@ -107,7 +107,7 @@ export class AppModule {
   // 还有一个token的令牌测试,需要测试全局实例化,全局后,可单独实例化,每一个实例都是单独的内存值,需要测试是否互相干扰
   static getGlobalIni(): DynamicModule {
     return {
-      module: AppModule,
+      module: ConfigTestModule,
       imports: [
         ConfigModule.register({
           iniFilePath: join(__dirname, 'config.ini'),
@@ -120,7 +120,7 @@ export class AppModule {
 
   static getTokenIni(): DynamicModule {
     return {
-      module: AppModule,
+      module: ConfigTestModule,
       imports: [
         ConfigModule.register({
           iniFilePath: join(__dirname, 'config.ini'),
@@ -133,7 +133,7 @@ export class AppModule {
 
   static getTokenAndGlobal(): DynamicModule {
     return {
-      module: AppModule,
+      module: ConfigTestModule,
       imports: [
         ConfigModule.register({
           iniFilePath: join(__dirname, 'config.ini'),

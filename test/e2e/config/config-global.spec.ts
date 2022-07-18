@@ -3,7 +3,7 @@
  */
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '@T/config/app.module';
+import { ConfigTestModule } from '@T/config/config.test.module';
 import * as request from 'supertest';
 
 describe('ConfigService 测试全局初始化', () => {
@@ -11,7 +11,7 @@ describe('ConfigService 测试全局初始化', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [AppModule.getGlobalIni()],
+      imports: [ConfigTestModule.getGlobalIni()],
     }).compile();
     app = module.createNestApplication();
     await app.init();

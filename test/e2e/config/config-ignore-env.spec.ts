@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '@T/config/app.module';
+import { ConfigTestModule } from '@T/config/config.test.module';
 import { ConfigService } from '@/common';
 
 describe('ConfigService 忽略环境变量值', () => {
@@ -14,7 +14,7 @@ describe('ConfigService 忽略环境变量值', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [AppModule.ignoreEnvVars()],
+      imports: [ConfigTestModule.ignoreEnvVars()],
     }).compile();
     app = module.createNestApplication();
     await app.init();

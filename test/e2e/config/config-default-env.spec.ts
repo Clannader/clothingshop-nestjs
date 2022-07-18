@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '@T/config/app.module';
+import { ConfigTestModule } from '@T/config/config.test.module';
 import { ConfigService } from '@/common';
 
 describe('ConfigService 默认加载环境变量文件', () => {
@@ -14,7 +14,7 @@ describe('ConfigService 默认加载环境变量文件', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [AppModule.loadEnvFile()],
+      imports: [ConfigTestModule.loadEnvFile()],
     }).compile();
     app = module.createNestApplication();
     await app.init();

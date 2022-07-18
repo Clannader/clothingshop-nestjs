@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '@T/config/app.module';
+import { ConfigTestModule } from '@T/config/config.test.module';
 import { ConfigService } from '@/common';
 
 describe('ConfigService 同时加载env和ini', () => {
@@ -14,7 +14,7 @@ describe('ConfigService 同时加载env和ini', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [AppModule.loadIniAndEnv()],
+      imports: [ConfigTestModule.loadIniAndEnv()],
     }).compile();
     app = module.createNestApplication();
     await app.init();
