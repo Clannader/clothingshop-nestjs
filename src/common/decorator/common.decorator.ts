@@ -70,6 +70,10 @@ export function ApiCommon(showCredential = true) {
   return applyDecorators(
     ApiHeaders(headers),
     ApiResponse({
+      status: CodeEnum.NO_FOUND,
+      description: '地址不存在',
+    }),
+    ApiResponse({
       status: CodeEnum.SUCCESS,
       description: '响应成功返回该响应码',
     }),

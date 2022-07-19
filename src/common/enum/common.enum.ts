@@ -1,4 +1,5 @@
 export enum CodeEnum {
+  NO_FOUND = 404, // 地址不存在
   SUCCESS = 1000, // 成功响应时返回该响应码
   EMPTY = 1001, // 校验字段为空时返回该响应码
   FAIL = 1002, // 统一失败时返回该状态码

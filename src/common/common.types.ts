@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { Session, Store } from 'express-session';
 
 export interface CmsSession {
@@ -25,6 +25,11 @@ export interface RequestSession extends Request {
   session: Session & AdminSession;
   sessionID: string;
   sessionStore: Store;
+  startTime?: Date;
+}
+
+export interface CmsResponse extends Response {
+  returnData: string;
 }
 
 export type NoInferType<T> = [T][T extends any ? 0 : never];
