@@ -7,7 +7,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { GlobalService } from '@/common';
+import { GlobalService, ValidateException } from '@/common';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -25,11 +25,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const message = exception.message;
     response.status(200).json({
       code: status,
-      msg: this.globalService.lang(
-        this.globalService.getHeadersLanguage(request),
-        message,
-        message,
-      ),
+      msg:
+        exception instanceof ValidateException
+          ? this.globalService.lang(
+              this.globalService.getHeadersLanguage(request),
+              message,
+              message,
+            )
+          : message,
       timestamp: new Date().toISOString(),
       path: request.url,
     });
