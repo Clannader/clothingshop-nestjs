@@ -33,11 +33,11 @@ export class MongooseConfigService implements MongooseOptionsFactory {
 
         connection.on('close', function () {
           //self
-          console.error('数据库已关闭');
+          console.log('数据库已关闭');
         });
 
         connection.on('disconnected', function () {
-          console.warn('数据库已断开');
+          console.log('数据库已断开');
         });
 
         connection.on('reconnected', function () {

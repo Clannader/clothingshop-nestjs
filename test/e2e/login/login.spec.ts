@@ -105,19 +105,6 @@ describe('AppController (e2e)', () => {
       });
   });
 
-  it('/cms/api/user/login (POST) 登录接口各种判断', () => {
-    return request(app.getHttpServer())
-      .post('/cms/api/user/login')
-      .expect(200)
-      .expect((res) => {
-        const body = res.body;
-        expect(body.code).toEqual(1005);
-        expect(body.msg).toEqual('adminId must be a string');
-        expect(body.timestamp).toBeDefined();
-        expect(body.path).toEqual('/cms/api/user/login');
-      });
-  });
-
   afterEach(async () => {
     await app.close();
   });

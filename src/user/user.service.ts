@@ -39,35 +39,6 @@ export class UserService {
     this.logger.log(params);
     const resp = new RespUserSearchDto();
     resp.code = 100;
-
-    // const delay = (time: number) =>
-    //   new Promise((resolve) => setTimeout(() => resolve(''), time));
-    // const super1 = await this.adminSchemaService
-    //   .getModel()
-    //   .findById('62a46159b04b9fce2c1123d9');
-    // const super2 = await this.adminSchemaService.getModel().findById('62a46159b04b9fce2c1123d9')
-    // super1.retryNumber = super1.retryNumber + 1;
-    // await super1.save().catch(err => console.log(err))
-    // super2.retryNumber = super2.retryNumber + 2;
-    // const super2 = await this.adminSchemaService.getModel().findById('62a46159b04b9fce2c1123d9')
-    // await this.adminSchemaService.getModel().updateOne({_id: super2._id.toString()}, {retryNumber: super2.retryNumber + 2}).catch(err => console.log(err))
-    // await super2.updateOne({retryNumber: super2.retryNumber + 2}).catch(err => console.log(err))
-    // super2.retryNumber = super2.retryNumber + 1;
-    // await super2.remove().catch(err => console.log(err))
-    // this.adminSchemaService.getModel().updateOne({ _id: '62a46159b04b9fce2c1123d9' }, {$set: {retryNumber: 3}}, (err, result) => {
-    //   console.log(result)
-    // });
-
-    // const offset = params.offset;
-
-    // if (offset < 10) {
-    //   await delay(1000);
-    // } else {
-    //   await delay(2000);
-    // }
-    // super1.retryNumber = super1.retryNumber + 1;
-    // await super1.save().catch((err) => console.log(err));
-    // resp.code = offset;
     return resp;
   }
 

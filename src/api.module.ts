@@ -38,9 +38,9 @@ import { MongooseConfigService } from './dao';
     MongooseModule.forRootAsync({
       useClass: MongooseConfigService,
     }),
+    UserSessionModule,
     HttpInterceptorModule,
     AopAspectModule,
-    UserSessionModule,
   ],
   providers: [
     {
