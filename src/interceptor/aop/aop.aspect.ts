@@ -45,8 +45,8 @@ export class AopAspect {
     };
 
     onFinished(res, () => {
-      const diffTime = Date.now() - now.getTime();
-      // this.logger.log(`请求响应时间: ${diffTime}ms`);
+      const diffTime = Date.now() - req.startTime.getTime();
+      this.logger.log(`请求响应时间: ${diffTime}ms`);
       if (!session) {
         session = {
           adminId:

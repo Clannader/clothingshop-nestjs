@@ -20,6 +20,7 @@ import {
 } from './dto';
 import { AdminSchemaService, Admin, LoginResult } from '@/entities';
 import { UserMapper } from './user.mapper';
+import { UserSessionService } from './user.session.service';
 
 @Injectable()
 export class UserService {
@@ -30,6 +31,9 @@ export class UserService {
 
   @Inject()
   private readonly adminSchemaService: AdminSchemaService;
+
+  @Inject()
+  private readonly userSessionService: UserSessionService;
 
   async getUsersList(params: ReqUserSearchDto): Promise<RespUserSearchDto> {
     this.logger.log(params);
@@ -249,18 +253,10 @@ export class UserService {
   }
 
   async userLogout(req: RequestSession): Promise<CommonResult> {
-    await this.deleteSession(req);
+    await this.userSessionService.deleteSession(req);
     const resp = new CommonResult();
     resp.code = CodeEnum.SUCCESS;
     return resp;
   }
 
-  deleteSession(req: RequestSession): Promise<void> {
-    delete req.session;
-    return new Promise((resolve) => {
-      req.sessionStore.destroy(req.sessionID, () => {
-        resolve();
-      });
-    });
-  }
 }

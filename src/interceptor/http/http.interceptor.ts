@@ -15,7 +15,7 @@ import {
   GlobalService,
   CodeException,
 } from '@/common';
-import { UserService } from '@/user';
+import { UserSessionService } from '@/user';
 // import { Response } from 'express';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class HttpInterceptor implements NestInterceptor {
   private globalService: GlobalService;
 
   @Inject()
-  private userService: UserService;
+  private userSessionService: UserSessionService;
 
   async intercept(context: ExecutionContext, next: CallHandler) {
     const http = context.switchToHttp();
@@ -50,7 +50,7 @@ export class HttpInterceptor implements NestInterceptor {
     }
     const adminSession = req.session.adminSession;
     if (!adminSession) {
-      await this.userService.deleteSession(req);
+      await this.userSessionService.deleteSession(req);
       throw new CodeException(
         CodeEnum.INVALID_SESSION,
         this.globalService.serverLang('无效的凭证', 'user.invSession'),
@@ -59,7 +59,7 @@ export class HttpInterceptor implements NestInterceptor {
     const currentDate = new Date();
     //这里不整合这2个判断条件是因为第一个条件不满足时,第二个条件无法获取expires值
     if (currentDate.getTime() - adminSession.expires > Session_Expires) {
-      await this.userService.deleteSession(req);
+      await this.userSessionService.deleteSession(req);
       throw new CodeException(
         CodeEnum.SESSION_EXPIRED,
         this.globalService.serverLang('凭证过期', 'user.sessionExp'),

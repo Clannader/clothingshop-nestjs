@@ -3,11 +3,11 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
-  HttpStatus,
+  // HttpStatus,
   Inject,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { GlobalService, ValidateException } from '@/common';
+import { GlobalService, ValidateException, CodeEnum } from '@/common';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -21,7 +21,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+        : CodeEnum.UNKNOWN;
     const message = exception.message;
     response.status(200).json({
       code: status,

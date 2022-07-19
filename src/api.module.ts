@@ -9,7 +9,7 @@ import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
 
 import { CommonModule, ConfigModule } from './common';
-import { UserModule } from './user';
+import { UserModule, UserSessionModule } from './user';
 import { SystemModule } from './system';
 import { LoginModule } from './login';
 import { TestModule } from './test/test.module';
@@ -40,6 +40,7 @@ import { MongooseConfigService } from './dao';
     }),
     HttpInterceptorModule,
     AopAspectModule,
+    UserSessionModule
   ],
   providers: [
     {
