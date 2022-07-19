@@ -25,6 +25,7 @@ export interface RequestSession extends Request {
   session: Session & AdminSession;
   sessionID: string;
   sessionStore: Store;
+  startTime?: Date;
 }
 
 export type NoInferType<T> = [T][T extends any ? 0 : never];

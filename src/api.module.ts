@@ -3,8 +3,8 @@
  */
 import {
   Module,
-  // NestModule,
-  // MiddlewareConsumer,
+  NestModule,
+  MiddlewareConsumer,
   // RequestMethod,
 } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -19,7 +19,7 @@ import { SystemModule } from './system';
 import { LoginModule } from './login';
 import { TestModule } from './test/test.module';
 import { HttpInterceptorModule } from './interceptor';
-// import { ApiMiddleware } from './middleware';
+import { AopMiddleware } from './middleware';
 
 import { MongooseConfigService } from './dao';
 
@@ -56,21 +56,15 @@ import { MongooseConfigService } from './dao';
     },
   ],
 })
-export class ApiModule {}
-// export class ApiModule implements NestModule {
-//   configure(consumer: MiddlewareConsumer) {
-//     consumer
-//       .apply(ApiMiddleware)
-//       .exclude({
-//         path: loginUrl,
-//         method: RequestMethod.ALL,
-//       })
-//       // 这里会有个bug,那就是/cms/api/开头的地址如果不存在时也会进入到这个中间件中
-//       // 这时候就会报中间件的错误信息而不是404
-//       .forRoutes('/cms/api/*');
-//     // 可以按照下面的写法,按照不同的路由写不同的中间件
-//     // consumer
-//     //   .apply(ApiMiddleware)
-//     //   .forRoutes('/cms/gateway/*')
-//   }
-// }
+// export class ApiModule {}
+export class ApiModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AopMiddleware).forRoutes('/*');
+    // 这里会有个bug,那就是/cms/api/开头的地址如果不存在时也会进入到这个中间件中
+    // 这时候就会报中间件的错误信息而不是404
+    // 可以按照下面的写法,按照不同的路由写不同的中间件
+    // consumer
+    //   .apply(ApiMiddleware)
+    //   .forRoutes('/cms/gateway/*')
+  }
+}
