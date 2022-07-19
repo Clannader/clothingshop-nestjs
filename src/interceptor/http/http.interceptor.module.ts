@@ -3,8 +3,10 @@
  */
 import { Module } from '@nestjs/common';
 import { HttpInterceptor } from './http.interceptor';
+import { UserModule } from '@/user';
 
 @Module({
+  imports: [UserModule],
   providers: [HttpInterceptor],
   exports: [HttpInterceptor],
 })

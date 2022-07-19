@@ -13,7 +13,7 @@ import {
 } from '@/common';
 import { Injectable, Inject } from '@nestjs/common';
 import { AopLogger } from '@/logger';
-import httpFinished from 'on-finished';
+import * as onFinished from 'on-finished';
 import { AdminAccessService } from '@/entities';
 
 @Injectable()
@@ -28,15 +28,7 @@ export class AopAspect {
 
   logAspect(req: RequestSession, res: CmsResponse): void {
     const now = new Date();
-    const orgUrl = req.url;
-    const url =
-      orgUrl.indexOf('?') !== -1
-        ? orgUrl.substring(0, orgUrl.indexOf('?'))
-        : orgUrl;
-    console.log(req.baseUrl);
-    console.log(req.url);
-    console.log(req.originalUrl);
-    console.log(url);
+    const url = req.baseUrl
     const method = req.method;
 
     if (method === 'OPTIONS') {
@@ -52,7 +44,7 @@ export class AopAspect {
       ...body,
     };
 
-    httpFinished(res, () => {
+    onFinished(res, () => {
       const diffTime = Date.now() - now.getTime();
       // this.logger.log(`请求响应时间: ${diffTime}ms`);
       if (!session) {
