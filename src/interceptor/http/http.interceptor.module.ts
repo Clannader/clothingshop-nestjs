@@ -3,10 +3,8 @@
  */
 import { Module } from '@nestjs/common';
 import { HttpInterceptor } from './http.interceptor';
-import { AdminAccessModule } from '@/entities';
 
 @Module({
-  imports: [AdminAccessModule],
   providers: [HttpInterceptor],
   exports: [HttpInterceptor],
 })

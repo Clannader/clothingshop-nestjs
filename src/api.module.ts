@@ -13,7 +13,7 @@ import { UserModule } from './user';
 import { SystemModule } from './system';
 import { LoginModule } from './login';
 import { TestModule } from './test/test.module';
-import { HttpInterceptorModule } from './interceptor';
+import { HttpInterceptorModule, AopAspectModule } from './interceptor';
 import { AopMiddleware } from './middleware';
 
 import { MongooseConfigService } from './dao';
@@ -39,6 +39,7 @@ import { MongooseConfigService } from './dao';
       useClass: MongooseConfigService,
     }),
     HttpInterceptorModule,
+    AopAspectModule,
   ],
   providers: [
     {

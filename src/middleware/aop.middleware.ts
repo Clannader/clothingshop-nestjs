@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware, Inject } from '@nestjs/common';
-import { Response, NextFunction } from 'express';
-import { CodeEnum, ConfigService, RequestSession } from '@/common';
+import { NextFunction } from 'express';
+import { CodeEnum, ConfigService, RequestSession, CmsResponse } from '@/common';
 import { clean } from 'node-xss';
 import { AopLogger } from '@/logger';
 import { AopAspect } from '@/interceptor';
@@ -15,7 +15,7 @@ export class AopMiddleware implements NestMiddleware {
   @Inject()
   private aopAspect: AopAspect;
 
-  use(req: RequestSession, res: Response, next: NextFunction) {
+  use(req: RequestSession, res: CmsResponse, next: NextFunction) {
     const url = req.baseUrl;
     const method = req.method;
     if ('GET' === method) {
@@ -30,6 +30,7 @@ export class AopMiddleware implements NestMiddleware {
     req.startTime = new Date();
 
     const _end = res.end;
+    /* eslint-disable @typescript-eslint/no-this-alias */
     const that = this;
     // @ts-ignore
     res.end = function (chunk, encoding): Response {

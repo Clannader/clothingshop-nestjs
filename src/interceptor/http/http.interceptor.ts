@@ -15,7 +15,7 @@ import {
   CodeException,
 } from '@/common';
 import { UserService } from '@/user';
-import { Response } from 'express';
+// import { Response } from 'express';
 
 @Injectable()
 export class HttpInterceptor implements NestInterceptor {
@@ -28,7 +28,7 @@ export class HttpInterceptor implements NestInterceptor {
   async intercept(context: ExecutionContext, next: CallHandler) {
     const http = context.switchToHttp();
     const req: RequestSession = http.getRequest();
-    const res: Response = http.getResponse();
+    // const res: Response = http.getResponse();
     if (!Utils.isHasJsonHeader(req)) {
       throw new CodeException(
         CodeEnum.INVALID_HEADERS,

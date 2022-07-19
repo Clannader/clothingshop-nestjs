@@ -1,12 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseInterceptors } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse } from '@/common';
 import { SystemService } from './system.service';
 import { RespWebConfigDto } from './dto';
+import { HttpInterceptor } from '@/interceptor';
 
 @ApiCommon()
 @Controller('/cms/api/system')
 @ApiTags('SystemController')
+@UseInterceptors(HttpInterceptor)
 export class SystemController {
   constructor(private readonly systemService: SystemService) {}
 

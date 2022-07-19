@@ -1,2 +1,2 @@
 export * from './http';
-export * from './aop.aspect';
+export * from './aop';
