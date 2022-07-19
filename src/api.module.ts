@@ -40,7 +40,7 @@ import { MongooseConfigService } from './dao';
     }),
     HttpInterceptorModule,
     AopAspectModule,
-    UserSessionModule
+    UserSessionModule,
   ],
   providers: [
     {

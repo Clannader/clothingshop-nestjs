@@ -28,7 +28,7 @@ export class AopAspect {
 
   logAspect(req: RequestSession, res: CmsResponse): void {
     const now = new Date();
-    const url = req.baseUrl
+    const url = req.baseUrl;
     const method = req.method;
 
     if (method === 'OPTIONS') {

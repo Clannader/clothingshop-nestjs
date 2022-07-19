@@ -65,7 +65,7 @@ export class HttpInterceptor implements NestInterceptor {
         this.globalService.serverLang('凭证过期', 'user.sessionExp'),
       );
     }
-    if (adminSession.isFirstLogin && req.baseUrl !== logoutUrl) {
+    if (adminSession.isFirstLogin && req.url !== logoutUrl) {
       // 如果用户第一次登录,但是没有去修改密码,所有接口都不能使用
       // 考虑前端的调用roles接口看看是否有问题
       throw new CodeException(
