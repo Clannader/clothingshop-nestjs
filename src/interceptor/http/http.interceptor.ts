@@ -4,7 +4,6 @@ import {
   NestInterceptor,
   Injectable,
   Inject,
-  // forwardRef
 } from '@nestjs/common';
 import {
   Utils,
@@ -15,8 +14,7 @@ import {
   GlobalService,
   CodeException,
 } from '@/common';
-import { UserSessionService } from '@/user';
-// import { Response } from 'express';
+import { UserSessionService } from '@/user/user.session.service';
 
 @Injectable()
 export class HttpInterceptor implements NestInterceptor {

@@ -9,7 +9,8 @@ import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
 
 import { CommonModule, ConfigModule } from './common';
-import { UserModule, UserSessionModule } from './user';
+import { UserModule } from './user';
+import { UserSessionModule } from './user/user.session.module';
 import { SystemModule } from './system';
 import { LoginModule } from './login';
 import { TestModule } from './test/test.module';
