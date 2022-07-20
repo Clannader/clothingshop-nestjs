@@ -16,6 +16,7 @@ import { LoginModule } from './login';
 import { TestModule } from './test/test.module';
 import { HttpInterceptorModule, AopAspectModule } from './interceptor';
 import { AopMiddleware } from './middleware';
+import { GuardModule } from './guard';
 
 import { MongooseConfigService } from './dao';
 
@@ -42,6 +43,7 @@ import { MongooseConfigService } from './dao';
     UserSessionModule,
     HttpInterceptorModule,
     AopAspectModule,
+    GuardModule,
   ],
   providers: [
     {

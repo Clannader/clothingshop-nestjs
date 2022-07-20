@@ -1,14 +1,23 @@
-import { Controller, Get, Query, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  UseInterceptors,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiOAuth2 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { ApiCommon, ApiCustomResponse } from '@/common';
 import { ReqUserSearchDto, RespUserSearchDto } from './dto';
 import { HttpInterceptor } from '@/interceptor';
+import { SessionGuard } from '@/guard';
+import { Rights, RightsEnum } from '@/rights';
 
 @ApiCommon()
 @ApiOAuth2(['pets:write'])
 @Controller('/cms/api/user')
 @ApiTags('UserController')
+@UseGuards(SessionGuard)
 @UseInterceptors(HttpInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -21,6 +30,7 @@ export class UserController {
   @ApiCustomResponse({
     type: RespUserSearchDto,
   })
+  @Rights(RightsEnum.UserSetup)
   getUsersList(@Query() params: ReqUserSearchDto) {
     return this.userService.getUsersList(params);
   }
