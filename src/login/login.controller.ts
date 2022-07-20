@@ -6,6 +6,7 @@ import {
   Body,
   Req,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import {
@@ -16,6 +17,7 @@ import {
 } from '@/common';
 import { UserService, ReqUserLoginDto, RespUserLoginDto } from '@/user';
 import { HttpInterceptor } from '@/interceptor';
+import { SessionGuard } from '@/guard';
 
 @Controller('/cms/api/user')
 @ApiTags('LoginController')
@@ -46,6 +48,7 @@ export class LoginController {
     type: CommonResult,
   })
   @ApiCommon()
+  @UseGuards(SessionGuard)
   @UseInterceptors(HttpInterceptor)
   userLogout(@Req() req: RequestSession) {
     return this.userService.userLogout(req);

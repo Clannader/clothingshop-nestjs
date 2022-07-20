@@ -50,8 +50,8 @@ export class AopAspect {
       if (!session) {
         session = {
           adminId:
-            (req.headers['adminid'] as string) || req.body['adminId'] || 'NULL',
-          shopId: (req.headers['shopid'] as string) || 'SYSTEM',
+            (req.headers['adminId'] as string) || req.body['adminId'] || 'NULL',
+          shopId: (req.headers['shopId'] as string) || 'SYSTEM',
           adminType: UserTypeEnum.OTHER,
         };
       }
