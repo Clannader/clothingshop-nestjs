@@ -82,14 +82,17 @@ export class SessionGuard implements CanActivate {
     }
     // 每次访问延长用户有效期时间
     req.session.adminSession.expires = currentDate.getTime() + Session_Expires;
-    const rights = this.reflector.get<string[]>(
+    // 判断是否有权限进入路由
+    const rights = this.reflector.get<number[]>(
       RIGHTS_KEY,
       context.getHandler(),
     );
-    console.log(rights);
+
+    // 如果接口没有设置权限就放行
     if (!rights) {
       return true;
     }
+    // TODO 这里判断权限,注意权限值是数字类型的,需要转换一下
     return true;
   }
 }

@@ -1,6 +1,6 @@
 import { SortEnum } from '../enum';
 import { Expose } from 'class-transformer';
-import { IsString, IsInt, Min, Max } from 'class-validator';
+import { IsString, IsInt, Min, Max, IsOptional } from 'class-validator';
 
 export class ReqPageSchemaDto {
   /**
@@ -8,6 +8,7 @@ export class ReqPageSchemaDto {
    */
   @Expose()
   @IsString()
+  @IsOptional()
   condition?: string;
 
   /**
