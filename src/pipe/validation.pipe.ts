@@ -30,7 +30,7 @@ export class ValidationPipe<T> implements PipeTransform<T> {
   }
 
   private static getErrorContent(constraints): string {
-    const keys = ['isString', 'isNotEmpty', 'matches'];
+    const keys = ['isString', 'isNotEmpty', 'matches', 'customValidation'];
     let content = 'Validation failed';
     forEach(keys, (v) => {
       if (has(constraints, v)) {

@@ -1,14 +1,16 @@
 import { SortEnum } from '../enum';
 import { Expose } from 'class-transformer';
-import { IsString, IsInt, Min, Max, IsOptional } from 'class-validator';
+import { CustomValidation } from '../decorator';
 
 export class ReqPageSchemaDto {
   /**
    * 查询条件,按空格分隔可查询多个条件
    */
   @Expose()
-  @IsString()
-  @IsOptional()
+  @CustomValidation({
+    optional: true,
+    type: String,
+  })
   condition?: string;
 
   /**
@@ -16,8 +18,13 @@ export class ReqPageSchemaDto {
    * @default 1
    */
   @Expose()
-  @IsInt()
-  @Min(1)
+  @CustomValidation({
+    optional: true,
+    type: Number,
+    default: 1,
+    min: 1,
+    isInt: true
+  })
   offset?: number = 1;
 
   /**
@@ -25,21 +32,33 @@ export class ReqPageSchemaDto {
    * @default 30
    */
   @Expose()
-  @IsInt()
-  @Max(100)
+  @CustomValidation({
+    optional: true,
+    type: Number,
+    max: 100,
+    default: 30,
+    isInt: true
+  })
   pageSize?: number = 30;
 
   /**
    * 排序字段名称
    */
   @Expose()
-  @IsString()
+  @CustomValidation({
+    optional: true,
+    type: String,
+  })
   sortName?: string;
 
   /**
    * 排序方式,默认降序:(asc=升序,desc=降序)
    */
   @Expose()
-  @IsString()
+  @CustomValidation({
+    optional: true,
+    type: String,
+    enum: ['asc', 'desc']
+  })
   orderBy?: SortEnum;
 }
