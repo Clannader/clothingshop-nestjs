@@ -106,7 +106,6 @@ const validationResult = function(args: ValidationArguments):ErrorResult {
     }
   }
 
-
   return {
     result: true
   }
