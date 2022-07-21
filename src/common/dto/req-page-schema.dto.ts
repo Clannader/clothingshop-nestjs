@@ -9,7 +9,7 @@ export class ReqPageSchemaDto {
   @Expose()
   @CustomValidation({
     optional: true,
-    type: String,
+    type: 'string',
   })
   condition?: string;
 
@@ -20,8 +20,7 @@ export class ReqPageSchemaDto {
   @Expose()
   @CustomValidation({
     optional: true,
-    type: Number,
-    default: 1,
+    type: 'number',
     min: 1,
     isInt: true
   })
@@ -34,9 +33,8 @@ export class ReqPageSchemaDto {
   @Expose()
   @CustomValidation({
     optional: true,
-    type: Number,
+    type: 'number',
     max: 100,
-    default: 30,
     isInt: true
   })
   pageSize?: number = 30;
@@ -47,7 +45,7 @@ export class ReqPageSchemaDto {
   @Expose()
   @CustomValidation({
     optional: true,
-    type: String,
+    type: 'string',
   })
   sortName?: string;
 
@@ -57,7 +55,7 @@ export class ReqPageSchemaDto {
   @Expose()
   @CustomValidation({
     optional: true,
-    type: String,
+    type: 'string',
     enum: ['asc', 'desc']
   })
   orderBy?: SortEnum;

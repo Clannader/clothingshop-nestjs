@@ -128,4 +128,24 @@ describe('Utils', () => {
       ),
     ).toBe('My name is ${myName}, 年龄是: ${info.age}');
   });
+
+  it('测试判空', () => {
+    expect(Utils.isEmpty(null)).toBe(true);
+    expect(Utils.isEmpty('')).toBe(true);
+    expect(Utils.isEmpty(undefined)).toBe(true);
+    expect(Utils.isEmpty('undefined')).toBe(true);
+    expect(Utils.isEmpty('test')).toBe(false);
+    expect(Utils.isEmpty([])).toBe(false);
+    expect(Utils.isEmpty(123)).toBe(false);
+    expect(Utils.isEmpty({})).toBe(false);
+
+    expect(Utils.isEmpty(null, true)).toBe(true);
+    expect(Utils.isEmpty('', true)).toBe(false);
+    expect(Utils.isEmpty(undefined, true)).toBe(true);
+    expect(Utils.isEmpty('undefined', true)).toBe(true);
+    expect(Utils.isEmpty('test', true)).toBe(false);
+    expect(Utils.isEmpty([], true)).toBe(false);
+    expect(Utils.isEmpty(123, true)).toBe(false);
+    expect(Utils.isEmpty({}, true)).toBe(false);
+  });
 });
