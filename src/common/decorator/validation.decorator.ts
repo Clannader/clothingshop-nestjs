@@ -13,6 +13,9 @@ import {
   isNumber,
   isObject,
   isString,
+  min,
+  max,
+  isIn,
 } from 'class-validator';
 import { Utils } from '../utils';
 
@@ -54,15 +57,55 @@ const validationResult = function(args: ValidationArguments):ErrorResult {
     }
   }
   // 这里的判空需要排除空格,避免只能输入数字,但是传过来''以为是空值进而不去判断类型了
-  if (relatedPropertyName.hasOwnProperty('type') && !Utils.isEmpty(relatedValue, true)) {
-    const type = relatedPropertyName.type
-    if (!typeMapper[type].call(this, relatedValue)) {
-      return {
-        result: false,
-        message: `$property must be a ${type}`
+  if (!Utils.isEmpty(relatedValue, true)) {
+    if (relatedPropertyName.hasOwnProperty('type')) {
+      const type = relatedPropertyName.type
+      if (!typeMapper[type].call(this, relatedValue)) {
+        return {
+          result: false,
+          message: `$property must be a ${type}`
+        }
+      }
+    }
+
+    if (relatedPropertyName.hasOwnProperty('isInt') && relatedPropertyName.isInt) {
+      // isInt这个判断是包括负数的整数的,也就是-1,-2也属于这个类型里面
+      if (!isInt(relatedValue)) {
+        return {
+          result: false,
+          message: '$property must be an integer number'
+        }
+      }
+    }
+
+    if (relatedPropertyName.hasOwnProperty('min')) {
+      if (!min(relatedValue, relatedPropertyName.min)) {
+        return {
+          result: false,
+          message: '$property must not be less than ' + relatedPropertyName.min
+        }
+      }
+    }
+
+    if (relatedPropertyName.hasOwnProperty('max')) {
+      if (!max(relatedValue, relatedPropertyName.max)) {
+        return {
+          result: false,
+          message: '$property must not be greater than ' + relatedPropertyName.max
+        }
+      }
+    }
+
+    if (relatedPropertyName.hasOwnProperty('enum')) {
+      if (!isIn(relatedValue, relatedPropertyName.enum)) {
+        return {
+          result: false,
+          message: '$property must be one of the following values: ' + relatedPropertyName.enum.toString()
+        }
       }
     }
   }
+
 
   return {
     result: true
