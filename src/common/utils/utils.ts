@@ -120,7 +120,9 @@ export class Utils {
    * @param excludeBlank 排除''这个判断
    */
   static isEmpty(obj: any, excludeBlank = false): boolean {
-    return obj == null || obj === 'undefined' || (excludeBlank ? false : obj === '');
+    return (
+      obj == null || obj === 'undefined' || (excludeBlank ? false : obj === '')
+    );
   }
 
   static replaceArgsFromJson(str: string): string;

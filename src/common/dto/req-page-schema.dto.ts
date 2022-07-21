@@ -3,7 +3,6 @@ import { Expose, Type } from 'class-transformer';
 import { CustomValidation } from '../decorator';
 
 export class ReqPageSchemaDto {
-
   // @Expose()
   // @Type(() => Number) 数组只能声明单一类型
   // array: number[];
@@ -36,7 +35,7 @@ export class ReqPageSchemaDto {
     optional: true,
     type: 'number',
     min: 1,
-    isInt: true
+    isInt: true,
   })
   @Type(() => Number)
   offset?: number = 1;
@@ -50,7 +49,7 @@ export class ReqPageSchemaDto {
     optional: true,
     type: 'number',
     max: 100,
-    isInt: true
+    isInt: true,
   })
   @Type(() => Number)
   pageSize?: number = 30;
@@ -72,7 +71,7 @@ export class ReqPageSchemaDto {
   @CustomValidation({
     optional: true,
     type: 'string',
-    enum: ['asc', 'desc']
+    enum: ['asc', 'desc'],
   })
   orderBy?: SortEnum;
 }

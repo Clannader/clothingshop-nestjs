@@ -1,4 +1,9 @@
-import { ReqPageSchemaDto, UserStatusEnum, UserTypeEnum, CustomValidation } from '@/common';
+import {
+  ReqPageSchemaDto,
+  UserStatusEnum,
+  UserTypeEnum,
+  CustomValidation,
+} from '@/common';
 import { Expose } from 'class-transformer';
 
 export class ReqUserSearchDto extends ReqPageSchemaDto {
@@ -9,7 +14,7 @@ export class ReqUserSearchDto extends ReqPageSchemaDto {
   @CustomValidation({
     optional: true,
     type: 'string',
-    enum: ['T', 'F']
+    enum: ['T', 'F'],
   })
   status?: UserStatusEnum;
 
@@ -20,7 +25,7 @@ export class ReqUserSearchDto extends ReqPageSchemaDto {
   @CustomValidation({
     optional: true,
     type: 'string',
-    enum: ['SYSTEM', 'OTHER', '3RD']
+    enum: ['SYSTEM', 'OTHER', '3RD'],
   })
   type?: UserTypeEnum;
 }
