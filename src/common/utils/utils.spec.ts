@@ -155,61 +155,70 @@ describe('Utils', () => {
     expect(Utils.piiData('123456')).toBe('123******456');
     expect(Utils.piiData('123456789')).toBe('123******789');
     expect(Utils.piiData('1234567890321', 5)).toBe('12345******321');
-    expect(Utils.piiData('12345678903243324431', 6, 4)).toBe('123456******4431');
+    expect(Utils.piiData('12345678903243324431', 6, 4)).toBe(
+      '123456******4431',
+    );
   });
 
   it('测试 piiXmlData方法', () => {
-    const xml = '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+    const xml =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
       '<note>\n' +
       '    <to>George</to>\n' +
       '    <from>John</from>\n' +
       '    <heading>Reminder not is found</heading>\n' +
       '    <body>1234567890</body>\n' +
-      '</note>'
-    const pii = '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+      '</note>';
+    const pii =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
       '<note>\n' +
       '    <to>George</to>\n' +
       '    <from>John</from>\n' +
       '    <heading>Rem******und</heading>\n' +
       '    <body>123******890</body>\n' +
-      '</note>'
+      '</note>';
     expect(Utils.piiXmlData(xml, 'heading', 'body')).toBe(pii);
 
-    const xml2 = '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+    const xml2 =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
       '<note>\n' +
       '    <to>George</to>\n' +
       '    <from>John</from>\n' +
       '    <q12:heading xmls:q12="xxxxxxx">Reminder not is found</q12:heading>\n' +
       '    <q13:body>1234567890</q13:body>\n' +
-      '</note>'
-    const pii2 = '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+      '</note>';
+    const pii2 =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
       '<note>\n' +
       '    <to>George</to>\n' +
       '    <from>John</from>\n' +
       '    <q12:heading xmls:q12="xxxxxxx">Rem******und</q12:heading>\n' +
       '    <q13:body>123******890</q13:body>\n' +
-      '</note>'
+      '</note>';
     expect(Utils.piiXmlData(xml2, 'heading', 'body')).toBe(pii2);
 
-    const xml3 = '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+    const xml3 =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
       '<note>\n' +
       '    <to>George</to>\n' +
       '    <from>John</from>\n' +
       '    <heading>Reminder not is found</heading>\n' +
       '    <bodyooo>43434234234</bodyooo>\n' +
       '    <body>1234567890</body>\n' +
-      '</note>'
-    const pii3 = '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+      '</note>';
+    const pii3 =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
       '<note>\n' +
       '    <to>George</to>\n' +
       '    <from>John</from>\n' +
       '    <heading>Rem******und</heading>\n' +
       '    <bodyooo>43434234234</bodyooo>\n' +
       '    <body>123******890</body>\n' +
-      '</note>'
+      '</note>';
     expect(Utils.piiXmlData(xml3, 'heading', 'body')).toBe(pii3);
 
-    const xml4 = '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+    const xml4 =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
       '<note>\n' +
       '    <to>George</to>\n' +
       '    <from>John</from>\n' +
@@ -218,9 +227,10 @@ describe('Utils', () => {
       '        <pass>ffdfdfdsfd</pass>\n' +
       '    </heading>\n' +
       '    <bodyooo>43434234234</bodyooo>\n' +
-      '    <body>Don\'t forget the meeting!</body>\n' +
-      '</note>'
-    const pii4 = '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+      "    <body>Don't forget the meeting!</body>\n" +
+      '</note>';
+    const pii4 =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
       '<note>\n' +
       '    <to>George</to>\n' +
       '    <from>John</from>\n' +
@@ -230,7 +240,7 @@ describe('Utils', () => {
       '    </heading>\n' +
       '    <bodyooo>43434234234</bodyooo>\n' +
       '    <body>Don******ng!</body>\n' +
-      '</note>'
+      '</note>';
     expect(Utils.piiXmlData(xml4, 'user', 'body')).toBe(pii4);
   });
 });

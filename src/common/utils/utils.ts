@@ -298,7 +298,10 @@ export class Utils {
    * 保留前几后几位数,中间*号
    */
   static piiData(str = '', start = 3, end = 3) {
-    const regExp = new RegExp(`([\\s\\S]{${start}})([\\s\\S]*)([\\s\\S]{${end}})$`, 'g')
+    const regExp = new RegExp(
+      `([\\s\\S]{${start}})([\\s\\S]*)([\\s\\S]{${end}})$`,
+      'g',
+    );
     return str.replace(regExp, '$1******$3');
   }
 
@@ -315,15 +318,20 @@ export class Utils {
    * @param args xml里面的节点
    */
   static piiXmlData(xmlData: string, ...args): string {
-    args.forEach(v => {
-      const matchArr = xmlData.match(`(<.{0,8}?:{0,1}${v}(\\s.*){0,1}>([\\s\\S]*)<.{0,8}?:{0,1}${v}>)`)
+    args.forEach((v) => {
+      const matchArr = xmlData.match(
+        `(<.{0,8}?:{0,1}${v}(\\s.*){0,1}>([\\s\\S]*)<.{0,8}?:{0,1}${v}>)`,
+      );
       if (matchArr) {
-        const matchContent = matchArr[0] // 匹配的节点内容
-        const matchValue = matchArr[3] // 节点的值
+        const matchContent = matchArr[0]; // 匹配的节点内容
+        const matchValue = matchArr[3]; // 节点的值
         // 把节点内容的值替换后再拼回去xml的内容里面
-        xmlData = xmlData.replace(matchContent, matchContent.replace(matchValue, this.piiData(matchValue)))
+        xmlData = xmlData.replace(
+          matchContent,
+          matchContent.replace(matchValue, this.piiData(matchValue)),
+        );
       }
-    })
-    return xmlData
+    });
+    return xmlData;
   }
 }
