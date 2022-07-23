@@ -243,4 +243,50 @@ describe('Utils', () => {
       '</note>';
     expect(Utils.piiXmlData(xml4, 'user', 'body')).toBe(pii4);
   });
+
+  it('测试 piiJsonData方法', () => {
+    const jsonData = {
+      userName: 'zhangsan',
+      address: '通天塔135路1号拐角左侧门',
+      rooms: [
+        {
+          roomNumber: 120,
+          address: '通天塔120路1号',
+        },
+        {
+          roomNumber: 123,
+          address: '通天塔123路3号',
+        },
+      ],
+      password: '1234567',
+      info: {
+        address: '原五象大厦世纪路136路2号右拐门',
+        userName: 'lisinihaoa',
+      },
+      token: '568994451',
+      picture: '图片',
+    };
+    expect(Utils.piiJsonData(jsonData, 'picture').picture).toBe('图片');
+    expect(Utils.piiJsonData(jsonData, 'token').token).toBe('568******451');
+
+    const p1 = Utils.piiJsonData(jsonData, 'token', 'password');
+    expect(p1.token).toBe('568******451');
+    expect(p1.password).toBe('123******567');
+
+    const p2 = Utils.piiJsonData(jsonData, 'userName', 'password');
+    expect(p2.token).toBe('568994451');
+    expect(p2.password).toBe('123******567');
+    expect(p2.userName).toBe('zha******san');
+    expect(p2.info.userName).toBe('lis******aoa');
+
+    const p3 = Utils.piiJsonData(jsonData, 'userName', 'password', 'address');
+    expect(p3.token).toBe('568994451');
+    expect(p3.password).toBe('123******567');
+    expect(p3.userName).toBe('zha******san');
+    expect(p3.info.userName).toBe('lis******aoa');
+    expect(p3.address).toBe('通天塔******左侧门');
+    expect(p3.info.address).toBe('原五象******右拐门');
+    expect(p3.rooms[0].address).toBe('通天塔******路1号');
+    expect(p3.rooms[1].address).toBe('通天塔******路3号');
+  });
 });

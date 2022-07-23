@@ -1,9 +1,10 @@
 import * as CryptoJS from 'crypto-js';
 import { tripleDES, ipExp, Supervisor_Rights } from '../constants';
-import { get, isPlainObject, has, forEach } from 'lodash';
+import { get, isPlainObject, has, forEach, cloneDeep } from 'lodash';
 import { Request } from 'express';
 import * as os from 'os';
 import { CmsSession } from '../common.types';
+import set = Reflect.set;
 
 /**
  * 系统工具类
@@ -308,8 +309,32 @@ export class Utils {
   /**
    * JSON数据脱敏方法
    */
-  static piiJsonData(jsonData: Record<string, any>): Record<string, any> {
-    return null;
+  static piiJsonData(
+    jsonData: Record<string, any>,
+    ...args: string[]
+  ): Record<string, any> {
+    // 先克隆一份json数据,不对原始数据进行修改
+    const piiJson = cloneDeep(jsonData);
+    // 循环克隆的json数据
+    forEach(piiJson, (value, key) => {
+      // 判断json数据的key是否是传入需要脱敏的字段值,并且只能脱敏字符串类型的数据
+      if (args.includes(key) && typeof value === 'string') {
+        set(piiJson, key, this.piiData(value));
+        return true; // 相当于continue
+      }
+      // 如果值是数组,循环判断
+      if (Array.isArray(value)) {
+        piiJson[key] = value.map((v) => {
+          return this.piiJsonData(v, ...args);
+        });
+        return true;
+      }
+      if (isPlainObject(value)) {
+        piiJson[key] = this.piiJsonData(value, ...args);
+        return true;
+      }
+    });
+    return piiJson;
   }
 
   /**
@@ -317,7 +342,7 @@ export class Utils {
    * @param xmlData xml字符串
    * @param args xml里面的节点
    */
-  static piiXmlData(xmlData: string, ...args): string {
+  static piiXmlData(xmlData: string, ...args: string[]): string {
     args.forEach((v) => {
       const matchArr = xmlData.match(
         `(<.{0,8}?:{0,1}${v}(\\s.*){0,1}>([\\s\\S]*)<.{0,8}?:{0,1}${v}>)`,
