@@ -18,11 +18,14 @@ export class AopMiddleware implements NestMiddleware {
   use(req: RequestSession, res: CmsResponse, next: NextFunction) {
     const url = req.baseUrl;
     const method = req.method;
-    if ('GET' === method) {
-      req.query = JSON.parse(clean(JSON.stringify(req.query)));
-    } else if ('POST' === method) {
-      req.body = JSON.parse(clean(JSON.stringify(req.body)));
-    }
+    // if ('GET' === method) {
+    //   req.query = JSON.parse(clean(JSON.stringify(req.query)));
+    // } else if ('POST' === method) {
+    //   req.body = JSON.parse(clean(JSON.stringify(req.body)));
+    // }
+    // 这里直接放开就好了,因为post接口或者put请求时还是有可能含有query或者body值的
+    req.query = JSON.parse(clean(JSON.stringify(req.query)));
+    req.body = JSON.parse(clean(JSON.stringify(req.body)));
     if (this.configService.get<boolean>('printUrl', true)) {
       this.logger.log(`请求:${method} ${url}`);
     }

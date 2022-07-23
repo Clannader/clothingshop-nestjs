@@ -35,18 +35,21 @@ export class AopAspect {
       return;
     }
 
-    const ip = Utils.getRequestIP(req);
-    const body = req.body;
-    const query = req.query;
+    // 如果是没有session的,在onFinished里面取是直接报错的
     let session: CmsSession = req.session.adminSession;
-    const params = {
-      ...query,
-      ...body,
-    };
 
     onFinished(res, () => {
+      const ip = Utils.getRequestIP(req);
+      const body = req.body;
+      const query = req.query;
+      const params = {
+        ...query,
+        ...body,
+      };
       const diffTime = Date.now() - req.startTime.getTime();
+
       this.logger.log(`请求响应时间: ${diffTime}ms`);
+
       if (!session) {
         session = {
           adminId:
