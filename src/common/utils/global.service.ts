@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as globalVariable from '../constants';
 import { i18n } from '../i18n';
-import { Utils } from './utils';
-import { languageType } from '../common.types';
+import { languageType, Utils } from '@/common';
 import { get } from 'lodash';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
