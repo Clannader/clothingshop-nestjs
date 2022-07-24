@@ -309,5 +309,6 @@ describe('Utils', () => {
     expect(p5.userName).toBe('zhangsan');
     expect(p5.token).toBe('568******451');
     expect(p5.rooms[1].address).toBe('通天塔******路3号');
+    expect(p5.rooms[0].address).toBe('通天塔120路1号');
   });
 });

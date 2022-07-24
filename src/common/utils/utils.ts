@@ -1,10 +1,9 @@
 import * as CryptoJS from 'crypto-js';
 import { tripleDES, ipExp, Supervisor_Rights } from '../constants';
-import { get, isPlainObject, has, forEach, cloneDeep } from 'lodash';
+import { get, isPlainObject, has, forEach, cloneDeep, set } from 'lodash';
 import { Request } from 'express';
 import * as os from 'os';
 import { CmsSession } from '../common.types';
-import set = Reflect.set;
 
 /**
  * 系统工具类
@@ -317,8 +316,7 @@ export class Utils {
     forEach(args, (key) => {
       if (has(piiJson, key)) {
         const value = get(piiJson, key);
-        console.log(value);
-        if (typeof value === 'string' && value.indexOf('*') === -1) {
+        if (typeof value === 'string' && value.indexOf('******') === -1) {
           set(piiJson, key, this.piiData(value));
         }
       }
@@ -329,13 +327,11 @@ export class Utils {
   private static piiJson(jsonData: Record<string, any>, ...args: string[]) {
     // 先克隆一份json数据,不对原始数据进行修改
     const piiJson = cloneDeep(jsonData);
-    const argsClone = cloneDeep(args);
     // 循环克隆的json数据
     forEach(piiJson, (value, key) => {
       // 判断json数据的key是否是传入需要脱敏的字段值,并且只能脱敏字符串类型的数据
       if (args.includes(key) && typeof value === 'string') {
-        set(piiJson, key, this.piiData(value));
-        argsClone.splice(args.indexOf(key), 1);
+        piiJson[key] = this.piiData(value);
         return true; // 相当于continue
       } else if (Array.isArray(value)) {
         // 如果值是数组,循环判断
