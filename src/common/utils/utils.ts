@@ -313,7 +313,7 @@ export class Utils {
     jsonData: Record<string, any>,
     ...args: string[]
   ): Record<string, any> {
-    const piiJson = this.piiJson(jsonData, args);
+    const piiJson = this.piiJson(jsonData, ...args);
     forEach(args, (key) => {
       if (has(piiJson, key)) {
         const value = get(piiJson, key);
