@@ -148,4 +148,167 @@ describe('Utils', () => {
     expect(Utils.isEmpty(123, true)).toBe(false);
     expect(Utils.isEmpty({}, true)).toBe(false);
   });
+
+  it('测试 piiData方法', () => {
+    expect(Utils.piiData('123')).toBe('123');
+    expect(Utils.piiData('12345')).toBe('12345');
+    expect(Utils.piiData('123456')).toBe('123******456');
+    expect(Utils.piiData('123456789')).toBe('123******789');
+    expect(Utils.piiData('1234567890321', 5)).toBe('12345******321');
+    expect(Utils.piiData('12345678903243324431', 6, 4)).toBe(
+      '123456******4431',
+    );
+  });
+
+  it('测试 piiXmlData方法', () => {
+    const xml =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+      '<note>\n' +
+      '    <to>George</to>\n' +
+      '    <from>John</from>\n' +
+      '    <heading>Reminder not is found</heading>\n' +
+      '    <body>1234567890</body>\n' +
+      '</note>';
+    const pii =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+      '<note>\n' +
+      '    <to>George</to>\n' +
+      '    <from>John</from>\n' +
+      '    <heading>Rem******und</heading>\n' +
+      '    <body>123******890</body>\n' +
+      '</note>';
+    expect(Utils.piiXmlData(xml, 'heading', 'body')).toBe(pii);
+
+    const xml2 =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+      '<note>\n' +
+      '    <to>George</to>\n' +
+      '    <from>John</from>\n' +
+      '    <q12:heading xmls:q12="xxxxxxx">Reminder not is found</q12:heading>\n' +
+      '    <q13:body>1234567890</q13:body>\n' +
+      '</note>';
+    const pii2 =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+      '<note>\n' +
+      '    <to>George</to>\n' +
+      '    <from>John</from>\n' +
+      '    <q12:heading xmls:q12="xxxxxxx">Rem******und</q12:heading>\n' +
+      '    <q13:body>123******890</q13:body>\n' +
+      '</note>';
+    expect(Utils.piiXmlData(xml2, 'heading', 'body')).toBe(pii2);
+
+    const xml3 =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+      '<note>\n' +
+      '    <to>George</to>\n' +
+      '    <from>John</from>\n' +
+      '    <heading>Reminder not is found</heading>\n' +
+      '    <bodyooo>43434234234</bodyooo>\n' +
+      '    <body>1234567890</body>\n' +
+      '</note>';
+    const pii3 =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+      '<note>\n' +
+      '    <to>George</to>\n' +
+      '    <from>John</from>\n' +
+      '    <heading>Rem******und</heading>\n' +
+      '    <bodyooo>43434234234</bodyooo>\n' +
+      '    <body>123******890</body>\n' +
+      '</note>';
+    expect(Utils.piiXmlData(xml3, 'heading', 'body')).toBe(pii3);
+
+    const xml4 =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+      '<note>\n' +
+      '    <to>George</to>\n' +
+      '    <from>John</from>\n' +
+      '    <heading>\n' +
+      '        <user>34234343</user>\n' +
+      '        <pass>ffdfdfdsfd</pass>\n' +
+      '    </heading>\n' +
+      '    <bodyooo>43434234234</bodyooo>\n' +
+      "    <body>Don't forget the meeting!</body>\n" +
+      '</note>';
+    const pii4 =
+      '<?xml version="1.0" encoding="iso-8859-1"?>\n' +
+      '<note>\n' +
+      '    <to>George</to>\n' +
+      '    <from>John</from>\n' +
+      '    <heading>\n' +
+      '        <user>342******343</user>\n' +
+      '        <pass>ffdfdfdsfd</pass>\n' +
+      '    </heading>\n' +
+      '    <bodyooo>43434234234</bodyooo>\n' +
+      '    <body>Don******ng!</body>\n' +
+      '</note>';
+    expect(Utils.piiXmlData(xml4, 'user', 'body')).toBe(pii4);
+  });
+
+  it('测试 piiJsonData方法', () => {
+    const jsonData = {
+      userName: 'zhangsan',
+      address: '通天塔135路1号拐角左侧门',
+      rooms: [
+        {
+          roomNumber: 120,
+          address: '通天塔120路1号',
+          info: '哈哈我乱写的',
+        },
+        {
+          roomNumber: 123,
+          address: '通天塔123路3号',
+          info: '电视剧里面的FFF',
+        },
+      ],
+      password: '1234567',
+      info: {
+        address: '原五象大厦世纪路136路2号右拐门',
+        userName: 'lisinihaoa',
+      },
+      token: '568994451',
+      picture: '图片',
+    };
+    expect(Utils.piiJsonData(jsonData, 'picture').picture).toBe('图片');
+    expect(Utils.piiJsonData(jsonData, 'token').token).toBe('568******451');
+
+    const p1 = Utils.piiJsonData(jsonData, 'token', 'password');
+    expect(p1.token).toBe('568******451');
+    expect(p1.password).toBe('123******567');
+
+    const p2 = Utils.piiJsonData(jsonData, 'userName', 'password');
+    expect(p2.token).toBe('568994451');
+    expect(p2.password).toBe('123******567');
+    expect(p2.userName).toBe('zha******san');
+    expect(p2.info.userName).toBe('lis******aoa');
+
+    const p3 = Utils.piiJsonData(jsonData, 'userName', 'password', 'address');
+    expect(p3.token).toBe('568994451');
+    expect(p3.password).toBe('123******567');
+    expect(p3.userName).toBe('zha******san');
+    expect(p3.info.userName).toBe('lis******aoa');
+    expect(p3.address).toBe('通天塔******左侧门');
+    expect(p3.info.address).toBe('原五象******右拐门');
+    expect(p3.rooms[0].address).toBe('通天塔******路1号');
+    expect(p3.rooms[1].address).toBe('通天塔******路3号');
+
+    const p4 = Utils.piiJsonData(jsonData, 'info');
+    expect(p4.rooms[0].info).toBe('哈哈我******乱写的');
+    expect(p4.rooms[1].info).toBe('电视剧******FFF');
+    expect(p4.info).toStrictEqual({
+      address: '原五象大厦世纪路136路2号右拐门',
+      userName: 'lisinihaoa',
+    });
+
+    const p5 = Utils.piiJsonData(
+      jsonData,
+      'info.userName',
+      'token',
+      'rooms[1].address',
+    );
+    expect(p5.info.userName).toBe('lis******aoa');
+    expect(p5.userName).toBe('zhangsan');
+    expect(p5.token).toBe('568******451');
+    expect(p5.rooms[1].address).toBe('通天塔******路3号');
+    expect(p5.rooms[0].address).toBe('通天塔120路1号');
+  });
 });

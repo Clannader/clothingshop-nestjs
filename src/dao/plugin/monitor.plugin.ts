@@ -4,6 +4,7 @@
 import { Schema } from 'mongoose';
 import * as Log4js from 'log4js';
 import { Utils } from '@/common';
+import { omit } from 'lodash';
 
 const logger = Log4js.getLogger('fileLogs');
 const parserLog =
@@ -147,12 +148,12 @@ const writeQueryLog = function (schema, result) {
 };
 
 const writeDocumentLog = function (schema, result) {
-  const { _id, ...params } = JSON.parse(JSON.stringify(result));
+  const cloneResult = JSON.parse(JSON.stringify(result));
   const logJSON = {
     methodName: this.$op, // 要不然写死create|save,要么写this.$op
     modelName: schema.statics['getAliasName'].call(this),
-    result: JSON.stringify({ _id, ...params }),
-    params: JSON.stringify(params),
+    result: JSON.stringify(cloneResult),
+    params: JSON.stringify(omit(cloneResult, '_id', '__v')),
     diffTime: new Date().getTime() - this.$locals.lastTime,
   };
   logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));

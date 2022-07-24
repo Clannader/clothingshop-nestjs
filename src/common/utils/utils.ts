@@ -1,6 +1,6 @@
 import * as CryptoJS from 'crypto-js';
 import { tripleDES, ipExp, Supervisor_Rights } from '../constants';
-import { get, isPlainObject, has, forEach } from 'lodash';
+import { get, isPlainObject, has, forEach, cloneDeep, set } from 'lodash';
 import { Request } from 'express';
 import * as os from 'os';
 import { CmsSession } from '../common.types';
@@ -292,5 +292,81 @@ export class Utils {
       createDate: new Date(),
       isFirstLogin: true,
     };
+  }
+
+  /**
+   * 保留前几后几位数,中间*号
+   */
+  static piiData(str = '', start = 3, end = 3) {
+    const regExp = new RegExp(
+      `([\\s\\S]{${start}})([\\s\\S]*)([\\s\\S]{${end}})$`,
+      'g',
+    );
+    return str.replace(regExp, '$1******$3');
+  }
+
+  /**
+   * JSON数据脱敏方法
+   */
+  static piiJsonData(
+    jsonData: Record<string, any>,
+    ...args: string[]
+  ): Record<string, any> {
+    const piiJson = this.piiJson(jsonData, ...args);
+    forEach(args, (key) => {
+      if (has(piiJson, key)) {
+        const value = get(piiJson, key);
+        if (typeof value === 'string' && value.indexOf('******') === -1) {
+          set(piiJson, key, this.piiData(value));
+        }
+      }
+    });
+    return piiJson;
+  }
+
+  private static piiJson(jsonData: Record<string, any>, ...args: string[]) {
+    // 先克隆一份json数据,不对原始数据进行修改
+    const piiJson = cloneDeep(jsonData);
+    // 循环克隆的json数据
+    forEach(piiJson, (value, key) => {
+      // 判断json数据的key是否是传入需要脱敏的字段值,并且只能脱敏字符串类型的数据
+      if (args.includes(key) && typeof value === 'string') {
+        piiJson[key] = this.piiData(value);
+        return true; // 相当于continue
+      } else if (Array.isArray(value)) {
+        // 如果值是数组,循环判断
+        piiJson[key] = value.map((v) => {
+          return this.piiJson(v, ...args);
+        });
+        return true;
+      } else if (isPlainObject(value)) {
+        piiJson[key] = this.piiJson(value, ...args);
+        return true;
+      }
+    });
+    return piiJson;
+  }
+
+  /**
+   * XML数据脱敏方法
+   * @param xmlData xml字符串
+   * @param args xml里面的节点
+   */
+  static piiXmlData(xmlData: string, ...args: string[]): string {
+    args.forEach((v) => {
+      const matchArr = xmlData.match(
+        `(<.{0,8}?:{0,1}${v}(\\s.*){0,1}>([\\s\\S]*)<.{0,8}?:{0,1}${v}>)`,
+      );
+      if (matchArr) {
+        const matchContent = matchArr[0]; // 匹配的节点内容
+        const matchValue = matchArr[3]; // 节点的值
+        // 把节点内容的值替换后再拼回去xml的内容里面
+        xmlData = xmlData.replace(
+          matchContent,
+          matchContent.replace(matchValue, this.piiData(matchValue)),
+        );
+      }
+    });
+    return xmlData;
   }
 }

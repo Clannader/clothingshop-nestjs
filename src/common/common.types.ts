@@ -32,6 +32,8 @@ export interface CmsResponse extends Response {
   returnData: string;
 }
 
+export type languageType = 'ZH' | 'EN';
+
 export type NoInferType<T> = [T][T extends any ? 0 : never];
 
 export type ExcludeUndefinedIf<
