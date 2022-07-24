@@ -25,9 +25,13 @@ describe('EmailUtils', () => {
       userAge: 28,
       url: 'http://localhost:3000/index',
     };
-    const enContent = readFileSync(__dirname + '/test.en.html').toString()
-    const zhContent = readFileSync(__dirname + '/test.zh.html').toString()
-    expect(emailUtils.getEmailTemplate(templateContent.toString(), options)).toBe(zhContent)
-    expect(emailUtils.getEmailTemplate(templateContent.toString(), options, 'EN')).toBe(enContent)
+    const enContent = readFileSync(__dirname + '/test.en.html').toString();
+    const zhContent = readFileSync(__dirname + '/test.zh.html').toString();
+    expect(
+      emailUtils.getEmailTemplate(templateContent.toString(), options),
+    ).toBe(zhContent);
+    expect(
+      emailUtils.getEmailTemplate(templateContent.toString(), options, 'EN'),
+    ).toBe(enContent);
   });
 });
