@@ -313,24 +313,38 @@ export class Utils {
     jsonData: Record<string, any>,
     ...args: string[]
   ): Record<string, any> {
+    const piiJson = this.piiJson(jsonData, args);
+    forEach(args, (key) => {
+      if (has(piiJson, key)) {
+        const value = get(piiJson, key);
+        console.log(value);
+        if (typeof value === 'string' && value.indexOf('*') === -1) {
+          set(piiJson, key, this.piiData(value));
+        }
+      }
+    });
+    return piiJson;
+  }
+
+  private static piiJson(jsonData: Record<string, any>, ...args: string[]) {
     // 先克隆一份json数据,不对原始数据进行修改
     const piiJson = cloneDeep(jsonData);
+    const argsClone = cloneDeep(args);
     // 循环克隆的json数据
     forEach(piiJson, (value, key) => {
       // 判断json数据的key是否是传入需要脱敏的字段值,并且只能脱敏字符串类型的数据
       if (args.includes(key) && typeof value === 'string') {
         set(piiJson, key, this.piiData(value));
+        argsClone.splice(args.indexOf(key), 1);
         return true; // 相当于continue
-      }
-      // 如果值是数组,循环判断
-      if (Array.isArray(value)) {
+      } else if (Array.isArray(value)) {
+        // 如果值是数组,循环判断
         piiJson[key] = value.map((v) => {
-          return this.piiJsonData(v, ...args);
+          return this.piiJson(v, ...args);
         });
         return true;
-      }
-      if (isPlainObject(value)) {
-        piiJson[key] = this.piiJsonData(value, ...args);
+      } else if (isPlainObject(value)) {
+        piiJson[key] = this.piiJson(value, ...args);
         return true;
       }
     });

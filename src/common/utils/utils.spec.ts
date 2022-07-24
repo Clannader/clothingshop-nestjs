@@ -252,10 +252,12 @@ describe('Utils', () => {
         {
           roomNumber: 120,
           address: '通天塔120路1号',
+          info: '哈哈我乱写的',
         },
         {
           roomNumber: 123,
           address: '通天塔123路3号',
+          info: '电视剧里面的FFF',
         },
       ],
       password: '1234567',
@@ -288,5 +290,24 @@ describe('Utils', () => {
     expect(p3.info.address).toBe('原五象******右拐门');
     expect(p3.rooms[0].address).toBe('通天塔******路1号');
     expect(p3.rooms[1].address).toBe('通天塔******路3号');
+
+    const p4 = Utils.piiJsonData(jsonData, 'info');
+    expect(p4.rooms[0].info).toBe('哈哈我******乱写的');
+    expect(p4.rooms[1].info).toBe('电视剧******FFF');
+    expect(p4.info).toStrictEqual({
+      address: '原五象大厦世纪路136路2号右拐门',
+      userName: 'lisinihaoa',
+    });
+
+    const p5 = Utils.piiJsonData(
+      jsonData,
+      'info.userName',
+      'token',
+      'rooms[1].address',
+    );
+    expect(p5.info.userName).toBe('lis******aoa');
+    expect(p5.userName).toBe('zhangsan');
+    expect(p5.token).toBe('568******451');
+    expect(p5.rooms[1].address).toBe('通天塔******路3号');
   });
 });

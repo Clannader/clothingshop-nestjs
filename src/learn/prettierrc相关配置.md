@@ -18,3 +18,4 @@
 "prettier.stylelintIntegration": false // 不让prettier使用stylelint的代码格式进行校验
 "prettier.trailingComma": "es5" // 在对象或数组最后一个元素后面是否加逗号(在ES5中加尾逗号)
 "prettier.tslintIntegration": false // 不让prettier使用tslint的代码格式进行校验
+// eslint的'space-before-function-paren'这个规则对应prettier的方法前面空格处理,eslint需要设置关闭才可以校验通过
