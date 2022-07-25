@@ -1,11 +1,10 @@
 import { Module, Global } from '@nestjs/common';
 import { GlobalService } from './utils';
+import { UserSessionService } from '../user/user.session.service';
 
 @Global()
 @Module({
-  imports: [],
-  controllers: [],
-  providers: [GlobalService],
-  exports: [GlobalService],
+  providers: [GlobalService, UserSessionService],
+  exports: [GlobalService, UserSessionService],
 })
 export class CommonModule {}
