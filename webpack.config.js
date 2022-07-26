@@ -5,7 +5,7 @@ module.exports = function(options) {
     ...options,
     output: {
       path: join(process.cwd(), 'build'),
-      filename: join(process.cwd(), '[name].[chunkhash].js')
+      filename: join(process.cwd(), 'main.[chunkhash].js')
     },
     optimization: {
       ...options.optimization,
