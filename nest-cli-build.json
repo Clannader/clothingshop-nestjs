@@ -2,7 +2,6 @@
   "extends": "./nest-cli.json",
   "compilerOptions": {
     "webpack": true,
-    "webpackConfigPath": "webpack.config.js",
-    "tsConfigPath": "tsconfig.build.json"
+    "webpackConfigPath": "webpack.config.js"
   }
 }
