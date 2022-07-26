@@ -9,7 +9,6 @@
       "options": {
         "introspectComments": true
       }
-    }],
-    "tsConfigPath": "tsconfig.json"
+    }]
   }
 }

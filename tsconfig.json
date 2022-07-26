@@ -1,8 +1,7 @@
 {
-  "exclude": ["node_modules", "test", "dist", "build", "**/*spec.ts"],
   "compilerOptions": {
     "module": "commonjs",
-    "declaration": false,
+    "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
