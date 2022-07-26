@@ -1,6 +1,6 @@
 import { Module, Global } from '@nestjs/common';
 import { GlobalService } from './utils';
-import { UserSessionService } from '../user/user.session.service';
+import { UserSessionService } from '@/user/user.session.service';
 
 @Global()
 @Module({
