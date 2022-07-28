@@ -54,7 +54,7 @@ export class AopAspect {
         session = {
           adminId:
             (req.headers['adminId'] as string) || req.body['adminId'] || 'NULL',
-          shopId: (req.headers['shopId'] as string) || 'SYSTEM',
+          shopId: (req.headers['shopId'] as string) || req.body['shopId'] || 'NULL',
           adminType: UserTypeEnum.OTHER,
         };
       }

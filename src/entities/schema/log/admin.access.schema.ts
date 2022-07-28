@@ -42,7 +42,7 @@ export class AdminAccess extends Document {
     type: Object,
     default: {},
   })
-  params: Record<string, any>; // 请求内容参数
+  params: Record<string, any> | string; // 请求内容参数
 
   @Prop({
     required: true,
