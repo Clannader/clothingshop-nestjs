@@ -19,7 +19,7 @@ describe('EmailUtils', () => {
   });
 
   it('邮件模板获取', () => {
-    const templateContent = readFileSync(__dirname + '/../template/test.html');
+    const templateContent = readFileSync(__dirname + '/test.html');
     const options = {
       userName: 'zhangsan',
       userAge: 28,
