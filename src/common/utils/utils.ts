@@ -223,6 +223,11 @@ export class Utils {
     return req.headers['x-requested-with'] === 'XMLHttpRequest';
   }
 
+  static isHasSoapHeader(req: Request) {
+    const xmlHeader = req.headers['content-type']
+    return xmlHeader && xmlHeader.indexOf('xml') !== -1
+  }
+
   static stringifyParams(
     obj: Record<string, string>,
     sep = '&',

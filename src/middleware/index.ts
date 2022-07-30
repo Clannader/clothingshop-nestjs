@@ -3,3 +3,4 @@
  */
 export * from './session.middleware';
 export * from './aop.middleware';
+export * from './xml.middleware';

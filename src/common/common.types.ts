@@ -26,6 +26,7 @@ export interface RequestSession extends Request {
   sessionID: string;
   sessionStore: Store;
   startTime?: Date;
+  xmlData?: string;
 }
 
 export interface CmsResponse extends Response {

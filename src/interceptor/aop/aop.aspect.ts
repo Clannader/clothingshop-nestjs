@@ -42,10 +42,13 @@ export class AopAspect {
       const ip = Utils.getRequestIP(req);
       const body = req.body;
       const query = req.query;
-      const params = {
+      let params = {
         ...query,
         ...body,
       };
+      if (Utils.isHasSoapHeader(req)) {
+        params = req.xmlData
+      }
       const diffTime = Date.now() - req.startTime.getTime();
 
       this.logger.log(`请求响应时间: ${diffTime}ms`);
