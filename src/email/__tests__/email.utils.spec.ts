@@ -33,5 +33,14 @@ describe('EmailUtils', () => {
     expect(
       emailUtils.getEmailTemplate(templateContent.toString(), options, 'EN'),
     ).toBe(enContent);
+
+    const options2 = {
+      userName: 'zhangsan',
+      url: 'http://localhost:3000/index',
+    };
+    const en2Content = readFileSync(__dirname + '/test.en2.html').toString();
+    expect(
+      emailUtils.getEmailTemplate(templateContent.toString(), options2, 'EN'),
+    ).toBe(en2Content);
   });
 });
