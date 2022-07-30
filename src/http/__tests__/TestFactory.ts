@@ -4,7 +4,6 @@
 import { TestOneAdapter } from './TestOneAdapter';
 import { TestTwoAdapter } from './TestTwoAdapter';
 import { AbstractTestAdapter } from './AbstractTestAdapter';
-// import { ITestInterface } from './ITestInterface';
 
 export type options = {
   name: 'One' | 'Two';

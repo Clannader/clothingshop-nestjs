@@ -9,10 +9,14 @@ export class TestTwoAdapter extends AbstractTestAdapter {
   }
 
   getUserList(userName: string) {
-    return ['fd', 'fasdf', 'cvc', 'jkjh'].filter((v) => v === userName);
+    return ['fd', 'fasdf', 'cvc', 'jkjh'];
   }
 
   getAdapter(): string {
     return 'TestTwoAdapter';
+  }
+
+  public getAge(): number {
+    return 30;
   }
 }

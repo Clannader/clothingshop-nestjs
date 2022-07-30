@@ -9,7 +9,7 @@ export class TestOneAdapter extends AbstractTestAdapter {
   }
 
   getUserList(userName: string) {
-    return ['12', '32', '43', 'fads'].filter((v) => v === userName);
+    return ['12', '32', '43', 'fads'];
   }
 
   getAdapter(): string {
