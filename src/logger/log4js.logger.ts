@@ -6,8 +6,8 @@ import { join } from 'path';
  * 这个也是一个问题
  */
 // 由于打包后的代码是在dist下面而已,所以使用的是/../,而不是以项目的路径为基准的
-const baseLogPath = join(__dirname, '/../logs/server.log');
-const baseFileLogPath = join(__dirname, '/../fileLogs/fileLog.log');
+const baseLogPath = join(process.cwd(), '/logs/server.log');
+const baseFileLogPath = join(process.cwd(), '/fileLogs/fileLog.log');
 
 function replaceConsole(logger) {
   function replaceWith(fn) {

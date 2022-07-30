@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GlobalService } from './global.service';
 import {
   dateSdf,
   dbSession_Expires,
   Supervisor_Rights,
   userNameExp,
   tripleDES,
-} from '../constants';
+  GlobalService,
+} from '@/common';
 
 describe('GlobalService', () => {
   let service: GlobalService;

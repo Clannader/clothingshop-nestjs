@@ -7,26 +7,16 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
 import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
-
 import { CommonModule, ConfigModule } from './common';
-import { UserModule } from './user';
-import { UserSessionModule } from './user/user.session.module';
-import { SystemModule } from './system';
-import { LoginModule } from './login';
-import { TestModule } from './test/test.module';
-import { HttpInterceptorModule, AopAspectModule } from './interceptor';
-import { AopMiddleware } from './middleware';
-import { GuardModule } from './guard';
-
+import { AopMiddleware, XmlMiddleware } from './middleware';
 import { MongooseConfigService } from './dao';
+import { SwaggerModule } from './swagger.module';
+import { InterceptorModule } from './interceptor.module';
+import { AopAspectModule } from './interceptor';
 
 @Module({
   imports: [
     CommonModule,
-    UserModule,
-    SystemModule,
-    LoginModule,
-    TestModule,
     ConfigModule.register({
       iniFilePath: './config/config.ini',
       envFilePath:
@@ -40,10 +30,9 @@ import { MongooseConfigService } from './dao';
     MongooseModule.forRootAsync({
       useClass: MongooseConfigService,
     }),
-    UserSessionModule,
-    HttpInterceptorModule,
+    SwaggerModule,
+    InterceptorModule,
     AopAspectModule,
-    GuardModule,
   ],
   providers: [
     {
@@ -59,6 +48,7 @@ import { MongooseConfigService } from './dao';
 // export class ApiModule {}
 export class ApiModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    consumer.apply(XmlMiddleware).forRoutes('/*');
     consumer.apply(AopMiddleware).forRoutes('/*');
     // 这里会有个bug,那就是/cms/api/开头的地址如果不存在时也会进入到这个中间件中
     // 这时候就会报中间件的错误信息而不是404

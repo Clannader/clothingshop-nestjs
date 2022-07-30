@@ -1,0 +1,16 @@
+{
+  "language": "ts",
+  "entryFile": "main",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "plugins": [{
+      "name": "@nestjs/swagger",
+      "options": {
+        "introspectComments": true
+      }
+    }],
+    "webpack": true,
+    "webpackConfigPath": "webpack.config.js"
+  }
+}

@@ -19,15 +19,19 @@ describe('EmailUtils', () => {
   });
 
   it('邮件模板获取', () => {
-    const templateContent = readFileSync(__dirname + '/../template/test.html');
+    const templateContent = readFileSync(__dirname + '/test.html');
     const options = {
       userName: 'zhangsan',
       userAge: 28,
       url: 'http://localhost:3000/index',
     };
-    const enContent = readFileSync(__dirname + '/test.en.html').toString()
-    const zhContent = readFileSync(__dirname + '/test.zh.html').toString()
-    expect(emailUtils.getEmailTemplate(templateContent.toString(), options)).toBe(zhContent)
-    expect(emailUtils.getEmailTemplate(templateContent.toString(), options, 'EN')).toBe(enContent)
+    const enContent = readFileSync(__dirname + '/test.en.html').toString();
+    const zhContent = readFileSync(__dirname + '/test.zh.html').toString();
+    expect(
+      emailUtils.getEmailTemplate(templateContent.toString(), options),
+    ).toBe(zhContent);
+    expect(
+      emailUtils.getEmailTemplate(templateContent.toString(), options, 'EN'),
+    ).toBe(enContent);
   });
 });

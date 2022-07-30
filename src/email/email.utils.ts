@@ -27,7 +27,7 @@ export class EmailUtils {
           const langKey = langKeyMatch[1];
           content = content.replace(
             v,
-            this.globalService.lang(language, langKey, langKey),
+            this.globalService.lang(language, `$t(${langKey})`, langKey),
           );
         }
       });

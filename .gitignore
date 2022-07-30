@@ -6,6 +6,7 @@
 /certs
 /fileLogs
 /logs
+/build
 
 # Logs
 logs
