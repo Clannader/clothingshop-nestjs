@@ -47,7 +47,7 @@ export class AopAspect {
         ...body,
       };
       if (Utils.isHasSoapHeader(req)) {
-        params = req.xmlData
+        params = req.xmlData;
       }
       const diffTime = Date.now() - req.startTime.getTime();
 
@@ -57,7 +57,8 @@ export class AopAspect {
         session = {
           adminId:
             (req.headers['adminId'] as string) || req.body['adminId'] || 'NULL',
-          shopId: (req.headers['shopId'] as string) || req.body['shopId'] || 'NULL',
+          shopId:
+            (req.headers['shopId'] as string) || req.body['shopId'] || 'NULL',
           adminType: UserTypeEnum.OTHER,
         };
       }

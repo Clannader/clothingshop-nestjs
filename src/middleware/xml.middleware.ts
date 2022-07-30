@@ -10,17 +10,17 @@ export function XmlMiddleware(
   next: NextFunction,
 ) {
   if (Utils.isHasSoapHeader(req)) {
-    const xmlData = []
-    let xmlLen = 0
-    req.on('data', data => {
-      xmlData.push(data)
-      xmlLen += data.length
-    })
+    const xmlData = [];
+    let xmlLen = 0;
+    req.on('data', (data) => {
+      xmlData.push(data);
+      xmlLen += data.length;
+    });
     req.on('end', () => {
-      req.xmlData = Buffer.concat(xmlData, xmlLen).toString()
-      next()
-    })
+      req.xmlData = Buffer.concat(xmlData, xmlLen).toString();
+      next();
+    });
   } else {
-    next()
+    next();
   }
 }

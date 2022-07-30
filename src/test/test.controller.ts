@@ -7,6 +7,7 @@ import {
   Post,
   Get,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
@@ -15,6 +16,8 @@ import {
   ConfigService,
   GlobalService,
   ApiGenericsResponse,
+  XmlData,
+  XmlJsonData,
 } from '@/common';
 import {
   ReqTestSchemaDto,
@@ -22,8 +25,9 @@ import {
   TestSchemaDto,
   RespObjectDto,
 } from './dto';
-import { cloneClass } from './utils/test.utils';
+// import { cloneClass } from './utils/test.utils';
 import { UserSessionDto } from '@/user';
+import { XmlInterceptor } from '@/interceptor';
 
 // import { UserService } from '../user/user.service';
 
@@ -50,15 +54,20 @@ export class TestController {
     description: '测试泛型接口',
   })
   @ApiGenericsResponse(RespTestSchemaDto, TestSchemaDto)
+  @UseInterceptors(XmlInterceptor)
   async testingPost(
     @Body() params: ReqTestSchemaDto,
+    @XmlData() xmlData: string,
+    @XmlJsonData() xmlJsonData: Record<string, any>,
     // @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();
     resp.result = new TestSchemaDto();
     console.log(params);
-    const clone = cloneClass(RespTestSchemaDto);
-    console.log(Reflect.getMetadataKeys(clone));
+    console.log(xmlData);
+    console.log(xmlJsonData);
+    // const clone = cloneClass(RespTestSchemaDto);
+    // console.log(Reflect.getMetadataKeys(clone));
     // const dbUser: string = this.configService.get<string>('dbUser');
     // console.log(dbUser);
     // console.log(typeof dbUser);
@@ -113,7 +122,7 @@ export class TestController {
     // console.log(isColorAllowed() ? 'true' : 'false')
     // console.log(process.env['NODE_ENV'])
     resp.code = CodeEnum.SUCCESS;
-    resp.rows = 23;
+    resp.rows = xmlJsonData.xml.age;
     return resp;
   }
 

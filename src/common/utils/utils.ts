@@ -224,8 +224,8 @@ export class Utils {
   }
 
   static isHasSoapHeader(req: Request) {
-    const xmlHeader = req.headers['content-type']
-    return xmlHeader && xmlHeader.indexOf('xml') !== -1
+    const xmlHeader = req.headers['content-type'];
+    return xmlHeader && xmlHeader.indexOf('xml') !== -1;
   }
 
   static stringifyParams(
