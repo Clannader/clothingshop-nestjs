@@ -10,8 +10,8 @@ import { sessionName, sessionSecret, dbSession_Expires } from '@/common';
 import { MongooseConfigService, SessionMongoStore } from '@/dao';
 import * as request from 'supertest';
 import * as session from 'express-session';
-import { readFileSync } from 'fs';
-import { join } from 'path'
+// import { readFileSync } from 'fs';
+// import { join } from 'path';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -45,15 +45,18 @@ describe('AppController (e2e)', () => {
   it('/cms/api/file/upload/test 测试文件上传', () => {
     return request(app.getHttpServer())
       .post('/cms/api/file/upload/test')
-      .attach('file', './test/src/upload/Test.js')
+      .attach('file', './test/src/upload/Test.js') // 这个路径是从当前项目的执行目录开始
       .field('fileName', 'Test.js')
-      .set('credential', 's:_KJj_oHMyslaa5ooqPXswOx-FYh5u3wz.ub8QmFp9j0tFH99XRBsai8NoLzVs+krmmmMKo/MqlLU')
+      .set(
+        'credential',
+        's:_KJj_oHMyslaa5ooqPXswOx-FYh5u3wz.ub8QmFp9j0tFH99XRBsai8NoLzVs+krmmmMKo/MqlLU',
+      )
       .set('content-type', 'multipart/form-data')
       .set('x-requested-with', 'XMLHttpRequest')
       .expect(200)
-      .expect(resp => {
-        console.log(resp)
-      })
+      .expect((resp) => {
+        console.log(resp);
+      });
   });
 
   afterEach(async () => {

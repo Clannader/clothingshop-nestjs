@@ -213,7 +213,7 @@ export class Utils {
   }
 
   static isHasJsonHeader(/*req: Request*/) {
-    return true
+    return true;
     // return (
     //   req.headers['content-type'] === 'application/json' ||
     //   req.headers['accept'] === 'application/json' ||
