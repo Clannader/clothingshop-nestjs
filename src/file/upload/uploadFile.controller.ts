@@ -37,10 +37,10 @@ export class UploadFileController {
   @UseInterceptors(FileInterceptor('file'))
   uploadFileTest(
     @Body() params: ReqFileUploadTestDto,
-    @UploadedFile() file: Express.Multer.File
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log(params)
-    console.log(file)
+    console.log(params);
+    console.log(file);
     const resp = new CommonResult();
     return resp;
   }
