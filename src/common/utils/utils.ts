@@ -212,12 +212,13 @@ export class Utils {
     return ip || '127.0.0.1';
   }
 
-  static isHasJsonHeader(req: Request) {
-    return (
-      req.headers['content-type'] === 'application/json' ||
-      req.headers['accept'] === 'application/json' ||
-      req.headers['content-type'] === 'multipart/form-data'
-    );
+  static isHasJsonHeader(/*req: Request*/) {
+    return true
+    // return (
+    //   req.headers['content-type'] === 'application/json' ||
+    //   req.headers['accept'] === 'application/json' ||
+    //   req.headers['content-type'] === 'multipart/form-data'
+    // );
   }
 
   static isHasRequestedHeader(req: Request) {

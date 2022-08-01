@@ -39,9 +39,10 @@ export class UploadFileController {
     @Body() params: ReqFileUploadTestDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log(params);
     console.log(file);
+    console.log(params);
     const resp = new CommonResult();
+    // resp.msg = file.buffer.toString()
     return resp;
   }
 }
