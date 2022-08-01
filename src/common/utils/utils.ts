@@ -215,7 +215,8 @@ export class Utils {
   static isHasJsonHeader(req: Request) {
     return (
       req.headers['content-type'] === 'application/json' ||
-      req.headers['accept'] === 'application/json'
+      req.headers['accept'] === 'application/json' ||
+      req.headers['content-type'] === 'multipart/form-data'
     );
   }
 
