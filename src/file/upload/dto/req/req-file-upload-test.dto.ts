@@ -10,8 +10,8 @@ export class ReqFileUploadTestDto {
   fileName: string;
 
   /**
-   * 文件buffer的内容
+   * 文件buffer类型的base64字符串,因为json传不了buffer
    */
   @Expose()
-  fileContent: Buffer;
+  fileContent: string;
 }

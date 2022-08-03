@@ -100,18 +100,24 @@ export class UploadFileController {
       resp.msg = '文件名格式不正确'
       return resp;
     }
-    if (!Buffer.isBuffer(fileContent)) {
+    if (Utils.isEmpty(fileContent)) {
+      resp.msg = '文件内容不能为空'
+      return resp;
+    }
+    const fileBuffer = Buffer.from(fileContent, 'base64')
+    if (!Buffer.isBuffer(fileBuffer)) {
       resp.msg = '文件内容格式不正确'
       return resp;
     }
-    console.log(fileContent.length)
-    if (fileContent.length > 10 * 1024 * 1024) {
+
+    if (fileBuffer.length > 10 * 1024 * 1024) {
       resp.msg = '文件大小超过10M'
       return resp;
     }
     const [, hash] = /^([a-f0-9]{32})_([\d]+)/.exec(fileName)
-    console.log(hash)
-    console.log(/^([a-f0-9]{32})_([\d]+)/.exec(fileName))
+
+
+    resp.code = 1000;
     return resp;
   }
 }
