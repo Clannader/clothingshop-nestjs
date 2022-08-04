@@ -121,7 +121,9 @@ export class Utils {
    */
   static isEmpty(obj: any, excludeBlank = false): boolean {
     return (
-      obj == null || obj === 'undefined' || (excludeBlank ? false : obj === '')
+      obj == null ||
+      obj.trim() === 'undefined' ||
+      (excludeBlank ? false : obj.trim() === '')
     );
   }
 

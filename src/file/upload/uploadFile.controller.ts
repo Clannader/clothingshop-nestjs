@@ -26,6 +26,8 @@ import {
 import { ReqFileUploadTestDto } from './dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
+import { writeFileSync } from 'fs';
+import { join } from 'path';
 
 @ApiCommon()
 @ApiTags('UploadFileController')
@@ -47,7 +49,7 @@ export class UploadFileController {
     @Body() params: ReqFileUploadTestDto,
     @UploadedFile() file: Express.Multer.File,
     @Query() query: any,
-    @Req() request: RequestSession
+    @Req() request: RequestSession,
   ) {
     // 这里是通过multer这个组件来上传文件的,并且使用了内置的拦截器FileInterceptor
     // 效果不是很好,所以以后要是使用这个组件上传文件的话,还需要重新定义拦截器,修改报错信息返回等等
@@ -85,37 +87,35 @@ export class UploadFileController {
   @ApiCustomResponse({
     type: CommonResult,
   })
-  uploadFileSingle(
-    @Body() params: ReqFileUploadTestDto
-  ) {
+  uploadFileSingle(@Body() params: ReqFileUploadTestDto) {
     const fileName = params.fileName;
     const fileContent = params.fileContent;
-    const resp = new CommonResult()
-    resp.code = 1001
+    const resp = new CommonResult();
+    resp.code = 1001;
     if (Utils.isEmpty(fileName)) {
-      resp.msg = '文件名不能为空'
+      resp.msg = '文件名不能为空';
       return resp;
     }
     if (!/^[a-f0-9]{32}_[\d]+/.test(fileName)) {
-      resp.msg = '文件名格式不正确'
+      resp.msg = '文件名格式不正确';
       return resp;
     }
     if (Utils.isEmpty(fileContent)) {
-      resp.msg = '文件内容不能为空'
+      resp.msg = '文件内容不能为空';
       return resp;
     }
-    const fileBuffer = Buffer.from(fileContent, 'base64')
+    const fileBuffer = Buffer.from(fileContent, 'base64');
     if (!Buffer.isBuffer(fileBuffer)) {
-      resp.msg = '文件内容格式不正确'
+      resp.msg = '文件内容格式不正确';
       return resp;
     }
 
     if (fileBuffer.length > 10 * 1024 * 1024) {
-      resp.msg = '文件大小超过10M'
+      resp.msg = '文件大小超过10M';
       return resp;
     }
-    const [, hash] = /^([a-f0-9]{32})_([\d]+)/.exec(fileName)
-
+    const [, hash] = /^([a-f0-9]{32})_([\d]+)/.exec(fileName);
+    writeFileSync(join(process.cwd(), 'tempUpload', fileName), fileBuffer);
 
     resp.code = 1000;
     return resp;

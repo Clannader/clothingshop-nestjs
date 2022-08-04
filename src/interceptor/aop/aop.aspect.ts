@@ -47,12 +47,12 @@ export class AopAspect {
         ...body,
       };
       // 由于涉及到上传文件内容时数据过大,需要脱敏进数据库
-      const piiFields = ['adminPws', 'fileContent']
-      piiFields.forEach(field => {
+      const piiFields = ['adminPws', 'fileContent'];
+      piiFields.forEach((field) => {
         if (params.hasOwnProperty(field) && typeof params[field] === 'string') {
-          params[field] = Utils.piiData(params[field])
+          params[field] = Utils.piiData(params[field]);
         }
-      })
+      });
       if (Utils.isHasSoapHeader(req)) {
         params = req.xmlData;
       }
