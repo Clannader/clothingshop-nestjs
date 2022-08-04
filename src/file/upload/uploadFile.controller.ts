@@ -188,7 +188,7 @@ export class UploadFileController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '合并已经上传过的分片集合',
-    description: '生成完整的文件接口',
+    description: '生成完整的文件的接口',
   })
   @ApiCustomResponse({
     type: CommonResult,
