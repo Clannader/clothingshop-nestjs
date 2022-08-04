@@ -3,10 +3,9 @@
  */
 import { CommonResult } from '@/common';
 
-export class RespFileUploadAlreadyDto extends CommonResult{
+export class RespFileUploadAlreadyDto extends CommonResult {
   /**
    * 文件分片下拉列表
    */
   fileChunk: number[];
-
 }

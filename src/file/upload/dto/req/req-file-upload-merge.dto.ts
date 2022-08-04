@@ -14,4 +14,10 @@ export class ReqFileUploadMergeDto {
    */
   @Expose()
   fileChunk: number;
+
+  /**
+   * 文件名
+   */
+  @Expose()
+  fileName: string;
 }

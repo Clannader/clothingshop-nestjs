@@ -8,5 +8,4 @@ export class ReqFileUploadAlreadyDto {
    */
   @Expose()
   fileHash: string;
-
 }

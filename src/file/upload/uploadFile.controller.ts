@@ -23,7 +23,12 @@ import {
   RequestSession,
   Utils,
 } from '@/common';
-import { ReqFileUploadTestDto, ReqFileUploadAlreadyDto, ReqFileUploadMergeDto, RespFileUploadAlreadyDto } from './dto';
+import {
+  ReqFileUploadTestDto,
+  ReqFileUploadAlreadyDto,
+  ReqFileUploadMergeDto,
+  RespFileUploadAlreadyDto,
+} from './dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 import * as fs from 'fs';
@@ -35,8 +40,7 @@ import { join } from 'path';
 @UseGuards(SessionGuard)
 @UseInterceptors(HttpInterceptor)
 export class UploadFileController {
-
-  private readonly uploadPath = 'tempUpload'
+  private readonly uploadPath = 'tempUpload';
 
   @Post('test')
   @HttpCode(HttpStatus.OK)
@@ -118,16 +122,16 @@ export class UploadFileController {
       resp.msg = '文件大小超过10M';
       return resp;
     }
-    const [, hashCode] = /^([a-f0-9]{32})_([\d]+)/.exec(fileName);
-    const fileDirPath = join(process.cwd(), this.uploadPath, hashCode)
+    const [, hashCode, chunkIndex] = /^([a-f0-9]{32})_([\d]+)/.exec(fileName);
+    const fileDirPath = join(process.cwd(), this.uploadPath, hashCode);
     if (!fs.existsSync(fileDirPath)) {
-      fs.mkdirSync(fileDirPath)
+      fs.mkdirSync(fileDirPath);
     }
-    const filePath = join(fileDirPath, fileName)
+    const filePath = join(fileDirPath, `${hashCode}_${chunkIndex}.temp`);
     if (fs.existsSync(filePath)) {
-      resp.code = 1000
-      resp.msg = '文件分片已存在'
-      return resp
+      resp.code = 1000;
+      resp.msg = '文件分片已存在';
+      return resp;
     }
     fs.writeFileSync(filePath, fileBuffer);
     resp.code = 1000;
@@ -155,22 +159,100 @@ export class UploadFileController {
       resp.msg = 'HASH值格式不正确';
       return resp;
     }
-    resp.code = 1000
-    resp.fileChunk = []
-    const fileDirPath = join(process.cwd(), this.uploadPath, fileHash)
+    resp.code = 1000;
+    resp.fileChunk = [];
+    const fileDirPath = join(process.cwd(), this.uploadPath, fileHash);
     if (!fs.existsSync(fileDirPath)) {
       // 如果不存在这个文件,返回空值
       return resp;
     }
     // 如果存在就遍历里面的值
     const fileDir = fs.readdirSync(fileDirPath, 'utf-8');
-    const chunkArr: number[] = []
+    const chunkArr: number[] = [];
     for (let i = 0; i < fileDir.length; i++) {
       const fileName = fileDir[i];
-      const [, , index] = /^([a-f0-9]{32})_([\d]+)/.exec(fileName);
-      chunkArr.push(+index)
+      const [, , index] = /^([a-f0-9]{32})_([\d]+).temp/.exec(fileName);
+      chunkArr.push(+index);
     }
-    resp.fileChunk = chunkArr
+    resp.fileChunk = chunkArr;
+    return resp;
+  }
+
+  @Post('merge')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '合并已经上传过的分片集合',
+    description: '生成完整的文件接口',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  uploadFileMerge(@Body() params: ReqFileUploadMergeDto) {
+    const fileHash = params.fileHash;
+    const fileChunk = params.fileChunk;
+    const fileName = params.fileName;
+    const resp = new CommonResult();
+    resp.code = 1001;
+    if (Utils.isEmpty(fileHash)) {
+      resp.msg = '文件的hash值不能为空';
+      return resp;
+    }
+    if (!/^[a-f0-9]{32}/.test(fileHash)) {
+      resp.msg = 'HASH值格式不正确';
+      return resp;
+    }
+    if (+fileChunk <= 0) {
+      resp.msg = '分片总数不能小于0';
+      return resp;
+    }
+    if (Utils.isEmpty(fileName)) {
+      resp.msg = '文件名不能为空';
+      return resp;
+    }
+    const uploadPath = join(process.cwd(), this.uploadPath);
+    const fileDirPath = join(uploadPath, fileHash);
+    if (!fs.existsSync(fileDirPath)) {
+      resp.msg = '文件不存在';
+      return resp;
+    }
+    // 如果存在就遍历里面的值
+    const fileDir = fs.readdirSync(fileDirPath, 'utf-8');
+    const chunkSet: Set<number> = new Set<number>();
+    const mergeFileDir = [];
+    for (let i = 0; i < fileDir.length; i++) {
+      const fileName = fileDir[i];
+      const execFileName = /^([a-f0-9]{32})_([\d]+).temp/.exec(fileName);
+      if (execFileName) {
+        // 里面的文件名规则正确才会去合并文件,否则不合并
+        const [, , index] = execFileName;
+        // 避免有重复的index
+        if (!chunkSet.has(+index)) {
+          chunkSet.add(+index);
+          mergeFileDir.push(fileName);
+        }
+      }
+    }
+    const chunkArr = new Array(chunkSet);
+    if (chunkArr.length !== fileChunk) {
+      resp.msg = '文件分片不正确';
+      return resp;
+    }
+    const fileNamePath = join(uploadPath, fileName);
+    mergeFileDir
+      .sort((a, b) => {
+        const reg = /_(\d+)/;
+        // 上面的正则保证这里的正则肯定是能匹配的
+        return +reg.exec(a)[1] - +reg.exec(b)[1];
+      })
+      .forEach((v) => {
+        fs.appendFileSync(fileNamePath, fs.readFileSync(join(fileDirPath, v)));
+      });
+    // 然后删除临时文件
+    for (let i = 0; i < fileDir.length; i++) {
+      fs.unlinkSync(join(fileDirPath, fileDir[i]));
+    }
+    fs.rmdirSync(fileDirPath);
+    resp.code = 1000;
     return resp;
   }
 }
