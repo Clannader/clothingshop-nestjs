@@ -23,10 +23,10 @@ import {
   RequestSession,
   Utils,
 } from '@/common';
-import { ReqFileUploadTestDto } from './dto';
+import { ReqFileUploadTestDto, ReqFileUploadAlreadyDto, ReqFileUploadMergeDto, RespFileUploadAlreadyDto } from './dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
-import { writeFileSync } from 'fs';
+import * as fs from 'fs';
 import { join } from 'path';
 
 @ApiCommon()
@@ -35,6 +35,9 @@ import { join } from 'path';
 @UseGuards(SessionGuard)
 @UseInterceptors(HttpInterceptor)
 export class UploadFileController {
+
+  private readonly uploadPath = 'tempUpload'
+
   @Post('test')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -55,7 +58,8 @@ export class UploadFileController {
     // 效果不是很好,所以以后要是使用这个组件上传文件的话,还需要重新定义拦截器,修改报错信息返回等等
     // 不过可以暂时这样上传文件也是没有什么问题的
     // console.log(file);
-    console.log(params); // 目前发现通过这个修饰器无法获取body的值,因为body不是一个标准的json,是这样的结构[Object: null prototype]{}
+    // 其实是可以拿到值的,只是自己忘记写@Expose()这个修饰器了
+    // console.log(params); // 目前发现通过这个修饰器无法获取body的值,因为body不是一个标准的json,是这样的结构[Object: null prototype]{}
     // console.log(query); // 可以获取地址栏带的参数值
     // console.log(JSON.parse(JSON.stringify(request.body))) // 这样可以取到formData里面设置的值
     // console.log(request.file) // 这里打印的结果和@UploadedFile() file是一样的
@@ -104,20 +108,69 @@ export class UploadFileController {
       resp.msg = '文件内容不能为空';
       return resp;
     }
+    // 这里我发现json其实还是可以传buffer过来的,只是当时前端代码写的有点问题
     const fileBuffer = Buffer.from(fileContent, 'base64');
     if (!Buffer.isBuffer(fileBuffer)) {
       resp.msg = '文件内容格式不正确';
       return resp;
     }
-
     if (fileBuffer.length > 10 * 1024 * 1024) {
       resp.msg = '文件大小超过10M';
       return resp;
     }
-    const [, hash] = /^([a-f0-9]{32})_([\d]+)/.exec(fileName);
-    writeFileSync(join(process.cwd(), 'tempUpload', fileName), fileBuffer);
-
+    const [, hashCode] = /^([a-f0-9]{32})_([\d]+)/.exec(fileName);
+    const fileDirPath = join(process.cwd(), this.uploadPath, hashCode)
+    if (!fs.existsSync(fileDirPath)) {
+      fs.mkdirSync(fileDirPath)
+    }
+    const filePath = join(fileDirPath, fileName)
+    if (fs.existsSync(filePath)) {
+      resp.code = 1000
+      resp.msg = '文件分片已存在'
+      return resp
+    }
+    fs.writeFileSync(filePath, fileBuffer);
     resp.code = 1000;
+    return resp;
+  }
+
+  @Post('already')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '获取已经上传过的分片集合',
+    description: '返回服务器分片集合',
+  })
+  @ApiCustomResponse({
+    type: RespFileUploadAlreadyDto,
+  })
+  uploadFileAlready(@Body() params: ReqFileUploadAlreadyDto) {
+    const fileHash = params.fileHash;
+    const resp = new RespFileUploadAlreadyDto();
+    resp.code = 1001;
+    if (Utils.isEmpty(fileHash)) {
+      resp.msg = '文件的hash值不能为空';
+      return resp;
+    }
+    if (!/^[a-f0-9]{32}/.test(fileHash)) {
+      resp.msg = 'HASH值格式不正确';
+      return resp;
+    }
+    resp.code = 1000
+    resp.fileChunk = []
+    const fileDirPath = join(process.cwd(), this.uploadPath, fileHash)
+    if (!fs.existsSync(fileDirPath)) {
+      // 如果不存在这个文件,返回空值
+      return resp;
+    }
+    // 如果存在就遍历里面的值
+    const fileDir = fs.readdirSync(fileDirPath, 'utf-8');
+    const chunkArr: number[] = []
+    for (let i = 0; i < fileDir.length; i++) {
+      const fileName = fileDir[i];
+      const [, , index] = /^([a-f0-9]{32})_([\d]+)/.exec(fileName);
+      chunkArr.push(+index)
+    }
+    resp.fileChunk = chunkArr
     return resp;
   }
 }
