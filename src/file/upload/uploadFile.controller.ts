@@ -55,7 +55,7 @@ export class UploadFileController {
     // 效果不是很好,所以以后要是使用这个组件上传文件的话,还需要重新定义拦截器,修改报错信息返回等等
     // 不过可以暂时这样上传文件也是没有什么问题的
     // console.log(file);
-    // console.log(params); // 目前发现通过这个修饰器无法获取body的值,因为body不是一个标准的json,是这样的结构[Object: null prototype]{}
+    console.log(params); // 目前发现通过这个修饰器无法获取body的值,因为body不是一个标准的json,是这样的结构[Object: null prototype]{}
     // console.log(query); // 可以获取地址栏带的参数值
     // console.log(JSON.parse(JSON.stringify(request.body))) // 这样可以取到formData里面设置的值
     // console.log(request.file) // 这里打印的结果和@UploadedFile() file是一样的
