@@ -136,7 +136,7 @@ export class UploadFileController {
       return resp;
     }
     // 没有传过就写入文件
-    fs.writeFileSync(filePath, fileBuffer, 'utf-8');
+    fs.writeFileSync(filePath, fileBuffer);
     resp.code = 1000;
     return resp;
   }
@@ -257,8 +257,7 @@ export class UploadFileController {
       .forEach((v) => {
         fs.appendFileSync(
           fileNamePath,
-          fs.readFileSync(join(fileDirPath, v), 'utf-8'),
-          'utf-8',
+          fs.readFileSync(join(fileDirPath, v)),
         );
       });
     // 然后删除临时文件
