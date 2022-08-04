@@ -124,16 +124,19 @@ export class UploadFileController {
     }
     const [, hashCode, chunkIndex] = /^([a-f0-9]{32})_([\d]+)/.exec(fileName);
     const fileDirPath = join(process.cwd(), this.uploadPath, hashCode);
+    // 判断上传的临时文件是否存在这个hashCode,不存在就创建一个文件夹
     if (!fs.existsSync(fileDirPath)) {
       fs.mkdirSync(fileDirPath);
     }
     const filePath = join(fileDirPath, `${hashCode}_${chunkIndex}.temp`);
+    // 判断临时文件是否传过,传过就返回文件已存在
     if (fs.existsSync(filePath)) {
       resp.code = 1000;
       resp.msg = '文件分片已存在';
       return resp;
     }
-    fs.writeFileSync(filePath, fileBuffer);
+    // 没有传过就写入文件
+    fs.writeFileSync(filePath, fileBuffer, 'utf-8');
     resp.code = 1000;
     return resp;
   }
@@ -241,6 +244,10 @@ export class UploadFileController {
       return resp;
     }
     const fileNamePath = join(uploadPath, fileName);
+    // 删除原本那个文件,否则下面的appendFileSync会继续传入文件的
+    if (fs.existsSync(fileNamePath)) {
+      fs.unlinkSync(fileNamePath);
+    }
     mergeFileDir
       .sort((a, b) => {
         const reg = /_(\d+)/;
@@ -248,7 +255,7 @@ export class UploadFileController {
         return +reg.exec(a)[1] - +reg.exec(b)[1];
       })
       .forEach((v) => {
-        fs.appendFileSync(fileNamePath, fs.readFileSync(join(fileDirPath, v)), 'utf-8');
+        fs.appendFileSync(fileNamePath, fs.readFileSync(join(fileDirPath, v), 'utf-8'), 'utf-8');
       });
     // 然后删除临时文件
     for (let i = 0; i < fileDir.length; i++) {
