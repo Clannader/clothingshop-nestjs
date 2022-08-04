@@ -171,8 +171,11 @@ export class UploadFileController {
     const chunkArr: number[] = [];
     for (let i = 0; i < fileDir.length; i++) {
       const fileName = fileDir[i];
-      const [, , index] = /^([a-f0-9]{32})_([\d]+).temp/.exec(fileName);
-      chunkArr.push(+index);
+      const execFileName = /^([a-f0-9]{32})_([\d]+).temp/.exec(fileName);
+      if (execFileName) {
+        const [, , index] = execFileName
+        chunkArr.push(+index);
+      }
     }
     resp.fileChunk = chunkArr;
     return resp;
@@ -232,7 +235,7 @@ export class UploadFileController {
         }
       }
     }
-    const chunkArr = new Array(chunkSet);
+    const chunkArr = Array.from(chunkSet);
     if (chunkArr.length !== fileChunk) {
       resp.msg = '文件分片不正确';
       return resp;
@@ -245,7 +248,7 @@ export class UploadFileController {
         return +reg.exec(a)[1] - +reg.exec(b)[1];
       })
       .forEach((v) => {
-        fs.appendFileSync(fileNamePath, fs.readFileSync(join(fileDirPath, v)));
+        fs.appendFileSync(fileNamePath, fs.readFileSync(join(fileDirPath, v)), 'utf-8');
       });
     // 然后删除临时文件
     for (let i = 0; i < fileDir.length; i++) {
