@@ -43,4 +43,17 @@ describe('EmailUtils', () => {
       emailUtils.getEmailTemplate(templateContent.toString(), options2, 'EN'),
     ).toBe(en2Content);
   });
+
+  it('邮件模板获取EJS', () => {
+    const templateContent = readFileSync(__dirname + '/test.ejs');
+    const options = {
+      userName: 'zhangsan',
+      userAge: 28,
+      url: 'http://localhost:3000/index',
+    };
+    const zhContent = readFileSync(__dirname + '/test.zh.html').toString();
+    expect(
+      emailUtils.getEmailTemplate(templateContent.toString(), options),
+    ).toBe(zhContent);
+  });
 });

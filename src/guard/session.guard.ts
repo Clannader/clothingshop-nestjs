@@ -34,7 +34,7 @@ export class SessionGuard implements CanActivate {
     const http = context.switchToHttp();
     const req: RequestSession = http.getRequest();
     // const res: Response = http.getResponse();
-    if (!Utils.isHasJsonHeader(req)) {
+    if (!Utils.isHasJsonHeader()) {
       throw new CodeException(
         CodeEnum.INVALID_HEADERS,
         this.globalService.serverLang(

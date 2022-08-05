@@ -8,7 +8,7 @@ export class TestOneAdapter extends AbstractTestAdapter {
     return 'TestOneAdapter';
   }
 
-  getUserList(userName?: string) {
+  getUserList() {
     return ['12', '32', '43', 'fads'];
   }
 

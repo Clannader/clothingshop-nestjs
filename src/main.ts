@@ -25,6 +25,7 @@ import {
 } from './common';
 import { MongooseConfigService } from './dao';
 import { SessionMiddleware } from './middleware';
+import * as bodyParser from 'body-parser';
 
 // import * as fs from 'fs';
 
@@ -72,6 +73,8 @@ async function bootstrap() {
       }),
     }),
   );
+  app.use(bodyParser.json({limit: '15mb'}))
+  app.use(bodyParser.urlencoded({extended: false, limit: '15mb'}))
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
