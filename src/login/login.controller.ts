@@ -97,7 +97,7 @@ export class LoginController {
     resp.credential = 's:' + sign(req.sessionID, sessionSecret);
     resp.session = UserMapper.getTemplateSession(req.session.adminSession);
     resp.expireMsg = result.expireMsg;
-    return;
+    return resp;
   }
 
   @Post('/logout')

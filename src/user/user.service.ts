@@ -80,12 +80,12 @@ export class UserService {
       updateWhere.retryNumber = retryNumber;
       updateWhere.lockTime = lockTime;
       isUpdate = true;
-      if (retryNumber <= 5) {
+      if (retryNumber < 5) {
         result.message = this.globalService.serverLang(
           '用户名或密码错误',
           'user.invPassword',
         );
-      } else if (retryNumber < 10 && retryNumber > 5) {
+      } else if (retryNumber < 10 && retryNumber >= 5) {
         result.message = this.globalService.serverLang(
           '用户名或密码错误, 今日还可输错{0}次',
           'user.retryPws',
