@@ -54,8 +54,8 @@ describe('AppController (e2e)', () => {
       .set('content-type', 'multipart/form-data')
       .set('x-requested-with', 'XMLHttpRequest')
       .expect(200)
-      .expect((resp) => {
-        console.log(resp);
+      .expect((/*resp*/) => {
+        // console.log(resp);
       });
   });
 

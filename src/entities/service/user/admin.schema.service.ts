@@ -5,24 +5,18 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { AdminModel, Admin } from '../../schema';
-import { GlobalService, Utils, CodeEnum, userNameExp } from '@/common';
+import {
+  GlobalService,
+  Utils,
+  CodeEnum,
+  userNameExp,
+  LoginResult,
+} from '@/common';
 import validator from 'validator';
 
 type LoginWhere = {
   email?: string;
   adminId?: object;
-};
-
-export type LoginResult = {
-  message?: string;
-  code: number;
-  adminInfo: Admin;
-  shopInfo: object | string; //TODO 暂时这样定义,后期改
-  otherInfo: {
-    rights?: string[];
-    shopList?: string[];
-    currentShop: string;
-  };
 };
 
 @Injectable()
@@ -111,6 +105,8 @@ export class AdminSchemaService {
       code: CodeEnum.SUCCESS,
       otherInfo: {
         currentShop: 'SYSTEM',
+        rights: [],
+        shopList: [],
       },
     });
   }
