@@ -60,6 +60,8 @@ async function bootstrap() {
   // app.setGlobalPrefix('cms'); // 这里类似于设置context-path,设置全局的路由前缀,不影响swagger的地址路由
   // 也就是说swagger的路由访问是不用加上前缀的
   app.use(cookieParser());
+  app.use(bodyParser.json({ limit: '15mb' }));
+  app.use(bodyParser.urlencoded({ extended: false, limit: '15mb' }));
   app.use(SessionMiddleware);
   app.use(
     session({
@@ -73,8 +75,6 @@ async function bootstrap() {
       }),
     }),
   );
-  app.use(bodyParser.json({ limit: '15mb' }));
-  app.use(bodyParser.urlencoded({ extended: false, limit: '15mb' }));
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
@@ -85,7 +85,27 @@ async function bootstrap() {
     .setTitle('Clothingshop System API')
     .setDescription('The clothingshop restful api')
     .setVersion('1.0')
-    .addOAuth2() // 要研究一下授权问题,发现有三种授权方式,但是怎么设置都不生效
+    .addOAuth2({
+      type: 'oauth2',
+      description: 'AuthorizationCode from CMS',
+      flows: {
+        // implicit: {
+        //   authorizationUrl: 'https://example.com/api/oauth/dialog',
+        //   scopes: {
+        //     'write:pets': 'modify pets in your account',
+        //     'read:pets': 'read your pets'
+        //   }
+        // },
+        authorizationCode: {
+          authorizationUrl: 'https://example.com/api/oauth/dialog',
+          tokenUrl: 'https://example.com/api/oauth/token',
+          scopes: {
+            //   'write:pets': 'modify pets in your account',
+            //   'read:pets': 'read your pets'
+          },
+        },
+      },
+    }) // 要研究一下授权问题,发现有三种授权方式,但是怎么设置都不生效
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
     .setContact(
       'oliver.wu',

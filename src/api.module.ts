@@ -10,9 +10,8 @@ import { ValidationPipe } from './pipe';
 import { CommonModule, ConfigModule } from './common';
 import { AopMiddleware, XmlMiddleware } from './middleware';
 import { MongooseConfigService } from './dao';
-import { SwaggerModule } from './swagger.module';
-import { InterceptorModule } from './interceptor.module';
 import { AopAspectModule } from './interceptor';
+import { SwaggerModule } from './swagger.module';
 
 @Module({
   imports: [
@@ -31,7 +30,6 @@ import { AopAspectModule } from './interceptor';
       useClass: MongooseConfigService,
     }),
     SwaggerModule,
-    InterceptorModule,
     AopAspectModule,
   ],
   providers: [
