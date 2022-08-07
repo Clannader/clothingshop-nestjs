@@ -50,7 +50,7 @@ async function bootstrap() {
 
   const config: ConfigService = app.get<ConfigService>(ConfigService);
   const port = config.get<number>('httpPort', 3000);
-  const hostName = config.get<string>('hostName', 'localhost');
+  const hostName = config.get<string>('hostName', 'http://localhost:3000');
   const mongooseService = app.get<MongooseConfigService>(MongooseConfigService);
 
   app.use(helmet());
@@ -97,11 +97,11 @@ async function bootstrap() {
         //   }
         // },
         authorizationCode: {
-          authorizationUrl: 'https://example.com/api/oauth/dialog',
-          tokenUrl: 'https://example.com/api/oauth/token',
+          authorizationUrl: `${hostName}/gateway/api/oauth/authorize`,
+          tokenUrl: `${hostName}/gateway/api/oauth/token`,
           scopes: {
-            //   'write:pets': 'modify pets in your account',
-            //   'read:pets': 'read your pets'
+            // 'write:pets': 'modify pets in your account',
+            // 'read:pets': 'read your pets'
           },
         },
       },
@@ -109,7 +109,7 @@ async function bootstrap() {
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
     .setContact(
       'oliver.wu',
-      `http://${hostName}:${port}/index`,
+      `${hostName}/index`,
       '294473343@qq.com',
     )
     .build();
@@ -136,7 +136,7 @@ async function bootstrap() {
     customCssUrl: '/swagger-ui-override.css',
   });
 
-  await app.listen(port);
+  await app.listen(port).then(() => console.log(`Application is running on: ${hostName}/swagger-ui`));
 }
 
 bootstrap();
