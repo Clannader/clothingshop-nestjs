@@ -26,6 +26,8 @@ import {
 import { MongooseConfigService } from './dao';
 import { SessionMiddleware } from './middleware';
 import * as bodyParser from 'body-parser';
+// import * as csurf from 'csurf';
+import { rateLimit, MemoryStore } from 'express-rate-limit';
 
 // import * as fs from 'fs';
 
@@ -59,6 +61,15 @@ async function bootstrap() {
   // app.useGlobalInterceptors(new LogInterceptor(aopLogger));
   // app.setGlobalPrefix('cms'); // 这里类似于设置context-path,设置全局的路由前缀,不影响swagger的地址路由
   // 也就是说swagger的路由访问是不用加上前缀的
+  app.use(
+    rateLimit({
+      max: 2,
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      legacyHeaders: false,
+      standardHeaders: true,
+      store: new MemoryStore(),
+    }),
+  );
   app.use(cookieParser());
   app.use(bodyParser.json({ limit: '15mb' }));
   app.use(bodyParser.urlencoded({ extended: false, limit: '15mb' }));
@@ -75,6 +86,7 @@ async function bootstrap() {
       }),
     }),
   );
+  // app.use(csurf({ cookie: true })) // 不是很懂'跨站点请求伪造',暂时注释掉吧,后期有空再研究研究
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
@@ -107,11 +119,7 @@ async function bootstrap() {
       },
     }) // 要研究一下授权问题,发现有三种授权方式,但是怎么设置都不生效
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
-    .setContact(
-      'oliver.wu',
-      `${hostName}/index`,
-      '294473343@qq.com',
-    )
+    .setContact('oliver.wu', `${hostName}/index`, '294473343@qq.com')
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('swagger-ui', app, document, {
@@ -136,7 +144,11 @@ async function bootstrap() {
     customCssUrl: '/swagger-ui-override.css',
   });
 
-  await app.listen(port).then(() => console.log(`Application is running on: ${hostName}/swagger-ui`));
+  await app
+    .listen(port)
+    .then(() =>
+      console.log(`Application is running on: ${hostName}/swagger-ui`),
+    );
 }
 
 bootstrap();

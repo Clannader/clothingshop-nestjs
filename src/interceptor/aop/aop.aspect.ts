@@ -58,7 +58,7 @@ export class AopAspect {
       }
       const diffTime = Date.now() - req.startTime.getTime();
 
-      this.logger.log(`请求响应时间: ${diffTime}ms`);
+      this.logger.log(`请求响应时间: ${url} ${diffTime}ms`);
 
       if (!session) {
         session = {
