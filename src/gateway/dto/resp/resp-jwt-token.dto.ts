@@ -4,7 +4,7 @@
 import { CommonResult } from '@/common';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class RespJwtToken extends CommonResult {
+export class RespJwtTokenDto extends CommonResult {
   @ApiProperty({
     description: 'JWT Token',
   })

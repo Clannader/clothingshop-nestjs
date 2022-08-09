@@ -4,7 +4,7 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse, CodeEnum, LoginResult } from '@/common';
-import { RespJwtToken, ReqRefreshToken } from './dto';
+import { RespJwtTokenDto, ReqRefreshTokenDto } from './dto';
 import { UserService, ReqUserLoginDto } from '@/user';
 
 @ApiCommon({ showCredential: false })
@@ -20,11 +20,11 @@ export class GatewayAuthController {
     description: '获取JWT的token',
   })
   @ApiCustomResponse({
-    type: RespJwtToken,
+    type: RespJwtTokenDto,
   })
   async authorizeLogin(@Body() params: ReqUserLoginDto) {
     const result: LoginResult = await this.userService.userLogin(params);
-    const resp = new RespJwtToken();
+    const resp = new RespJwtTokenDto();
     if (result.code !== CodeEnum.SUCCESS) {
       resp.code = result.code;
       resp.msg = result.message;
@@ -41,10 +41,10 @@ export class GatewayAuthController {
     description: 'Token过期时可以获取一个新的JWT token',
   })
   @ApiCustomResponse({
-    type: RespJwtToken,
+    type: RespJwtTokenDto,
   })
-  async refreshToken(@Body() params: ReqRefreshToken) {
-    const resp = new RespJwtToken();
+  async refreshToken(@Body() params: ReqRefreshTokenDto) {
+    const resp = new RespJwtTokenDto();
     resp.accessToken = 'sfdfsd';
     return resp;
   }
