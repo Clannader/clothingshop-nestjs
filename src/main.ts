@@ -26,9 +26,8 @@ import {
 import { MongooseConfigService } from './dao';
 import { SessionMiddleware } from './middleware';
 import * as bodyParser from 'body-parser';
-// import * as csurf from 'csurf';
 import { rateLimit, MemoryStore } from 'express-rate-limit';
-
+// import * as csurf from 'csurf';
 // import * as fs from 'fs';
 
 async function bootstrap() {
@@ -63,7 +62,7 @@ async function bootstrap() {
   // 也就是说swagger的路由访问是不用加上前缀的
   app.use(
     rateLimit({
-      max: 2,
+      max: 20 * 1000,
       windowMs: 15 * 60 * 1000, // 15 minutes
       legacyHeaders: false,
       standardHeaders: true,
@@ -88,8 +87,8 @@ async function bootstrap() {
   );
   // app.use(csurf({ cookie: true })) // 不是很懂'跨站点请求伪造',暂时注释掉吧,后期有空再研究研究
 
-  app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.useStaticAssets(join(process.cwd(), 'public'));
+  app.setBaseViewsDir(join(process.cwd(), 'views'));
   app.engine('html', renderFile);
   app.setViewEngine('html');
 
@@ -117,7 +116,8 @@ async function bootstrap() {
           },
         },
       },
-    }) // 要研究一下授权问题,发现有三种授权方式,但是怎么设置都不生效
+    })
+    // 要研究一下授权问题,发现有三种授权方式,但是怎么设置都不生效
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
     .setContact('oliver.wu', `${hostName}/index`, '294473343@qq.com')
     .build();
