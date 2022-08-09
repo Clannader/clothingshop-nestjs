@@ -5,7 +5,7 @@ import {
   UseInterceptors,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiOAuth2 } from '@nestjs/swagger';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { ApiCommon, ApiCustomResponse } from '@/common';
 import { ReqUserSearchDto, RespUserSearchDto } from './dto';
@@ -14,7 +14,6 @@ import { SessionGuard } from '@/guard';
 import { Rights, RightsEnum } from '@/rights';
 
 @ApiCommon()
-@ApiOAuth2(['pets:write'])
 @Controller('/cms/api/user')
 @ApiTags('UserController')
 @UseGuards(SessionGuard)

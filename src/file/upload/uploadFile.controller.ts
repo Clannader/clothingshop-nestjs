@@ -62,7 +62,7 @@ export class UploadFileController {
     // 效果不是很好,所以以后要是使用这个组件上传文件的话,还需要重新定义拦截器,修改报错信息返回等等
     // 不过可以暂时这样上传文件也是没有什么问题的
     // console.log(file);
-    // 其实是可以拿到值的,只是自己忘记写@Expose()这个修饰器了
+    // 其实是可以拿到值的,只是自己忘记写@Expose()这个修饰器了,并且Buffer类型也是可以拿得到数据的
     // console.log(params); // 目前发现通过这个修饰器无法获取body的值,因为body不是一个标准的json,是这样的结构[Object: null prototype]{}
     // console.log(query); // 可以获取地址栏带的参数值
     // console.log(JSON.parse(JSON.stringify(request.body))) // 这样可以取到formData里面设置的值
@@ -255,10 +255,7 @@ export class UploadFileController {
         return +reg.exec(a)[1] - +reg.exec(b)[1];
       })
       .forEach((v) => {
-        fs.appendFileSync(
-          fileNamePath,
-          fs.readFileSync(join(fileDirPath, v)),
-        );
+        fs.appendFileSync(fileNamePath, fs.readFileSync(join(fileDirPath, v)));
       });
     // 然后删除临时文件
     for (let i = 0; i < fileDir.length; i++) {

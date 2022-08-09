@@ -114,7 +114,7 @@ export class ConfigService {
 
   private static transformTypeof(value: string): ReturnValueOf {
     if (/^-?\d+(\.\d+)?$/.test(value)) {
-      return parseFloat(value);
+      return +value;
     } else if (/^(true|false)$/.test(value)) {
       return value === 'true';
     } else {
@@ -148,10 +148,12 @@ export class ConfigService {
   get<ReturnValueOf = any>(
     propertyPath: string,
     defaultValue?: ReturnValueOf,
-  ): any {
+  ): ReturnValueOf {
     const internalValue = get(this.internalConfig, propertyPath);
     if (!Utils.isUndefined(internalValue)) {
-      return ConfigService.transformTypeof(internalValue);
+      return ConfigService.transformTypeof(
+        internalValue,
+      ) as unknown as ReturnValueOf;
     }
 
     return defaultValue as ReturnValueOf;
