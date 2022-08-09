@@ -23,6 +23,7 @@ export class GatewayAuthController {
     type: RespJwtTokenDto,
   })
   async authorizeLogin(@Body() params: ReqUserLoginDto) {
+    params.allowThirdUser = true;
     const result: LoginResult = await this.userService.userLogin(params);
     const resp = new RespJwtTokenDto();
     if (result.code !== CodeEnum.SUCCESS) {
