@@ -7,12 +7,12 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ReqRefreshTokenDto {
   @ApiProperty({
-    description: '授权时获取到的token',
+    description: '授权时获取到的refreshToken',
   })
   @IsNotEmpty({
     message: 'user.isEmptyToken',
   })
   @IsString()
   @Expose()
-  accessToken: string;
+  refreshToken: string;
 }

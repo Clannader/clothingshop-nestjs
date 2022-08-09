@@ -12,7 +12,7 @@ import { TokenService } from './services';
 @Module({
   imports: [
     UserModule,
-    PassportModule.registerAsync({}),
+    // PassportModule.registerAsync({}),
     JwtModule.registerAsync({
       useFactory: (config: ConfigService) => ({
         secret: tripleDES.key, // 签发的秘钥

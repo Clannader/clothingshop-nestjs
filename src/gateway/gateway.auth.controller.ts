@@ -69,14 +69,17 @@ export class GatewayAuthController {
       adminType: admin.adminType,
       mobile: false,
       loginTime: currentDate,
-      expires: this.configService.get<number>('tokenExpires', 60),
+      // expires: this.configService.get<number>('tokenExpires', 60),
       lastTime: admin.loginTime || currentDate,
       shopId: otherInfo.currentShop,
       requestIP: Utils.getRequestIP(req),
       requestHost: req.headers['host'],
       isFirstLogin: false,
     };
-    resp.accessToken = this.tokenService.generateToken(session);
+    const expires = this.configService.get<number>('tokenExpires', 60);
+    const refreshExpires = this.configService.get<number>('tokenRefresh', 120);
+    resp.accessToken = this.tokenService.generateToken(session, expires);
+    resp.refreshToken = this.tokenService.generateToken(session, refreshExpires);
     return resp;
   }
 
@@ -90,6 +93,8 @@ export class GatewayAuthController {
     type: RespJwtTokenDto,
   })
   async refreshToken(@Body() params: ReqRefreshTokenDto) {
+    const result = this.tokenService.verifyToken(params.refreshToken);
+    console.log(result)
     const resp = new RespJwtTokenDto();
     resp.accessToken = 'sfdfsd';
     return resp;

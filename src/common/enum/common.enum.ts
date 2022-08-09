@@ -10,6 +10,8 @@ export enum CodeEnum {
   INVALID_HEADERS = 1007, // 请求头错误时返回该响应码
   SESSION_EXPIRED = 1008, // 凭证过期返回该响应码
   FIRST_LOGIN = 1009, // 第一次登录需要修改密码
+  INVALID_TOKEN = 1010, // 无效的Token
+  TOKEN_EXPIRED = 1011, // Token过期
   UNKNOWN = 9999, // 发生未知错误时返回该响应码
 }
 

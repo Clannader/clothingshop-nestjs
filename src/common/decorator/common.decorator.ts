@@ -136,6 +136,14 @@ export function ApiCommon(options?: HeadersOptions) {
       description: '第一次登录需要修改密码',
     }),
     ApiResponse({
+      status: CodeEnum.INVALID_TOKEN,
+      description: '无效的Token',
+    }),
+    ApiResponse({
+      status: CodeEnum.TOKEN_EXPIRED,
+      description: 'Token过期',
+    }),
+    ApiResponse({
       status: CodeEnum.UNKNOWN,
       description: '发生未知错误时返回该响应码',
     }),
