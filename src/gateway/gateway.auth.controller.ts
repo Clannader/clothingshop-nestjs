@@ -1,21 +1,16 @@
 /**
  * Create by CC on 2022/8/9
  */
-import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse, CodeEnum, LoginResult } from '@/common';
 import { RespJwtToken, ReqRefreshToken } from './dto';
-import {
-  UserService,
-  ReqUserLoginDto
-} from '@/user';
+import { UserService, ReqUserLoginDto } from '@/user';
 
-@ApiCommon({ showJwtToken: true })
+@ApiCommon({ showCredential: false })
 @Controller('/gateway/api/oauth')
 @ApiTags('GatewayAuthController')
-// @UseGuards(SessionGuard)
 export class GatewayAuthController {
-
   constructor(private readonly userService: UserService) {}
 
   @Post('/authorize')
@@ -35,7 +30,7 @@ export class GatewayAuthController {
       resp.msg = result.message;
       return resp;
     }
-    resp.accessToken = 'sfdfsd'
+    resp.accessToken = 'sfdfsd';
     return resp;
   }
 
@@ -43,15 +38,14 @@ export class GatewayAuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '刷新JWT凭证',
-    description: '获取一个新的JWT token',
+    description: 'Token过期时可以获取一个新的JWT token',
   })
   @ApiCustomResponse({
     type: RespJwtToken,
   })
-  @ApiBearerAuth()
   async refreshToken(@Body() params: ReqRefreshToken) {
     const resp = new RespJwtToken();
-    resp.accessToken = 'sfdfsd'
+    resp.accessToken = 'sfdfsd';
     return resp;
   }
 }

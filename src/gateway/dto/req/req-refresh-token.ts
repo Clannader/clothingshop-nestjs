@@ -5,7 +5,6 @@ import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class ReqRefreshToken {
-
   /**
    * 授权时获取到的token
    */

@@ -44,12 +44,14 @@ type HeadersOptions = {
   showJwtToken?: boolean; // 是否显示jwtToken的header
 };
 
-export function ApiCommon(
-  options?: HeadersOptions,
-) {
-  options = Object.assign({
-    showCredential: true, showJwtToken: false
-  }, options ?? {});
+export function ApiCommon(options?: HeadersOptions) {
+  options = Object.assign(
+    {
+      showCredential: true,
+      showJwtToken: false,
+    },
+    options ?? {},
+  );
   if (options.showJwtToken) {
     options.showCredential = false; // 这两个条件互斥的
   }
@@ -77,6 +79,13 @@ export function ApiCommon(
     headers.push({
       name: 'credential',
       description: '用户凭证,通过登录接口获得该凭证',
+      required: true,
+    });
+  }
+  if (options.showJwtToken) {
+    headers.push({
+      name: 'Authorization',
+      description: 'JWT Token:(`Bearer {token}`)',
       required: true,
     });
   }
