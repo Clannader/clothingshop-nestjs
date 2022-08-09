@@ -9,4 +9,5 @@ export const user = {
   isFirstLogin: 'User login for the first time, please change the password',
   invContent: 'Missing content-type header',
   invRequest: 'Missing x-requested-with header',
+  isEmptyToken: 'The token is not empty'
 };

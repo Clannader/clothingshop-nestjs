@@ -44,7 +44,7 @@ export class LoginController {
   @ApiCustomResponse({
     type: RespUserLoginDto,
   })
-  @ApiCommon(false)
+  @ApiCommon({ showCredential: false })
   async userLogin(@Body() params: ReqUserLoginDto, @Req() req: RequestSession) {
     const result: LoginResult = await this.userService.userLogin(params);
     const resp = new RespUserLoginDto();

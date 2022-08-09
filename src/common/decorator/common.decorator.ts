@@ -39,7 +39,20 @@ export function BindMethod(...decorators: any[]): MethodDecorator {
   };
 }
 
-export function ApiCommon(showCredential = true) {
+type HeadersOptions = {
+  showCredential?: boolean; // 是否显示credential的header
+  showJwtToken?: boolean; // 是否显示jwtToken的header
+};
+
+export function ApiCommon(
+  options?: HeadersOptions,
+) {
+  options = Object.assign({
+    showCredential: true, showJwtToken: false
+  }, options ?? {});
+  if (options.showJwtToken) {
+    options.showCredential = false; // 这两个条件互斥的
+  }
   const headers: ApiHeaderOptions[] = [
     {
       name: 'Content-Type',
@@ -60,7 +73,7 @@ export function ApiCommon(showCredential = true) {
       enum: ['ZH', 'EN'],
     },
   ];
-  if (showCredential) {
+  if (options.showCredential) {
     headers.push({
       name: 'credential',
       description: '用户凭证,通过登录接口获得该凭证',
