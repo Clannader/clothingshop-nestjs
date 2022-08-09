@@ -79,7 +79,10 @@ export class GatewayAuthController {
     const expires = this.configService.get<number>('tokenExpires', 60);
     const refreshExpires = this.configService.get<number>('tokenRefresh', 120);
     resp.accessToken = this.tokenService.generateToken(session, expires);
-    resp.refreshToken = this.tokenService.generateToken(session, refreshExpires);
+    resp.refreshToken = this.tokenService.generateToken(
+      session,
+      refreshExpires,
+    );
     return resp;
   }
 
@@ -93,10 +96,14 @@ export class GatewayAuthController {
     type: RespJwtTokenDto,
   })
   async refreshToken(@Body() params: ReqRefreshTokenDto) {
-    const result = this.tokenService.verifyToken(params.refreshToken);
-    console.log(result)
+    const { iat, exp, ...result } = this.tokenService.verifyToken(
+      params.refreshToken,
+    ); // 如果有返回值,说明token有效
     const resp = new RespJwtTokenDto();
-    resp.accessToken = 'sfdfsd';
+    const expires = this.configService.get<number>('tokenExpires', 60);
+    const refreshExpires = this.configService.get<number>('tokenRefresh', 120);
+    resp.accessToken = this.tokenService.generateToken(result, expires);
+    resp.refreshToken = this.tokenService.generateToken(result, refreshExpires);
     return resp;
   }
 }

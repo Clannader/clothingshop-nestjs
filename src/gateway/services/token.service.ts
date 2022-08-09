@@ -30,9 +30,15 @@ export class TokenService {
       return this.jwtService.verify(token);
     } catch ({ name, message }) {
       if (name === 'TokenExpiredError') {
-        throw new CodeException(CodeEnum.TOKEN_EXPIRED, this.globalService.serverLang('Token过期', 'user.tokenExpired'))
+        throw new CodeException(
+          CodeEnum.TOKEN_EXPIRED,
+          this.globalService.serverLang('Token过期', 'user.tokenExpired'),
+        );
       }
-      throw new CodeException(CodeEnum.INVALID_TOKEN, this.globalService.serverLang('无效的Token', 'user.tokenInvalid'))
+      throw new CodeException(
+        CodeEnum.INVALID_TOKEN,
+        this.globalService.serverLang('无效的Token', 'user.tokenInvalid'),
+      );
     }
   }
 }
