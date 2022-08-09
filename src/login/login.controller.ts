@@ -89,7 +89,7 @@ export class LoginController {
       // userImg: '/img/default.jpg',
       requestIP: Utils.getRequestIP(req),
       requestHost: req.headers['host'],
-      isFirstLogin: admin.isFirstLogin,
+      isFirstLogin: admin.isFirstLogin, // 如果是接口用户估计需要这个字段是false的
       // supplierCode: admin.supplierCode || '',//集团代码
       // shopName: otherInfo.shopName //店铺名,没有@shopId那么就是没有值
     };
