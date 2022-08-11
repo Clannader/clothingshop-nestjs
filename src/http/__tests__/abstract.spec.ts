@@ -1,10 +1,10 @@
 /**
  * Create by CC on 2022/7/30
  */
-import { TestFactory } from './TestFactory';
-import { TestOneAdapter } from './TestOneAdapter';
-import { TestTwoAdapter } from './TestTwoAdapter';
-import { TestService } from './TestService';
+import { TestFactory } from './TestFactory.spec';
+import { TestOneAdapter } from './TestOneAdapter.spec';
+import { TestTwoAdapter } from './TestTwoAdapter.spec';
+import { TestService } from './TestService.spec';
 
 describe('AbstractTest', () => {
   it('测试工厂实现', () => {

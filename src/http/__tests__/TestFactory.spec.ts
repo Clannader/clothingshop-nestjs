@@ -1,9 +1,9 @@
 /**
  * Create by CC on 2022/7/30
  */
-import { TestOneAdapter } from './TestOneAdapter';
-import { TestTwoAdapter } from './TestTwoAdapter';
-import { AbstractTestAdapter } from './AbstractTestAdapter';
+import { TestOneAdapter } from './TestOneAdapter.spec';
+import { TestTwoAdapter } from './TestTwoAdapter.spec';
+import { AbstractTestAdapter } from './AbstractTestAdapter.spec';
 
 export type options = {
   name: 'One' | 'Two';

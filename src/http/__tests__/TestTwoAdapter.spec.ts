@@ -1,7 +1,7 @@
 /**
  * Create by CC on 2022/7/30
  */
-import { AbstractTestAdapter } from './AbstractTestAdapter';
+import { AbstractTestAdapter } from './AbstractTestAdapter.spec';
 
 export class TestTwoAdapter extends AbstractTestAdapter {
   getTestName() {
