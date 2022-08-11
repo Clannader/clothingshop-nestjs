@@ -9,6 +9,4 @@ import { createCacheManager } from './cache.providers';
   providers: [createCacheManager()],
   exports: [CACHE_MANAGER],
 })
-export class CacheModule {
-
-}
+export class CacheModule {}

@@ -1,6 +1,6 @@
 import { Provider, CacheManagerOptions } from '@nestjs/common';
 import { CACHE_MANAGER, CACHE_MODULE_OPTIONS } from './cache.constants';
-import { caching } from 'cache-manager'
+import { caching } from 'cache-manager';
 import { ConfigService } from '@/common';
 
 /**
@@ -15,8 +15,8 @@ export function createCacheManager(): Provider {
       const defaultCacheOptions = {
         ttl: config.get<number>('cacheTtl', 60), // 单位秒
         max: config.get<number>('cacheMax', 20),
-        store: 'memory'
-      }
+        store: 'memory',
+      };
       // @ts-ignore
       return caching({ ...defaultCacheOptions, ...(options || {}) });
     },
