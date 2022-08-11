@@ -1,7 +1,7 @@
 /**
  * Create by CC on 2022/7/30
  */
-import { ITestInterface } from './ITestInterface';
+import { ITestInterface } from './ITestInterface.spec';
 
 export abstract class AbstractTestAdapter implements ITestInterface {
   abstract getTestName(): string;

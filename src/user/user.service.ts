@@ -112,7 +112,10 @@ export class UserService {
           '用户未激活',
           'user.invStatus',
         );
-      } else if (admin.adminType === UserTypeEnum.THIRD) {
+      } else if (
+        !params.allowThirdUser &&
+        admin.adminType === UserTypeEnum.THIRD
+      ) {
         result.message = this.globalService.serverLang(
           '第三方用户不能登录系统',
           'user.thirdUser',

@@ -4,7 +4,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AdminAccess, AdminAccessSchema } from '../schema';
-import { AdminAccessService } from '../service';
+import { AdminAccessService } from '../services';
 
 @Module({
   imports: [

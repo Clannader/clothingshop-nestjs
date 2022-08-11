@@ -4,6 +4,7 @@ import { get, isPlainObject, has, forEach, cloneDeep, set } from 'lodash';
 import { Request } from 'express';
 import * as os from 'os';
 import { CmsSession } from '../common.types';
+import { v4 } from 'node-uuid';
 
 /**
  * 系统工具类
@@ -384,5 +385,9 @@ export class Utils {
       }
     });
     return xmlData;
+  }
+
+  static getUuid(): string {
+    return v4().replace(/\-/g, '')
   }
 }
