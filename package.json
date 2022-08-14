@@ -8,6 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "cross-env NODE_ENV=production nest build -c nest-cli-build.json",
+    "build:dev": "nest build",
     "build:prod": "npm run lint && npm run test && npm run test:e2e && cross-env NODE_ENV=production nest build -c nest-cli-build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "cross-env NODE_ENV=development nest start",

@@ -1,19 +1,17 @@
 /**
- * Create by CC on 2022/8/1
+ * Create by CC on 2022/8/15
  */
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '@/app.module';
-import * as cookieParser from 'cookie-parser';
-import { SessionMiddleware } from '@/middleware';
-import { sessionName, sessionSecret, dbSession_Expires } from '@/common';
-import { MongooseConfigService, SessionMongoStore } from '@/dao';
+// import * as cookieParser from 'cookie-parser';
+// import { SessionMiddleware } from '@/middleware';
+// import { sessionName, sessionSecret, dbSession_Expires } from '@/common';
+// import { MongooseConfigService, SessionMongoStore } from '@/dao';
 import * as request from 'supertest';
-import * as session from 'express-session';
-// import { readFileSync } from 'fs';
-// import { join } from 'path';
+// import * as session from 'express-session';
 
-describe('UploadFileController (e2e)', () => {
+describe('GatewayAuthController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -22,23 +20,23 @@ describe('UploadFileController (e2e)', () => {
     }).compile();
 
     app = module.createNestApplication();
-    const mongooseService = app.get<MongooseConfigService>(
-      MongooseConfigService,
-    );
-    app.use(cookieParser());
-    app.use(SessionMiddleware);
-    app.use(
-      session({
-        name: sessionName,
-        secret: sessionSecret,
-        saveUninitialized: false,
-        resave: true,
-        store: SessionMongoStore.create({
-          client: mongooseService.getConnection().getClient(),
-          ttl: dbSession_Expires,
-        }),
-      }),
-    );
+    // const mongooseService = app.get<MongooseConfigService>(
+    //   MongooseConfigService,
+    // );
+    // app.use(cookieParser());
+    // app.use(SessionMiddleware);
+    // app.use(
+    //   session({
+    //     name: sessionName,
+    //     secret: sessionSecret,
+    //     saveUninitialized: false,
+    //     resave: true,
+    //     store: SessionMongoStore.create({
+    //       client: mongooseService.getConnection().getClient(),
+    //       ttl: dbSession_Expires,
+    //     }),
+    //   }),
+    // );
     await app.init();
   });
 

@@ -11,7 +11,7 @@ import { MongooseConfigService, SessionMongoStore } from '@/dao';
 import * as request from 'supertest';
 import * as session from 'express-session';
 
-describe('AppController (e2e)', () => {
+describe('LoginController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {

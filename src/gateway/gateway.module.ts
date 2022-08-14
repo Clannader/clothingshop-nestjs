@@ -4,7 +4,7 @@
 import { Module } from '@nestjs/common';
 import { GatewayAuthController } from './gateway.auth.controller';
 import { UserModule } from '@/user';
-import { PassportModule } from '@nestjs/passport';
+// import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { tripleDES, ConfigService } from '@/common';
 import { TokenService } from './services';
@@ -17,7 +17,7 @@ import { TokenService } from './services';
       useFactory: (config: ConfigService) => ({
         secret: tripleDES.key, // 签发的秘钥
         signOptions: {
-          expiresIn: config.get<number>('tokenExpires', 60), // token有效期,单位秒
+          expiresIn: config.get<number>('tokenExpires', 3600), // token有效期,单位秒
         },
       }),
       inject: [ConfigService],
