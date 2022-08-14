@@ -4,15 +4,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '@/app.module';
-// import * as cookieParser from 'cookie-parser';
-// import { SessionMiddleware } from '@/middleware';
-// import { sessionName, sessionSecret, dbSession_Expires } from '@/common';
-// import { MongooseConfigService, SessionMongoStore } from '@/dao';
 import * as request from 'supertest';
-// import * as session from 'express-session';
+import { TokenService } from '@/gateway';
+import { ConfigService } from '@/common';
 
 describe('GatewayAuthController (e2e)', () => {
   let app: INestApplication;
+  let accessToken: string;
+  let refreshToken: string;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,41 +19,43 @@ describe('GatewayAuthController (e2e)', () => {
     }).compile();
 
     app = module.createNestApplication();
-    // const mongooseService = app.get<MongooseConfigService>(
-    //   MongooseConfigService,
-    // );
-    // app.use(cookieParser());
-    // app.use(SessionMiddleware);
-    // app.use(
-    //   session({
-    //     name: sessionName,
-    //     secret: sessionSecret,
-    //     saveUninitialized: false,
-    //     resave: true,
-    //     store: SessionMongoStore.create({
-    //       client: mongooseService.getConnection().getClient(),
-    //       ttl: dbSession_Expires,
-    //     }),
-    //   }),
-    // );
     await app.init();
   });
 
-  it('/cms/api/file/upload/test 测试文件上传', () => {
+  it('/gateway/api/oauth/authorize oauth授权测试', () => {
+    console.log(Date.now());
+    const tokenService = app.get<TokenService>(TokenService);
+    const configService = app.get<ConfigService>(ConfigService);
     return request(app.getHttpServer())
-      .post('/cms/api/file/upload/test')
-      .attach('file', './test/src/upload/Test.js') // 这个路径是从当前项目的执行目录开始
-      .field('fileName', 'Test.js')
-      .set(
-        'credential',
-        's:_KJj_oHMyslaa5ooqPXswOx-FYh5u3wz.ub8QmFp9j0tFH99XRBsai8NoLzVs+krmmmMKo/MqlLU',
-      )
-      .set('content-type', 'multipart/form-data')
-      .set('x-requested-with', 'XMLHttpRequest')
+      .post('/gateway/api/oauth/authorize')
+      .send({
+        adminId: 'oliver',
+        adminPws:
+          '043a718774c572bd8a25adbeb1bfcd5c0256ae11cecf9f9c3f925d0e52beaf89',
+      })
       .expect(200)
-      .expect((/*resp*/) => {
-        // console.log(resp);
+      .expect((resp) => {
+        const body = resp.body;
+        expect(body.code).toEqual(1000);
+        expect(body.accessToken).not.toBeNull();
+        expect(body.refreshToken).not.toBeNull();
+        const accessSession = tokenService.verifyToken(body.accessToken);
+        const refreshSession = tokenService.verifyToken(body.refreshToken);
+        expect(accessSession.expires).toBeUndefined();
+        expect(refreshSession.expires).not.toBeNull();
+        const accessExpires = configService.get<number>('tokenExpires', 3600);
+        const refreshExpires = configService.get<number>('tokenRefresh', 7200);
+        expect(accessSession.exp - accessSession.iat).toBe(accessExpires);
+        expect(refreshSession.exp - refreshSession.iat).toBe(refreshExpires);
+        expect(refreshSession.expires).toBe(refreshExpires);
+        accessToken = body.accessToken;
+        refreshToken = body.refreshToken;
       });
+  });
+
+  it('/gateway/api/oauth/refreshToken 刷新token测试', () => {
+    console.log(accessToken);
+    console.log(refreshToken);
   });
 
   afterEach(async () => {

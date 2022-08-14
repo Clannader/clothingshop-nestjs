@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Session, Store } from 'express-session';
 
 export interface CmsSession {
-  readonly adminId: string;
+  readonly adminId?: string;
   readonly adminName?: string;
   readonly shopId?: string;
   readonly adminType?: string;
