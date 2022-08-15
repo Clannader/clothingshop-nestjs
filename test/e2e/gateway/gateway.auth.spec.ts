@@ -12,6 +12,12 @@ describe('GatewayAuthController (e2e)', () => {
   let app: INestApplication;
   let accessToken: string;
   let refreshToken: string;
+  const delay = (time: number) =>
+    new Promise((resolve) => setTimeout(() => resolve(''), time));
+  let tokenService: TokenService;
+  let configService: ConfigService;
+  let accessExpires: number;
+  let refreshExpires: number;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,12 +26,13 @@ describe('GatewayAuthController (e2e)', () => {
 
     app = module.createNestApplication();
     await app.init();
+    tokenService = app.get<TokenService>(TokenService);
+    configService = app.get<ConfigService>(ConfigService);
+    accessExpires = configService.get<number>('tokenExpires', 3600);
+    refreshExpires = configService.get<number>('tokenRefresh', 7200);
   });
 
   it('/gateway/api/oauth/authorize oauth授权测试', () => {
-    console.log(Date.now());
-    const tokenService = app.get<TokenService>(TokenService);
-    const configService = app.get<ConfigService>(ConfigService);
     return request(app.getHttpServer())
       .post('/gateway/api/oauth/authorize')
       .send({
@@ -43,8 +50,6 @@ describe('GatewayAuthController (e2e)', () => {
         const refreshSession = tokenService.verifyToken(body.refreshToken);
         expect(accessSession.expires).toBeUndefined();
         expect(refreshSession.expires).not.toBeNull();
-        const accessExpires = configService.get<number>('tokenExpires', 3600);
-        const refreshExpires = configService.get<number>('tokenRefresh', 7200);
         expect(accessSession.exp - accessSession.iat).toBe(accessExpires);
         expect(refreshSession.exp - refreshSession.iat).toBe(refreshExpires);
         expect(refreshSession.expires).toBe(refreshExpires);
@@ -53,9 +58,40 @@ describe('GatewayAuthController (e2e)', () => {
       });
   });
 
-  it('/gateway/api/oauth/refreshToken 刷新token测试', () => {
-    console.log(accessToken);
-    console.log(refreshToken);
+  it('/gateway/api/oauth/refreshToken 刷新token测试', async () => {
+    // 测试使用accessToken当refreshToken刷新时应该无效
+    await request(app.getHttpServer())
+      .post('/gateway/api/oauth/refreshToken')
+      .send({
+        refreshToken: accessToken
+      })
+      .expect(resp => {
+        expect(resp.body.code).toBe(1010)
+      })
+    await request(app.getHttpServer())
+      .post('/gateway/api/oauth/refreshToken')
+      .send({
+        refreshToken: 'clothingShop'
+      })
+      .expect(resp => {
+        expect(resp.body.code).toBe(1010)
+      })
+    console.time('find')
+    await delay(5000)
+    console.timeEnd('find')
+    // 测试等待10秒后,使用refreshToken刷新时,不改变refreshToken的值,并且减少accessToken的有效期
+    // return request(app.getHttpServer())
+    //   .post('/gateway/api/oauth/refreshToken')
+    //   .send({
+    //     refreshToken: refreshToken
+    //   })
+    //   .expect(200)
+    //   .expect(resp => {
+    //     expect(resp.body.refreshToken).toBe(refreshToken)
+    //     expect(resp.body.accessToken).not.toBe(accessToken)
+    //     const accessSession = tokenService.verifyToken(resp.body.accessToken);
+    //     expect(accessSession.exp - accessSession.iat).toBe(accessExpires - 10);
+    //   })
   });
 
   afterEach(async () => {
