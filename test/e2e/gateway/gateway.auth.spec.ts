@@ -12,8 +12,8 @@ describe('GatewayAuthController (e2e)', () => {
   let app: INestApplication;
   let accessToken: string;
   let refreshToken: string;
-  const delay = (time: number) =>
-    new Promise((resolve) => setTimeout(() => resolve(''), time));
+  // const delay = (time: number) =>
+  //   new Promise((resolve) => setTimeout(() => resolve(''), time));
   let tokenService: TokenService;
   let configService: ConfigService;
   let accessExpires: number;
@@ -76,9 +76,7 @@ describe('GatewayAuthController (e2e)', () => {
       .expect(resp => {
         expect(resp.body.code).toBe(1010)
       })
-    console.time('find')
-    await delay(5000)
-    console.timeEnd('find')
+    // 下面代码无法测试
     // 测试等待10秒后,使用refreshToken刷新时,不改变refreshToken的值,并且减少accessToken的有效期
     // return request(app.getHttpServer())
     //   .post('/gateway/api/oauth/refreshToken')
