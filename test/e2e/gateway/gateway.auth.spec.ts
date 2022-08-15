@@ -11,7 +11,7 @@ import { ConfigService } from '@/common';
 describe('GatewayAuthController (e2e)', () => {
   let app: INestApplication;
   let accessToken: string;
-  let refreshToken: string;
+  // let refreshToken: string;
   // const delay = (time: number) =>
   //   new Promise((resolve) => setTimeout(() => resolve(''), time));
   let tokenService: TokenService;
@@ -54,7 +54,7 @@ describe('GatewayAuthController (e2e)', () => {
         expect(refreshSession.exp - refreshSession.iat).toBe(refreshExpires);
         expect(refreshSession.expires).toBe(refreshExpires);
         accessToken = body.accessToken;
-        refreshToken = body.refreshToken;
+        // refreshToken = body.refreshToken;
       });
   });
 
@@ -63,19 +63,19 @@ describe('GatewayAuthController (e2e)', () => {
     await request(app.getHttpServer())
       .post('/gateway/api/oauth/refreshToken')
       .send({
-        refreshToken: accessToken
+        refreshToken: accessToken,
       })
-      .expect(resp => {
-        expect(resp.body.code).toBe(1010)
-      })
+      .expect((resp) => {
+        expect(resp.body.code).toBe(1010);
+      });
     await request(app.getHttpServer())
       .post('/gateway/api/oauth/refreshToken')
       .send({
-        refreshToken: 'clothingShop'
+        refreshToken: 'clothingShop',
       })
-      .expect(resp => {
-        expect(resp.body.code).toBe(1010)
-      })
+      .expect((resp) => {
+        expect(resp.body.code).toBe(1010);
+      });
     // 下面代码无法测试
     // 测试等待10秒后,使用refreshToken刷新时,不改变refreshToken的值,并且减少accessToken的有效期
     // return request(app.getHttpServer())
