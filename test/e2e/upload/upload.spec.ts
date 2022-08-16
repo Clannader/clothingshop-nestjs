@@ -13,7 +13,7 @@ import * as session from 'express-session';
 // import { readFileSync } from 'fs';
 // import { join } from 'path';
 
-describe('AppController (e2e)', () => {
+describe('UploadFileController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {

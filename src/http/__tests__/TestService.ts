@@ -1,7 +1,7 @@
 /**
  * Create by CC on 2022/7/31
  */
-import { AbstractTestAdapter } from './AbstractTestAdapter.spec';
+import { AbstractTestAdapter } from './AbstractTestAdapter';
 
 export class TestService {
   private readonly adapter: AbstractTestAdapter;

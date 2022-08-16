@@ -388,6 +388,6 @@ export class Utils {
   }
 
   static getUuid(): string {
-    return v4().replace(/\-/g, '')
+    return v4().replace(/\-/g, '');
   }
 }
