@@ -143,6 +143,9 @@ export class GatewayAuthController {
     // 生成多个token,由于有多台服务器的原因,内存同步问题,思考过了,不需要同步内存,如果进到了另一台
     // 没有内存的服务器,也可以让他重新生成一个新的token,反正也最多生成和服务器数量一致的token
     // 也不至于目前这种可以产生多个新的token.并且内存管理以后要是使用radis的话,就可以控制生成一个了
+
+    // 这里第一步通过解析出来的sessionId,从内存中获取refreshToken,如果没有,则正常生成,如果有,则返回token无效,禁止多次刷新
+
     resp.accessToken = this.tokenService.generateToken(result, accessExpires);
     result.expires = refreshExpires;
     resp.refreshToken = this.tokenService.generateToken(result, refreshExpires);
