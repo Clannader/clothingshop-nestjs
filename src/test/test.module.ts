@@ -12,7 +12,7 @@ import { MemoryCacheModule } from '@/cache';
     //   token: 'TEST_CONFIG',
     // }),
     // UserModule,
-    MemoryCacheModule
+    MemoryCacheModule,
   ],
   controllers: [TestController],
   providers: [],

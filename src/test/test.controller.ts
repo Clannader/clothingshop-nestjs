@@ -158,7 +158,7 @@ export class TestController {
     const resp = new RespObjectDto();
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
-    this.memoryCacheService.setMemoryCache('23444', {dfff: ''})
+    this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
     console.log(this.memoryCacheService.getAllCacheKeys());
     return resp;
   }

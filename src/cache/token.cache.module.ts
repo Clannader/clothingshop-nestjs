@@ -4,7 +4,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@/common';
 import { TokenCacheService } from './services';
-import { TOKEN_CACHE_MANAGER } from './cache.constants'
+import { TOKEN_CACHE_MANAGER } from './cache.constants';
 import { caching, StoreConfig } from 'cache-manager';
 
 @Module({
@@ -16,12 +16,12 @@ import { caching, StoreConfig } from 'cache-manager';
         const options: StoreConfig = {
           ttl: config.get<number>('cacheTTL', 3600),
           max: config.get<number>('cacheMax', 100 * 1000),
-          store: 'memory'
-        }
-        return caching(options)
+          store: 'memory',
+        };
+        return caching(options);
       },
       inject: [ConfigService],
-    }
+    },
   ],
   exports: [TokenCacheService],
 })
