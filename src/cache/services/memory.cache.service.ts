@@ -1,28 +1,21 @@
 /**
  * Create by CC on 2022/8/11
  */
-import { Injectable, Inject } from '@nestjs/common';
-import { caching, Cache } from 'cache-manager';
+import { Injectable, Inject, CACHE_MANAGER } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class MemoryCacheService {
+  @Inject(CACHE_MANAGER)
   private readonly cacheManager: Cache;
 
-  constructor() {
-    // @ts-ignore
-    this.cacheManager = caching();
+  setTokenCache(key: string, value: any) {
+    this.cacheManager.set(`token:${key}`, value);
   }
 
-  set<T>(key: string, value: T) {
-    this.cacheManager.set(key, value)
+  getTokenCache(key: string) {
+    return this.cacheManager.get(`token:${key}`);
   }
 
-  get<T>(key: string): Promise<T | undefined>{
-    return this.cacheManager.get(key)
-  }
-
-  printAll() {
-    const keys = this.cacheManager.store.keys()
-    console.log(keys)
-  }
+  // printAllCache() {}
 }

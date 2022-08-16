@@ -8,6 +8,7 @@ import { UserModule } from '@/user';
 import { JwtModule } from '@nestjs/jwt';
 import { tripleDES, ConfigService } from '@/common';
 import { TokenService } from './services';
+import { MemoryCacheModule } from '@/cache';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { TokenService } from './services';
       }),
       inject: [ConfigService],
     }),
+    MemoryCacheModule,
   ],
   controllers: [GatewayAuthController],
   providers: [TokenService],
