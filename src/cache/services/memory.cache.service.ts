@@ -17,5 +17,7 @@ export class MemoryCacheService {
     return this.cacheManager.get(`token:${key}`);
   }
 
-  // printAllCache() {}
+  getAllCacheKeys() {
+    return this.cacheManager.store.keys();
+  }
 }
