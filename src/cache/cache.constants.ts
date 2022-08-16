@@ -1,0 +1,2 @@
+export const TOKEN_CACHE_MANAGER = 'TOKEN_CACHE_MANAGER';
+

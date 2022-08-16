@@ -26,7 +26,7 @@ import { RespJwtTokenDto, ReqRefreshTokenDto } from './dto';
 import { UserService, ReqUserLoginDto } from '@/user';
 import { TokenService } from './services';
 import { Admin } from '@/entities';
-import { MemoryCacheService } from '@/cache';
+import { TokenCacheService } from '@/cache';
 
 @ApiCommon({ showCredential: false })
 @Controller('/gateway/api/oauth')
@@ -45,7 +45,7 @@ export class GatewayAuthController {
   private readonly globalService: GlobalService;
 
   @Inject()
-  private readonly memoryCacheService: MemoryCacheService;
+  private readonly tokenCacheService: TokenCacheService;
 
   @Post('/authorize')
   @HttpCode(HttpStatus.OK)
@@ -149,7 +149,7 @@ export class GatewayAuthController {
     // 也不至于目前这种可以产生多个新的token.并且内存管理以后要是使用radis的话,就可以控制生成一个了
 
     // 这里第一步通过解析出来的sessionId,从内存中获取refreshToken,如果没有,则正常生成,如果有,则返回token无效,禁止多次刷新
-    const cacheToken = await this.memoryCacheService
+    const cacheToken = await this.tokenCacheService
       .getTokenCache(result.sessionId)
       .then((result) => result);
     if (cacheToken) {
@@ -160,7 +160,7 @@ export class GatewayAuthController {
       );
       return resp;
     }
-    this.memoryCacheService.setTokenCache(
+    this.tokenCacheService.setTokenCache(
       result.sessionId,
       params.refreshToken,
     );

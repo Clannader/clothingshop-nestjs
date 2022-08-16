@@ -28,6 +28,7 @@ import {
 // import { cloneClass } from './utils/test.utils';
 import { UserSessionDto } from '@/user';
 import { XmlInterceptor } from '@/interceptor';
+import { MemoryCacheService } from '@/cache';
 
 // import { UserService } from '../user/user.service';
 
@@ -37,6 +38,9 @@ import { XmlInterceptor } from '@/interceptor';
 export class TestController {
   @Inject()
   private readonly globalService: GlobalService;
+
+  @Inject()
+  private readonly memoryCacheService: MemoryCacheService;
 
   // @Inject()
   // private readonly userService: UserService;
@@ -154,6 +158,8 @@ export class TestController {
     const resp = new RespObjectDto();
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
+    this.memoryCacheService.setMemoryCache('23444', {dfff: ''})
+    console.log(this.memoryCacheService.getAllCacheKeys());
     return resp;
   }
 }
