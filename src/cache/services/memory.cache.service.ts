@@ -9,12 +9,12 @@ export class MemoryCacheService {
   @Inject(CACHE_MANAGER)
   private readonly cacheManager: Cache;
 
-  setTokenCache(key: string, value: any) {
-    this.cacheManager.set(`token:${key}`, value);
+  setMemoryCache(key: string, value: any) {
+    this.cacheManager.set(key, value);
   }
 
-  getTokenCache(key: string) {
-    return this.cacheManager.get(`token:${key}`);
+  getMemoryCache(key: string) {
+    return this.cacheManager.get(key);
   }
 
   getAllCacheKeys() {

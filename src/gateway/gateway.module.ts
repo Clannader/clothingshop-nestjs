@@ -2,18 +2,17 @@
  * Create by CC on 2022/8/9
  */
 import { Module } from '@nestjs/common';
-import { GatewayAuthController } from './gateway.auth.controller';
-import { UserModule } from '@/user';
-// import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { UserModule } from '@/user';
 import { tripleDES, ConfigService } from '@/common';
+import { TokenCacheModule } from '@/cache';
 import { TokenService } from './services';
-import { MemoryCacheModule } from '@/cache';
+import { GatewayAuthController, GatewaySystemController } from './controllers';
+import { SystemModule } from '@/system';
 
 @Module({
   imports: [
     UserModule,
-    // PassportModule.registerAsync({}),
     JwtModule.registerAsync({
       useFactory: (config: ConfigService) => ({
         secret: tripleDES.key, // 签发的秘钥
@@ -23,9 +22,10 @@ import { MemoryCacheModule } from '@/cache';
       }),
       inject: [ConfigService],
     }),
-    MemoryCacheModule,
+    TokenCacheModule,
+    SystemModule,
   ],
-  controllers: [GatewayAuthController],
+  controllers: [GatewayAuthController, GatewaySystemController],
   providers: [TokenService],
 })
 export class GatewayModule {}

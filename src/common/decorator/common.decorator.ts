@@ -85,7 +85,7 @@ export function ApiCommon(options?: HeadersOptions) {
   if (options.showJwtToken) {
     headers.push({
       name: 'Authorization',
-      description: 'JWT Token:(`Bearer {token}`)',
+      description: 'JWT Token (`Bearer accessToken`)',
       required: true,
     });
   }

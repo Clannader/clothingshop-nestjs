@@ -1,17 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { RespWebConfigDto, WebConfigDto } from './dto';
-import { CodeEnum } from '@/common';
+import { CodeEnum, ConfigService } from '@/common';
 
 @Injectable()
 export class SystemService {
+  @Inject()
+  private readonly configService: ConfigService;
+
   getSystemConfig(): RespWebConfigDto {
     const resp = new RespWebConfigDto();
 
     const config = new WebConfigDto();
     config.dateFormat = 'yyyy/MM/dd';
-    config.version = '1.0.0';
-    config.author = 'oliver.wu';
-    config.copyright = '2022';
+    config.version = this.configService.get<string>('version', '1.0.0');
+    config.author = this.configService.get<string>('author', 'Oliver.wu');
+    config.copyright = this.configService
+      .get<string>('copyright', '2022')
+      .toString();
 
     resp.config = config;
     resp.code = CodeEnum.SUCCESS;

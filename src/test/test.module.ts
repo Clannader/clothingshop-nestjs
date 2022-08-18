@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TestController } from './test.controller';
+import { MemoryCacheModule } from '@/cache';
 // import { ConfigModule } from '../common';
 // import { UserModule } from '../user/user.module';
 
@@ -11,6 +12,7 @@ import { TestController } from './test.controller';
     //   token: 'TEST_CONFIG',
     // }),
     // UserModule,
+    MemoryCacheModule,
   ],
   controllers: [TestController],
   providers: [],

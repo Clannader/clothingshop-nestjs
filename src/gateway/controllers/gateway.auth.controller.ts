@@ -22,11 +22,11 @@ import {
   ConfigService,
   GlobalService,
 } from '@/common';
-import { RespJwtTokenDto, ReqRefreshTokenDto } from './dto';
+import { RespJwtTokenDto, ReqRefreshTokenDto } from '../dto';
 import { UserService, ReqUserLoginDto } from '@/user';
-import { TokenService } from './services';
+import { TokenService } from '../services';
 import { Admin } from '@/entities';
-import { MemoryCacheService } from '@/cache';
+import { TokenCacheService } from '@/cache';
 
 @ApiCommon({ showCredential: false })
 @Controller('/gateway/api/oauth')
@@ -45,7 +45,7 @@ export class GatewayAuthController {
   private readonly globalService: GlobalService;
 
   @Inject()
-  private readonly memoryCacheService: MemoryCacheService;
+  private readonly tokenCacheService: TokenCacheService;
 
   @Post('/authorize')
   @HttpCode(HttpStatus.OK)
@@ -109,9 +109,10 @@ export class GatewayAuthController {
   })
   async refreshToken(@Body() params: ReqRefreshTokenDto) {
     // iat是开始时间 exp是结束时间, expires是session里面的有效期,只有refreshToken里面才会有值
-    const { iat, exp, expires, ...result } = this.tokenService.verifyToken(
+    const { iat, /*exp, */ expires, ...result } = this.tokenService.verifyToken(
       params.refreshToken,
     );
+    delete result.exp;
     // 如果有返回值,说明token有效
     const resp = new RespJwtTokenDto();
     // 只有result.expires > 0 才是refreshToken
@@ -149,7 +150,7 @@ export class GatewayAuthController {
     // 也不至于目前这种可以产生多个新的token.并且内存管理以后要是使用radis的话,就可以控制生成一个了
 
     // 这里第一步通过解析出来的sessionId,从内存中获取refreshToken,如果没有,则正常生成,如果有,则返回token无效,禁止多次刷新
-    const cacheToken = await this.memoryCacheService
+    const cacheToken = await this.tokenCacheService
       .getTokenCache(result.sessionId)
       .then((result) => result);
     if (cacheToken) {
@@ -160,10 +161,7 @@ export class GatewayAuthController {
       );
       return resp;
     }
-    this.memoryCacheService.setTokenCache(
-      result.sessionId,
-      params.refreshToken,
-    );
+    this.tokenCacheService.setTokenCache(result.sessionId, params.refreshToken);
     resp.accessToken = this.tokenService.generateToken(result, accessExpires);
     result.expires = refreshExpires;
     resp.refreshToken = this.tokenService.generateToken(result, refreshExpires);
