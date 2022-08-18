@@ -1,11 +1,21 @@
 /**
  * Create by CC on 2022/7/19
  */
-import { Injectable } from '@nestjs/common';
-import { RequestSession } from '@/common';
+import { Inject, Injectable } from '@nestjs/common';
+import {
+  CodeEnum,
+  CodeException,
+  GlobalService,
+  RequestSession,
+  tripleDES,
+} from '@/common';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class UserSessionService {
+  @Inject()
+  private globalService: GlobalService;
+
   deleteSession(req: RequestSession): Promise<void> {
     delete req.session;
     return new Promise((resolve) => {
@@ -13,5 +23,22 @@ export class UserSessionService {
         resolve();
       });
     });
+  }
+
+  verifyToken(token: string) {
+    try {
+      return jwt.verify(token, tripleDES.key) as any;
+    } catch ({ name, message }) {
+      if (name === 'TokenExpiredError') {
+        throw new CodeException(
+          CodeEnum.TOKEN_EXPIRED,
+          this.globalService.serverLang('Token过期', 'user.tokenExpired'),
+        );
+      }
+      throw new CodeException(
+        CodeEnum.INVALID_TOKEN,
+        this.globalService.serverLang('无效的Token', 'user.tokenInvalid'),
+      );
+    }
   }
 }

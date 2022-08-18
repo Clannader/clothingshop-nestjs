@@ -7,7 +7,6 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
-import { TokenService } from '@/gateway';
 import {
   CodeEnum,
   CodeException,
@@ -16,11 +15,12 @@ import {
   Utils,
 } from '@/common';
 import { forEach, get } from 'lodash';
+import { UserSessionService } from '@/user/user.session.service';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
   @Inject()
-  private tokenService: TokenService;
+  private userSessionService: UserSessionService;
 
   @Inject()
   private globalService: GlobalService;
@@ -54,7 +54,7 @@ export class JwtGuard implements CanActivate {
       );
     }
     const { /*iat, exp, */ expires, ...jwtSession } =
-      this.tokenService.verifyToken(value);
+      this.userSessionService.verifyToken(value);
     delete jwtSession.iat;
     delete jwtSession.exp;
     if (!Utils.isEmpty(expires)) {
