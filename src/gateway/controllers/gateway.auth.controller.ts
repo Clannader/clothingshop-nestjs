@@ -109,9 +109,10 @@ export class GatewayAuthController {
   })
   async refreshToken(@Body() params: ReqRefreshTokenDto) {
     // iat是开始时间 exp是结束时间, expires是session里面的有效期,只有refreshToken里面才会有值
-    const { iat, exp, expires, ...result } = this.tokenService.verifyToken(
+    const { iat, /*exp, */ expires, ...result } = this.tokenService.verifyToken(
       params.refreshToken,
     );
+    delete result.exp;
     // 如果有返回值,说明token有效
     const resp = new RespJwtTokenDto();
     // 只有result.expires > 0 才是refreshToken

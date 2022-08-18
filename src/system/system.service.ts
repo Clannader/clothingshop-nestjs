@@ -14,7 +14,9 @@ export class SystemService {
     config.dateFormat = 'yyyy/MM/dd';
     config.version = this.configService.get<string>('version', '1.0.0');
     config.author = this.configService.get<string>('author', 'Oliver.wu');
-    config.copyright = this.configService.get<string>('copyright', '2022').toString();
+    config.copyright = this.configService
+      .get<string>('copyright', '2022')
+      .toString();
 
     resp.config = config;
     resp.code = CodeEnum.SUCCESS;
