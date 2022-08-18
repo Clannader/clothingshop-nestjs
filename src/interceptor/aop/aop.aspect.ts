@@ -91,6 +91,19 @@ export class AopAspect {
           }
         });
       } catch (e) {}
+      const headers = Object.assign(req.headers, {
+        cookie: req.cookies
+      });
+      // 脱敏headers
+      const piiHeaders = ['authorization', 'credential']
+      piiHeaders.forEach((field) => {
+        if (
+          headers.hasOwnProperty(field) &&
+          typeof headers[field] === 'string'
+        ) {
+          headers[field] = Utils.piiData(headers[field] as string);
+        }
+      });
       const createParams = {
         date: now,
         ip,
@@ -103,9 +116,7 @@ export class AopAspect {
         type: isIndex ? LogTypeEnum.Browser : LogTypeEnum.Interface,
         timestamp: diffTime,
         send: returnData,
-        headers: Object.assign(req.headers, {
-          cookie: req.cookies,
-        }),
+        headers: headers,
       };
       if (this.configService.get<boolean>('monitorLog', true)) {
         this.adminAccessService
