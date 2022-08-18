@@ -22,9 +22,9 @@ import {
   ConfigService,
   GlobalService,
 } from '@/common';
-import { RespJwtTokenDto, ReqRefreshTokenDto } from './dto';
+import { RespJwtTokenDto, ReqRefreshTokenDto } from '../dto';
 import { UserService, ReqUserLoginDto } from '@/user';
-import { TokenService } from './services';
+import { TokenService } from '../services';
 import { Admin } from '@/entities';
 import { TokenCacheService } from '@/cache';
 
