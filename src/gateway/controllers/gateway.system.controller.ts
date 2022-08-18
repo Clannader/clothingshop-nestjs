@@ -2,15 +2,16 @@
  * Create by CC on 2022/8/18
  */
 import { Controller, Get, UseGuards, Inject } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse } from '@/common';
 import { SystemService } from '@/system/system.service';
 import { RespWebConfigDto } from '@/system/dto';
 import { JwtGuard } from '@/guard';
 
-@ApiCommon({ showCredential: false })
+@ApiCommon({ showCredential: false, showJwtToken: true })
 @UseGuards(JwtGuard)
 @Controller('/gateway/api/system')
+@ApiBearerAuth()
 @ApiTags('GatewaySystemController')
 export class GatewaySystemController {
   @Inject()

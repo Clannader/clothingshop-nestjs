@@ -8,6 +8,7 @@ import { tripleDES, ConfigService } from '@/common';
 import { TokenCacheModule } from '@/cache';
 import { TokenService } from './services';
 import { GatewayAuthController, GatewaySystemController } from './controllers';
+import { SystemModule } from '@/system';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { GatewayAuthController, GatewaySystemController } from './controllers';
       inject: [ConfigService],
     }),
     TokenCacheModule,
+    SystemModule,
   ],
   controllers: [GatewayAuthController, GatewaySystemController],
   providers: [TokenService],
