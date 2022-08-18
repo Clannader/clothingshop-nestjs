@@ -79,7 +79,7 @@ export class JwtGuard implements CanActivate {
       'sessionId',
     ];
     forEach(validFields, (v) => {
-      if (!get(jwtSession, v)) {
+      if (Utils.isEmpty(get(jwtSession, v))) {
         throw new CodeException(
           CodeEnum.INVALID_TOKEN,
           this.globalService.serverLang('无效的Token', 'user.tokenInvalid'),
