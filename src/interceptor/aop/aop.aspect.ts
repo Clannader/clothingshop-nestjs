@@ -92,10 +92,10 @@ export class AopAspect {
         });
       } catch (e) {}
       const headers = Object.assign(req.headers, {
-        cookie: req.cookies
+        cookie: req.cookies,
       });
       // 脱敏headers
-      const piiHeaders = ['authorization', 'credential']
+      const piiHeaders = ['authorization', 'credential'];
       piiHeaders.forEach((field) => {
         if (
           headers.hasOwnProperty(field) &&
