@@ -23,7 +23,7 @@ export const sessionName = 'cmsApp';
 export const sessionSecret = '123456cms';
 export const interfaceHeader = 'CMS-Interface';
 export const tripleDES = {
-  // TODO 这个应该改成使用sessionid来做key,位数不足使用0补齐
+  // 这个应该改成使用sessionid来做key,位数不足使用0补齐
   key: 'ClothingShopClothingShopClothingShopClothingShopClothingShopAAAA',
   iv: '8890880',
 };

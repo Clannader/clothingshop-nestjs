@@ -2,13 +2,21 @@ import {
   Controller,
   Get,
   Query,
+  Post,
   UseInterceptors,
   UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { ApiCommon, ApiCustomResponse } from '@/common';
-import { ReqUserSearchDto, RespUserSearchDto } from './dto';
+import {
+  ApiCommon,
+  ApiCustomResponse,
+  UserSession,
+  CmsSession,
+} from '@/common';
+import { ReqUserSearchDto, RespUserSearchDto, RespUserRolesDto } from './dto';
 import { HttpInterceptor } from '@/interceptor';
 import { SessionGuard } from '@/guard';
 import { Rights, RightsEnum } from '@/rights';
@@ -32,5 +40,18 @@ export class UserController {
   @Rights(RightsEnum.UserSetup)
   getUsersList(@Query() params: ReqUserSearchDto) {
     return this.userService.getUsersList(params);
+  }
+
+  @Post('roles')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '返回用户角色权限',
+    description: '查询用户权限信息',
+  })
+  @ApiCustomResponse({
+    type: RespUserRolesDto,
+  })
+  getUserRoles(@UserSession() session: CmsSession) {
+    return this.userService.getUserRoles(session);
   }
 }

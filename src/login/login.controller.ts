@@ -69,6 +69,7 @@ export class LoginController {
       });
     };
     await getRegenerate();
+    const credential = 's:' + sign(req.sessionID, sessionSecret)
     req.session.adminSession = {
       adminId: admin.adminId,
       adminName: admin.adminName,
@@ -90,12 +91,13 @@ export class LoginController {
       requestIP: Utils.getRequestIP(req),
       requestHost: req.headers['host'],
       sessionId: req.sessionID,
+      credential: credential,
       isFirstLogin: admin.isFirstLogin, // 如果是接口用户估计需要这个字段是false的
       // supplierCode: admin.supplierCode || '',//集团代码
       // shopName: otherInfo.shopName //店铺名,没有@shopId那么就是没有值
     };
     resp.code = CodeEnum.SUCCESS;
-    resp.credential = 's:' + sign(req.sessionID, sessionSecret);
+    resp.credential = credential;
     resp.session = UserMapper.getTemplateSession(req.session.adminSession);
     resp.expireMsg = result.expireMsg;
     return resp;
