@@ -69,7 +69,7 @@ export class LoginController {
       });
     };
     await getRegenerate();
-    const credential = 's:' + sign(req.sessionID, sessionSecret)
+    const credential = 's:' + sign(req.sessionID, sessionSecret);
     req.session.adminSession = {
       adminId: admin.adminId,
       adminName: admin.adminName,

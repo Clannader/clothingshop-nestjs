@@ -191,7 +191,10 @@ export class UserService {
   getUserRoles(session: CmsSession) {
     const resp = new RespUserRolesDto();
     resp.code = CodeEnum.SUCCESS;
-    resp.roles = Utils.tripleDESencryptBySession(Utils.stringToBase64('3000,3300,3400,3411,3412'), session)
+    resp.roles = Utils.tripleDESencryptBySession(
+      Utils.stringToBase64('3000,3400,3410,3420'),
+      session,
+    );
     resp.session = UserMapper.getTemplateSession(session);
     resp.tripleIV = tripleDES.iv;
     return resp;
