@@ -27,21 +27,21 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       connectionFactory: (connection: Connection) => {
         //数据库连接错误时报错
         connection.on('error', function (err) {
-          console.log('数据库出错');
+          console.error('数据库出错');
           console.error(err);
         });
 
         connection.on('close', function () {
           //self
-          console.log('数据库已关闭');
+          console.error('数据库已关闭');
         });
 
         connection.on('disconnected', function () {
-          console.log('数据库已断开');
+          console.error('数据库已断开');
         });
 
         connection.on('reconnected', function () {
-          console.log('数据库重连成功');
+          console.error('数据库重连成功');
         });
         connection.plugin(monitorPlugin);
         this.connection = connection;
