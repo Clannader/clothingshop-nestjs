@@ -62,6 +62,15 @@ export class Utils {
   }
 
   /**
+   * 3DES加密算法,通过sessionId加密
+   * @param str 加密的内容
+   * @param session 用户的session
+   */
+  static tripleDESencryptBySession(str: string, session: CmsSession) {
+    return this.tripleDESencrypt(str, session.credential.substring(0, 64));
+  }
+
+  /**
    * 3DES解密算法
    * @param str 解密内容
    * @param tripleKey 解密的key

@@ -15,6 +15,7 @@ export interface CmsSession {
   readonly requestIP?: string;
   readonly requestHost?: string;
   readonly sessionId?: string;
+  readonly credential?: string;
   expires?: number;
 }
 

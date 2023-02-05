@@ -6,14 +6,22 @@ import {
   CommonResult,
   GlobalService,
   RequestSession,
+  CmsSession,
   Utils,
   UserTypeEnum,
   UpdateLoginWhere,
   LoginResult,
+  tripleDES,
 } from '@/common';
-import { ReqUserLoginDto, ReqUserSearchDto, RespUserSearchDto } from './dto';
+import {
+  ReqUserLoginDto,
+  ReqUserSearchDto,
+  RespUserSearchDto,
+  RespUserRolesDto,
+} from './dto';
 import { AdminSchemaService, Admin } from '@/entities';
 import { UserSessionService } from './user.session.service';
+import { UserMapper } from './user.mapper';
 
 @Injectable()
 export class UserService {
@@ -177,6 +185,18 @@ export class UserService {
     await this.userSessionService.deleteSession(req);
     const resp = new CommonResult();
     resp.code = CodeEnum.SUCCESS;
+    return resp;
+  }
+
+  getUserRoles(session: CmsSession) {
+    const resp = new RespUserRolesDto();
+    resp.code = CodeEnum.SUCCESS;
+    resp.roles = Utils.tripleDESencryptBySession(
+      Utils.stringToBase64('3000,3400,3410,3420'),
+      session,
+    );
+    resp.session = UserMapper.getTemplateSession(session);
+    resp.tripleIV = tripleDES.iv;
     return resp;
   }
 }

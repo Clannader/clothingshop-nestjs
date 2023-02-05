@@ -12,7 +12,8 @@ module.exports = function(options) {
     optimization: {
       ...options.optimization,
       // nodeEnv: true,
-      minimize: process.env.NODE_ENV === 'production', // 可以对打包的js进行压缩
+      minimize: false,
+      // minimize: process.env.NODE_ENV === 'production', // 可以对打包的js进行压缩
     },
   };
 };
