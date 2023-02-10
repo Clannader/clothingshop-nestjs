@@ -9,7 +9,7 @@ import {
 import { Request, Response } from 'express';
 import { GlobalService, ValidateException, CodeEnum } from '@/common';
 
-@Catch(HttpException)
+@Catch(HttpException, Error)
 export class HttpExceptionFilter implements ExceptionFilter {
   @Inject()
   private readonly globalService: GlobalService;
