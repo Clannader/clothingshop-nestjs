@@ -21,7 +21,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
     return {
       uri: this.configService.getSecurityConfig('dbUrl'),
       retryDelay: 10 * 1000, // 重连的间隔时间10s
-      retryAttempts: 30, // 重连次数
+      retryAttempts: 30000, // 重连次数
       user: this.configService.getSecurityConfig('dbUser'),
       pass: this.configService.getSecurityConfig('dbPws'),
       connectionFactory: (connection: Connection) => {
