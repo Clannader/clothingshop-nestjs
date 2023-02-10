@@ -18,6 +18,7 @@ import {
   ApiGenericsResponse,
   XmlData,
   XmlJsonData,
+  CodeException,
 } from '@/common';
 import {
   ReqTestSchemaDto,
@@ -29,7 +30,8 @@ import {
 import { UserSessionDto } from '@/user';
 import { XmlInterceptor } from '@/interceptor';
 import { MemoryCacheService } from '@/cache';
-
+import { AdminSchemaService } from '@/entities';
+import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
 
 @ApiCommon()
@@ -51,6 +53,11 @@ export class TestController {
   // @Inject('TEST_CONFIG')
   // private readonly config2Service: ConfigService;
 
+  @Inject()
+  private readonly adminSchemaService: AdminSchemaService;
+
+  private readonly logger = new AopLogger(TestController.name);
+
   @Post('/gateway/test/post')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -58,7 +65,7 @@ export class TestController {
     description: '测试泛型接口',
   })
   @ApiGenericsResponse(RespTestSchemaDto, TestSchemaDto)
-  @UseInterceptors(XmlInterceptor)
+  @UseInterceptors(XmlInterceptor) // 拦截器返回XML格式的报文
   async testingPost(
     @Body() params: ReqTestSchemaDto,
     @XmlData() xmlData: string,
@@ -66,10 +73,13 @@ export class TestController {
     // @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();
-    resp.result = new TestSchemaDto();
-    console.log(params);
-    console.log(xmlData);
-    console.log(xmlJsonData);
+    const result = new TestSchemaDto();
+    result.age = 20
+    result.password = '123'
+    result.username = '123'
+    // console.log(params);
+    // console.log(xmlData);
+    // console.log(xmlJsonData);
     // const clone = cloneClass(RespTestSchemaDto);
     // console.log(Reflect.getMetadataKeys(clone));
     // const dbUser: string = this.configService.get<string>('dbUser');
@@ -125,8 +135,36 @@ export class TestController {
     // console.log(process.env['NO_COLOR'])
     // console.log(isColorAllowed() ? 'true' : 'false')
     // console.log(process.env['NODE_ENV'])
+    // throw new Error('fdsfdsfds')
     resp.code = CodeEnum.SUCCESS;
-    resp.rows = xmlJsonData.xml.age;
+    resp.result = result;
+    // resp.rows = xmlJsonData.xml.age;
+    // return resp;
+
+    const test = () => {
+      return new Promise((resolve, reject) => {
+        reject({})
+      })
+    }
+    const testResult: Record<string, any> = await test().then(res => res).catch(err => err)
+    // console.log(testResult.name.age)
+    // const name = testResult?.name?.age
+    // this.logger.error(name)
+    // this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
+    // const keys = await this.memoryCacheService.getAllCacheKeys();
+    // const value = await this.memoryCacheService.getMemoryCache('23444')
+    // console.log(value)
+    // console.log(keys)
+    const findResult /*[err, findResult]*/ = await this.adminSchemaService.getModel().count({adminId: 'SUPERVISOR'}) // .then((result) => [null, result]).catch(err => [err])
+    // console.log(err)
+    // console.log('1111')
+    // console.log(findResult)
+    if (findResult) {
+      // throw err
+      // this.logger.error(err)
+      // console.log(err)
+    }
+    console.log(findResult)
     return resp;
   }
 
