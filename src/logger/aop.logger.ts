@@ -40,7 +40,7 @@ export class AopLogger extends ConsoleLogger {
     logger.debug(AopLogger.getStackTrace(), message);
   }
 
-  error(message: any, stack?: string, context?: string) {
+  error(message: any, context?: string, stack?: string) {
     logger.addContext('originalContext', context || this.context);
     logger.error(AopLogger.getStackTrace(), message);
     const stackList: StackTrace.StackFrame[] = StackTrace.getSync()
