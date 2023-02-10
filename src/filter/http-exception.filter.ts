@@ -23,6 +23,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : CodeEnum.UNKNOWN;
     const message = exception.message;
+    console.error(exception.stack)
     response.status(200).json({
       code: status,
       msg:

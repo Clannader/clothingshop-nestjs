@@ -147,7 +147,8 @@ export class TestController {
       })
     }
     const testResult: Record<string, any> = await test().then(res => res).catch(err => err)
-    // console.log(testResult.name.age)
+    // throw new CodeException(CodeEnum.TOKEN_EXPIRED, '哈哈')
+    console.log(testResult.name.age)
     // const name = testResult?.name?.age
     // this.logger.error(name)
     // this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
