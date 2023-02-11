@@ -148,14 +148,10 @@ async function bootstrap() {
     customCssUrl: '/swagger-ui-override.css',
   });
 
-  await app
-    .listen(port)
-    .then(
-      () => {
-        console.log(`Application is running on: ${hostName}/swagger-ui`);
-        console.log(`SwaggerJson is running on: ${hostName}/swagger-ui-json`);
-      }
-    );
+  await app.listen(port).then(() => {
+    console.log(`Application is running on: ${hostName}/swagger-ui`);
+    console.log(`SwaggerJson is running on: ${hostName}/swagger-ui-json`);
+  });
 }
 
 bootstrap();

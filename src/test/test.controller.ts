@@ -74,9 +74,9 @@ export class TestController {
   ) {
     const resp = new RespTestSchemaDto();
     const result = new TestSchemaDto();
-    result.age = 20
-    result.password = '123'
-    result.username = '123'
+    result.age = 20;
+    result.password = '123';
+    result.username = '123';
     // console.log(params);
     // console.log(xmlData);
     // console.log(xmlJsonData);
@@ -143,12 +143,14 @@ export class TestController {
 
     const test = () => {
       return new Promise((resolve, reject) => {
-        reject({})
-      })
-    }
-    const testResult: Record<string, any> = await test().then(res => res).catch(err => err)
-    throw new CodeException(CodeEnum.TOKEN_EXPIRED, '哈哈')
-    // console.log(testResult.name.age)
+        reject({});
+      });
+    };
+    const testResult: Record<string, any> = await test()
+      .then((res) => res)
+      .catch((err) => err);
+    // throw new CodeException(CodeEnum.TOKEN_EXPIRED, '哈哈')
+    console.log(testResult.name.age);
     // const name = testResult?.name?.age
     // this.logger.error(name)
     // this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
@@ -156,7 +158,9 @@ export class TestController {
     // const value = await this.memoryCacheService.getMemoryCache('23444')
     // console.log(value)
     // console.log(keys)
-    const findResult /*[err, findResult]*/ = await this.adminSchemaService.getModel().count({adminId: 'SUPERVISOR'}) // .then((result) => [null, result]).catch(err => [err])
+    const findResult /*[err, findResult]*/ = await this.adminSchemaService
+      .getModel()
+      .count({ adminId: 'SUPERVISOR' }); // .then((result) => [null, result]).catch(err => [err])
     // console.log(err)
     // console.log('1111')
     // console.log(findResult)
@@ -165,7 +169,7 @@ export class TestController {
       // this.logger.error(err)
       // console.log(err)
     }
-    console.log(findResult)
+    console.log(findResult);
     return resp;
   }
 

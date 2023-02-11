@@ -43,11 +43,11 @@ export class AopLogger extends ConsoleLogger {
   error(message: any, stack?: string, context?: string) {
     logger.addContext('originalContext', context || this.context);
     logger.error(AopLogger.getStackTrace(), message);
-    const stackList: StackTrace.StackFrame[] = StackTrace.getSync()
-    const stackContent = stackList.map(v => v.source).join('\r\n')
-    console.error(stackContent)
+    const stackList: StackTrace.StackFrame[] = StackTrace.getSync();
+    const stackContent = stackList.map((v) => v.source).join('\r\n');
+    console.error(stackContent);
     if (stack) {
-      console.error(stack)
+      console.error(stack);
     }
   }
 
