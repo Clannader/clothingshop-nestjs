@@ -2,8 +2,9 @@
  * Create by CC on 2022/8/16
  */
 import { Injectable, Inject } from '@nestjs/common';
-import { Cache } from 'cache-manager';
 import { TOKEN_CACHE_MANAGER } from '../cache.constants';
+
+import type { Cache } from 'cache-manager';
 
 @Injectable()
 export class TokenCacheService {

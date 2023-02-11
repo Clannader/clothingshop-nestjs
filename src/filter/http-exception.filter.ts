@@ -9,7 +9,7 @@ import {
 import { Request, Response } from 'express';
 import { GlobalService, ValidateException, CodeEnum } from '@/common';
 
-@Catch(HttpException)
+@Catch(HttpException, Error)
 export class HttpExceptionFilter implements ExceptionFilter {
   @Inject()
   private readonly globalService: GlobalService;
@@ -23,6 +23,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : CodeEnum.UNKNOWN;
     const message = exception.message;
+    console.error(exception.stack);
     response.status(200).json({
       code: status,
       msg:

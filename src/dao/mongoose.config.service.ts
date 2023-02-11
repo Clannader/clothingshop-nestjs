@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@/common';
 import { Connection } from 'mongoose';
 import { monitorPlugin } from './plugin';
+import { MongodbLogger } from '@/logger';
 
 @Injectable()
 export class MongooseConfigService implements MongooseOptionsFactory {
@@ -17,13 +18,16 @@ export class MongooseConfigService implements MongooseOptionsFactory {
 
   private connection: Connection;
 
+  private readonly logger = new MongodbLogger(MongooseConfigService.name);
+
   createMongooseOptions(): MongooseModuleOptions {
     return {
       uri: this.configService.getSecurityConfig('dbUrl'),
       retryDelay: 10 * 1000, // 重连的间隔时间10s
-      retryAttempts: 30, // 重连次数
+      retryAttempts: 30000, // 重连次数
       user: this.configService.getSecurityConfig('dbUser'),
       pass: this.configService.getSecurityConfig('dbPws'),
+      logger: this.logger,
       connectionFactory: (connection: Connection) => {
         //数据库连接错误时报错
         connection.on('error', function (err) {

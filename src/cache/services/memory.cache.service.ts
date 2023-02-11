@@ -2,7 +2,8 @@
  * Create by CC on 2022/8/11
  */
 import { Injectable, Inject, CACHE_MANAGER } from '@nestjs/common';
-import { Cache } from 'cache-manager';
+
+import type { Cache } from 'cache-manager';
 
 @Injectable()
 export class MemoryCacheService {
