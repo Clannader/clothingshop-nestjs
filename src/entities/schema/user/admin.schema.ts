@@ -10,7 +10,7 @@ export class Admin extends Document {
   @Prop({
     required: true,
     trim: true, // 去除数据前后的空格
-    uppercase: true, // 总是将值转化为大写
+    // uppercase:  true, // 总是将值转化为大写
   })
   adminId: string; // 登录时的管理员ID,唯一,后期考虑建唯一索引
 
@@ -42,9 +42,9 @@ export class Admin extends Document {
   email: string; // 邮箱地址,修改逻辑可以为空,但是不能重复,并且符合邮箱格式
 
   @Prop({
-    maxlength: 3,
+    maxlength: 5,
   })
-  usedPws: string[]; // 使用过的密码,最大长度3
+  usedPws: string[]; // 使用过的密码,最大长度5
 
   @Prop()
   loginTime: Date; // 登录时间
