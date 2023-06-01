@@ -4,7 +4,7 @@ import { get, isPlainObject, has, forEach, cloneDeep, set } from 'lodash';
 import { Request } from 'express';
 import * as os from 'os';
 import { CmsSession } from '../common.types';
-import { v4 } from 'node-uuid';
+import { v4 } from 'uuid';
 
 /**
  * 系统工具类
@@ -83,7 +83,8 @@ export class Utils {
       mode: CryptoJS.mode.CBC,
       padding: CryptoJS.pad.Pkcs7,
     });
-    return decryptAction.toString(CryptoJS.enc.Utf8);
+    const decryptStr = decryptAction.toString(CryptoJS.enc.Utf8);
+    return this.isEmpty(decryptStr) ? str : decryptStr;
   }
 
   /**

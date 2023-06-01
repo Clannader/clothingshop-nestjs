@@ -36,7 +36,7 @@ export class AopAspect {
     }
 
     // 如果是没有session的,在onFinished里面取是直接报错的
-    let session: CmsSession = req.session && req.session.adminSession;
+    let session: CmsSession = req.session?.adminSession;
 
     // 这里还要考虑jwt过来的时候,带入的session值解析,记录用户操作
     // 考虑做法,在jwt守卫那边解析出来值,放到req里面,然后完成响应的时候,只要判断节点里面有值,就替换session

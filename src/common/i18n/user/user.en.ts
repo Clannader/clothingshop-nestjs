@@ -10,4 +10,5 @@ export const user = {
   invContent: 'Missing content-type header',
   invRequest: 'Missing x-requested-with header',
   isEmptyToken: 'The token cannot be empty',
+  invPassword: 'Incorrect username or password',
 };

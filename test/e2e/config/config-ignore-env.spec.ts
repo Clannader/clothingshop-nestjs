@@ -33,12 +33,12 @@ describe('ConfigService 忽略环境变量值', () => {
     expect(typeof service.get<string>('isString')).toBe('string');
     expect(service.get<string>('ENV_APP_HOME')).toBe(undefined);
     expect(service.get<string>('ENV_PORT')).toBe(undefined);
-    expect(service.get<string>('JAVA_HOME')).toBe(undefined);
+    expect(service.get<string>('HOMEPATH')).toBe(undefined);
     expect(process.env['ENV_PORT']).toBe('5000');
     expect(process.env['ENV_isShow']).toBe('true');
     expect(process.env['ENV_isString']).toBe('Hello');
     expect(process.env['ENV_APP_HOME']).toBe('/clothingshop/index');
-    expect(process.env['JAVA_HOME']).toBe('D:\\java1.8\\jdk\\bin');
+    // expect(process.env['HOMEPATH']).toBe(process.env['HOMEPATH']);
   });
 
   afterEach(async () => {

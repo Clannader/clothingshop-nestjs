@@ -10,4 +10,5 @@ export const user = {
   invContent: '缺少content-type头信息',
   invRequest: '缺少x-requested-with头信息',
   isEmptyToken: 'Token不能为空',
+  invPassword: '用户名或密码错误',
 };
