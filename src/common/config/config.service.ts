@@ -50,7 +50,9 @@ export class ConfigService {
         encoding: this.options.encoding || 'utf-8',
       });
       // 由于上传ini文件后,下载下来的文件的换行符是\n,本地使用的是\r\n所以需要做个替换
-      const orgIniConfig = this.parse(sourceString.replace(/(\\r\\n||\\n||\\r)/, '\r\n'));
+      const orgIniConfig = this.parse(
+        sourceString.replace(/(\r\n|\n|\r)/g, '\r\n'),
+      );
       this.orgInternalConfig = cloneDeep(orgIniConfig);
       // if (!this.options.ignoreEnvVars) {
       //   config = Object.assign(orgIniConfig, this.envConfig);

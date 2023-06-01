@@ -83,7 +83,7 @@ export class Utils {
       mode: CryptoJS.mode.CBC,
       padding: CryptoJS.pad.Pkcs7,
     });
-    const decryptStr = decryptAction.toString(CryptoJS.enc.Utf8)
+    const decryptStr = decryptAction.toString(CryptoJS.enc.Utf8);
     return this.isEmpty(decryptStr) ? str : decryptStr;
   }
 
