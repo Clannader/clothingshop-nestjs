@@ -34,7 +34,7 @@ describe('ConfigService 默认加载', () => {
     expect(service.getSecurityConfig('dbName')).toBe(
       'M9kB1vUOFHzgzHa2VeIUkgeMZJ',
     );
-    expect(service.get<string>('JAVA_HOME')).not.toBe('D:\\java1.8\\jdk\\bin');
+    expect(service.get<string>('HOMEPATH')).not.toBe(process.env['HOMEPATH']);
   });
 
   afterEach(async () => {
