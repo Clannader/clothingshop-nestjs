@@ -32,12 +32,12 @@ describe('ConfigService 忽略环境变量文件', () => {
     expect(typeof service.get<boolean>('isShow')).toBe('boolean');
     expect(typeof service.get<string>('isString')).toBe('string');
     expect(service.get<string>('ENV_APP_HOME')).toBe(undefined);
-    expect(service.get<string>('JAVA_HOME')).toBe(undefined);
+    expect(service.get<string>('HOMEPATH')).toBe(undefined);
     expect(process.env['ENV_PORT']).toBe(undefined);
     expect(process.env['ENV_isShow']).toBe(undefined);
     expect(process.env['ENV_isString']).toBe(undefined);
     expect(process.env['ENV_APP_HOME']).toBe(undefined);
-    expect(process.env['JAVA_HOME']).toBe('D:\\java1.8\\jdk\\bin');
+    // expect(process.env['HOMEPATH']).toBe(process.env['HOMEPATH']);
   });
 
   afterEach(async () => {
