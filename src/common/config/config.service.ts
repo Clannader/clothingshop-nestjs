@@ -7,7 +7,7 @@ import { DotenvExpandOptions, expand } from 'dotenv-expand';
 import { ConfigServiceOptions } from './config.interface';
 // import { NoInferType, ExcludeUndefinedIf, KeyOf } from '../common.type';
 import { Utils } from '../utils';
-import { CONFIG_OPTIONS, CONFIG_ENV_TOKEN } from './config.constants';
+import { CONFIG_OPTIONS, CONFIG_ENV_TOKEN, CONFIG_SECRET } from './config.constants';
 
 type ReturnValueOf = string | boolean | number;
 
@@ -21,6 +21,7 @@ export class ConfigService {
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: ConfigServiceOptions,
     @Inject(CONFIG_ENV_TOKEN) private readonly envConfig: Record<string, any>,
+    @Inject(CONFIG_SECRET) private readonly secretConfig: Record<string, any>,
   ) {
     if (!Utils.isEmpty(options.iniFilePath)) {
       this.iniFilePath = options.iniFilePath;
@@ -170,7 +171,7 @@ export class ConfigService {
     return !Utils.isUndefined(internalValue) &&
       typeof isSecurity === 'boolean' &&
       isSecurity
-      ? Utils.tripleDESdecrypt(internalValue)
+      ? Utils.tripleDESdecrypt(internalValue, this.secretConfig['tripleKey'], this.secretConfig['tripleIv'])
       : internalValue;
   }
 

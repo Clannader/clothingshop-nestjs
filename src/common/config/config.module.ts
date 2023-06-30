@@ -1,12 +1,12 @@
 import { DynamicModule, Module, ClassProvider } from '@nestjs/common';
 import { DotenvExpandOptions, expand } from 'dotenv-expand';
-import { resolve } from 'path';
+import { join } from 'path';
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
 import { isPlainObject } from 'lodash';
 import { ConfigServiceOptions } from './config.interface';
 import { ConfigService } from './config.service';
-import { CONFIG_OPTIONS, CONFIG_ENV_TOKEN } from './config.constants';
+import { CONFIG_OPTIONS, CONFIG_ENV_TOKEN, CONFIG_SECRET } from './config.constants';
 import { Utils } from '../utils';
 
 @Module({
@@ -23,6 +23,7 @@ export class ConfigModule {
       options.ignoreEnvFile = true;
     }
     const envConfig = options.ignoreEnvFile ? {} : this.loadEnvFile(options);
+    const secretConfig = this.loadSecretFile()
     this.assignVariablesToProcess(envConfig);
     const isToken = !Utils.isEmpty(options.token);
     const providers = [
@@ -50,6 +51,10 @@ export class ConfigModule {
           provide: CONFIG_ENV_TOKEN,
           useValue: envConfig,
         },
+        {
+          provide: CONFIG_SECRET,
+          useValue: secretConfig,
+        },
         ...providers,
       ],
       exports: [ConfigService, ...configProviderTokens],
@@ -60,7 +65,7 @@ export class ConfigModule {
     options: ConfigServiceOptions,
   ): Record<string, any> {
     const envFilePath = Utils.isEmpty(options.envFilePath)
-      ? resolve(process.cwd(), '.env')
+      ? join(process.cwd(), '.env')
       : options.envFilePath;
 
     let config: Record<string, any> = {};
@@ -83,6 +88,18 @@ export class ConfigModule {
           ...config,
           ...process.env,
         };
+  }
+
+  private static loadSecretFile(): Record<string, any> {
+    const secretPath = join(process.cwd(), '/pem/secret.ini');
+    let config: Record<string, any> = {};
+    if (fs.existsSync(secretPath)) {
+      config = Object.assign(
+        dotenv.parse(fs.readFileSync(secretPath)),
+        config,
+      );
+    }
+    return config
   }
 
   private static assignVariablesToProcess(config: Record<string, any>) {
