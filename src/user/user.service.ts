@@ -11,7 +11,8 @@ import {
   UserTypeEnum,
   UpdateLoginWhere,
   LoginResult,
-  tripleDES,
+  ConfigService,
+  SECRET_CONFIG,
 } from '@/common';
 import {
   ReqUserLoginDto,
@@ -35,6 +36,9 @@ export class UserService {
 
   @Inject()
   private readonly userSessionService: UserSessionService;
+
+  @Inject(SECRET_CONFIG)
+  private readonly secretConfig: ConfigService;
 
   async getUsersList(params: ReqUserSearchDto): Promise<RespUserSearchDto> {
     this.logger.log(params);
@@ -194,9 +198,10 @@ export class UserService {
     resp.roles = Utils.tripleDESencryptBySession(
       Utils.stringToBase64('3000,3400,3410,3420'),
       session,
+      this.secretConfig.get<string>('tripleIv'),
     );
     resp.session = UserMapper.getTemplateSession(session);
-    resp.tripleIV = tripleDES.iv;
+    resp.tripleIV = this.secretConfig.get<string>('tripleIv');
     return resp;
   }
 }

@@ -61,7 +61,7 @@ export class ConfigModule {
         },
         ...providers,
       ],
-      exports: [ConfigService /*, CONFIG_SECRET*/, ...configProviderTokens], // 如果想外部使用secretConfig,就需要exports
+      exports: [ConfigService, CONFIG_SECRET, ...configProviderTokens], // 如果想外部使用secretConfig,就需要exports
     };
   }
 

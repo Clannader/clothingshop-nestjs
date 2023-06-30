@@ -73,8 +73,12 @@ export class Utils {
    * @param str 加密的内容
    * @param session 用户的session
    */
-  static tripleDESencryptBySession(str: string, session: CmsSession) {
-    return this.tripleDESencrypt(str, session.credential.substring(0, 64));
+  static tripleDESencryptBySession(
+    str: string,
+    session: CmsSession,
+    iv: string,
+  ) {
+    return this.tripleDESencrypt(str, session.credential.substring(0, 64), iv);
   }
 
   /**

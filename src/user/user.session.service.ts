@@ -7,7 +7,7 @@ import {
   CodeException,
   GlobalService,
   RequestSession,
-  tripleDES,
+  CONFIG_SECRET,
 } from '@/common';
 import * as jwt from 'jsonwebtoken';
 
@@ -15,6 +15,9 @@ import * as jwt from 'jsonwebtoken';
 export class UserSessionService {
   @Inject()
   private globalService: GlobalService;
+
+  @Inject(CONFIG_SECRET)
+  private secretConfig: Record<string, any>;
 
   deleteSession(req: RequestSession): Promise<void> {
     delete req.session;
@@ -27,7 +30,7 @@ export class UserSessionService {
 
   verifyToken(token: string) {
     try {
-      return jwt.verify(token, tripleDES.key) as any;
+      return jwt.verify(token, this.secretConfig['tripleKey']) as any;
     } catch ({ name, message }) {
       if (name === 'TokenExpiredError') {
         throw new CodeException(
