@@ -2,9 +2,8 @@
  * Create by CC on 2023/6/28
  */
 import { DynamicModule, Module } from '@nestjs/common';
-import { ConfigModule } from '@/common/config';
 import { join } from 'path';
-import { SECRET_CONFIG } from '@/common/constants';
+import { ConfigModule, SECRET_CONFIG } from '@/common';
 
 @Module({})
 export class SecretConfigModule {
