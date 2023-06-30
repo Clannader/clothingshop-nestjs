@@ -9,3 +9,4 @@ export * from './utils';
 export * from './common.module';
 export * from './common.types';
 export * from './constants';
+export * from './secret.config.module';

@@ -50,11 +50,18 @@ export class Utils {
    * @param str 加密的内容
    * @param tripleKey 加密的key
    */
-  static tripleDESencrypt(str: string, tripleKey: string = tripleDES.key) {
+  static tripleDESencrypt(str: string): string;
+  static tripleDESencrypt(str: string, tripleKey: string): string;
+  static tripleDESencrypt(str: string, tripleKey: string, iv: string): string;
+  static tripleDESencrypt(
+    str: string,
+    tripleKey: string = tripleDES.key,
+    iv: string = tripleDES.iv,
+  ): string {
     // 3DES加密算法
     const key = CryptoJS.enc.Utf8.parse(tripleKey);
     const encryptAction = CryptoJS.TripleDES.encrypt(str, key, {
-      iv: CryptoJS.enc.Utf8.parse(tripleDES.iv),
+      iv: CryptoJS.enc.Utf8.parse(iv),
       mode: CryptoJS.mode.CBC,
       padding: CryptoJS.pad.Pkcs7,
     });
@@ -66,8 +73,12 @@ export class Utils {
    * @param str 加密的内容
    * @param session 用户的session
    */
-  static tripleDESencryptBySession(str: string, session: CmsSession) {
-    return this.tripleDESencrypt(str, session.credential.substring(0, 64));
+  static tripleDESencryptBySession(
+    str: string,
+    session: CmsSession,
+    iv: string,
+  ) {
+    return this.tripleDESencrypt(str, session.credential.substring(0, 64), iv);
   }
 
   /**
@@ -75,11 +86,18 @@ export class Utils {
    * @param str 解密内容
    * @param tripleKey 解密的key
    */
-  static tripleDESdecrypt(str: string, tripleKey: string = tripleDES.key) {
+  static tripleDESdecrypt(str: string): string;
+  static tripleDESdecrypt(str: string, tripleKey: string): string;
+  static tripleDESdecrypt(str: string, tripleKey: string, iv: string): string;
+  static tripleDESdecrypt(
+    str: string,
+    tripleKey: string = tripleDES.key,
+    iv: string = tripleDES.iv,
+  ): string {
     // 3DES解密算法
     const key = CryptoJS.enc.Utf8.parse(tripleKey);
     const decryptAction = CryptoJS.TripleDES.decrypt(str, key, {
-      iv: CryptoJS.enc.Utf8.parse(tripleDES.iv),
+      iv: CryptoJS.enc.Utf8.parse(iv),
       mode: CryptoJS.mode.CBC,
       padding: CryptoJS.pad.Pkcs7,
     });
