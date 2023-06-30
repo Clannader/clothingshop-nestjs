@@ -53,7 +53,11 @@ export class Utils {
   static tripleDESencrypt(str: string): string;
   static tripleDESencrypt(str: string, tripleKey: string): string;
   static tripleDESencrypt(str: string, tripleKey: string, iv: string): string;
-  static tripleDESencrypt(str: string, tripleKey: string = tripleDES.key, iv: string = tripleDES.iv): string{
+  static tripleDESencrypt(
+    str: string,
+    tripleKey: string = tripleDES.key,
+    iv: string = tripleDES.iv,
+  ): string {
     // 3DES加密算法
     const key = CryptoJS.enc.Utf8.parse(tripleKey);
     const encryptAction = CryptoJS.TripleDES.encrypt(str, key, {
@@ -81,7 +85,11 @@ export class Utils {
   static tripleDESdecrypt(str: string): string;
   static tripleDESdecrypt(str: string, tripleKey: string): string;
   static tripleDESdecrypt(str: string, tripleKey: string, iv: string): string;
-  static tripleDESdecrypt(str: string, tripleKey: string = tripleDES.key, iv: string = tripleDES.iv): string {
+  static tripleDESdecrypt(
+    str: string,
+    tripleKey: string = tripleDES.key,
+    iv: string = tripleDES.iv,
+  ): string {
     // 3DES解密算法
     const key = CryptoJS.enc.Utf8.parse(tripleKey);
     const decryptAction = CryptoJS.TripleDES.decrypt(str, key, {

@@ -11,6 +11,6 @@ export class SecretConfigModule {
     return ConfigModule.register({
       iniFilePath: join(process.cwd(), '/pem/secret.ini'),
       token: SECRET_CONFIG,
-    })
+    });
   }
 }

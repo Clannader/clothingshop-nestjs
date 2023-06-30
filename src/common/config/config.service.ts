@@ -7,7 +7,11 @@ import { DotenvExpandOptions, expand } from 'dotenv-expand';
 import { ConfigServiceOptions } from './config.interface';
 // import { NoInferType, ExcludeUndefinedIf, KeyOf } from '../common.type';
 import { Utils } from '../utils';
-import { CONFIG_OPTIONS, CONFIG_ENV_TOKEN, CONFIG_SECRET } from './config.constants';
+import {
+  CONFIG_OPTIONS,
+  CONFIG_ENV_TOKEN,
+  CONFIG_SECRET,
+} from './config.constants';
 
 type ReturnValueOf = string | boolean | number;
 
@@ -171,7 +175,11 @@ export class ConfigService {
     return !Utils.isUndefined(internalValue) &&
       typeof isSecurity === 'boolean' &&
       isSecurity
-      ? Utils.tripleDESdecrypt(internalValue, this.secretConfig['tripleKey'], this.secretConfig['tripleIv'])
+      ? Utils.tripleDESdecrypt(
+          internalValue,
+          this.secretConfig['tripleKey'],
+          this.secretConfig['tripleIv'],
+        )
       : internalValue;
   }
 

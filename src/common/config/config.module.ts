@@ -6,7 +6,11 @@ import * as dotenv from 'dotenv';
 import { isPlainObject } from 'lodash';
 import { ConfigServiceOptions } from './config.interface';
 import { ConfigService } from './config.service';
-import { CONFIG_OPTIONS, CONFIG_ENV_TOKEN, CONFIG_SECRET } from './config.constants';
+import {
+  CONFIG_OPTIONS,
+  CONFIG_ENV_TOKEN,
+  CONFIG_SECRET,
+} from './config.constants';
 import { Utils } from '../utils';
 
 @Module({
@@ -23,7 +27,7 @@ export class ConfigModule {
       options.ignoreEnvFile = true;
     }
     const envConfig = options.ignoreEnvFile ? {} : this.loadEnvFile(options);
-    const secretConfig = this.loadSecretFile()
+    const secretConfig = this.loadSecretFile();
     this.assignVariablesToProcess(envConfig);
     const isToken = !Utils.isEmpty(options.token);
     const providers = [
@@ -57,7 +61,7 @@ export class ConfigModule {
         },
         ...providers,
       ],
-      exports: [ConfigService/*, CONFIG_SECRET*/, ...configProviderTokens], // 如果想外部使用secretConfig,就需要exports
+      exports: [ConfigService /*, CONFIG_SECRET*/, ...configProviderTokens], // 如果想外部使用secretConfig,就需要exports
     };
   }
 
@@ -94,12 +98,9 @@ export class ConfigModule {
     const secretPath = join(process.cwd(), '/pem/secret.ini');
     let config: Record<string, any> = {};
     if (fs.existsSync(secretPath)) {
-      config = Object.assign(
-        dotenv.parse(fs.readFileSync(secretPath)),
-        config,
-      );
+      config = Object.assign(dotenv.parse(fs.readFileSync(secretPath)), config);
     }
-    return config
+    return config;
   }
 
   private static assignVariablesToProcess(config: Record<string, any>) {
