@@ -24,7 +24,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         : CodeEnum.UNKNOWN;
     const message = exception.message;
     console.error(exception.stack);
-    response.status(404).json({
+    response.status(200).json({
       code: status,
       msg:
         exception instanceof ValidateException
