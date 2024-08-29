@@ -193,7 +193,7 @@ export class UserService {
     return resp;
   }
 
-  getUserRoles(session: CmsSession) {
+  getUserRoles(session: CmsSession): RespUserRolesDto {
     const resp = new RespUserRolesDto();
     resp.code = CodeEnum.SUCCESS;
     resp.roles = Utils.tripleDESencryptBySession(
