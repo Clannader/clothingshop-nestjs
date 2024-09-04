@@ -101,11 +101,11 @@ export class ConfigModule {
       config = Object.assign(dotenv.parse(fs.readFileSync(secretPath)), config);
     } else {
       // 如果pem目录不存在则创建一个目录
-      const pemDir = join(process.cwd(), '/pem')
+      const pemDir = join(process.cwd(), '/pem');
       if (!fs.existsSync(pemDir)) {
-        fs.mkdirSync(pemDir)
+        fs.mkdirSync(pemDir);
       }
-      fs.writeFileSync(secretPath, '')
+      fs.writeFileSync(secretPath, '');
     }
     return config;
   }
