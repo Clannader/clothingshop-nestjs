@@ -72,9 +72,10 @@ export class UserService {
       if (moment().isBefore(moment(lockTime))) {
         result.code = CodeEnum.FAIL;
         result.message = this.globalService.serverLang(
-          '该用户已锁定于{0}',
-          'user.lockTime',
+          '该用户已锁定于{0},请在{1}分钟后重试',
+          'user.lockTimeBySeconds',
           moment(lockTime).format('YYYY-MM-DD HH:mm:ss,SSS'),
+          Math.ceil(moment(lockTime).diff(moment(), 'seconds') / 60)
         );
         return result;
       } else {
@@ -192,7 +193,7 @@ export class UserService {
     return resp;
   }
 
-  getUserRoles(session: CmsSession) {
+  getUserRoles(session: CmsSession): RespUserRolesDto {
     const resp = new RespUserRolesDto();
     resp.code = CodeEnum.SUCCESS;
     resp.roles = Utils.tripleDESencryptBySession(
