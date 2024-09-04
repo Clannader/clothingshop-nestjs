@@ -4,6 +4,7 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { join } from 'path';
 
 import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
@@ -17,11 +18,11 @@ import { SwaggerModule } from './swagger.module';
   imports: [
     CommonModule,
     ConfigModule.register({
-      iniFilePath: './config/config.ini',
+      iniFilePath: join(process.cwd(), '/config/config.ini'),
       envFilePath:
         process.env.NODE_ENV === 'development'
-          ? './config/.env.development'
-          : './config/.env.production',
+          ? join(process.cwd(), '/config/.env.development')
+          : join(process.cwd(), '/config/.env.production'),
       isGlobal: true,
       isWatch: true,
       // expandVariables: true, // 有bug,暂时去掉,原因是watch文件时,文件被修改了,没有检测到最新的值到内存里面
