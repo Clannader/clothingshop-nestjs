@@ -8,7 +8,7 @@ import { join } from 'path';
 
 import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
-import { CommonModule, ConfigModule } from './common';
+import { CommonModule, ConfigModule, GLOBAL_CONFIG } from './common';
 import { AopMiddleware, XmlMiddleware } from './middleware';
 import { MongooseConfigService } from './dao';
 import { AopAspectModule } from './interceptor';
@@ -25,6 +25,7 @@ import { SwaggerModule } from './swagger.module';
           : join(process.cwd(), '/config/.env.production'),
       isGlobal: true,
       isWatch: true,
+      token: GLOBAL_CONFIG,
       // expandVariables: true, // 有bug,暂时去掉,原因是watch文件时,文件被修改了,没有检测到最新的值到内存里面
     }),
     MongooseModule.forRootAsync({

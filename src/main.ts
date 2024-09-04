@@ -22,6 +22,7 @@ import {
   sessionSecret,
   ConfigService,
   dbSession_Expires,
+  GLOBAL_CONFIG,
 } from './common';
 import { MongooseConfigService } from './dao';
 import { SessionMiddleware } from './middleware';
@@ -49,7 +50,7 @@ async function bootstrap() {
     // httpsOptions
   });
 
-  const config: ConfigService = app.get<ConfigService>(ConfigService);
+  const config: ConfigService = app.get<ConfigService>(GLOBAL_CONFIG);
   const port = config.get<number>('httpPort', 3000);
   const hostName = config.get<string>('hostName', 'http://localhost:3000');
   const mongooseService = app.get<MongooseConfigService>(MongooseConfigService);
