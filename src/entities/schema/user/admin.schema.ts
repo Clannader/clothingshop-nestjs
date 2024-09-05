@@ -3,7 +3,8 @@
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Model } from 'mongoose';
-import { UpdateLoginWhere, UserTypeEnum } from '@/common';
+import { UpdateLoginWhere } from '@/common';
+import { UserTypeEnum } from '@/common/enum';
 
 @Schema()
 export class Admin extends Document {

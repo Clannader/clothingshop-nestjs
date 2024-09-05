@@ -4,13 +4,19 @@
 import {
   baseUrl,
   CmsSession,
-  ConfigService,
-  LogTypeEnum,
-  UserTypeEnum,
-  Utils,
   RequestSession,
   CmsResponse,
 } from '@/common';
+import {
+  Utils,
+} from '@/common/utils';
+import {
+  LogTypeEnum,
+  UserTypeEnum,
+} from '@/common/enum'
+import {
+  ConfigService,
+} from '@/common/config';
 import { Injectable, Inject } from '@nestjs/common';
 import { AopLogger } from '@/logger';
 import * as onFinished from 'on-finished';

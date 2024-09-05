@@ -4,7 +4,9 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '@/user';
-import { ConfigService, SecretConfigModule, SECRET_CONFIG } from '@/common';
+import { SECRET_CONFIG } from '@/common';
+import { SecretConfigModule } from '@/common/module';
+import { ConfigService } from '@/common/config';
 import { TokenCacheModule } from '@/cache/module';
 import { TokenService } from './services';
 import { GatewayAuthController, GatewaySystemController } from './controllers';

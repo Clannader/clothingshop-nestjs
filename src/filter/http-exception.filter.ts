@@ -7,7 +7,9 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { GlobalService, ValidateException, CodeEnum } from '@/common';
+import { CodeEnum } from '@/common/enum';
+import { ValidateException } from '@/common/exceptions';
+import { GlobalService} from '@/common/utils';
 
 @Catch(HttpException, Error)
 export class HttpExceptionFilter implements ExceptionFilter {

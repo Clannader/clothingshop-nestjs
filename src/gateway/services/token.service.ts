@@ -3,7 +3,10 @@
  */
 import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CmsSession, CodeEnum, CodeException, GlobalService } from '@/common';
+import { CmsSession } from '@/common';
+import { CodeEnum } from '@/common/enum';
+import { CodeException } from '@/common/exceptions';
+import { GlobalService } from '@/common/utils';
 
 @Injectable()
 export class TokenService {

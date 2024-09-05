@@ -3,7 +3,7 @@
  */
 import { Schema } from 'mongoose';
 import * as Log4js from 'log4js';
-import { Utils } from '@/common';
+import { Utils } from '@/common/utils';
 import { omit } from 'lodash';
 
 const logger = Log4js.getLogger('fileLogs');

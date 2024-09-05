@@ -3,12 +3,20 @@
  */
 import { Inject, Injectable } from '@nestjs/common';
 import {
-  CodeEnum,
-  CodeException,
-  GlobalService,
   RequestSession,
-  CONFIG_SECRET,
 } from '@/common';
+import {
+  CodeEnum,
+} from '@/common/enum';
+import {
+  CodeException,
+} from '@/common/exceptions';
+import {
+  GlobalService,
+} from '@/common/utils';
+import {
+  CONFIG_SECRET,
+} from '@/common/config';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()

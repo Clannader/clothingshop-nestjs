@@ -8,7 +8,8 @@ import { join } from 'path';
 
 import { HttpExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
-import { CommonModule, ConfigModule, GLOBAL_CONFIG } from './common';
+import { GLOBAL_CONFIG } from './common';
+import { CommonModule, ConfigModule } from './common/module';
 import { AopMiddleware, XmlMiddleware } from './middleware';
 import { MongooseConfigService } from './dao';
 import { AopAspectModule } from './interceptor/aop';

@@ -4,13 +4,13 @@ import { join } from 'path';
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
 import { isPlainObject } from 'lodash';
-import { ConfigServiceOptions } from './config.interface';
-import { ConfigService } from './config.service';
+import { ConfigServiceOptions } from '../config/config.interface';
+import { ConfigService } from '../config/config.service';
 import {
   CONFIG_OPTIONS,
   CONFIG_ENV_TOKEN,
   CONFIG_SECRET,
-} from './config.constants';
+} from '../config/config.constants';
 import { Utils } from '../utils';
 
 @Module({

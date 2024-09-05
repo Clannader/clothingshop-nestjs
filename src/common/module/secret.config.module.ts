@@ -3,7 +3,8 @@
  */
 import { DynamicModule, Module } from '@nestjs/common';
 import { join } from 'path';
-import { ConfigModule, SECRET_CONFIG } from '@/common';
+import { ConfigModule } from './config.module';
+import { SECRET_CONFIG } from '../constants';
 
 @Module({})
 export class SecretConfigModule {

@@ -8,12 +8,18 @@ import {
   Injectable,
 } from '@nestjs/common';
 import {
-  CodeEnum,
-  CodeException,
-  GlobalService,
   RequestSession,
-  Utils,
 } from '@/common';
+import {
+  GlobalService,
+  Utils,
+} from '@/common/utils';
+import {
+  CodeEnum,
+} from '@/common/enum';
+import {
+  CodeException,
+} from '@/common/exceptions';
 import { forEach, get } from 'lodash';
 import { UserSessionService } from '@/user/user.session.service';
 

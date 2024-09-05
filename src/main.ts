@@ -20,10 +20,12 @@ import * as session from 'express-session';
 import {
   sessionName,
   sessionSecret,
-  ConfigService,
   dbSession_Expires,
   GLOBAL_CONFIG,
 } from './common';
+import {
+  ConfigService,
+} from './common/config';
 import { MongooseConfigService } from './dao';
 import { SessionMiddleware } from './middleware';
 import * as bodyParser from 'body-parser';

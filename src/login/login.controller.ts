@@ -10,15 +10,21 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import {
-  ApiCommon,
-  ApiCustomResponse,
-  CodeEnum,
   CommonResult,
   RequestSession,
   sessionSecret,
-  Utils,
   LoginResult,
 } from '@/common';
+import {
+  Utils,
+} from '@/common/utils';
+import {
+  CodeEnum,
+} from '@/common/enum';
+import {
+  ApiCommon,
+  ApiCustomResponse,
+} from '@/common/decorator';
 import {
   UserService,
   UserMapper,

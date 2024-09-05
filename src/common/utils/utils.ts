@@ -3,7 +3,7 @@ import { tripleDES, ipExp, Supervisor_Rights } from '../constants';
 import { get, isPlainObject, has, forEach, cloneDeep, set } from 'lodash';
 import { Request } from 'express';
 import * as os from 'os';
-import { CmsSession } from '../common.types';
+import { CmsSession } from '../types';
 import { v4 } from 'uuid';
 
 /**

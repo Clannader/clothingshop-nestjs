@@ -11,15 +11,20 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
-  ApiCommon,
-  CodeEnum,
   ConfigService,
+} from '@/common/config';
+import {
+  CodeEnum,
+} from '@/common/enum';
+import {
   GlobalService,
+} from '@/common/utils';
+import {
+  ApiCommon,
   ApiGenericsResponse,
   XmlData,
   XmlJsonData,
-  CodeException,
-} from '@/common';
+} from '@/common/decorator';
 import {
   ReqTestSchemaDto,
   RespTestSchemaDto,
