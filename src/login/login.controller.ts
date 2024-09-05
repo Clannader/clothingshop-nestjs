@@ -25,7 +25,7 @@ import {
   RespUserLoginDto,
   UserMapper,
 } from '@/user';
-import { HttpInterceptor } from '@/interceptor';
+import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { sign } from 'cookie-signature';
 import { Admin } from '@/entities';

@@ -11,7 +11,7 @@ import { ValidationPipe } from './pipe';
 import { CommonModule, ConfigModule, GLOBAL_CONFIG } from './common';
 import { AopMiddleware, XmlMiddleware } from './middleware';
 import { MongooseConfigService } from './dao';
-import { AopAspectModule } from './interceptor';
+import { AopAspectModule } from './interceptor/aop';
 import { SwaggerModule } from './swagger.module';
 
 @Module({

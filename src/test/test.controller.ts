@@ -28,7 +28,7 @@ import {
 } from './dto';
 // import { cloneClass } from './utils/test.utils';
 import { UserSessionDto } from '@/user';
-import { XmlInterceptor } from '@/interceptor';
+import { XmlInterceptor } from '@/interceptor/xml';
 import { MemoryCacheService } from '@/cache';
 import { AdminSchemaService } from '@/entities';
 import { AopLogger } from '@/logger';

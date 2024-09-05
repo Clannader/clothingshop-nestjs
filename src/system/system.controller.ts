@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse } from '@/common';
 import { SystemService } from './system.service';
 import { RespWebConfigDto } from './dto';
-import { HttpInterceptor } from '@/interceptor';
+import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 
 @ApiCommon()

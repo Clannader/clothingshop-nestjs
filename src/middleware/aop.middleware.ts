@@ -3,7 +3,7 @@ import { NextFunction } from 'express';
 import { CodeEnum, ConfigService, RequestSession, CmsResponse } from '@/common';
 import { clean } from 'node-xss';
 import { AopLogger } from '@/logger';
-import { AopAspect } from '@/interceptor';
+import { AopAspect } from '@/interceptor/aop';
 
 @Injectable()
 export class AopMiddleware implements NestMiddleware {

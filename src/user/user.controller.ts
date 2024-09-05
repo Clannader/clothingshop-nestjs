@@ -17,7 +17,7 @@ import {
   CmsSession,
 } from '@/common';
 import { ReqUserSearchDto, RespUserSearchDto, RespUserRolesDto } from './dto';
-import { HttpInterceptor } from '@/interceptor';
+import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { Rights, RightsEnum } from '@/rights';
 
