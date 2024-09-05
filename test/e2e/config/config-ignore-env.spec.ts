@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { ConfigTestModule } from '@T/config/config.test.module';
-import { ConfigService } from '@/common';
+import { ConfigService } from '@/common/config';
 
 describe('ConfigService 忽略环境变量值', () => {
   let service: ConfigService;
