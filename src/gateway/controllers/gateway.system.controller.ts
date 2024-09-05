@@ -4,7 +4,8 @@
 import { Controller, Get, UseGuards, Inject } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse } from '@/common';
-import { SystemService, RespWebConfigDto } from '@/system';
+import { SystemService } from '@/system';
+import { RespWebConfigDto } from '@/system/dto';
 import { JwtGuard } from '@/guard';
 
 @ApiCommon({ showCredential: false, showJwtToken: true })
