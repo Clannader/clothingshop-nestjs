@@ -26,13 +26,16 @@ describe('ConfigService 默认加载', () => {
     expect(typeof service.get<boolean>('isShow')).toBe('boolean');
     expect(typeof service.get<string>('isString')).toBe('string');
     expect(service.get<string>('dbUrl')).toBe(
-      'M9kB1vUOFHzgzHa2VeIUkgeMZJ/4SQzeJ6ehKlLZPTz6fmy7SBEY2A==',
+      'X2agApWXC8SQS39fc+g0yn2l/hZwwWKclUXJOURINX37Y9xg9CRsKg==',
     );
     expect(service.getSecurityConfig('dbUrl')).toBe(
       'mongodb://127.0.0.1:27018/clothingshop',
     );
     expect(service.getSecurityConfig('dbName')).toBe(
       'M9kB1vUOFHzgzHa2VeIUkgeMZJ',
+    );
+    expect(service.getSecurityConfig('dbPws')).toBe(
+      '123456',
     );
     expect(service.get<string>('HOMEPATH')).not.toBe(process.env['HOMEPATH']);
   });
