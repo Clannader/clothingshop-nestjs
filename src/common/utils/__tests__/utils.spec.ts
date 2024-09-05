@@ -1,4 +1,4 @@
-import { Utils } from '@/common';
+import { Utils } from '@/common/utils';
 
 describe('Utils', () => {
   it('32位系统路径转义', () => {
