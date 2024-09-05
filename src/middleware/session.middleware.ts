@@ -2,7 +2,8 @@
  * Create by CC on 2022/6/3
  */
 import { Response, NextFunction } from 'express';
-import { RequestSession, sessionName, Utils } from '@/common';
+import { RequestSession, sessionName } from '@/common';
+import { Utils } from '@/common/utils';
 import * as cookieModule from 'cookie';
 
 export function SessionMiddleware(

@@ -10,25 +10,20 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import {
-  ApiCommon,
-  ApiCustomResponse,
-  CodeEnum,
   CommonResult,
   RequestSession,
   sessionSecret,
-  Utils,
   LoginResult,
 } from '@/common';
-import {
-  UserService,
-  ReqUserLoginDto,
-  RespUserLoginDto,
-  UserMapper,
-} from '@/user';
-import { HttpInterceptor } from '@/interceptor';
+import { Utils } from '@/common/utils';
+import { CodeEnum } from '@/common/enum';
+import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
+import { UserService, UserMapper } from '@/user';
+import { ReqUserLoginDto, RespUserLoginDto } from '@/user/dto';
+import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { sign } from 'cookie-signature';
-import { Admin } from '@/entities';
+import { Admin } from '@/entities/schema';
 
 @Controller('/cms/api/user')
 @ApiTags('LoginController')

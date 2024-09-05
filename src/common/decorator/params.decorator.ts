@@ -2,7 +2,7 @@
  * Create by CC on 2022/7/21
  */
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { RequestSession } from '../common.types';
+import { RequestSession } from '../types/common.types';
 import { parseString } from 'xml2js';
 import { Utils } from '../utils';
 

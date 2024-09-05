@@ -3,7 +3,8 @@
  * 针对dto和内部实体类的转换
  */
 
-import { CmsSession, UserTypeEnum } from '@/common';
+import { CmsSession } from '@/common';
+import { UserTypeEnum } from '@/common/enum';
 import { UserSessionDto } from './dto';
 
 export class UserMapper {

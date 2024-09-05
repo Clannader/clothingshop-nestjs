@@ -3,7 +3,8 @@
  */
 import { render } from 'ejs';
 import { Inject, Injectable } from '@nestjs/common';
-import { GlobalService, languageType } from '@/common';
+import { languageType } from '@/common';
+import { GlobalService } from '@/common/utils';
 
 @Injectable()
 export class EmailUtils {

@@ -6,7 +6,7 @@ import {
   MongooseOptionsFactory,
   MongooseModuleOptions,
 } from '@nestjs/mongoose';
-import { ConfigService } from '@/common';
+import { ConfigService } from '@/common/config';
 import { Connection } from 'mongoose';
 import { monitorPlugin } from './plugin';
 import { MongodbLogger } from '@/logger';

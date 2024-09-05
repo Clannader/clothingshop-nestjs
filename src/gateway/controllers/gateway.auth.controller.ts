@@ -11,22 +11,17 @@ import {
   Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import {
-  ApiCommon,
-  ApiCustomResponse,
-  CodeEnum,
-  LoginResult,
-  CmsSession,
-  Utils,
-  RequestSession,
-  ConfigService,
-  GlobalService,
-} from '@/common';
+import { LoginResult, CmsSession, RequestSession } from '@/common';
+import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
+import { CodeEnum } from '@/common/enum';
+import { ConfigService } from '@/common/config';
+import { Utils, GlobalService } from '@/common/utils';
 import { RespJwtTokenDto, ReqRefreshTokenDto } from '../dto';
-import { UserService, ReqUserLoginDto } from '@/user';
+import { UserService } from '@/user';
+import { ReqUserLoginDto } from '@/user/dto';
 import { TokenService } from '../services';
-import { Admin } from '@/entities';
-import { TokenCacheService } from '@/cache';
+import { Admin } from '@/entities/schema';
+import { TokenCacheService } from '@/cache/services';
 
 @ApiCommon({ showCredential: false })
 @Controller('/gateway/api/oauth')

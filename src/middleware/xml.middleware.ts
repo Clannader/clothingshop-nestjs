@@ -2,7 +2,8 @@
  * Create by CC on 2022/7/30
  */
 import { Response, NextFunction } from 'express';
-import { RequestSession, Utils } from '@/common';
+import { RequestSession } from '@/common';
+import { Utils } from '@/common/utils';
 
 export function XmlMiddleware(
   req: RequestSession,

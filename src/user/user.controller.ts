@@ -10,14 +10,10 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import {
-  ApiCommon,
-  ApiCustomResponse,
-  UserSession,
-  CmsSession,
-} from '@/common';
+import { CmsSession } from '@/common';
+import { ApiCommon, ApiCustomResponse, UserSession } from '@/common/decorator';
 import { ReqUserSearchDto, RespUserSearchDto, RespUserRolesDto } from './dto';
-import { HttpInterceptor } from '@/interceptor';
+import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { Rights, RightsEnum } from '@/rights';
 
