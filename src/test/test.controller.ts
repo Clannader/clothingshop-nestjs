@@ -29,7 +29,7 @@ import {
 // import { cloneClass } from './utils/test.utils';
 import { UserSessionDto } from '@/user/dto';
 import { XmlInterceptor } from '@/interceptor/xml';
-import { MemoryCacheService } from '@/cache';
+import { MemoryCacheService } from '@/cache/services';
 import { AdminSchemaService } from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';

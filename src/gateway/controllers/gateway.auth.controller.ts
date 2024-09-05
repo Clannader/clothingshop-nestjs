@@ -27,7 +27,7 @@ import { UserService } from '@/user';
 import { ReqUserLoginDto } from '@/user/dto';
 import { TokenService } from '../services';
 import { Admin } from '@/entities/schema';
-import { TokenCacheService } from '@/cache';
+import { TokenCacheService } from '@/cache/services';
 
 @ApiCommon({ showCredential: false })
 @Controller('/gateway/api/oauth')

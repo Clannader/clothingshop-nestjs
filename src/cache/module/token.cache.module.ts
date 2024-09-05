@@ -3,8 +3,8 @@
  */
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@/common';
-import { TokenCacheService } from './services';
-import { TOKEN_CACHE_MANAGER } from './cache.constants';
+import { TokenCacheService } from '../services';
+import { TOKEN_CACHE_MANAGER } from '../cache.constants';
 import { caching, StoreConfig } from 'cache-manager';
 
 @Module({

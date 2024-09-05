@@ -3,7 +3,7 @@
  */
 import { CacheModule, Module } from '@nestjs/common';
 import { ConfigService } from '@/common';
-import { MemoryCacheService } from './services';
+import { MemoryCacheService } from '../services';
 
 @Module({
   imports: [

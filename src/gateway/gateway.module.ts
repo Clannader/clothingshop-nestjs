@@ -5,7 +5,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '@/user';
 import { ConfigService, SecretConfigModule, SECRET_CONFIG } from '@/common';
-import { TokenCacheModule } from '@/cache';
+import { TokenCacheModule } from '@/cache/module';
 import { TokenService } from './services';
 import { GatewayAuthController, GatewaySystemController } from './controllers';
 import { SystemModule } from '@/system';
