@@ -1,9 +1,11 @@
 import { Injectable, NestMiddleware, Inject } from '@nestjs/common';
 import { NextFunction } from 'express';
-import { CodeEnum, ConfigService, RequestSession, CmsResponse } from '@/common';
+import { RequestSession, CmsResponse } from '@/common';
+import { CodeEnum } from '@/common/enum';
+import { ConfigService } from '@/common/config';
 import { clean } from 'node-xss';
 import { AopLogger } from '@/logger';
-import { AopAspect } from '@/interceptor';
+import { AopAspect } from '@/interceptor/aop';
 
 @Injectable()
 export class AopMiddleware implements NestMiddleware {

@@ -4,13 +4,13 @@ import { join } from 'path';
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
 import { isPlainObject } from 'lodash';
-import { ConfigServiceOptions } from './config.interface';
-import { ConfigService } from './config.service';
+import { ConfigServiceOptions } from '../config/config.interface';
+import { ConfigService } from '../config/config.service';
 import {
   CONFIG_OPTIONS,
   CONFIG_ENV_TOKEN,
   CONFIG_SECRET,
-} from './config.constants';
+} from '../config/config.constants';
 import { Utils } from '../utils';
 
 @Module({
@@ -99,6 +99,13 @@ export class ConfigModule {
     let config: Record<string, any> = {};
     if (fs.existsSync(secretPath)) {
       config = Object.assign(dotenv.parse(fs.readFileSync(secretPath)), config);
+    } else {
+      // 如果pem目录不存在则创建一个目录
+      const pemDir = join(process.cwd(), '/pem');
+      if (!fs.existsSync(pemDir)) {
+        fs.mkdirSync(pemDir);
+      }
+      fs.writeFileSync(secretPath, '');
     }
     return config;
   }

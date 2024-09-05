@@ -1,20 +1,14 @@
 /**
  * Create by CC on 2022/7/19
  */
-import {
-  baseUrl,
-  CmsSession,
-  ConfigService,
-  LogTypeEnum,
-  UserTypeEnum,
-  Utils,
-  RequestSession,
-  CmsResponse,
-} from '@/common';
+import { baseUrl, CmsSession, RequestSession, CmsResponse } from '@/common';
+import { Utils } from '@/common/utils';
+import { LogTypeEnum, UserTypeEnum } from '@/common/enum';
+import { ConfigService } from '@/common/config';
 import { Injectable, Inject } from '@nestjs/common';
 import { AopLogger } from '@/logger';
 import * as onFinished from 'on-finished';
-import { AdminAccessService } from '@/entities';
+import { AdminAccessService } from '@/entities/services';
 
 @Injectable()
 export class AopAspect {

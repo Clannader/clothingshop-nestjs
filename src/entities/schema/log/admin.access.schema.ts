@@ -3,7 +3,8 @@
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Model } from 'mongoose';
-import { UserTypeEnum, ipExp, LogTypeEnum, RequestMethod } from '@/common';
+import { ipExp } from '@/common';
+import { UserTypeEnum, LogTypeEnum, RequestMethod } from '@/common/enum';
 
 @Schema()
 export class AdminAccess extends Document {

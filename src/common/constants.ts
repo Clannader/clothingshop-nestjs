@@ -34,3 +34,4 @@ export const logoutUrl = '/cms/api/user/logout';
 export const API_MODEL_PROPERTIES = 'swagger/apiModelProperties';
 export const API_MODEL_PROPERTIES_ARRAY = 'swagger/apiModelPropertiesArray';
 export const SECRET_CONFIG = 'SECRET_CONFIG';
+export const GLOBAL_CONFIG = 'GLOBAL_CONFIG';

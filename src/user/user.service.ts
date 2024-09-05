@@ -2,25 +2,24 @@ import { Inject, Injectable } from '@nestjs/common';
 import * as moment from 'moment';
 import { AopLogger } from '@/logger';
 import {
-  CodeEnum,
   CommonResult,
-  GlobalService,
   RequestSession,
   CmsSession,
-  Utils,
-  UserTypeEnum,
   UpdateLoginWhere,
   LoginResult,
-  ConfigService,
   SECRET_CONFIG,
 } from '@/common';
+import { CodeEnum, UserTypeEnum } from '@/common/enum';
+import { ConfigService } from '@/common/config';
+import { GlobalService, Utils } from '@/common/utils';
 import {
   ReqUserLoginDto,
   ReqUserSearchDto,
   RespUserSearchDto,
   RespUserRolesDto,
 } from './dto';
-import { AdminSchemaService, Admin } from '@/entities';
+import { AdminSchemaService } from '@/entities/services';
+import { Admin } from '@/entities/schema';
 import { UserSessionService } from './user.session.service';
 import { UserMapper } from './user.mapper';
 
@@ -75,7 +74,7 @@ export class UserService {
           '该用户已锁定于{0},请在{1}分钟后重试',
           'user.lockTimeBySeconds',
           moment(lockTime).format('YYYY-MM-DD HH:mm:ss,SSS'),
-          Math.ceil(moment(lockTime).diff(moment(), 'seconds') / 60)
+          Math.ceil(moment(lockTime).diff(moment(), 'seconds') / 60),
         );
         return result;
       } else {

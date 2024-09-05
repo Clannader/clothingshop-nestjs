@@ -10,16 +10,15 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ConfigService } from '@/common/config';
+import { CodeEnum } from '@/common/enum';
+import { GlobalService } from '@/common/utils';
 import {
   ApiCommon,
-  CodeEnum,
-  ConfigService,
-  GlobalService,
   ApiGenericsResponse,
   XmlData,
   XmlJsonData,
-  CodeException,
-} from '@/common';
+} from '@/common/decorator';
 import {
   ReqTestSchemaDto,
   RespTestSchemaDto,
@@ -27,10 +26,10 @@ import {
   RespObjectDto,
 } from './dto';
 // import { cloneClass } from './utils/test.utils';
-import { UserSessionDto } from '@/user';
-import { XmlInterceptor } from '@/interceptor';
-import { MemoryCacheService } from '@/cache';
-import { AdminSchemaService } from '@/entities';
+import { UserSessionDto } from '@/user/dto';
+import { XmlInterceptor } from '@/interceptor/xml';
+import { MemoryCacheService } from '@/cache/services';
+import { AdminSchemaService } from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
 
