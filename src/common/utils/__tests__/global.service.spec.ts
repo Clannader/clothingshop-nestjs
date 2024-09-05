@@ -5,8 +5,8 @@ import {
   Supervisor_Rights,
   userNameExp,
   tripleDES,
-  GlobalService,
 } from '@/common';
+import { GlobalService } from '@/common/utils';
 
 describe('GlobalService', () => {
   let service: GlobalService;

@@ -3,7 +3,7 @@
  */
 import { Test, TestingModule } from '@nestjs/testing';
 import { EmailUtils } from '@/email/email.utils';
-import { CommonModule } from '@/common';
+import { CommonModule } from '@/common/module';
 import { readFileSync } from 'fs';
 
 describe('EmailUtils', () => {

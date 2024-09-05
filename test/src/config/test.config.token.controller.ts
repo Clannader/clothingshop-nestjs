@@ -1,5 +1,5 @@
 import { Inject, Controller, Get } from '@nestjs/common';
-import { ConfigService } from '@/common';
+import { ConfigService } from '@/common/config';
 
 @Controller('/api/test')
 export class TestConfigTokenController {

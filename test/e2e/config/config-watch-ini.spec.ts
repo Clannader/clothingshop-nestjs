@@ -4,7 +4,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { ConfigTestModule } from '@T/config/config.test.module';
-import { ConfigService } from '@/common';
+import { ConfigService } from '@/common/config';
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 

@@ -6,7 +6,7 @@ import { INestApplication } from '@nestjs/common';
 import { AppModule } from '@/app.module';
 import * as request from 'supertest';
 import { TokenService } from '@/gateway';
-import { ConfigService } from '@/common';
+import { ConfigService } from '@/common/config';
 
 describe('GatewayAuthController (e2e)', () => {
   let app: INestApplication;
