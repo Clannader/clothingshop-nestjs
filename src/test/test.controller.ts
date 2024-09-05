@@ -27,7 +27,7 @@ import {
   RespObjectDto,
 } from './dto';
 // import { cloneClass } from './utils/test.utils';
-import { UserSessionDto } from '@/user';
+import { UserSessionDto } from '@/user/dto';
 import { XmlInterceptor } from '@/interceptor/xml';
 import { MemoryCacheService } from '@/cache';
 import { AdminSchemaService } from '@/entities';
