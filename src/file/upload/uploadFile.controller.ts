@@ -16,17 +16,9 @@ import {
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { SessionGuard } from '@/guard';
 import { HttpInterceptor } from '@/interceptor/http';
-import {
-  CommonResult,
-  RequestSession,
-} from '@/common';
-import {
-  ApiCommon,
-  ApiCustomResponse,
-} from '@/common/decorator';
-import {
-  Utils,
-} from '@/common/utils';
+import { CommonResult, RequestSession } from '@/common';
+import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
+import { Utils } from '@/common/utils';
 import {
   ReqFileUploadTestDto,
   ReqFileUploadAlreadyDto,

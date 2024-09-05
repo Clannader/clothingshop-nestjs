@@ -15,24 +15,11 @@ import {
   sessionSecret,
   LoginResult,
 } from '@/common';
-import {
-  Utils,
-} from '@/common/utils';
-import {
-  CodeEnum,
-} from '@/common/enum';
-import {
-  ApiCommon,
-  ApiCustomResponse,
-} from '@/common/decorator';
-import {
-  UserService,
-  UserMapper,
-} from '@/user';
-import {
-  ReqUserLoginDto,
-  RespUserLoginDto,
-} from '@/user/dto';
+import { Utils } from '@/common/utils';
+import { CodeEnum } from '@/common/enum';
+import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
+import { UserService, UserMapper } from '@/user';
+import { ReqUserLoginDto, RespUserLoginDto } from '@/user/dto';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { sign } from 'cookie-signature';

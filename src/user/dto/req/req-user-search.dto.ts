@@ -1,13 +1,6 @@
-import {
-  ReqPageSchemaDto,
-} from '@/common';
-import {
-  UserStatusEnum,
-  UserTypeEnum,
-} from '@/common/enum';
-import {
-  CustomValidation,
-} from '@/common/decorator';
+import { ReqPageSchemaDto } from '@/common';
+import { UserStatusEnum, UserTypeEnum } from '@/common/enum';
+import { CustomValidation } from '@/common/decorator';
 import { Expose } from 'class-transformer';
 
 export class ReqUserSearchDto extends ReqPageSchemaDto {

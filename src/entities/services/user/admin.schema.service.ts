@@ -5,17 +5,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { AdminModel, Admin } from '../../schema';
-import {
-  GlobalService,
-  Utils,
-} from '@/common/utils';
-import {
-  CodeEnum,
-} from '@/common/enum';
-import {
-  userNameExp,
-  LoginResult,
-} from '@/common';
+import { GlobalService, Utils } from '@/common/utils';
+import { CodeEnum } from '@/common/enum';
+import { userNameExp, LoginResult } from '@/common';
 import validator from 'validator';
 
 type LoginWhere = {

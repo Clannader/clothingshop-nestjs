@@ -2,21 +2,11 @@
  * Create by CC on 2022/7/19
  */
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  RequestSession,
-} from '@/common';
-import {
-  CodeEnum,
-} from '@/common/enum';
-import {
-  CodeException,
-} from '@/common/exceptions';
-import {
-  GlobalService,
-} from '@/common/utils';
-import {
-  CONFIG_SECRET,
-} from '@/common/config';
+import { RequestSession } from '@/common';
+import { CodeEnum } from '@/common/enum';
+import { CodeException } from '@/common/exceptions';
+import { GlobalService } from '@/common/utils';
+import { CONFIG_SECRET } from '@/common/config';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()

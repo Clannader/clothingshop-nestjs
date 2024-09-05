@@ -9,17 +9,9 @@ import {
   LoginResult,
   SECRET_CONFIG,
 } from '@/common';
-import {
-  CodeEnum,
-  UserTypeEnum,
-} from '@/common/enum';
-import {
-  ConfigService,
-} from '@/common/config';
-import {
-  GlobalService,
-  Utils,
-} from '@/common/utils';
+import { CodeEnum, UserTypeEnum } from '@/common/enum';
+import { ConfigService } from '@/common/config';
+import { GlobalService, Utils } from '@/common/utils';
 import {
   ReqUserLoginDto,
   ReqUserSearchDto,

@@ -1,1 +1,1 @@
-export * from './xml.interceptor'
+export * from './xml.interceptor';

@@ -10,15 +10,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import {
-  ConfigService,
-} from '@/common/config';
-import {
-  CodeEnum,
-} from '@/common/enum';
-import {
-  GlobalService,
-} from '@/common/utils';
+import { ConfigService } from '@/common/config';
+import { CodeEnum } from '@/common/enum';
+import { GlobalService } from '@/common/utils';
 import {
   ApiCommon,
   ApiGenericsResponse,
