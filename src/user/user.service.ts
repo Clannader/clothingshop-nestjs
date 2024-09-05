@@ -20,7 +20,8 @@ import {
   RespUserSearchDto,
   RespUserRolesDto,
 } from './dto';
-import { AdminSchemaService, Admin } from '@/entities';
+import { AdminSchemaService } from '@/entities/services';
+import { Admin } from '@/entities/schema';
 import { UserSessionService } from './user.session.service';
 import { UserMapper } from './user.mapper';
 

@@ -1,4 +1,4 @@
-import { Admin } from '@/entities';
+import { Admin } from '@/entities/schema';
 
 export type UpdateLoginWhere = {
   retryNumber?: number;

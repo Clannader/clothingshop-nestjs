@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import { AdminSchemaModule } from '@/entities';
+import { AdminSchemaModule } from '@/entities/module';
 import { SecretConfigModule } from '@/common';
 
 @Module({

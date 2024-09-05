@@ -14,7 +14,7 @@ import {
 import { Injectable, Inject } from '@nestjs/common';
 import { AopLogger } from '@/logger';
 import * as onFinished from 'on-finished';
-import { AdminAccessService } from '@/entities';
+import { AdminAccessService } from '@/entities/services';
 
 @Injectable()
 export class AopAspect {

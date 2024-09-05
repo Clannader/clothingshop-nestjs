@@ -30,7 +30,7 @@ import {
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { sign } from 'cookie-signature';
-import { Admin } from '@/entities';
+import { Admin } from '@/entities/schema';
 
 @Controller('/cms/api/user')
 @ApiTags('LoginController')

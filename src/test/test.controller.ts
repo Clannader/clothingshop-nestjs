@@ -30,7 +30,7 @@ import {
 import { UserSessionDto } from '@/user/dto';
 import { XmlInterceptor } from '@/interceptor/xml';
 import { MemoryCacheService } from '@/cache';
-import { AdminSchemaService } from '@/entities';
+import { AdminSchemaService } from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
 
