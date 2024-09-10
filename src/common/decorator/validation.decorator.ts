@@ -19,7 +19,7 @@ import {
 } from 'class-validator';
 import { Utils } from '../utils';
 
-interface CmsValiationOptions {
+interface CmsValidationOptions {
   optional?: boolean; // 缺省,true表示可不填该字段
   type?:
     | 'array'
@@ -126,7 +126,7 @@ const validationResult = function (args: ValidationArguments): ErrorResult {
 };
 
 export function CustomValidation(
-  property: CmsValiationOptions,
+  property: CmsValidationOptions,
   validationOptions?: ValidationOptions,
 ) {
   return function (object: Object, propertyName: string) {
@@ -137,7 +137,7 @@ export function CustomValidation(
       constraints: [property],
       options: validationOptions,
       validator: {
-        validate(value: any, args: ValidationArguments) {
+        validate(_value: any, args: ValidationArguments) {
           return validationResult(args).result;
         },
         defaultMessage(args: ValidationArguments) {

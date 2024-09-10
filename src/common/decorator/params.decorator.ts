@@ -7,21 +7,21 @@ import { parseString } from 'xml2js';
 import { Utils } from '../utils';
 
 export const UserSession = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
+  (_data: unknown, ctx: ExecutionContext) => {
     const request: RequestSession = ctx.switchToHttp().getRequest();
     return request.session.adminSession;
   },
 );
 
 export const XmlData = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
+  (_data: unknown, ctx: ExecutionContext) => {
     const request: RequestSession = ctx.switchToHttp().getRequest();
     return request.xmlData;
   },
 );
 
 export const XmlJsonData = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
+  (_data: unknown, ctx: ExecutionContext) => {
     const request: RequestSession = ctx.switchToHttp().getRequest();
     const xmlData = request.xmlData;
     let xmlJson = {};
