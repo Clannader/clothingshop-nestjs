@@ -26,7 +26,7 @@ export interface AdminSession {
 export interface RequestSession extends Request {
   session: Session & AdminSession;
   sessionID: string;
-  sessionStore: Store;
+  // sessionStore: Store; // 发现升级后有sessionStore这个类型,后期看使用的时候对不对再说吧
   startTime?: Date;
   xmlData?: string;
 }
