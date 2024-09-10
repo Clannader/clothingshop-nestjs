@@ -20,7 +20,7 @@ export class MulterConfigService implements MulterOptionsFactory {
     }
     const storage = diskStorage({
       destination: uploadDirPath,
-      filename: (req, file, cb) => {
+      filename: (_req, file, cb) => {
         cb(null, file.originalname);
       },
     });

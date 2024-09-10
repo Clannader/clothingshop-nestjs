@@ -1,7 +1,8 @@
 /**
  * Create by CC on 2022/8/11
  */
-import { Injectable, Inject, CACHE_MANAGER } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 import type { Cache } from 'cache-manager';
 
@@ -10,8 +11,8 @@ export class MemoryCacheService {
   @Inject(CACHE_MANAGER)
   private readonly cacheManager: Cache;
 
-  setMemoryCache(key: string, value: any) {
-    this.cacheManager.set(key, value);
+  async setMemoryCache(key: string, value: any) {
+    await this.cacheManager.set(key, value);
   }
 
   getMemoryCache(key: string) {

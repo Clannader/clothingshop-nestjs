@@ -14,7 +14,7 @@ const builder = new Builder();
 
 @Injectable()
 export class XmlInterceptor implements NestInterceptor {
-  async intercept(context: ExecutionContext, next: CallHandler) {
+  async intercept(_context: ExecutionContext, next: CallHandler) {
     return next.handle().pipe(
       map((value) => {
         return builder.buildObject(value);

@@ -58,10 +58,10 @@ export class GlobalService {
     return Utils.isEmpty(headerLanguage)
       ? 'ZH'
       : ['ZH', 'EN'].includes(
-          typeof headerLanguage === 'string' ? headerLanguage : 'ZH',
-        )
-      ? (headerLanguage as languageType)
-      : 'ZH';
+            typeof headerLanguage === 'string' ? headerLanguage : 'ZH',
+          )
+        ? (headerLanguage as languageType)
+        : 'ZH';
   }
 
   private parseProperties(properties: object, key: string): string | undefined {

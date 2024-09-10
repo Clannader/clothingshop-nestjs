@@ -159,7 +159,7 @@ export class TestController {
     // console.log(keys)
     const findResult /*[err, findResult]*/ = await this.adminSchemaService
       .getModel()
-      .count({ adminId: 'SUPERVISOR' }); // .then((result) => [null, result]).catch(err => [err])
+      .countDocuments({ adminId: 'SUPERVISOR' }); // .then((result) => [null, result]).catch(err => [err])
     // console.log(err)
     // console.log('1111')
     // console.log(findResult)
@@ -195,12 +195,12 @@ export class TestController {
     description: '测试gateway接口',
   })
   @ApiGenericsResponse(RespObjectDto, UserSessionDto)
-  gatewayGet(@Query() params: ReqTestSchemaDto) {
+  async gatewayGet(@Query() params: ReqTestSchemaDto) {
     console.log(params);
     const resp = new RespObjectDto();
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
-    this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
+    await this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
     console.log(this.memoryCacheService.getAllCacheKeys());
     return resp;
   }

@@ -10,6 +10,14 @@ const logger = Log4js.getLogger('fileLogs');
 const parserLog =
   '[{methodName}]-[{modelName}]-[{result}]-[{query}]-[{projection}]-[{options}]-[{params}]-[{diffTime}]';
 
+type schemaConfig = {
+  statics: {
+    [x: string]: {
+      call: (arg0: any) => any;
+    };
+  };
+};
+
 export const monitorPlugin = function (schema: Schema): void {
   // 中间件主要还是看mongoose的文档可以了解得更多
   // 中间件分4种:document 中间件,model 中间件,aggregate 中间件,和 query 中间件
@@ -59,17 +67,18 @@ export const monitorPlugin = function (schema: Schema): void {
     writeDocumentLog.call(this, schema, result);
   });
 
-  schema.pre('remove', function () {
-    this.$locals.lastTime = new Date().getTime();
-    // 删除时没办法判断版本是否更新了,感觉这个版本只有编辑数据时才有用
-    // this.$where = {
-    //   ...this.$where,
-    //   [versionKey]: this[versionKey],
-    // };
-  });
-  schema.post('remove', function (result) {
-    writeDocumentLog.call(this, schema, result);
-  });
+  // mongoose版本7.x以上,remove方法已经删除,所以不需要使用这个方法做拦截了
+  // schema.pre('remove', function () {
+  //   this.$locals.lastTime = new Date().getTime();
+  //   // 删除时没办法判断版本是否更新了,感觉这个版本只有编辑数据时才有用
+  //   // this.$where = {
+  //   //   ...this.$where,
+  //   //   [versionKey]: this[versionKey],
+  //   // };
+  // });
+  // schema.post('remove', function (result) {
+  //   writeDocumentLog.call(this, schema, result);
+  // });
 
   schema.pre('find', async function () {
     // this.mongooseOptions({
@@ -132,7 +141,7 @@ export const monitorPlugin = function (schema: Schema): void {
   });
 };
 
-const writeQueryLog = function (schema, result) {
+const writeQueryLog = function (schema: schemaConfig, result: any) {
   const { _lastTime, ...options } = this.getOptions();
   const logJSON = {
     methodName: this.op,
@@ -147,7 +156,7 @@ const writeQueryLog = function (schema, result) {
   logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
 };
 
-const writeDocumentLog = function (schema, result) {
+const writeDocumentLog = function (schema: schemaConfig, result: any) {
   const cloneResult = JSON.parse(JSON.stringify(result));
   const logJSON = {
     methodName: this.$op, // 要不然写死create|save,要么写this.$op
