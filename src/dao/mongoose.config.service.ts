@@ -9,7 +9,7 @@ import {
 import { ConfigService } from '@/common/config';
 import { Connection } from 'mongoose';
 import { monitorPlugin } from './plugin';
-import { MongodbLogger } from '@/logger';
+// import { MongodbLogger } from '@/logger';
 
 @Injectable()
 export class MongooseConfigService implements MongooseOptionsFactory {
@@ -18,7 +18,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
 
   private connection: Connection;
 
-  private readonly logger = new MongodbLogger(MongooseConfigService.name);
+  // private readonly logger = new MongodbLogger(MongooseConfigService.name);
 
   createMongooseOptions(): MongooseModuleOptions {
     return {
@@ -27,7 +27,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       retryAttempts: 30000, // 重连次数
       user: this.configService.getSecurityConfig('dbUser'),
       pass: this.configService.getSecurityConfig('dbPws'),
-      logger: this.logger,
+      // logger: this.logger, //TODO 暂时注掉再说吧
       connectionFactory: (connection: Connection) => {
         //数据库连接错误时报错
         connection.on('error', function (err) {

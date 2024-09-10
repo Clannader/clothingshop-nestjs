@@ -67,6 +67,7 @@ export const monitorPlugin = function (schema: Schema): void {
     writeDocumentLog.call(this, schema, result);
   });
 
+  // mongoose版本7.x以上,remove方法已经删除,所以不需要使用这个方法做拦截了
   // schema.pre('remove', function () {
   //   this.$locals.lastTime = new Date().getTime();
   //   // 删除时没办法判断版本是否更新了,感觉这个版本只有编辑数据时才有用
