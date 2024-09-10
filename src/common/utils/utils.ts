@@ -1,4 +1,4 @@
-import * as CryptoJS from 'crypto-js';
+import CryptoJS from 'crypto-js';
 import { tripleDES, ipExp, Supervisor_Rights } from '../constants';
 import { get, isPlainObject, has, forEach, cloneDeep, set } from 'lodash';
 import { Request } from 'express';
