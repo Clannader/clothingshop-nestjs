@@ -19,6 +19,7 @@ export class TokenService {
   /**
    * 生成token
    * @param session
+   * @param expired
    */
   generateToken(session: CmsSession, expired: string | number) {
     return this.jwtService.sign(session, { expiresIn: expired });

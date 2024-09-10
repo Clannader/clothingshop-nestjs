@@ -16,7 +16,7 @@ type schemaConfig = {
       call: (arg0: any) => any;
     };
   };
-}
+};
 
 export const monitorPlugin = function (schema: Schema): void {
   // 中间件主要还是看mongoose的文档可以了解得更多

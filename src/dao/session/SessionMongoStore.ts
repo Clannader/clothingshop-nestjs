@@ -132,7 +132,7 @@ export class SessionMongoStore extends session.Store {
   private clientP: Promise<MongoClient>;
   private readonly crypto: Kruptein | null = null;
   private timer?: NodeJS.Timeout;
-  collectionP: Promise<Collection>;
+  collectionP: Promise<Collection<InternalSessionType>>;
   private options: ConcretConnectMongoOptions;
   private transformFunctions: {
     serialize: (a: any) => any;
@@ -204,7 +204,7 @@ export class SessionMongoStore extends session.Store {
     this.collectionP = _clientP.then(async (con) => {
       const collection = con
         .db(options.dbName)
-        .collection(options.collectionName);
+        .collection<InternalSessionType>(options.collectionName);
       await this.setAutoRemove(collection);
       return collection;
     });
@@ -217,7 +217,9 @@ export class SessionMongoStore extends session.Store {
     return new SessionMongoStore(options);
   }
 
-  private setAutoRemove(collection: Collection): Promise<unknown> {
+  private setAutoRemove(
+    collection: Collection<InternalSessionType>,
+  ): Promise<unknown> {
     const removeQuery = () => ({
       expires: {
         $lt: new Date(),
@@ -230,7 +232,6 @@ export class SessionMongoStore extends session.Store {
           {
             background: true,
             expireAfterSeconds: 0,
-            writeConcern: this.options.writeOperationOptions,
           },
         );
       case 'interval':

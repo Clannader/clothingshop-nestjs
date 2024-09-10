@@ -34,9 +34,7 @@ describe('ConfigService 默认加载', () => {
     expect(service.getSecurityConfig('dbName')).toBe(
       'M9kB1vUOFHzgzHa2VeIUkgeMZJ',
     );
-    expect(service.getSecurityConfig('dbPws')).toBe(
-      '123456',
-    );
+    expect(service.getSecurityConfig('dbPws')).toBe('123456');
     expect(service.get<string>('HOMEPATH')).not.toBe(process.env['HOMEPATH']);
   });
 
