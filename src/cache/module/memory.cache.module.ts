@@ -1,7 +1,8 @@
 /**
  * Create by CC on 2022/8/11
  */
-import { CacheModule, Module } from '@nestjs/common';
+import {  Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigService } from '@/common/config';
 import { MemoryCacheService } from '../services';
 
