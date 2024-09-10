@@ -29,7 +29,9 @@ export class ValidationPipe<T> implements PipeTransform<T> {
     return !types.includes(metatype);
   }
 
-  private static getErrorContent(constraints: { [type: string]: string; }): string {
+  private static getErrorContent(constraints: {
+    [type: string]: string;
+  }): string {
     const keys = ['isString', 'isNotEmpty', 'matches', 'customValidation'];
     let content = 'Validation failed';
     forEach(keys, (v) => {
