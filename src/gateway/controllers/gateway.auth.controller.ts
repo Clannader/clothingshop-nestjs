@@ -156,7 +156,7 @@ export class GatewayAuthController {
       );
       return resp;
     }
-    this.tokenCacheService.setTokenCache(result.sessionId, params.refreshToken);
+    await this.tokenCacheService.setTokenCache(result.sessionId, params.refreshToken);
     resp.accessToken = this.tokenService.generateToken(result, accessExpires);
     result.expires = refreshExpires;
     resp.refreshToken = this.tokenService.generateToken(result, refreshExpires);
