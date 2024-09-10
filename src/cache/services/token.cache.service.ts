@@ -11,8 +11,8 @@ export class TokenCacheService {
   @Inject(TOKEN_CACHE_MANAGER)
   private readonly cacheManager: Cache;
 
-  setTokenCache(key: string, value: any) {
-    this.cacheManager.set(key, value);
+  async setTokenCache(key: string, value: any) {
+    await this.cacheManager.set(key, value);
   }
 
   getTokenCache(key: string) {

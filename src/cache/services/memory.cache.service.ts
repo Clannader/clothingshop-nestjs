@@ -11,8 +11,8 @@ export class MemoryCacheService {
   @Inject(CACHE_MANAGER)
   private readonly cacheManager: Cache;
 
-  setMemoryCache(key: string, value: any) {
-    this.cacheManager.set(key, value);
+  async setMemoryCache(key: string, value: any) {
+    await this.cacheManager.set(key, value);
   }
 
   getMemoryCache(key: string) {
