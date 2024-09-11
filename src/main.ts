@@ -63,7 +63,7 @@ async function bootstrap() {
   // 也就是说swagger的路由访问是不用加上前缀的
   app.use(
     rateLimit({
-      max: 20 * 1000,
+      limit: 20 * 1000,
       windowMs: 15 * 60 * 1000, // 15 minutes
       legacyHeaders: false,
       standardHeaders: true,

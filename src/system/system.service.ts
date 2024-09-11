@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { RespWebConfigDto, WebConfigDto } from './dto';
 import { ConfigService } from '@/common/config';
 import { CodeEnum } from '@/common/enum';
+import pkg from '@/../package.json';
 
 @Injectable()
 export class SystemService {
@@ -13,7 +14,7 @@ export class SystemService {
 
     const config = new WebConfigDto();
     config.dateFormat = 'yyyy/MM/dd';
-    config.version = this.configService.get<string>('version', '1.0.0');
+    config.version = pkg.version; // this.configService.get<string>('version', '1.0.0');
     config.author = this.configService.get<string>('author', 'Oliver.wu');
     config.copyright = this.configService
       .get<string>('copyright', '2022')
