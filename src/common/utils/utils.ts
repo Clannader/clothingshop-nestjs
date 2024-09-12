@@ -72,6 +72,7 @@ export class Utils {
    * 3DES加密算法,通过sessionId加密
    * @param str 加密的内容
    * @param session 用户的session
+   * @param iv
    */
   static tripleDESencryptBySession(
     str: string,
