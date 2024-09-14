@@ -15,7 +15,7 @@ import { ApiCommon, ApiCustomResponse, UserSession } from '@/common/decorator';
 import { ReqUserSearchDto, RespUserSearchDto, RespUserRolesDto } from './dto';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
-import { Rights, RightsEnum } from '@/rights';
+import { ApiRights, RightsEnum } from '@/rights';
 
 @ApiCommon()
 @Controller('/cms/api/user')
@@ -33,7 +33,7 @@ export class UserController {
   @ApiCustomResponse({
     type: RespUserSearchDto,
   })
-  @Rights(RightsEnum.UserSetup)
+  @ApiRights(RightsEnum.UserSetup)
   getUsersList(@Query() params: ReqUserSearchDto) {
     return this.userService.getUsersList(params);
   }

@@ -5,7 +5,7 @@ import { SystemService } from './system.service';
 import { RespWebConfigDto, RespPackageVersionDto } from './dto';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
-import { Rights, RightsEnum } from '@/rights';
+import { ApiRights, RightsEnum } from '@/rights';
 
 @ApiCommon()
 @Controller('/cms/api/system')
@@ -23,6 +23,7 @@ export class SystemController {
   @ApiCustomResponse({
     type: RespWebConfigDto,
   })
+  @ApiRights(RightsEnum.SystemBaseSetup)
   getSystemConfig() {
     return this.systemService.getSystemConfig();
   }
@@ -35,7 +36,7 @@ export class SystemController {
   @ApiCustomResponse({
     type: RespPackageVersionDto,
   })
-  @Rights(RightsEnum.PackageVersionSetup)
+  @ApiRights(RightsEnum.PackageVersionSetup)
   getPackageVersion() {
     return this.systemService.getPackageVersion();
   }
