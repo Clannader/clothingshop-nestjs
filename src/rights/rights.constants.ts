@@ -20,6 +20,16 @@ export const RightsList: RightsConfig = {
   SystemDataSetup: {
     code: '3010',
     desc: '系统数据设置',
+    children: {
+      SystemBaseSetup: {
+        code: '30110',
+        desc: '基础设置'
+      },
+      PackageVersionSetup: {
+        code: '30120',
+        desc: '获取依赖包版本'
+      }
+    }
   },
   UserSetup: {
     code: '3020',
@@ -78,4 +88,6 @@ export enum RightsEnum {
   RightsCodeSetup = +RightsList.RightsSetup.children.RightsCodeSetup.code,
   RightsCodeModify = +RightsList.RightsSetup.children.RightsCodeSetup.children.RightsCodeModify.code,
   RepairData = +RightsList.RepairData.code,
+  SystemBaseSetup = +RightsList.SystemDataSetup.children.SystemBaseSetup.code,
+  PackageVersionSetup = +RightsList.SystemDataSetup.children.PackageVersionSetup.code,
 }

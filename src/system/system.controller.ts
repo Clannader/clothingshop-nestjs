@@ -2,9 +2,10 @@ import { Controller, Get, UseInterceptors, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
 import { SystemService } from './system.service';
-import { RespWebConfigDto } from './dto';
+import { RespWebConfigDto, RespPackageVersionDto } from './dto';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
+import { Rights, RightsEnum } from '@/rights';
 
 @ApiCommon()
 @Controller('/cms/api/system')
@@ -24,5 +25,18 @@ export class SystemController {
   })
   getSystemConfig() {
     return this.systemService.getSystemConfig();
+  }
+
+  @Get('/package/version')
+  @ApiOperation({
+    summary: '获取依赖包版本',
+    description: '获取当前安装的所有依赖包版本',
+  })
+  @ApiCustomResponse({
+    type: RespPackageVersionDto,
+  })
+  @Rights(RightsEnum.PackageVersionSetup)
+  getPackageVersion() {
+    return this.systemService.getPackageVersion();
   }
 }
