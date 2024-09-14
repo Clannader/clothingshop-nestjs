@@ -2,9 +2,9 @@ import { Injectable, Inject } from '@nestjs/common';
 import { RespWebConfigDto, WebConfigDto, RespPackageVersionDto } from './dto';
 import { ConfigService } from '@/common/config';
 import { CodeEnum } from '@/common/enum';
-import fs from 'fs'
-import nodePath from 'path';
-import pkg from '@/../package.json';
+import * as fs from 'fs'
+import * as nodePath from 'path';
+import * as pkg from '@/../package.json'
 
 @Injectable()
 export class SystemService {
@@ -30,8 +30,6 @@ export class SystemService {
 
   getPackageVersion(): RespPackageVersionDto {
     const resp = new RespPackageVersionDto();
-
-    console.log(pkg)
 
     const modulesPackage = {
       ...pkg.dependencies,
