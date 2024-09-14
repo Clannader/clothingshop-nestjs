@@ -21,14 +21,17 @@ export const RightsList: RightsConfig = {
     code: '3010',
     desc: '系统数据设置',
     children: {
+      // 针对系统中各种杂七杂八的数据配置
       SystemBaseSetup: {
-        code: '30110',
+        code: '3011',
         desc: '基础设置'
       },
+      // 查库依赖包版本
       PackageVersionSetup: {
-        code: '30120',
+        code: '3012',
         desc: '获取依赖包版本'
       }
+      // 后续计划邮箱设置,国家/省份/城市设置,动态参数设置,消息设置,都归属在里面吧
     }
   },
   UserSetup: {
@@ -40,7 +43,7 @@ export const RightsList: RightsConfig = {
     desc: '权限设置',
     children: {
       RightsGroupSetup: {
-        code: '30310',
+        code: '3031',
         desc: '权限组设置',
         children: {
           RightsGroupCreate: {
@@ -58,7 +61,7 @@ export const RightsList: RightsConfig = {
         },
       },
       RightsCodeSetup: {
-        code: '30320',
+        code: '3032',
         desc: '权限代码设置',
         children: {
           RightsCodeModify: {
@@ -71,7 +74,25 @@ export const RightsList: RightsConfig = {
   },
   RepairData: {
     code: '3040',
-    desc: '修复系统数据'
+    desc: '修复系统数据',
+    children: {
+      RepairBaseData: {
+        code: '3041',
+        desc: '修复基础数据'
+      },
+      RepairDBIndex: {
+        code: '3042',
+        desc: '修复数据库索引'
+      },
+      RepairRightsGroup: {
+        code: '3043',
+        desc: '修复权限数据'
+      },
+      SelfCheck: {
+        code: '3044',
+        desc: '自动检查'
+      }
+    }
   }
 };
 
@@ -79,6 +100,8 @@ export const RightsList: RightsConfig = {
 export enum RightsEnum {
   OtherSetup = +RightsList.OtherSetup.code,
   SystemDataSetup = +RightsList.SystemDataSetup.code,
+  SystemBaseSetup = +RightsList.SystemDataSetup.children.SystemBaseSetup.code,
+  PackageVersionSetup = +RightsList.SystemDataSetup.children.PackageVersionSetup.code,
   UserSetup = +RightsList.UserSetup.code,
   RightsSetup = +RightsList.RightsSetup.code,
   RightsGroupSetup = +RightsList.RightsSetup.children.RightsGroupSetup.code,
@@ -88,6 +111,8 @@ export enum RightsEnum {
   RightsCodeSetup = +RightsList.RightsSetup.children.RightsCodeSetup.code,
   RightsCodeModify = +RightsList.RightsSetup.children.RightsCodeSetup.children.RightsCodeModify.code,
   RepairData = +RightsList.RepairData.code,
-  SystemBaseSetup = +RightsList.SystemDataSetup.children.SystemBaseSetup.code,
-  PackageVersionSetup = +RightsList.SystemDataSetup.children.PackageVersionSetup.code,
+  RepairBaseData = +RightsList.RepairData.children.RepairBaseData.code,
+  RepairDBIndex = +RightsList.RepairData.children.RepairDBIndex.code,
+  RepairRightsGroup = +RightsList.RepairData.children.RepairRightsGroup.code,
+  SelfCheck = +RightsList.RepairData.children.SelfCheck.code,
 }
