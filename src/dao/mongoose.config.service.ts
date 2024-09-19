@@ -27,7 +27,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       retryAttempts: 30000, // 重连次数
       user: this.configService.getSecurityConfig('dbUser'),
       pass: this.configService.getSecurityConfig('dbPws'),
-      monitorCommands: true,
+      monitorCommands: false,
       // logger: this.logger, //TODO 暂时注掉再说吧
       connectionFactory: (connection: Connection) => {
         //数据库连接错误时报错
