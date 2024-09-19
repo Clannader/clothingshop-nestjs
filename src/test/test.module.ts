@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TestController } from './test.controller';
-import { MemoryCacheModule } from '@/cache/module';
-import { AdminSchemaModule } from '@/entities/module';
+import { MemoryCacheModule } from '@/cache/modules';
+import { AdminSchemaModule } from 'src/entities/modules';
 // import { ConfigModule } from '../common';
 // import { UserModule } from '../user/user.module';
 

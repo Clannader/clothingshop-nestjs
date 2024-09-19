@@ -1,8 +1,8 @@
 import { Controller, Get, UseInterceptors, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
-import { SystemService } from './system.service';
-import { RespWebConfigDto, RespPackageVersionDto } from './dto';
+import { SystemService } from '@/system/services/system.service';
+import { RespWebConfigDto, RespPackageVersionDto } from '../dto';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { ApiRights, RightsEnum } from '@/rights';

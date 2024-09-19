@@ -8,7 +8,7 @@ import {
 } from '@nestjs/mongoose';
 import { ConfigService } from '@/common/config';
 import { Connection } from 'mongoose';
-import { monitorPlugin } from './plugin';
+import { monitorPlugin } from './plugins';
 // import { MongodbLogger } from '@/logger';
 
 @Injectable()

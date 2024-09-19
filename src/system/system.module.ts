@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { SystemService } from './system.service';
-import { SystemController } from './system.controller';
+import { SystemService, RepairDataService } from './services';
+import { SystemController, RepairDataController } from './controllers';
 
 @Module({
   imports: [],
-  controllers: [SystemController],
-  providers: [SystemService],
+  controllers: [SystemController, RepairDataController],
+  providers: [SystemService, RepairDataService],
   exports: [SystemService],
 })
 export class SystemModule {}
