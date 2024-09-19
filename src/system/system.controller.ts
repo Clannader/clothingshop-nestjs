@@ -12,6 +12,7 @@ import { ApiRights, RightsEnum } from '@/rights';
 @ApiTags('SystemController')
 @UseGuards(SessionGuard)
 @UseInterceptors(HttpInterceptor)
+@ApiRights(RightsEnum.SystemDataSetup)
 export class SystemController {
   constructor(private readonly systemService: SystemService) {}
 

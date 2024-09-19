@@ -24,15 +24,15 @@ export const RightsList: RightsConfig = {
       // 针对系统中各种杂七杂八的数据配置
       SystemBaseSetup: {
         code: '3011',
-        desc: '基础设置'
+        desc: '基础设置',
       },
       // 查库依赖包版本
       PackageVersionSetup: {
         code: '3012',
-        desc: '获取依赖包版本'
-      }
+        desc: '获取依赖包版本',
+      },
       // 后续计划邮箱设置,国家/省份/城市设置,动态参数设置,消息设置,都归属在里面吧
-    }
+    },
   },
   UserSetup: {
     code: '3020',
@@ -78,22 +78,22 @@ export const RightsList: RightsConfig = {
     children: {
       RepairBaseData: {
         code: '3041',
-        desc: '修复基础数据'
+        desc: '修复基础数据',
       },
       RepairDBIndex: {
         code: '3042',
-        desc: '修复数据库索引'
+        desc: '修复数据库索引',
       },
       RepairRightsGroup: {
         code: '3043',
-        desc: '修复权限数据'
+        desc: '修复权限数据',
       },
       SelfCheck: {
         code: '3044',
-        desc: '自动检查'
-      }
-    }
-  }
+        desc: '自动检查',
+      },
+    },
+  },
 };
 
 // 这里定义的枚举的值是数字,ts编译不过去,坑爹,其实也可以是字符串的
@@ -101,15 +101,20 @@ export enum RightsEnum {
   OtherSetup = +RightsList.OtherSetup.code,
   SystemDataSetup = +RightsList.SystemDataSetup.code,
   SystemBaseSetup = +RightsList.SystemDataSetup.children.SystemBaseSetup.code,
-  PackageVersionSetup = +RightsList.SystemDataSetup.children.PackageVersionSetup.code,
+  PackageVersionSetup = +RightsList.SystemDataSetup.children.PackageVersionSetup
+    .code,
   UserSetup = +RightsList.UserSetup.code,
   RightsSetup = +RightsList.RightsSetup.code,
   RightsGroupSetup = +RightsList.RightsSetup.children.RightsGroupSetup.code,
-  RightsGroupCreate = +RightsList.RightsSetup.children.RightsGroupSetup.children.RightsGroupCreate.code,
-  RightsGroupModify = +RightsList.RightsSetup.children.RightsGroupSetup.children.RightsGroupModify.code,
-  RightsGroupDelete = +RightsList.RightsSetup.children.RightsGroupSetup.children.RightsGroupDelete.code,
+  RightsGroupCreate = +RightsList.RightsSetup.children.RightsGroupSetup.children
+    .RightsGroupCreate.code,
+  RightsGroupModify = +RightsList.RightsSetup.children.RightsGroupSetup.children
+    .RightsGroupModify.code,
+  RightsGroupDelete = +RightsList.RightsSetup.children.RightsGroupSetup.children
+    .RightsGroupDelete.code,
   RightsCodeSetup = +RightsList.RightsSetup.children.RightsCodeSetup.code,
-  RightsCodeModify = +RightsList.RightsSetup.children.RightsCodeSetup.children.RightsCodeModify.code,
+  RightsCodeModify = +RightsList.RightsSetup.children.RightsCodeSetup.children
+    .RightsCodeModify.code,
   RepairData = +RightsList.RepairData.code,
   RepairBaseData = +RightsList.RepairData.children.RepairBaseData.code,
   RepairDBIndex = +RightsList.RepairData.children.RepairDBIndex.code,

@@ -150,9 +150,9 @@ async function bootstrap() {
   });
 
   await app.listen(port).then(() => {
-    aopLogger.log(`Application is running on: ${hostName}/swagger-ui`)
-    aopLogger.log(`SwaggerJson is running on: ${hostName}/swagger-ui-json`)
-    aopLogger.log(`Node Version: ${process.version}`)
+    aopLogger.log(`Application is running on: ${hostName}/swagger-ui`);
+    aopLogger.log(`SwaggerJson is running on: ${hostName}/swagger-ui-json`);
+    aopLogger.log(`Node Version: ${process.version}`);
   });
 }
 
