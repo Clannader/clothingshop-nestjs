@@ -8,7 +8,7 @@ import {
 } from '@nestjs/mongoose';
 import { ConfigService } from '@/common/config';
 import { Connection } from 'mongoose';
-import { monitorPlugin } from './plugin';
+import { monitorPlugin } from './plugins';
 // import { MongodbLogger } from '@/logger';
 
 @Injectable()
@@ -27,6 +27,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       retryAttempts: 30000, // 重连次数
       user: this.configService.getSecurityConfig('dbUser'),
       pass: this.configService.getSecurityConfig('dbPws'),
+      monitorCommands: false,
       // logger: this.logger, //TODO 暂时注掉再说吧
       connectionFactory: (connection: Connection) => {
         //数据库连接错误时报错
@@ -48,6 +49,19 @@ export class MongooseConfigService implements MongooseOptionsFactory {
           console.error('数据库重连成功');
         });
         connection.plugin(monitorPlugin);
+
+        // 参考https://www.mongodb.com/zh-cn/docs/drivers/node/current/fundamentals/logging/
+        const client = connection.getClient();
+        client.on('commandStarted', (event) => {
+          console.log(event);
+        });
+        client.on('commandSucceeded', (event) => {
+          console.info(event);
+        });
+        client.on('commandFailed', (event) => {
+          console.error(event);
+        });
+
         this.connection = connection;
         return connection;
       },

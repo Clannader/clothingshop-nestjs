@@ -39,6 +39,10 @@ export class AopMiddleware implements NestMiddleware {
     const that = this;
     // @ts-ignore
     res.end = function (chunk, encoding): Response {
+      // 发现这里nestjs更新后,使用swagger界面做的请求,有时候拿不到返回值,但是使用工具请求就可以,不知道是不是改过curl请求的逻辑了
+      // 但是有些请求有可以拿到返回值,不知道是请求方式get的问题还是什么问题了
+      // 发现确实是Get方法的问题,但是使用postman访问又没见有这种问题
+      // TODO 看后面怎么解决吧
       this.returnData = chunk + '';
       const resultString = chunk + '';
       if (that.configService.get<boolean>('errorCatch', false)) {

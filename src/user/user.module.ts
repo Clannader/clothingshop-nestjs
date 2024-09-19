@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import { AdminSchemaModule } from '@/entities/module';
-import { SecretConfigModule } from '@/common/module';
+import { AdminSchemaModule } from 'src/entities/modules';
+import { SecretConfigModule } from 'src/common/modules';
 
 @Module({
   imports: [AdminSchemaModule, SecretConfigModule.register()],

@@ -147,7 +147,7 @@ export class UserService {
         } else {
           // 计算距离过期还有多少天
           const diffDays = moment(expireTime).diff(moment(), 'days');
-          if (diffDays >= 1 && diffDays <= 3) {
+          if (diffDays >= 1 && diffDays <= 7) {
             expireMsg = this.globalService.serverLang(
               '该用户还有 {0} 天过期,请尽快联系管理员',
               'user.expireMsg',

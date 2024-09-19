@@ -105,5 +105,5 @@ AdminSchema.statics.updateLoginInfo = function (
 
 export interface AdminModel extends Model<Admin> {
   getAliasName(): string;
-  updateLoginInfo(id: string, update: UpdateLoginWhere);
+  updateLoginInfo(id: string, update: UpdateLoginWhere): any;
 }

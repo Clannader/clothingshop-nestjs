@@ -88,6 +88,7 @@ export class SessionGuard implements CanActivate {
       return true;
     }
     // TODO 这里判断权限,注意权限值是数字类型的,需要转换一下
+    console.log(rights);
     return true;
   }
 }
