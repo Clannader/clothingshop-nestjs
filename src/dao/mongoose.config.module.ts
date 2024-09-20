@@ -14,6 +14,7 @@ import { ConfigService } from '@/common/config';
       inject: [ConfigService]
     }),
   ],
-  // exports: [MongooseConfigService]
+  providers: [MongooseConfigService],
+  exports: [MongooseConfigService],
 })
 export class MongooseConfigModule {}
