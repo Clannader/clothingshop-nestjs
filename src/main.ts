@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule, DocumentBuilder, SwaggerDocumentOptions } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 // 我真的是醉了,官网没有@types的包,使用import运行时又报错
@@ -93,7 +93,7 @@ async function bootstrap() {
   app.engine('html', renderFile);
   app.setViewEngine('html');
 
-  const options = new DocumentBuilder()
+  const swaggerConfig = new DocumentBuilder()
     .setTitle('Clothingshop System API')
     .setDescription('The clothingshop restful api')
     .setVersion('1.0')
@@ -126,7 +126,13 @@ async function bootstrap() {
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
     .setContact('oliver.wu', `${hostName}/index`, '294473343@qq.com')
     .build();
-  const document = SwaggerModule.createDocument(app, options);
+  const swaggerOptions: SwaggerDocumentOptions = {
+    operationIdFactory: (controllerKey: string, methodKey: string) => {
+      return `${controllerKey}_${methodKey}`;
+    },
+    // deepScanRoutes: true // 不懂有什么用
+  }
+  const document = SwaggerModule.createDocument(app, swaggerConfig, swaggerOptions);
   SwaggerModule.setup('swagger-ui', app, document, {
     swaggerOptions: {
       persistAuthorization: true, // 这个参数好像是做持久化认证的
@@ -146,12 +152,14 @@ async function bootstrap() {
     // swaggerUrl: 'http://localhost:3000/swagger-ui-json', // 感觉无效
     // explorer: true,
     // customCss: '.swagger-ui .model-box { display:block }',
+    customSiteTitle: 'CMS Swagger UI',
     customCssUrl: '/swagger-ui-override.css',
+    jsonDocumentUrl: 'swagger-ui/json', // 默认为swagger-ui-json,可以自定义更换
   });
 
   await app.listen(port).then(() => {
     aopLogger.log(`Application is running on: ${hostName}/swagger-ui`);
-    aopLogger.log(`SwaggerJson is running on: ${hostName}/swagger-ui-json`);
+    aopLogger.log(`SwaggerJson is running on: ${hostName}/swagger-ui/json`);
     aopLogger.log(`Node Version: ${process.version}`);
   });
 }
