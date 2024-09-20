@@ -3,15 +3,16 @@
  */
 import { Injectable, Inject } from '@nestjs/common';
 
-import { MongooseConfigService } from '@/dao';
+import { InjectConnection } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
 
 import { CommonResult } from '@/common/dto';
 import { RespCollectionsName } from '../dto';
 
 @Injectable()
 export class DatabaseService {
-  @Inject()
-  private readonly mongooseConfigService: MongooseConfigService;
+  @InjectConnection()
+  private readonly mongooseConnection: Connection;
 
   getDbStatistics() {
     const resp = new CommonResult();
@@ -35,7 +36,7 @@ export class DatabaseService {
 
   getDbCollectionsName() {
     const resp = new RespCollectionsName();
-    const connection = this.mongooseConfigService.getConnection()
+    const connection = this.mongooseConnection
     console.log(connection.modelNames());
     return resp;
   }

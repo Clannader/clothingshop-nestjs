@@ -5,16 +5,12 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { MongooseConfigService } from './mongoose.config.service';
-import { ConfigService } from '@/common/config';
 
 @Module({
   imports: [
     MongooseModule.forRootAsync({
       useClass: MongooseConfigService,
-      inject: [ConfigService]
     }),
   ],
-  providers: [MongooseConfigService],
-  exports: [MongooseConfigService],
 })
 export class MongooseConfigModule {}
