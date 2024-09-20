@@ -46,21 +46,39 @@ export class DatabaseService {
       return resp;
     }
     // 把别名转换成真实数据库名
-    const dbName: string[] = [];
-    const modelNames: string[] = this.mongooseConnection.modelNames();
-    for (const modelName of modelNames) {
-      // @ts-ignore
-      const alias = this.mongooseConnection.models[modelName].getAliasName();
-      if (aliasNames.includes(alias)) {
-        // dbName.push(this.mongooseConnection.collection('dd'))
+    const modelMap = this.getModelMap()
+    for (const aliasName of aliasNames) {
+      if (modelMap.has(aliasName)) {
+        const modelInfo = modelMap.get(aliasName);
+        // 这个是数据库总的状态
+        // const info = await this.mongooseConnection.db.stats()
+        // const info = await this.mongooseConnection.db.admin().serverInfo()
+
+        // @ts-ignore
+        // const info = await this.mongooseConnection.getClient().db().stats({
+        //
+        // })
+        // console.log(info)
       }
     }
-    console.log(dbName);
-    // @ts-ignore
-    const a = await this.mongooseConnection.collection('admins').getIndexes();
-    console.log(this.mongooseConnection.collections['admins']);
-    console.log(a);
     return resp;
+  }
+
+  private getModelMap(): Map<string, ModelMap> {
+    const modelMap = new Map<string, ModelMap>();
+    const collections = this.mongooseConnection.collections; // 所有连接名
+    for (const collection in collections) {
+      const value = collections[collection] as CustomCollection;
+      const modelName = value.modelName;
+      const aliasName = (
+        this.mongooseConnection.models[modelName] as CustomModel
+      ).getAliasName();
+      modelMap.set(aliasName, {
+        collectionName: value.collectionName,
+        modelName,
+      });
+    }
+    return modelMap;
   }
 
   async getDbIndexList(params: ReqDbStatisticsDto) {
@@ -74,19 +92,7 @@ export class DatabaseService {
       return resp;
     }
     // 构造一个Map,<aliasName, {modelName, collectionName}>
-    const modelMap = new Map<string, ModelMap>();
-    const collections = this.mongooseConnection.collections; // 所有连接名
-    for (const collection in collections) {
-      const value = collections[collection] as CustomCollection;
-      const modelName = value.modelName;
-      const alias = (
-        this.mongooseConnection.models[modelName] as CustomModel
-      ).getAliasName();
-      modelMap.set(alias, {
-        collectionName: value.collectionName,
-        modelName,
-      });
-    }
+    const modelMap = this.getModelMap();
     // 遍历有效的数据库名
     for (const aliasName of aliasNames) {
       if (modelMap.has(aliasName)) {
@@ -123,14 +129,18 @@ export class DatabaseService {
 
   async getDbCollectionsName() {
     const resp = new RespCollectionsNameDto();
-    const modelNames: string[] = this.mongooseConnection.modelNames(); // 如果不取别名,直接返回这个即可
     const aliasNames: string[] = [];
-    for (const modelName of modelNames) {
-      aliasNames.push(
-        (
-          this.mongooseConnection.models[modelName] as CustomModel
-        ).getAliasName(),
-      );
+    // const modelNames: string[] = this.mongooseConnection.modelNames(); // 如果不取别名,直接返回这个即可
+    // for (const modelName of modelNames) {
+    //   aliasNames.push(
+    //     (
+    //       this.mongooseConnection.models[modelName] as CustomModel
+    //     ).getAliasName(),
+    //   );
+    // }
+    const modelMap = this.getModelMap();
+    for(const [aliasName] of modelMap) {
+      aliasNames.push(aliasName)
     }
     resp.aliasNames = aliasNames;
     return resp;
