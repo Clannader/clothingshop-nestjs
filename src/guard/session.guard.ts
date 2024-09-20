@@ -21,7 +21,7 @@ import { AopLogger } from '@/logger';
 export class SessionGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
-  private readonly logger = new AopLogger(SessionGuard.name)
+  private readonly logger = new AopLogger(SessionGuard.name);
 
   @Inject()
   private globalService: GlobalService;
@@ -94,10 +94,10 @@ export class SessionGuard implements CanActivate {
     // );
     // this.logger.log(methodRights);
     // 如果想class和method合并再一起,这样写
-    const mergeRights = this.reflector.getAllAndMerge<number[]>(
-      RIGHTS_KEY,
-      [context.getClass(), context.getHandler()]
-    );
+    const mergeRights = this.reflector.getAllAndMerge<number[]>(RIGHTS_KEY, [
+      context.getClass(),
+      context.getHandler(),
+    ]);
     this.logger.log(mergeRights);
     // 如果接口没有设置权限就放行
     if (!mergeRights) {

@@ -58,7 +58,7 @@ export class AopAspect {
       //     params[field] = Utils.piiData(params[field]);
       //   }
       // });
-      const isXmlRequest = Utils.isHasSoapHeader(req)
+      const isXmlRequest = Utils.isHasSoapHeader(req);
       if (isXmlRequest) {
         params = req.xmlData;
       }
@@ -108,13 +108,17 @@ export class AopAspect {
         ip,
         url,
         method: method.toUpperCase(),
-        params: isXmlRequest ? Utils.piiXmlData(params, ...piiFields) : Utils.piiJsonData(params, ...piiFields),
+        params: isXmlRequest
+          ? Utils.piiXmlData(params, ...piiFields)
+          : Utils.piiJsonData(params, ...piiFields),
         shopId: session.shopId,
         adminId: session.adminId,
         adminType: session.adminType,
         type: isIndex ? LogTypeEnum.Browser : LogTypeEnum.Interface,
         timestamp: diffTime,
-        send: isXmlRequest ? Utils.piiXmlData(returnData as string, ...piiFields) : Utils.piiJsonData(returnData as Record<string, any>, ...piiFields),
+        send: isXmlRequest
+          ? Utils.piiXmlData(returnData as string, ...piiFields)
+          : Utils.piiJsonData(returnData as Record<string, any>, ...piiFields),
         headers: Utils.piiJsonData(headers, ...piiHeaders),
       };
       if (this.configService.get<boolean>('monitorLog', true)) {

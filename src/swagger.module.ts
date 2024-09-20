@@ -8,6 +8,7 @@ import { LoginModule } from './login';
 import { TestModule } from './test';
 import { UploadFileModule } from './file';
 import { GatewayModule } from './gateway';
+import { DatabaseModule } from './database';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { GatewayModule } from './gateway';
     TestModule,
     UploadFileModule,
     GatewayModule,
+    DatabaseModule,
   ],
 })
 export class SwaggerModule {}

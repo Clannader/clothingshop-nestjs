@@ -108,14 +108,14 @@ export const RightsList: RightsConfig = {
       },
       DbDetails: {
         code: '3053',
-        desc: '数据库详情'
+        desc: '数据库详情',
       },
       DbLogs: {
         code: '3054',
-        desc: '数据库日志'
-      }
-    }
-  }
+        desc: '数据库日志',
+      },
+    },
+  },
 };
 
 // 这里定义的枚举的值是数字,ts编译不过去,坑爹,其实也可以是字符串的

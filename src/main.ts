@@ -1,6 +1,10 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder, SwaggerDocumentOptions } from '@nestjs/swagger';
+import {
+  SwaggerModule,
+  DocumentBuilder,
+  SwaggerDocumentOptions,
+} from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 // 我真的是醉了,官网没有@types的包,使用import运行时又报错
@@ -131,8 +135,12 @@ async function bootstrap() {
       return `${controllerKey}_${methodKey}`;
     },
     // deepScanRoutes: true // 不懂有什么用
-  }
-  const document = SwaggerModule.createDocument(app, swaggerConfig, swaggerOptions);
+  };
+  const document = SwaggerModule.createDocument(
+    app,
+    swaggerConfig,
+    swaggerOptions,
+  );
   SwaggerModule.setup('swagger-ui', app, document, {
     swaggerOptions: {
       persistAuthorization: true, // 这个参数好像是做持久化认证的
