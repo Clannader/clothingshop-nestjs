@@ -34,10 +34,15 @@ export class DatabaseService {
     return resp;
   }
 
-  getDbCollectionsName() {
+  async getDbCollectionsName() {
     const resp = new RespCollectionsName();
-    const connection = this.mongooseConnection
-    console.log(connection.modelNames());
+    const modelNames: string[] = this.mongooseConnection.modelNames(); // 如果不取别名,直接返回这个即可
+    const aliasNames: string[] = []
+    for (const modelName of modelNames) {
+      // @ts-ignore
+      aliasNames.push(this.mongooseConnection.models[modelName].getAliasName());
+    }
+    resp.aliasNames = aliasNames
     return resp;
   }
 }

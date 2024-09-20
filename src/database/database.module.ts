@@ -3,12 +3,10 @@
  */
 import { Module } from '@nestjs/common';
 
-import { MongooseConfigModule } from '@/dao';
 import { DatabaseController } from './controller';
 import { DatabaseService } from './services';
 
 @Module({
-  imports: [MongooseConfigModule],
   controllers: [DatabaseController],
   providers: [DatabaseService],
 })
