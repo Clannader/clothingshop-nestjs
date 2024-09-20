@@ -8,30 +8,45 @@ import { Connection } from 'mongoose';
 
 import { Utils } from '@/common/utils';
 import { CommonResult } from '@/common/dto';
-import { RespCollectionsNameDto, ReqDbStatisticsDto, RespDbStatisticsDto, DbStatisticsDto } from '../dto';
+import { RespCollectionsNameDto, ReqDbStatisticsDto, RespDbStatisticsDto, DbStatisticsDto, RespDbIndexesListDto } from '../dto';
 
 @Injectable()
 export class DatabaseService {
   @InjectConnection()
   private readonly mongooseConnection: Connection;
 
-  getDbStatistics(params: ReqDbStatisticsDto) {
+  async getDbStatistics(params: ReqDbStatisticsDto) {
     const resp = new RespDbStatisticsDto();
     const collectionStatistics: DbStatisticsDto[] = []
     const aliasNames = params.aliasNames
 
+    // 先给一个默认值
+    resp.collectionStatistics = collectionStatistics
     if(Utils.isEmpty(aliasNames)) {
-      resp.collectionStatistics = collectionStatistics
       return resp;
     }
-
-
-
+    // 把别名转换成真实数据库名
+    const dbName: string[] = []
+    const modelNames: string[] = this.mongooseConnection.modelNames();
+    for (const modelName of modelNames) {
+      // @ts-ignore
+      const alias = this.mongooseConnection.models[modelName].getAliasName();
+      if (aliasNames.includes(alias)) {
+        // dbName.push(this.mongooseConnection.collection('dd'))
+      }
+    }
+    console.log(dbName)
+    // @ts-ignore
+    const a = await this.mongooseConnection.collection('admins').getIndexes()
+    console.log(this.mongooseConnection.collections['admins'])
+    console.log(a)
     return resp;
   }
 
-  getDbIndexList() {
-    const resp = new CommonResult();
+  getDbIndexList(params: ReqDbStatisticsDto) {
+    const resp = new RespDbIndexesListDto();
+    const collections = this.mongooseConnection.collections // 所有连接名
+
     return resp;
   }
 

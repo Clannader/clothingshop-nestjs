@@ -4,3 +4,4 @@
 export * from './req'
 export * from './resp'
 export * from './db-statistics.dto'
+export * from './db-indexes.dto'

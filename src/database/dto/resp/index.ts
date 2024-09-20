@@ -3,3 +3,4 @@
  */
 export * from './resp-collections-name.dto'
 export * from './resp-db-statistics.dto'
+export * from './resp-db-indexes-list.dto'

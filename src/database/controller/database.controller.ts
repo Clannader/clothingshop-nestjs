@@ -10,7 +10,7 @@ import { ApiRights, RightsEnum } from '@/rights';
 
 import { DatabaseService } from '../services/database.service';
 import { CommonResult } from '@/common/dto';
-import { RespCollectionsNameDto, RespDbStatisticsDto, ReqDbStatisticsDto } from '../dto';
+import { RespCollectionsNameDto, RespDbStatisticsDto, ReqDbStatisticsDto, RespDbIndexesListDto } from '../dto';
 
 @ApiCommon()
 @Controller('/cms/api/database')
@@ -31,7 +31,7 @@ export class DatabaseController {
     type: RespDbStatisticsDto,
   })
   @ApiRights(RightsEnum.DbStatistics)
-  getDbStatistics(@Body() params: ReqDbStatisticsDto): RespDbStatisticsDto {
+  getDbStatistics(@Body() params: ReqDbStatisticsDto) {
     return this.databaseService.getDbStatistics(params);
   }
 
@@ -42,11 +42,11 @@ export class DatabaseController {
     description: '查询数据库表索引',
   })
   @ApiCustomResponse({
-    type: CommonResult,
+    type: RespDbIndexesListDto,
   })
   @ApiRights(RightsEnum.DbIndexManage)
-  getDbIndexList() {
-    return this.databaseService.getDbIndexList();
+  getDbIndexList(@Body() params: ReqDbStatisticsDto) {
+    return this.databaseService.getDbIndexList(params);
   }
 
   @Get('/details/info')
