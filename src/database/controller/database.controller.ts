@@ -10,7 +10,7 @@ import { ApiRights, RightsEnum } from '@/rights';
 
 import { DatabaseService } from '../services/database.service';
 import { CommonResult } from '@/common/dto';
-import { RespCollectionsName } from '../dto';
+import { RespCollectionsNameDto } from '../dto';
 
 @ApiCommon()
 @Controller('/cms/api/database')
@@ -81,7 +81,7 @@ export class DatabaseController {
     description: '获取数据库表名别名列表',
   })
   @ApiCustomResponse({
-    type: RespCollectionsName,
+    type: RespCollectionsNameDto,
   })
   getDbCollectionsName() {
     return this.databaseService.getDbCollectionsName();

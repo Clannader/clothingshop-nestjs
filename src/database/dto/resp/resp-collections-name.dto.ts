@@ -3,7 +3,7 @@
  */
 import { CommonResult } from '@/common';
 
-export class RespCollectionsName extends CommonResult {
+export class RespCollectionsNameDto extends CommonResult {
   /**
    * 数据库别名列表
    */

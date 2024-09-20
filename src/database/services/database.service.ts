@@ -7,7 +7,7 @@ import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 
 import { CommonResult } from '@/common/dto';
-import { RespCollectionsName } from '../dto';
+import { RespCollectionsNameDto } from '../dto';
 
 @Injectable()
 export class DatabaseService {
@@ -35,7 +35,7 @@ export class DatabaseService {
   }
 
   async getDbCollectionsName() {
-    const resp = new RespCollectionsName();
+    const resp = new RespCollectionsNameDto();
     const modelNames: string[] = this.mongooseConnection.modelNames(); // 如果不取别名,直接返回这个即可
     const aliasNames: string[] = []
     for (const modelName of modelNames) {
