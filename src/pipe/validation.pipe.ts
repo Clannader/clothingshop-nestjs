@@ -32,7 +32,8 @@ export class ValidationPipe<T> implements PipeTransform<T> {
   private static getErrorContent(constraints: {
     [type: string]: string;
   }): string {
-    const keys = ['isString', 'isNotEmpty', 'matches', 'customValidation'];
+    // 返回的错误确实是无序的,需要使用keys这个数组按优先级判断哪些错误优先,否则返回错误不对
+    const keys = ['isDefined', 'isString', 'isArray', 'isNotEmpty', 'matches', 'customValidation'];
     let content = 'Validation failed';
     forEach(keys, (v) => {
       if (has(constraints, v)) {

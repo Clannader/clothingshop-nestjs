@@ -9,10 +9,10 @@ export class ReqRefreshTokenDto {
   @ApiProperty({
     description: '授权时获取到的refreshToken',
   })
+  @IsString()
   @IsNotEmpty({
     message: 'user.isEmptyToken',
   })
-  @IsString()
   @Expose()
   refreshToken: string;
 }
