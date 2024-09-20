@@ -11,7 +11,7 @@ import { ValidationPipe } from './pipe';
 import { GLOBAL_CONFIG } from './common';
 import { CommonModule, ConfigModule } from './common/modules';
 import { AopMiddleware, XmlMiddleware } from './middleware';
-import { MongooseConfigService } from './dao';
+import { MongooseConfigModule } from './dao';
 import { AopAspectModule } from './interceptor/aop';
 import { SwaggerModule } from './swagger.module';
 
@@ -29,9 +29,7 @@ import { SwaggerModule } from './swagger.module';
       token: GLOBAL_CONFIG,
       // expandVariables: true, // 有bug,暂时去掉,原因是watch文件时,文件被修改了,没有检测到最新的值到内存里面
     }),
-    MongooseModule.forRootAsync({
-      useClass: MongooseConfigService,
-    }),
+    MongooseConfigModule,
     SwaggerModule,
     AopAspectModule,
   ],

@@ -4,3 +4,4 @@
 export * from './mongoose.config.service';
 export * from './plugins';
 export * from './session';
+export * from './mongoose.config.module';

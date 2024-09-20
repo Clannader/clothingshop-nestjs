@@ -15,9 +15,13 @@ import { CodeException } from '@/common/exceptions';
 import { UserSessionService } from '@/user/user.session.service';
 import { RIGHTS_KEY } from '@/rights';
 
+import { AopLogger } from '@/logger';
+
 @Injectable()
 export class SessionGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
+
+  private readonly logger = new AopLogger(SessionGuard.name);
 
   @Inject()
   private globalService: GlobalService;
@@ -77,18 +81,29 @@ export class SessionGuard implements CanActivate {
     }
     // 每次访问延长用户有效期时间
     req.session.adminSession.expires = currentDate.getTime() + Session_Expires;
-    // 判断是否有权限进入路由
-    const rights = this.reflector.get<number[]>(
-      RIGHTS_KEY,
+    // 先取class上面的权限,如果没有再判断method上面的权限值
+    // const classRights = this.reflector.get<number[]>(
+    //   RIGHTS_KEY,
+    //   context.getClass(),
+    // )
+    // this.logger.log(classRights);
+    // // 下面取method上面的权限值,判断是否有权限进入路由
+    // const methodRights = this.reflector.get<number[]>(
+    //   RIGHTS_KEY,
+    //   context.getHandler(),
+    // );
+    // this.logger.log(methodRights);
+    // 如果想class和method合并再一起,这样写
+    const mergeRights = this.reflector.getAllAndMerge<number[]>(RIGHTS_KEY, [
+      context.getClass(),
       context.getHandler(),
-    );
-
+    ]);
+    this.logger.log(mergeRights);
     // 如果接口没有设置权限就放行
-    if (!rights) {
+    if (!mergeRights) {
       return true;
     }
     // TODO 这里判断权限,注意权限值是数字类型的,需要转换一下
-    console.log(rights);
     return true;
   }
 }

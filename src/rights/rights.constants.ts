@@ -94,6 +94,28 @@ export const RightsList: RightsConfig = {
       },
     },
   },
+  DatabaseManage: {
+    code: '3050',
+    desc: '数据库管理',
+    children: {
+      DbStatistics: {
+        code: '3051',
+        desc: '数据库统计',
+      },
+      DbIndexManage: {
+        code: '3052',
+        desc: '索引管理',
+      },
+      DbDetails: {
+        code: '3053',
+        desc: '数据库详情',
+      },
+      DbLogs: {
+        code: '3054',
+        desc: '数据库日志',
+      },
+    },
+  },
 };
 
 // 这里定义的枚举的值是数字,ts编译不过去,坑爹,其实也可以是字符串的
@@ -120,4 +142,9 @@ export enum RightsEnum {
   RepairDBIndex = +RightsList.RepairData.children.RepairDBIndex.code,
   RepairRightsGroup = +RightsList.RepairData.children.RepairRightsGroup.code,
   SelfCheck = +RightsList.RepairData.children.SelfCheck.code,
+  DatabaseManage = +RightsList.DatabaseManage.code,
+  DbStatistics = +RightsList.DatabaseManage.children.DbStatistics.code,
+  DbIndexManage = +RightsList.DatabaseManage.children.DbIndexManage.code,
+  DbDetails = +RightsList.DatabaseManage.children.DbDetails.code,
+  DbLogs = +RightsList.DatabaseManage.children.DbLogs.code,
 }

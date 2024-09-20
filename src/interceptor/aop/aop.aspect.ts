@@ -45,18 +45,21 @@ export class AopAspect {
         ...body,
       };
       // 由于涉及到上传文件内容时数据过大,需要脱敏进数据库
-      const piiFields = [
+      const piiFields: string[] = [
         'adminPws',
         'fileContent',
         'refreshToken',
         'accessToken',
+        'credential',
       ];
-      piiFields.forEach((field) => {
-        if (params.hasOwnProperty(field) && typeof params[field] === 'string') {
-          params[field] = Utils.piiData(params[field]);
-        }
-      });
-      if (Utils.isHasSoapHeader(req)) {
+      // params = Utils.piiJsonData(params, ...piiFields)
+      // piiFields.forEach((field) => {
+      //   if (params.hasOwnProperty(field) && typeof params[field] === 'string') {
+      //     params[field] = Utils.piiData(params[field]);
+      //   }
+      // });
+      const isXmlRequest = Utils.isHasSoapHeader(req);
+      if (isXmlRequest) {
         params = req.xmlData;
       }
       const diffTime = Date.now() - req.startTime.getTime();
@@ -73,44 +76,50 @@ export class AopAspect {
         };
       }
       const isIndex = url.indexOf(baseUrl) !== -1; //如果url含有index,说明是网页进来的
-      let returnData = res.returnData;
+      let returnData: string | Record<string, any> = res.returnData;
       try {
-        returnData = JSON.parse(res.returnData);
-        piiFields.forEach((field) => {
-          if (
-            returnData.hasOwnProperty(field) &&
-            typeof returnData[field] === 'string'
-          ) {
-            returnData[field] = Utils.piiData(returnData[field]);
-          }
-        });
+        if (!isXmlRequest) {
+          returnData = JSON.parse(res.returnData);
+        }
+        // piiFields.forEach((field) => {
+        //   if (
+        //     returnData.hasOwnProperty(field) &&
+        //     typeof returnData[field] === 'string'
+        //   ) {
+        //     returnData[field] = Utils.piiData(returnData[field]);
+        //   }
+        // });
       } catch (e) {}
       const headers = Object.assign(req.headers, {
         cookie: req.cookies,
       });
       // 脱敏headers
-      const piiHeaders = ['authorization', 'credential'];
-      piiHeaders.forEach((field) => {
-        if (
-          headers.hasOwnProperty(field) &&
-          typeof headers[field] === 'string'
-        ) {
-          headers[field] = Utils.piiData(headers[field] as string);
-        }
-      });
+      const piiHeaders = ['authorization', 'credential', 'cmsApp'];
+      // piiHeaders.forEach((field) => {
+      //   if (
+      //     headers.hasOwnProperty(field) &&
+      //     typeof headers[field] === 'string'
+      //   ) {
+      //     headers[field] = Utils.piiData(headers[field] as string);
+      //   }
+      // });
       const createParams = {
         date: now,
         ip,
         url,
         method: method.toUpperCase(),
-        params,
+        params: isXmlRequest
+          ? Utils.piiXmlData(params, ...piiFields)
+          : Utils.piiJsonData(params, ...piiFields),
         shopId: session.shopId,
         adminId: session.adminId,
         adminType: session.adminType,
         type: isIndex ? LogTypeEnum.Browser : LogTypeEnum.Interface,
         timestamp: diffTime,
-        send: returnData,
-        headers: headers,
+        send: isXmlRequest
+          ? Utils.piiXmlData(returnData as string, ...piiFields)
+          : Utils.piiJsonData(returnData as Record<string, any>, ...piiFields),
+        headers: Utils.piiJsonData(headers, ...piiHeaders),
       };
       if (this.configService.get<boolean>('monitorLog', true)) {
         this.adminAccessService
