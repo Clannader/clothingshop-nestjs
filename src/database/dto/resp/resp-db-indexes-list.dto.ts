@@ -9,5 +9,5 @@ export class RespDbIndexesListDto extends CommonResult {
   /**
    * 索引集合
    */
-  indexes: DbIndexesDto[]
+  indexes: DbIndexesDto[];
 }

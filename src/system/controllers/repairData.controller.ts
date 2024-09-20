@@ -1,7 +1,14 @@
 /**
  * Create by oliver.wu 2024/9/19
  */
-import { Controller, Post, UseInterceptors, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseInterceptors,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';

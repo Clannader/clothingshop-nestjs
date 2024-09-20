@@ -15,12 +15,12 @@ export class DbIndexesDto {
   /**
    * 索引参数
    */
-  indexOptions: Record<string, string>
+  indexOptions: Record<string, string>;
 
   /**
    * 索引字段
    */
-  indexFields: Record<string, number>
+  indexFields: Record<string, any>;
 
   /**
    * 索引状态

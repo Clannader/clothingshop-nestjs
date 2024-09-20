@@ -1,7 +1,16 @@
 /**
  * Create by oliver.wu 2024/9/20
  */
-import { Controller, Post, UseInterceptors, UseGuards, Get, HttpCode, HttpStatus, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseInterceptors,
+  UseGuards,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Body,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';
@@ -10,7 +19,12 @@ import { ApiRights, RightsEnum } from '@/rights';
 
 import { DatabaseService } from '../services/database.service';
 import { CommonResult } from '@/common/dto';
-import { RespCollectionsNameDto, RespDbStatisticsDto, ReqDbStatisticsDto, RespDbIndexesListDto } from '../dto';
+import {
+  RespCollectionsNameDto,
+  RespDbStatisticsDto,
+  ReqDbStatisticsDto,
+  RespDbIndexesListDto,
+} from '../dto';
 
 @ApiCommon()
 @Controller('/cms/api/database')
