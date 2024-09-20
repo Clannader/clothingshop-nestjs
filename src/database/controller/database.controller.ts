@@ -1,7 +1,7 @@
 /**
  * Create by oliver.wu 2024/9/20
  */
-import { Controller, Post, UseInterceptors, UseGuards, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UseGuards, Get, HttpCode, HttpStatus, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';
@@ -10,7 +10,7 @@ import { ApiRights, RightsEnum } from '@/rights';
 
 import { DatabaseService } from '../services/database.service';
 import { CommonResult } from '@/common/dto';
-import { RespCollectionsNameDto } from '../dto';
+import { RespCollectionsNameDto, RespDbStatisticsDto, ReqDbStatisticsDto } from '../dto';
 
 @ApiCommon()
 @Controller('/cms/api/database')
@@ -28,11 +28,11 @@ export class DatabaseController {
     description: '统计所有表的数据大小及其他信息',
   })
   @ApiCustomResponse({
-    type: CommonResult,
+    type: RespDbStatisticsDto,
   })
   @ApiRights(RightsEnum.DbStatistics)
-  getDbStatistics() {
-    return this.databaseService.getDbStatistics();
+  getDbStatistics(@Body() params: ReqDbStatisticsDto): RespDbStatisticsDto {
+    return this.databaseService.getDbStatistics(params);
   }
 
   @Post('/indexes/list')

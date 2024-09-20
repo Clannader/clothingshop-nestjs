@@ -6,16 +6,27 @@ import { Injectable, Inject } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 
+import { Utils } from '@/common/utils';
 import { CommonResult } from '@/common/dto';
-import { RespCollectionsNameDto } from '../dto';
+import { RespCollectionsNameDto, ReqDbStatisticsDto, RespDbStatisticsDto, DbStatisticsDto } from '../dto';
 
 @Injectable()
 export class DatabaseService {
   @InjectConnection()
   private readonly mongooseConnection: Connection;
 
-  getDbStatistics() {
-    const resp = new CommonResult();
+  getDbStatistics(params: ReqDbStatisticsDto) {
+    const resp = new RespDbStatisticsDto();
+    const collectionStatistics: DbStatisticsDto[] = []
+    const aliasNames = params.aliasNames
+
+    if(Utils.isEmpty(aliasNames)) {
+      resp.collectionStatistics = collectionStatistics
+      return resp;
+    }
+
+
+
     return resp;
   }
 
