@@ -1,7 +1,7 @@
 /**
  * Create by oliver.wu 2024/9/19
  */
-import { Controller, Post, UseInterceptors, UseGuards } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';
@@ -21,6 +21,7 @@ export class RepairDataController {
   constructor(private readonly repairService: RepairDataService) {}
 
   @Post('baseData')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '修复系统数据',
     description: '修复系统需要的基础数据',
@@ -34,6 +35,7 @@ export class RepairDataController {
   }
 
   @Post('dbIndex')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '修复数据库索引',
     description: '修复默认内置数据库索引',
@@ -47,6 +49,7 @@ export class RepairDataController {
   }
 
   @Post('rightsGroup')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '修复权限组列表',
     description: '修复默认权限和权限组',
@@ -60,6 +63,7 @@ export class RepairDataController {
   }
 
   @Post('selfCheck')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '自检查系统',
     description: '检查系统默认缺少什么功能,返回提示进行修复',
