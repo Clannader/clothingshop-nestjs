@@ -51,14 +51,18 @@ export class DatabaseService {
       if (modelMap.has(aliasName)) {
         const modelInfo = modelMap.get(aliasName);
         // 这个是数据库总的状态
-        // const info = await this.mongooseConnection.db.stats()
-        // const info = await this.mongooseConnection.db.admin().serverInfo()
+        // const dbStats = await this.mongooseConnection.db.stats()
+        // 这个是数据库总的信息
+        // const serverInfo = await this.mongooseConnection.db.admin().serverInfo()
 
-        // @ts-ignore
-        // const info = await this.mongooseConnection.getClient().db().stats({
-        //
-        // })
-        // console.log(info)
+        // mongodb 4.5.x有效,6.8.0已经没有这个写法了
+        // const name = modelInfo.collectionName
+        // const collStats = await this.mongooseConnection.collection(name).stats()
+        // console.log(`ns: ${collStats.ns}`)
+        // console.log(`size: ${collStats.size}`)
+        // console.log(`storageSize: ${collStats.storageSize}`)
+        // console.log(`count: ${collStats.count}`)
+        // console.log(`avgObjSize: ${collStats.avgObjSize}`)
       }
     }
     return resp;
