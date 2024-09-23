@@ -144,6 +144,10 @@ export function ApiCommon(options?: HeadersOptions) {
       description: 'Token过期',
     }),
     ApiResponse({
+      status: CodeEnum.DB_VERSION_ERROR,
+      description: '当前数据库版本不支持',
+    }),
+    ApiResponse({
       status: CodeEnum.UNKNOWN,
       description: '发生未知错误时返回该响应码',
     }),

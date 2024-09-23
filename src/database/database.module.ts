@@ -3,7 +3,7 @@
  */
 import { Module } from '@nestjs/common';
 
-import { DatabaseController } from './controller';
+import { DatabaseController } from './controllers';
 import { DatabaseService } from './services';
 
 @Module({
