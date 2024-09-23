@@ -88,7 +88,7 @@ export class DatabaseService {
 
         // 这里是安装的数据库版本
         // 新的写法必须使用6.x以上的安装数据库版本执行
-        const name = modelInfo.collectionName;
+        // const name = modelInfo.collectionName;
         const collection = this.mongooseConnection.models[modelInfo.modelName];
         const [error, collStats] = await collection
           .aggregate([
