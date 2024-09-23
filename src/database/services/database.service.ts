@@ -61,7 +61,7 @@ export class DatabaseService {
     if(versionNumber < 6) {
       throw new CodeException(
         CodeEnum.DB_VERSION_ERROR,
-        this.globalService.serverLang('数据库版本必须6.x以上,当前数据库版本:{0}', 'dbInfo.versionError'),
+        this.globalService.serverLang('数据库版本必须6.x以上,当前数据库版本:{0}', 'dbInfo.versionError', buildInfo.version),
       );
     }
 
