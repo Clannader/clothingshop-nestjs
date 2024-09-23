@@ -90,17 +90,23 @@ export class DatabaseService {
         // 新的写法必须使用6.x以上的安装数据库版本执行
         const name = modelInfo.collectionName;
         const collection = this.mongooseConnection.models[modelInfo.modelName];
-        const collStats = await collection.aggregate([
-          {
-            $collStats: {
-              // count: {},
-              storageStats: {
-                // scale: 1024
+        const [error, collStats] = await collection
+          .aggregate([
+            {
+              $collStats: {
+                // count: {},
+                storageStats: {
+                  // scale: 1024
+                },
+                // queryExecStats: {},
               },
-              // queryExecStats: {},
             },
-          },
-        ]);
+          ])
+          .then((result) => [null, result])
+          .catch((err) => [err]);
+        if (error) {
+          throw new CodeException(CodeEnum.DB_EXEC_ERROR, error.message);
+        }
         collectionStatistics.push({
           aliasName,
           countSize: collStats[0].storageStats.count,
