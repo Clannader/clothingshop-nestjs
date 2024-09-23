@@ -125,6 +125,7 @@ export class DatabaseService {
         });
       }
     }
+    resp.dbVersion = buildInfo.version;
     return resp;
   }
 
