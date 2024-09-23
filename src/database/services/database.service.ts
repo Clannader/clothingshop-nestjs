@@ -57,11 +57,15 @@ export class DatabaseService {
     // const serverInfo = await this.mongooseConnection.db.admin().serverInfo();
     // 优先判断数据库版本,必须大于6才可以执行
     const buildInfo = await this.mongooseConnection.db.admin().buildInfo();
-    const versionNumber = buildInfo.versionArray[0]
-    if(versionNumber < 6) {
+    const versionNumber = buildInfo.versionArray[0];
+    if (versionNumber < 6) {
       throw new CodeException(
         CodeEnum.DB_VERSION_ERROR,
-        this.globalService.serverLang('数据库版本必须6.x以上,当前数据库版本:{0}', 'dbInfo.versionError', buildInfo.version),
+        this.globalService.serverLang(
+          '数据库版本必须6.x以上,当前数据库版本:{0}',
+          'dbInfo.versionError',
+          buildInfo.version,
+        ),
       );
     }
 
@@ -102,11 +106,17 @@ export class DatabaseService {
           countSize: collStats[0].storageStats.count,
           dbSize: +(collStats[0].storageStats.size / 1024).toFixed(2),
           dbSizeLabel: Utils.getFileSize(collStats[0].storageStats.size),
-          dbIndexSize: +(collStats[0].storageStats.totalIndexSize / 1024).toFixed(2),
-          dbIndexSizeLabel: Utils.getFileSize(collStats[0].storageStats.totalIndexSize),
+          dbIndexSize: +(
+            collStats[0].storageStats.totalIndexSize / 1024
+          ).toFixed(2),
+          dbIndexSizeLabel: Utils.getFileSize(
+            collStats[0].storageStats.totalIndexSize,
+          ),
           avgObjSize: +(collStats[0].storageStats.avgObjSize / 1024).toFixed(2),
-          avgObjSizeLabel: Utils.getFileSize(collStats[0].storageStats.avgObjSize),
-        })
+          avgObjSizeLabel: Utils.getFileSize(
+            collStats[0].storageStats.avgObjSize,
+          ),
+        });
       }
     }
     return resp;
