@@ -101,8 +101,11 @@ export class DatabaseService {
           aliasName,
           countSize: collStats[0].storageStats.count,
           dbSize: +(collStats[0].storageStats.size / 1024).toFixed(2),
+          dbSizeLabel: Utils.getFileSize(collStats[0].storageStats.size),
           dbIndexSize: +(collStats[0].storageStats.totalIndexSize / 1024).toFixed(2),
+          dbIndexSizeLabel: Utils.getFileSize(collStats[0].storageStats.totalIndexSize),
           avgObjSize: +(collStats[0].storageStats.avgObjSize / 1024).toFixed(2),
+          avgObjSizeLabel: Utils.getFileSize(collStats[0].storageStats.avgObjSize),
         })
       }
     }
