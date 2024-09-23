@@ -12,6 +12,7 @@ export enum CodeEnum {
   FIRST_LOGIN = 1009, // 第一次登录需要修改密码
   INVALID_TOKEN = 1010, // 无效的Token
   TOKEN_EXPIRED = 1011, // Token过期
+  DB_VERSION_ERROR = 1012, // 当前数据库版本不支持
   UNKNOWN = 9999, // 发生未知错误时返回该响应码
 }
 

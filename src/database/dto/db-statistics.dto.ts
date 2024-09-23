@@ -21,4 +21,9 @@ export class DbStatisticsDto {
    * 表的索引大小
    */
   dbIndexSize: number;
+
+  /**
+   * 平均每个数据占用大小
+   */
+  avgObjSize: number;
 }
