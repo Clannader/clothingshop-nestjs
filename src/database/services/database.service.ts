@@ -196,9 +196,11 @@ export class DatabaseService {
     // 遍历有效的数据库名
 
     for (const [dbName, defaultIndexInfo] of defaultIndexMap) {
+      // 减少查询数据库
       if (!aliasNames.includes(dbName)) {
         continue;
       }
+      // 因为循环的是默认索引,所以dbName肯定是正确的
       const collectionName = modelMap.get(dbName).collectionName;
       // 拿到某个表的全部索引信息
       const indexArray = await this.mongooseConnection
@@ -230,19 +232,13 @@ export class DatabaseService {
               indexOptions,
             )
           ) {
-            respIndexSchema.indexStatus = DbIndexType.Normal;
-            defaultIndex.indexStatus = DbIndexType.Normal;
+            respIndexSchema.indexStatus = DbIndexType.Normal; // 改变值跳出循环判断用
+            defaultIndex.indexStatus = DbIndexType.Normal; // 修改内存变量值
           }
         }
         if (respIndexSchema.indexStatus === DbIndexType.Difference) {
           defaultIndexInfo.push(respIndexSchema);
         }
-      }
-    }
-
-    for (const [dbName, defaultIndexInfo] of defaultIndexMap) {
-      if (!aliasNames.includes(dbName)) {
-        continue;
       }
       for (const indexInfo of defaultIndexInfo) {
         indexesList.push({
