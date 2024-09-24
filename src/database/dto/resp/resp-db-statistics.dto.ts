@@ -9,4 +9,9 @@ export class RespDbStatisticsDto extends CommonResult {
    * 每个表的统计集合
    */
   collectionStatistics: DbStatisticsDto[];
+
+  /**
+   * 数据库版本
+   */
+  dbVersion: string;
 }

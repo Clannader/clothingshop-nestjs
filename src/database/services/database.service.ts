@@ -1,34 +1,37 @@
 /**
  * Create by oliver.wu 2024/9/20
  */
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { InjectConnection } from '@nestjs/mongoose';
-import { Connection, Collection, Model } from 'mongoose';
+import { Collection, Connection, Model } from 'mongoose';
 
 import { GlobalService, Utils } from '@/common/utils';
 import { CommonResult } from '@/common/dto';
 import {
-  RespCollectionsNameDto,
-  ReqDbStatisticsDto,
-  RespDbStatisticsDto,
-  DbStatisticsDto,
-  RespDbIndexesListDto,
   DbIndexesDto,
+  DbStatisticsDto,
+  ReqDbStatisticsDto,
+  RespCollectionsNameDto,
+  RespDbIndexesListDto,
+  RespDbStatisticsDto,
 } from '../dto';
 import { CodeException } from '@/common/exceptions';
-import { CodeEnum } from '@/common/enum';
+import { CodeEnum, DbIndexType } from '@/common/enum';
 
-type ModelMap = {
+import { defaultIndexes } from '@/system/defaultSystemData';
+import type { IndexOptions, IndexSchema } from '@/system/defaultSystemData';
+
+export type ModelMap = {
   modelName: string;
   collectionName: string;
 };
 
-interface CustomCollection extends Collection {
+export interface CustomCollection extends Collection {
   modelName: string;
 }
 
-interface CustomModel extends Model<any> {
+export interface CustomModel extends Model<any> {
   getAliasName(): string;
 }
 
@@ -71,6 +74,7 @@ export class DatabaseService {
 
     // 把别名转换成真实数据库名
     const modelMap = this.getModelMap();
+    const fractionDigits = 2;
     for (const aliasName of aliasNames) {
       if (modelMap.has(aliasName)) {
         const modelInfo = modelMap.get(aliasName);
@@ -88,41 +92,57 @@ export class DatabaseService {
 
         // 这里是安装的数据库版本
         // 新的写法必须使用6.x以上的安装数据库版本执行
-        const name = modelInfo.collectionName;
+        // const name = modelInfo.collectionName;
         const collection = this.mongooseConnection.models[modelInfo.modelName];
-        const collStats = await collection.aggregate([
-          {
-            $collStats: {
-              // count: {},
-              storageStats: {
-                // scale: 1024
+        const [error, collStats] = await collection
+          .aggregate([
+            {
+              $collStats: {
+                // count: {},
+                storageStats: {
+                  // scale: 1024
+                },
+                // queryExecStats: {},
               },
-              // queryExecStats: {},
             },
-          },
-        ]);
+          ])
+          .then((result) => [null, result])
+          .catch((err) => [err]);
+        if (error) {
+          throw new CodeException(CodeEnum.DB_EXEC_ERROR, error.message);
+        }
         collectionStatistics.push({
           aliasName,
           countSize: collStats[0].storageStats.count,
-          dbSize: +(collStats[0].storageStats.size / 1024).toFixed(2),
-          dbSizeLabel: Utils.getFileSize(collStats[0].storageStats.size),
+          dbSize: +(collStats[0].storageStats.size / 1024).toFixed(
+            fractionDigits,
+          ),
+          dbSizeLabel: Utils.getFileSize(
+            collStats[0].storageStats.size,
+            fractionDigits,
+          ),
           dbIndexSize: +(
             collStats[0].storageStats.totalIndexSize / 1024
-          ).toFixed(2),
+          ).toFixed(fractionDigits),
           dbIndexSizeLabel: Utils.getFileSize(
             collStats[0].storageStats.totalIndexSize,
+            fractionDigits,
           ),
-          avgObjSize: +(collStats[0].storageStats.avgObjSize / 1024).toFixed(2),
+          avgObjSize: +(collStats[0].storageStats.avgObjSize / 1024).toFixed(
+            fractionDigits,
+          ),
           avgObjSizeLabel: Utils.getFileSize(
             collStats[0].storageStats.avgObjSize,
+            fractionDigits,
           ),
         });
       }
     }
+    resp.dbVersion = buildInfo.version;
     return resp;
   }
 
-  private getModelMap(): Map<string, ModelMap> {
+  getModelMap(): Map<string, ModelMap> {
     const modelMap = new Map<string, ModelMap>();
     const collections = this.mongooseConnection.collections; // 所有连接名
     for (const collection in collections) {
@@ -149,29 +169,85 @@ export class DatabaseService {
     if (Utils.isEmpty(aliasNames)) {
       return resp;
     }
+
+    // 构建默认索引Map
+    const defaultIndexMap = new Map<string, IndexSchema[]>();
+    for (const dbIndexInfo of defaultIndexes) {
+      const dbName = dbIndexInfo.aliasName;
+      const indexNameArray = [];
+      for (const key in dbIndexInfo.fields) {
+        indexNameArray.push(key);
+        indexNameArray.push(dbIndexInfo.fields[key]);
+      }
+      dbIndexInfo.indexName = indexNameArray.join('_');
+      dbIndexInfo.indexStatus = DbIndexType.Exception;
+      if (defaultIndexMap.has(dbName)) {
+        defaultIndexMap.get(dbName).push(dbIndexInfo);
+      } else {
+        defaultIndexMap.set(dbName, [dbIndexInfo]);
+      }
+    }
+
     // 构造一个Map,<aliasName, {modelName, collectionName}>
     const modelMap = this.getModelMap();
     // 遍历有效的数据库名
-    for (const aliasName of aliasNames) {
-      if (modelMap.has(aliasName)) {
-        const collectionName = modelMap.get(aliasName).collectionName;
-        const indexArray = await this.mongooseConnection
-          .collection(collectionName)
-          .indexInformation({ full: true });
-        for (const indexInfo of indexArray) {
-          if (indexInfo.name === '_id_') {
-            continue;
+
+    for (const [dbName, defaultIndexInfo] of defaultIndexMap) {
+      // 减少查询数据库
+      if (!aliasNames.includes(dbName)) {
+        continue;
+      }
+      // 因为循环的是默认索引,所以dbName肯定是正确的
+      const collectionName = modelMap.get(dbName).collectionName;
+      // 拿到某个表的全部索引信息
+      const indexArray = await this.mongooseConnection
+        .collection(collectionName)
+        .indexInformation({ full: true });
+      for (const indexInfo of indexArray) {
+        if (indexInfo.name === '_id_') {
+          continue;
+        }
+        const indexOptions: IndexOptions = Utils.pick(indexInfo, [
+          'unique',
+          'expireAfterSeconds',
+        ]);
+        const respIndexSchema: IndexSchema = {
+          aliasName: dbName,
+          indexName: indexInfo.name,
+          options: indexOptions,
+          fields: indexInfo.key,
+          indexStatus: DbIndexType.Difference,
+        };
+        for (const defaultIndex of defaultIndexInfo) {
+          // 这里需要注意的是建立索引的字段排序有可能不同,但代码可能判断是一样的
+          // 这里的判断字段是否相同是无序的,也就是说{a:1, b:1}和{b:1, a:1}代码判断是一样的
+          // 但是实际上索引的效果是不一样的,这个有点无法避免,那么能否判断索引的名字是否相同(索引默认名是按照字段的顺序起的)? 不可取,因为建立索引时可以另取名字
+          if (
+            Utils.compareObjects(defaultIndex.fields, indexInfo.key) &&
+            Utils.compareObjects(
+              Utils.omit(defaultIndex.options ?? {}, 'name'),
+              indexOptions,
+            )
+          ) {
+            respIndexSchema.indexStatus = DbIndexType.Normal; // 改变值跳出循环判断用
+            defaultIndex.indexStatus = DbIndexType.Normal; // 修改内存变量值
           }
-          indexesList.push({
-            aliasName,
-            indexName: indexInfo.name,
-            indexOptions: {}, // TODO 后期再修改
-            indexFields: indexInfo.key,
-            indexStatus: 1, // 后期再加入判断
-          });
+        }
+        if (respIndexSchema.indexStatus === DbIndexType.Difference) {
+          defaultIndexInfo.push(respIndexSchema);
         }
       }
+      for (const indexInfo of defaultIndexInfo) {
+        indexesList.push({
+          aliasName: dbName,
+          indexName: indexInfo.indexName,
+          indexOptions: indexInfo.options,
+          indexFields: indexInfo.fields,
+          indexStatus: indexInfo.indexStatus,
+        });
+      }
     }
+
     return resp;
   }
 

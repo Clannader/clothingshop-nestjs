@@ -148,6 +148,10 @@ export function ApiCommon(options?: HeadersOptions) {
       description: '当前数据库版本不支持',
     }),
     ApiResponse({
+      status: CodeEnum.DB_EXEC_ERROR,
+      description: '数据库执行语句异常',
+    }),
+    ApiResponse({
       status: CodeEnum.UNKNOWN,
       description: '发生未知错误时返回该响应码',
     }),

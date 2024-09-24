@@ -44,8 +44,8 @@ export class RepairDataController {
   @Post('dbIndex')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: '修复数据库索引',
-    description: '修复默认内置数据库索引',
+    summary: '修复数据库全部索引',
+    description: '修复全部默认内置的数据库索引',
   })
   @ApiCustomResponse({
     type: CommonResult,

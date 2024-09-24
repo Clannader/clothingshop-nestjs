@@ -21,6 +21,9 @@ export class MongooseConfigService implements MongooseOptionsFactory {
   // private readonly logger = new MongodbLogger(MongooseConfigService.name);
 
   createMongooseOptions(): MongooseModuleOptions {
+    // 参考连接
+    // https://www.mongodb.com/zh-cn/docs/drivers/php/laravel-mongodb/v5.x/fundamentals/connection/connection-options/
+    // https://www.mongodb.com/zh-cn/docs/drivers/csharp/current/fundamentals/connection/connection-options/
     return {
       uri: this.configService.getSecurityConfig('dbUrl'),
       retryDelay: 10 * 1000, // 重连的间隔时间10s
@@ -28,6 +31,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       user: this.configService.getSecurityConfig('dbUser'),
       pass: this.configService.getSecurityConfig('dbPws'),
       monitorCommands: false,
+      maxIdleTimeMS: 2000, // 空闲连接2秒后关闭
       // logger: this.logger, //TODO 暂时注掉再说吧
       connectionFactory: (connection: Connection) => {
         //数据库连接错误时报错

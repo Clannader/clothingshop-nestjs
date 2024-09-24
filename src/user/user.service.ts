@@ -195,7 +195,7 @@ export class UserService {
   getUserRoles(session: CmsSession): RespUserRolesDto {
     const resp = new RespUserRolesDto();
     resp.code = CodeEnum.SUCCESS;
-    resp.roles = Utils.tripleDESencryptBySession(
+    resp.roles = Utils.tripleDesEncryptBySession(
       Utils.stringToBase64('3000,3400,3410,3420'),
       session,
       this.secretConfig.get<string>('tripleIv'),

@@ -13,6 +13,7 @@ export enum CodeEnum {
   INVALID_TOKEN = 1010, // 无效的Token
   TOKEN_EXPIRED = 1011, // Token过期
   DB_VERSION_ERROR = 1012, // 当前数据库版本不支持
+  DB_EXEC_ERROR = 1013, // 数据库执行语句异常
   UNKNOWN = 9999, // 发生未知错误时返回该响应码
 }
 
@@ -72,4 +73,13 @@ export enum RequestMethod {
   DELETE = 'DELETE',
   PATCH = 'PATCH',
   OPTIONS = 'OPTIONS',
+}
+
+/**
+ * 索引差异类型
+ */
+export enum DbIndexType {
+  Exception = 0,
+  Normal = 1,
+  Difference = 2,
 }
