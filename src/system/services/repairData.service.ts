@@ -9,6 +9,8 @@ import { DatabaseService } from '@/database/services';
 import { defaultIndexes } from '../defaultSystemData';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
+import { CodeException } from '@/common/exceptions';
+import { CodeEnum } from '@/common/enum';
 
 @Injectable()
 export class RepairDataService {
@@ -36,9 +38,12 @@ export class RepairDataService {
       const collName = modelInfo.collectionName;
       // 这里发现就算有重复的索引也可以修复生成,并且不会报错
       // 所以不需要任何错误和结果了
-      await this.mongooseConnection
+      const [error, res] = await this.mongooseConnection
         .collection(collName)
-        .createIndex(dbIndexInfo.fields, dbIndexInfo.options);
+        .createIndex(dbIndexInfo.fields, dbIndexInfo.options).then(res => [null, res]).catch(error => [error]);
+      if (error) {
+        throw new CodeException(CodeEnum.DB_EXEC_ERROR, error.errorResponse.errmsg);
+      }
     }
 
     return resp;

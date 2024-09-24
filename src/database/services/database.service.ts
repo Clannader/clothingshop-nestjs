@@ -109,7 +109,7 @@ export class DatabaseService {
           .then((result) => [null, result])
           .catch((err) => [err]);
         if (error) {
-          throw new CodeException(CodeEnum.DB_EXEC_ERROR, error.message);
+          throw new CodeException(CodeEnum.DB_EXEC_ERROR, error.errorResponse.errmsg);
         }
         collectionStatistics.push({
           aliasName,
