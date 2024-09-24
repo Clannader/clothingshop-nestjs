@@ -74,3 +74,12 @@ export enum RequestMethod {
   PATCH = 'PATCH',
   OPTIONS = 'OPTIONS',
 }
+
+/**
+ * 索引差异类型
+ */
+export enum DbIndexType {
+  Exception = 0,
+  Normal = 1,
+  Difference = 2,
+}

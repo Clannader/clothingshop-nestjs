@@ -6,13 +6,12 @@ import { Injectable, Inject } from '@nestjs/common';
 import { CommonResult } from '@/common/dto';
 import { DatabaseService } from '@/database/services';
 
-import { defaultIndexes } from '../defaultSystemData'
+import { defaultIndexes } from '../defaultSystemData';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 
 @Injectable()
 export class RepairDataService {
-
   @Inject()
   private readonly databaseService: DatabaseService;
 
@@ -29,14 +28,18 @@ export class RepairDataService {
     const modelMap = this.databaseService.getModelMap();
     const resp = new CommonResult();
 
-    for(const dbIndexInfo of defaultIndexes) {
-      const modelInfo = modelMap.get(dbIndexInfo.aliasName)
+    for (const dbIndexInfo of defaultIndexes) {
+      const modelInfo = modelMap.get(dbIndexInfo.aliasName);
       if (!modelInfo) {
         continue;
       }
-      const collName = modelInfo.collectionName
-      const [error, result] = await this.mongooseConnection.collection(collName).createIndex(dbIndexInfo.fields, dbIndexInfo.options)
-        .then(result => [null, result]).catch(error => [error]);
+      const collName = modelInfo.collectionName;
+      const [error, result] = await this.mongooseConnection
+        .collection(collName)
+        .createIndex(dbIndexInfo.fields, dbIndexInfo.options)
+        // this.mongooseConnection.collection(collName).indexExists()
+        .then((result) => [null, result])
+        .catch((error) => [error]);
     }
 
     return resp;

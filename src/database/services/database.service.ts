@@ -17,7 +17,9 @@ import {
   DbIndexesDto,
 } from '../dto';
 import { CodeException } from '@/common/exceptions';
-import { CodeEnum } from '@/common/enum';
+import { CodeEnum, DbIndexType } from '@/common/enum';
+
+import { defaultIndexes, type IndexOptions } from '@/system/defaultSystemData';
 
 export type ModelMap = {
   modelName: string;
@@ -169,17 +171,38 @@ export class DatabaseService {
           if (indexInfo.name === '_id_') {
             continue;
           }
+          const indexOptions = Object.assign(
+            {},
+            {
+              unique: indexInfo.unique,
+              expireAfterSeconds: indexInfo.expireAfterSeconds,
+            },
+          );
           indexesList.push({
             aliasName,
             indexName: indexInfo.name,
-            indexOptions: {}, // TODO 后期再修改
+            indexOptions,
             indexFields: indexInfo.key,
-            indexStatus: 1, // 后期再加入判断
+            indexStatus: await this.getDbIndexStatus(
+              collectionName,
+              indexInfo.key,
+              indexOptions,
+            ),
           });
         }
       }
     }
     return resp;
+  }
+
+  async getDbIndexStatus(
+    collectionName: string,
+    indexFields: Record<string, any>,
+    indexOptions: IndexOptions,
+  ) {
+    const is = await this.mongooseConnection.collection(collectionName).indexExists("_id_")
+    console.log(is)
+    return DbIndexType.Difference;
   }
 
   getDbDetails() {

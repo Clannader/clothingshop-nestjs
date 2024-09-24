@@ -2,16 +2,28 @@
  * Create by oliver.wu 2024/9/24
  */
 
+export type IndexOptions = {
+  unique?: boolean;
+  expireAfterSeconds?: number;
+  name?: string;
+};
+
+export type IndexSchema = {
+  aliasName: string;
+  fields: Record<string, any>;
+  options?: IndexOptions;
+};
+
 // 默认索引
-export const defaultIndexes = [
+export const defaultIndexes: IndexSchema[] = [
   {
     aliasName: 'CmsUser',
     fields: {
-      email: 1
+      email: 1,
     },
     options: {
-      unique: true // 唯一索引
-    }
+      unique: true, // 唯一索引
+    },
   },
   {
     aliasName: 'CmsUser',
@@ -20,8 +32,8 @@ export const defaultIndexes = [
       adminType: 1,
     },
     options: {
-      unique: true // 唯一索引
-    }
+      unique: true, // 唯一索引
+    },
   },
   {
     aliasName: 'CmsUser',
@@ -39,12 +51,12 @@ export const defaultIndexes = [
   {
     aliasName: 'AccessLog',
     fields: {
-      date: 1
+      date: 1,
     },
     options: {
       name: 'expireClear',
-      expireAfterSeconds: 15 * 24 * 60 * 60 // 保留15天
-    }
+      expireAfterSeconds: 15 * 24 * 60 * 60, // 保留15天
+    },
   },
   {
     aliasName: 'CmsRightCode',
@@ -52,8 +64,8 @@ export const defaultIndexes = [
       code: 1,
     },
     options: {
-      unique: true
-    }
+      unique: true,
+    },
   },
   {
     aliasName: 'CmsRightCodeGroup',
@@ -61,7 +73,7 @@ export const defaultIndexes = [
       groupCode: 1,
     },
     options: {
-      unique: true
-    }
-  }
-]
+      unique: true,
+    },
+  },
+];
