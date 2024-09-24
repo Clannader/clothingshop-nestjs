@@ -19,11 +19,8 @@ import {
 import { CodeException } from '@/common/exceptions';
 import { CodeEnum, DbIndexType } from '@/common/enum';
 
-import {
-  defaultIndexes,
-  type IndexOptions,
-  IndexSchema,
-} from '@/system/defaultSystemData';
+import { defaultIndexes } from '@/system/defaultSystemData';
+import type { IndexOptions, IndexSchema } from '@/system/defaultSystemData';
 
 export type ModelMap = {
   modelName: string;
