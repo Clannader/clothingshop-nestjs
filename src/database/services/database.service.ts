@@ -19,16 +19,16 @@ import {
 import { CodeException } from '@/common/exceptions';
 import { CodeEnum } from '@/common/enum';
 
-type ModelMap = {
+export type ModelMap = {
   modelName: string;
   collectionName: string;
 };
 
-interface CustomCollection extends Collection {
+export interface CustomCollection extends Collection {
   modelName: string;
 }
 
-interface CustomModel extends Model<any> {
+export interface CustomModel extends Model<any> {
   getAliasName(): string;
 }
 
@@ -129,7 +129,7 @@ export class DatabaseService {
     return resp;
   }
 
-  private getModelMap(): Map<string, ModelMap> {
+  getModelMap(): Map<string, ModelMap> {
     const modelMap = new Map<string, ModelMap>();
     const collections = this.mongooseConnection.collections; // 所有连接名
     for (const collection in collections) {
