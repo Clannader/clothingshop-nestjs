@@ -53,6 +53,8 @@ export class RepairDataService {
   doSelfCheck() {
     // 返回自检查结果集
     const resp = new CommonResult();
+
+    // 检查索引是否修复完成,检查默认索引是否在数据库中即可,注意表不存在时需要忽略
     return resp;
   }
 }

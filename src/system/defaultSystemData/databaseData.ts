@@ -10,6 +10,8 @@ export type IndexOptions = {
 
 export type IndexSchema = {
   aliasName: string;
+  indexName?: string;
+  indexStatus?: number;
   fields: Record<string, any>;
   options?: IndexOptions;
 };

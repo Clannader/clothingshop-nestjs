@@ -1,20 +1,20 @@
 /**
  * Create by oliver.wu 2024/9/20
  */
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { InjectConnection } from '@nestjs/mongoose';
-import { Connection, Collection, Model } from 'mongoose';
+import { Collection, Connection, Model } from 'mongoose';
 
 import { GlobalService, Utils } from '@/common/utils';
 import { CommonResult } from '@/common/dto';
 import {
-  RespCollectionsNameDto,
-  ReqDbStatisticsDto,
-  RespDbStatisticsDto,
-  DbStatisticsDto,
-  RespDbIndexesListDto,
   DbIndexesDto,
+  DbStatisticsDto,
+  ReqDbStatisticsDto,
+  RespCollectionsNameDto,
+  RespDbIndexesListDto,
+  RespDbStatisticsDto,
 } from '../dto';
 import { CodeException } from '@/common/exceptions';
 import { CodeEnum, DbIndexType } from '@/common/enum';
@@ -45,11 +45,6 @@ export class DatabaseService {
 
   @Inject()
   private globalService: GlobalService;
-
-  private indexMap: Map<string, IndexSchema[]> = new Map<
-    string,
-    IndexSchema[]
-  >();
 
   async getDbStatistics(params: ReqDbStatisticsDto) {
     const resp = new RespDbStatisticsDto();
@@ -167,21 +162,6 @@ export class DatabaseService {
     return modelMap;
   }
 
-  getIndexMap(): Map<string, IndexSchema[]> {
-    if (!Utils.isEmpty(this.indexMap)) {
-      return this.indexMap;
-    }
-    for (const dbIndexInfo of defaultIndexes) {
-      const dbName = dbIndexInfo.aliasName;
-      if (this.indexMap.has(dbName)) {
-        this.indexMap.get(dbName).push(dbIndexInfo);
-      } else {
-        this.indexMap.set(dbName, [dbIndexInfo]);
-      }
-    }
-    return this.indexMap;
-  }
-
   async getDbIndexList(params: ReqDbStatisticsDto) {
     const resp = new RespDbIndexesListDto();
     const indexesList: DbIndexesDto[] = [];
@@ -192,70 +172,90 @@ export class DatabaseService {
     if (Utils.isEmpty(aliasNames)) {
       return resp;
     }
+
+    // 构建默认索引Map
+    const defaultIndexMap = new Map<string, IndexSchema[]>();
+    for (const dbIndexInfo of defaultIndexes) {
+      const dbName = dbIndexInfo.aliasName;
+      const indexNameArray = [];
+      for (const key in dbIndexInfo.fields) {
+        indexNameArray.push(key);
+        indexNameArray.push(dbIndexInfo.fields[key]);
+      }
+      dbIndexInfo.indexName = indexNameArray.join('_');
+      dbIndexInfo.indexStatus = DbIndexType.Exception;
+      if (defaultIndexMap.has(dbName)) {
+        defaultIndexMap.get(dbName).push(dbIndexInfo);
+      } else {
+        defaultIndexMap.set(dbName, [dbIndexInfo]);
+      }
+    }
+
     // 构造一个Map,<aliasName, {modelName, collectionName}>
     const modelMap = this.getModelMap();
     // 遍历有效的数据库名
-    for (const aliasName of aliasNames) {
-      if (modelMap.has(aliasName)) {
-        const collectionName = modelMap.get(aliasName).collectionName;
-        // 拿到某个表的全部索引信息
-        const indexArray = await this.mongooseConnection
-          .collection(collectionName)
-          .indexInformation({ full: true });
-        for (const indexInfo of indexArray) {
-          if (indexInfo.name === '_id_') {
-            continue;
-          }
-          const indexOptions = Utils.pick(indexInfo, [
-            'unique',
-            'expireAfterSeconds',
-          ]);
-          indexesList.push({
-            aliasName,
-            indexName: indexInfo.name,
-            indexOptions,
-            indexFields: indexInfo.key,
-            indexStatus: await this.getDbIndexStatus(
-              aliasName,
-              indexInfo.key,
+
+    for (const [dbName, defaultIndexInfo] of defaultIndexMap) {
+      if (!aliasNames.includes(dbName)) {
+        continue;
+      }
+      const collectionName = modelMap.get(dbName).collectionName;
+      // 拿到某个表的全部索引信息
+      const indexArray = await this.mongooseConnection
+        .collection(collectionName)
+        .indexInformation({ full: true });
+      for (const indexInfo of indexArray) {
+        if (indexInfo.name === '_id_') {
+          continue;
+        }
+        const indexOptions: IndexOptions = Utils.pick(indexInfo, [
+          'unique',
+          'expireAfterSeconds',
+        ]);
+        const respIndexSchema: IndexSchema = {
+          aliasName: dbName,
+          indexName: indexInfo.name,
+          options: indexOptions,
+          fields: indexInfo.key,
+          indexStatus: DbIndexType.Difference,
+        };
+        for (const defaultIndex of defaultIndexInfo) {
+          // 这里需要注意的是建立索引的字段排序有可能不同,但代码可能判断是一样的
+          // 这里的判断字段是否相同是无序的,也就是说{a:1, b:1}和{b:1, a:1}代码判断是一样的
+          // 但是实际上索引的效果是不一样的,这个有点无法避免,那么能否判断索引的名字是否相同(索引默认名是按照字段的顺序起的)? 不可取,因为建立索引时可以另取名字
+          if (
+            Utils.compareObjects(defaultIndex.fields, indexInfo.key) &&
+            Utils.compareObjects(
+              Utils.omit(defaultIndex.options ?? {}, 'name'),
               indexOptions,
-            ),
-          });
+            )
+          ) {
+            respIndexSchema.indexStatus = DbIndexType.Normal;
+            defaultIndex.indexStatus = DbIndexType.Normal;
+          }
+        }
+        if (respIndexSchema.indexStatus === DbIndexType.Difference) {
+          defaultIndexInfo.push(respIndexSchema);
         }
       }
     }
-    return resp;
-  }
 
-  /**
-   * 该方法只能判断进来的索引是否在数据库中
-   * @param aliasName
-   * @param indexFields
-   * @param indexOptions
-   */
-  async getDbIndexStatus(
-    aliasName: string,
-    indexFields: Record<string, any>,
-    indexOptions: IndexOptions,
-  ) {
-    const defaultIndexMap = this.getIndexMap();
-    // 取表的默认索引
-    const defaultIndexArray = defaultIndexMap.get(aliasName);
-    if (!defaultIndexArray) {
-      return DbIndexType.Difference;
-    }
-    for (const dbIndexInfo of defaultIndexArray) {
-      if (
-        Utils.compareObjects(dbIndexInfo.fields, indexFields) &&
-        Utils.compareObjects(
-          Utils.omit(dbIndexInfo.options ?? {}, 'name'),
-          indexOptions,
-        )
-      ) {
-        return DbIndexType.Normal;
+    for (const [dbName, defaultIndexInfo] of defaultIndexMap) {
+      if (!aliasNames.includes(dbName)) {
+        continue;
+      }
+      for (const indexInfo of defaultIndexInfo) {
+        indexesList.push({
+          aliasName: dbName,
+          indexName: indexInfo.indexName,
+          indexOptions: indexInfo.options,
+          indexFields: indexInfo.fields,
+          indexStatus: indexInfo.indexStatus,
+        });
       }
     }
-    return DbIndexType.Difference;
+
+    return resp;
   }
 
   getDbDetails() {
