@@ -38,11 +38,11 @@ export class RepairDataService {
       const collName = modelInfo.collectionName;
       // 这里发现就算有重复的索引也可以修复生成,并且不会报错
       // 所以不需要任何错误和结果了
-      const [error, res] = await this.mongooseConnection
+      const [error] = await this.mongooseConnection
         .collection(collName)
-        .createIndex(dbIndexInfo.fields, dbIndexInfo.options).then(res => [null, res]).catch(error => [error]);
+        .createIndex(dbIndexInfo.fields, dbIndexInfo.options).then((result) => [null, result]).catch(error => [error]);
       if (error) {
-        throw new CodeException(CodeEnum.DB_EXEC_ERROR, error.errorResponse.errmsg);
+        throw new CodeException(CodeEnum.DB_EXEC_ERROR, error.message);
       }
     }
 
