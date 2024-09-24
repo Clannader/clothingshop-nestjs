@@ -46,7 +46,10 @@ export class DatabaseService {
   @Inject()
   private globalService: GlobalService;
 
-  private indexMap: Map<string, IndexSchema[]> = new Map<string, IndexSchema[]>();
+  private indexMap: Map<string, IndexSchema[]> = new Map<
+    string,
+    IndexSchema[]
+  >();
 
   async getDbStatistics(params: ReqDbStatisticsDto) {
     const resp = new RespDbStatisticsDto();
@@ -173,7 +176,7 @@ export class DatabaseService {
       if (this.indexMap.has(dbName)) {
         this.indexMap.get(dbName).push(dbIndexInfo);
       } else {
-        this.indexMap.set(dbName, [dbIndexInfo])
+        this.indexMap.set(dbName, [dbIndexInfo]);
       }
     }
     return this.indexMap;
@@ -203,7 +206,10 @@ export class DatabaseService {
           if (indexInfo.name === '_id_') {
             continue;
           }
-          const indexOptions = Utils.pick(indexInfo, ['unique', 'expireAfterSeconds'])
+          const indexOptions = Utils.pick(indexInfo, [
+            'unique',
+            'expireAfterSeconds',
+          ]);
           indexesList.push({
             aliasName,
             indexName: indexInfo.name,
@@ -234,12 +240,18 @@ export class DatabaseService {
   ) {
     const defaultIndexMap = this.getIndexMap();
     // 取表的默认索引
-    const defaultIndexArray = defaultIndexMap.get(aliasName)
+    const defaultIndexArray = defaultIndexMap.get(aliasName);
     if (!defaultIndexArray) {
       return DbIndexType.Difference;
     }
     for (const dbIndexInfo of defaultIndexArray) {
-      if (Utils.compareObjects(dbIndexInfo.fields, indexFields) && Utils.compareObjects(Utils.omit(dbIndexInfo.options ?? {}, 'name'), indexOptions)) {
+      if (
+        Utils.compareObjects(dbIndexInfo.fields, indexFields) &&
+        Utils.compareObjects(
+          Utils.omit(dbIndexInfo.options ?? {}, 'name'),
+          indexOptions,
+        )
+      ) {
         return DbIndexType.Normal;
       }
     }

@@ -1,6 +1,15 @@
 import * as CryptoJS from 'crypto-js';
 import { tripleDES, ipExp, Supervisor_Rights } from '../constants';
-import { get, isPlainObject, has, forEach, cloneDeep, set, pick, omit } from 'lodash';
+import {
+  get,
+  isPlainObject,
+  has,
+  forEach,
+  cloneDeep,
+  set,
+  pick,
+  omit,
+} from 'lodash';
 import { Request } from 'express';
 import * as os from 'os';
 import { CmsSession } from '../types';
@@ -468,7 +477,7 @@ export class Utils {
     return true;
   }
 
-  static pick = pick
+  static pick = pick;
 
-  static omit = omit
+  static omit = omit;
 }
