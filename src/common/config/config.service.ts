@@ -175,7 +175,7 @@ export class ConfigService {
     return !Utils.isUndefined(internalValue) &&
       typeof isSecurity === 'boolean' &&
       isSecurity
-      ? Utils.tripleDESdecrypt(
+      ? Utils.tripleDesDecrypt(
           internalValue,
           this.secretConfig['tripleKey'],
           this.secretConfig['tripleIv'],

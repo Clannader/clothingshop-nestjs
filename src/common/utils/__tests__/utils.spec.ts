@@ -46,13 +46,13 @@ describe('Utils', () => {
   });
 
   it('3DES加解密 "a"', () => {
-    const encrypt = Utils.tripleDESencrypt('a');
-    expect(Utils.tripleDESdecrypt(encrypt)).toBe('a');
+    const encrypt = Utils.tripleDesEncrypt('a');
+    expect(Utils.tripleDesDecrypt(encrypt)).toBe('a');
 
     const key =
       'ClothingShopClothingShopClothingShopClothingShopClothingShopBBBB';
-    const encrypt2 = Utils.tripleDESencrypt('a', key);
-    expect(Utils.tripleDESdecrypt(encrypt2, key)).toBe('a');
+    const encrypt2 = Utils.tripleDesEncrypt('a', key);
+    expect(Utils.tripleDesDecrypt(encrypt2, key)).toBe('a');
   });
 
   it('base64加解密 "a"', () => {
@@ -147,6 +147,16 @@ describe('Utils', () => {
     expect(Utils.isEmpty([], true)).toBe(true);
     expect(Utils.isEmpty(123, true)).toBe(false);
     expect(Utils.isEmpty({}, true)).toBe(false);
+
+    const map = new Map();
+    expect(Utils.isEmpty(map)).toBe(true);
+    map.set('aa', 123);
+    expect(Utils.isEmpty(map)).toBe(false);
+
+    const set = new Set();
+    expect(Utils.isEmpty(set)).toBe(true);
+    set.add('222');
+    expect(Utils.isEmpty(set)).toBe(false);
   });
 
   it('测试 piiData方法', () => {

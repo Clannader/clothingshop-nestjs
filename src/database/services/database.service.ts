@@ -19,7 +19,11 @@ import {
 import { CodeException } from '@/common/exceptions';
 import { CodeEnum, DbIndexType } from '@/common/enum';
 
-import { defaultIndexes, type IndexOptions } from '@/system/defaultSystemData';
+import {
+  defaultIndexes,
+  type IndexOptions,
+  IndexSchema,
+} from '@/system/defaultSystemData';
 
 export type ModelMap = {
   modelName: string;
@@ -41,6 +45,8 @@ export class DatabaseService {
 
   @Inject()
   private globalService: GlobalService;
+
+  private indexMap: Map<string, IndexSchema[]> = new Map<string, IndexSchema[]>();
 
   async getDbStatistics(params: ReqDbStatisticsDto) {
     const resp = new RespDbStatisticsDto();
@@ -73,6 +79,7 @@ export class DatabaseService {
 
     // 把别名转换成真实数据库名
     const modelMap = this.getModelMap();
+    const fractionDigits = 2;
     for (const aliasName of aliasNames) {
       if (modelMap.has(aliasName)) {
         const modelInfo = modelMap.get(aliasName);
@@ -112,17 +119,26 @@ export class DatabaseService {
         collectionStatistics.push({
           aliasName,
           countSize: collStats[0].storageStats.count,
-          dbSize: +(collStats[0].storageStats.size / 1024).toFixed(2),
-          dbSizeLabel: Utils.getFileSize(collStats[0].storageStats.size),
+          dbSize: +(collStats[0].storageStats.size / 1024).toFixed(
+            fractionDigits,
+          ),
+          dbSizeLabel: Utils.getFileSize(
+            collStats[0].storageStats.size,
+            fractionDigits,
+          ),
           dbIndexSize: +(
             collStats[0].storageStats.totalIndexSize / 1024
-          ).toFixed(2),
+          ).toFixed(fractionDigits),
           dbIndexSizeLabel: Utils.getFileSize(
             collStats[0].storageStats.totalIndexSize,
+            fractionDigits,
           ),
-          avgObjSize: +(collStats[0].storageStats.avgObjSize / 1024).toFixed(2),
+          avgObjSize: +(collStats[0].storageStats.avgObjSize / 1024).toFixed(
+            fractionDigits,
+          ),
           avgObjSizeLabel: Utils.getFileSize(
             collStats[0].storageStats.avgObjSize,
+            fractionDigits,
           ),
         });
       }
@@ -148,6 +164,21 @@ export class DatabaseService {
     return modelMap;
   }
 
+  getIndexMap(): Map<string, IndexSchema[]> {
+    if (!Utils.isEmpty(this.indexMap)) {
+      return this.indexMap;
+    }
+    for (const dbIndexInfo of defaultIndexes) {
+      const dbName = dbIndexInfo.aliasName;
+      if (this.indexMap.has(dbName)) {
+        this.indexMap.get(dbName).push(dbIndexInfo);
+      } else {
+        this.indexMap.set(dbName, [dbIndexInfo])
+      }
+    }
+    return this.indexMap;
+  }
+
   async getDbIndexList(params: ReqDbStatisticsDto) {
     const resp = new RespDbIndexesListDto();
     const indexesList: DbIndexesDto[] = [];
@@ -164,6 +195,7 @@ export class DatabaseService {
     for (const aliasName of aliasNames) {
       if (modelMap.has(aliasName)) {
         const collectionName = modelMap.get(aliasName).collectionName;
+        // 拿到某个表的全部索引信息
         const indexArray = await this.mongooseConnection
           .collection(collectionName)
           .indexInformation({ full: true });
@@ -171,20 +203,14 @@ export class DatabaseService {
           if (indexInfo.name === '_id_') {
             continue;
           }
-          const indexOptions = Object.assign(
-            {},
-            {
-              unique: indexInfo.unique,
-              expireAfterSeconds: indexInfo.expireAfterSeconds,
-            },
-          );
+          const indexOptions = Utils.pick(indexInfo, ['unique', 'expireAfterSeconds'])
           indexesList.push({
             aliasName,
             indexName: indexInfo.name,
             indexOptions,
             indexFields: indexInfo.key,
             indexStatus: await this.getDbIndexStatus(
-              collectionName,
+              aliasName,
               indexInfo.key,
               indexOptions,
             ),
@@ -195,13 +221,28 @@ export class DatabaseService {
     return resp;
   }
 
+  /**
+   * 该方法只能判断进来的索引是否在数据库中
+   * @param aliasName
+   * @param indexFields
+   * @param indexOptions
+   */
   async getDbIndexStatus(
-    collectionName: string,
+    aliasName: string,
     indexFields: Record<string, any>,
     indexOptions: IndexOptions,
   ) {
-    const is = await this.mongooseConnection.collection(collectionName).indexExists("_id_")
-    console.log(is)
+    const defaultIndexMap = this.getIndexMap();
+    // 取表的默认索引
+    const defaultIndexArray = defaultIndexMap.get(aliasName)
+    if (!defaultIndexArray) {
+      return DbIndexType.Difference;
+    }
+    for (const dbIndexInfo of defaultIndexArray) {
+      if (Utils.compareObjects(dbIndexInfo.fields, indexFields) && Utils.compareObjects(Utils.omit(dbIndexInfo.options ?? {}, 'name'), indexOptions)) {
+        return DbIndexType.Normal;
+      }
+    }
     return DbIndexType.Difference;
   }
 

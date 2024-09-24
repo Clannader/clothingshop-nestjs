@@ -1,6 +1,6 @@
 import * as CryptoJS from 'crypto-js';
 import { tripleDES, ipExp, Supervisor_Rights } from '../constants';
-import { get, isPlainObject, has, forEach, cloneDeep, set } from 'lodash';
+import { get, isPlainObject, has, forEach, cloneDeep, set, pick, omit } from 'lodash';
 import { Request } from 'express';
 import * as os from 'os';
 import { CmsSession } from '../types';
@@ -50,10 +50,10 @@ export class Utils {
    * @param str 加密的内容
    * @param tripleKey 加密的key
    */
-  static tripleDESencrypt(str: string): string;
-  static tripleDESencrypt(str: string, tripleKey: string): string;
-  static tripleDESencrypt(str: string, tripleKey: string, iv: string): string;
-  static tripleDESencrypt(
+  static tripleDesEncrypt(str: string): string;
+  static tripleDesEncrypt(str: string, tripleKey: string): string;
+  static tripleDesEncrypt(str: string, tripleKey: string, iv: string): string;
+  static tripleDesEncrypt(
     str: string,
     tripleKey: string = tripleDES.key,
     iv: string = tripleDES.iv,
@@ -74,12 +74,12 @@ export class Utils {
    * @param session 用户的session
    * @param iv
    */
-  static tripleDESencryptBySession(
+  static tripleDesEncryptBySession(
     str: string,
     session: CmsSession,
     iv: string,
   ) {
-    return this.tripleDESencrypt(str, session.credential.substring(0, 64), iv);
+    return this.tripleDesEncrypt(str, session.credential.substring(0, 64), iv);
   }
 
   /**
@@ -87,10 +87,10 @@ export class Utils {
    * @param str 解密内容
    * @param tripleKey 解密的key
    */
-  static tripleDESdecrypt(str: string): string;
-  static tripleDESdecrypt(str: string, tripleKey: string): string;
-  static tripleDESdecrypt(str: string, tripleKey: string, iv: string): string;
-  static tripleDESdecrypt(
+  static tripleDesDecrypt(str: string): string;
+  static tripleDesDecrypt(str: string, tripleKey: string): string;
+  static tripleDesDecrypt(str: string, tripleKey: string, iv: string): string;
+  static tripleDesDecrypt(
     str: string,
     tripleKey: string = tripleDES.key,
     iv: string = tripleDES.iv,
@@ -127,7 +127,7 @@ export class Utils {
    * @param size 文件的字节大小
    * @param fixed 保留几位小数
    */
-  static getFileSize(size: number, fixed: number = 2): string {
+  static getFileSize(size: number, fixed?: number): string {
     if (size === 0) return '0B';
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -160,6 +160,8 @@ export class Utils {
     }
     if (Array.isArray(obj)) {
       return obj.length === 0;
+    } else if (obj instanceof Map || obj instanceof Set) {
+      return obj.size === 0;
     }
     return false;
   }
@@ -428,4 +430,45 @@ export class Utils {
       .toString()
       .substring(0, length > 40 ? 40 : length);
   }
+
+  static compareObjects(
+    objA: Record<string, any> | Array<any>,
+    objB: Record<string, any> | Array<any>,
+  ): boolean {
+    const objectAProperties = Object.getOwnPropertyNames(objA);
+    const objectBProperties = Object.getOwnPropertyNames(objB);
+    let propName = '';
+
+    if (objectAProperties.length !== objectBProperties.length) {
+      return false;
+    }
+
+    for (const element of objectAProperties) {
+      propName = element;
+      // 这里暂时排除__ob__
+      if (propName === '__ob__') {
+        continue;
+      }
+      if (objectBProperties.indexOf(propName) > -1) {
+        const isObj =
+          isPlainObject(objA[propName]) && isPlainObject(objB[propName]);
+        const isArr =
+          Array.isArray(objA[propName]) && Array.isArray(objB[propName]);
+        if (isArr || isObj) {
+          if (!this.compareObjects(objA[propName], objB[propName])) {
+            return false;
+          }
+        } else if (objA[propName] !== objB[propName]) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  static pick = pick
+
+  static omit = omit
 }
