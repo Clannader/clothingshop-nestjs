@@ -40,7 +40,9 @@ export class RepairDataService {
       // 所以不需要任何错误和结果了
       const [error] = await this.mongooseConnection
         .collection(collName)
-        .createIndex(dbIndexInfo.fields, dbIndexInfo.options).then((result) => [null, result]).catch(error => [error]);
+        .createIndex(dbIndexInfo.fields, dbIndexInfo.options)
+        .then((result) => [null, result])
+        .catch((error) => [error]);
       if (error) {
         throw new CodeException(CodeEnum.DB_EXEC_ERROR, error.message);
       }
