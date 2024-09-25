@@ -11,7 +11,7 @@ import * as onFinished from 'on-finished';
 import { AdminAccessService } from '@/entities/services';
 
 // @ts-ignore
-const cluster = require('node:cluster'); // 不明白这个包的引入问题,后期有版本修改了再说吧
+const cluster = require('node:cluster'); // 不明白这个包的引入问题,后期有解决办法修改了再说吧
 
 @Injectable()
 export class AopAspect {
