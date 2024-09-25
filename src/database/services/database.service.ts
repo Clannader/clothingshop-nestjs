@@ -231,6 +231,7 @@ export class DatabaseService {
           ) {
             respIndexSchema.indexStatus = DbIndexType.Normal; // 改变值跳出循环判断用
             defaultIndex.indexStatus = DbIndexType.Normal; // 修改内存变量值
+            break;
           }
         }
         if (respIndexSchema.indexStatus === DbIndexType.Difference) {

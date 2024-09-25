@@ -435,7 +435,7 @@ export class Utils {
    * 通过传入的内容,转换成40位的哈希值,然后截取前面几位,当做短的字符串不重复值使用
    */
   static getSha1Uuid(content = '', length = 8): string {
-    return CryptoJS.SHA1(new Date().getTime() + content.toString())
+    return CryptoJS.SHA1(this.getUuid() + content.toString())
       .toString()
       .substring(0, length > 40 ? 40 : length);
   }
