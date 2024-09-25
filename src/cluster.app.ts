@@ -1,12 +1,12 @@
 /**
  * Create by oliver.wu 2024/9/25
  */
-import cluster from 'cluster';
+// import * as cluster from 'node:cluster'; // 用这个声明,使用时ts编译不过去
+// @ts-ignore
+const cluster = require('node:cluster'); // 用这个声明的话,又不是ts的写法,暂时这样弄吧
 import { availableParallelism } from 'node:os';
 import parseEnv from '@/lib/parseEnv';
 import { bootstrap } from './single.app';
-
-// TODO 发现好像是Nestjs不支持集群
 
 export async function clusterApp() {
   let numCPUs = availableParallelism();
