@@ -10,6 +10,9 @@ import { AopLogger } from '@/logger';
 import * as onFinished from 'on-finished';
 import { AdminAccessService } from '@/entities/services';
 
+// @ts-ignore
+const cluster = require('node:cluster'); // 不明白这个包的引入问题,后期有版本修改了再说吧
+
 @Injectable()
 export class AopAspect {
   private readonly logger = new AopLogger(AopAspect.name);
@@ -64,7 +67,9 @@ export class AopAspect {
       }
       const diffTime = Date.now() - req.startTime.getTime();
 
-      this.logger.log(`请求响应时间: ${url} ${diffTime}ms`);
+      this.logger.log(
+        `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, 请求响应时间: ${url} ${diffTime}ms`,
+      );
 
       if (!session) {
         session = {
