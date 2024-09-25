@@ -6,9 +6,11 @@ import { availableParallelism } from 'node:os';
 import parseEnv from '@/lib/parseEnv';
 import { bootstrap } from './single.app';
 
+// TODO 发现好像是Nestjs不支持集群
+
 export async function clusterApp() {
   let numCPUs = availableParallelism();
-  console.log(cluster)
+
   if (cluster.isPrimary) {
     console.log(`Master Pid:${process.pid} is running`);
     // 根据config.ini的进程数量开启多少个进程
