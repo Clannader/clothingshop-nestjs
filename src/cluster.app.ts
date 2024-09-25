@@ -23,6 +23,7 @@ export async function clusterApp() {
     for (let i = 0; i < numCPUs; i++) {
       cluster.fork();
     }
+
     cluster.on('exit', function (worker, code) {
       //worker, code, signal
       //之所以打印2次监听是因为开启了http和https服务导致的
