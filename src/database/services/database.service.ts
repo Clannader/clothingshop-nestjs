@@ -2,7 +2,6 @@
  * Create by oliver.wu 2024/9/20
  */
 import { Inject, Injectable } from '@nestjs/common';
-
 import { InjectConnection } from '@nestjs/mongoose';
 import { Collection, Connection, Model } from 'mongoose';
 

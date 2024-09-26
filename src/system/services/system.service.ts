@@ -1,9 +1,12 @@
 import { Injectable, Inject } from '@nestjs/common';
+import * as fs from 'node:fs';
+import * as nodePath from 'node:path';
+
 import { RespWebConfigDto, WebConfigDto, RespPackageVersionDto } from '../dto';
+
 import { ConfigService } from '@/common/config';
 import { CodeEnum } from '@/common/enum';
-import * as fs from 'fs';
-import * as nodePath from 'path';
+
 import * as pkg from '../../../package.json';
 
 @Injectable()
