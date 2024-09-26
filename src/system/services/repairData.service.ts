@@ -74,6 +74,9 @@ export class RepairDataService {
       };
       await this.rightCodeSchemaService.createRightCode(rightCodeInfo);
     }
+    // 写一下修复权限代码的逻辑,如果数据库没有则插入,插入时写日志插入什么权限代码
+    // 如果有,考虑是否需要修复某些字段
+    // 数据库多出来的,考虑删除,需要写日志
     return resp;
   }
 
