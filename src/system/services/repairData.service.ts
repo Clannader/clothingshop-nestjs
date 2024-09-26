@@ -2,18 +2,18 @@
  * Create by oliver.wu 2024/9/19
  */
 import { Injectable, Inject } from '@nestjs/common';
-
-import { CommonResult } from '@/common/dto';
-import { DatabaseService } from '@/database/services';
-
-import { defaultIndexes } from '../defaultSystemData';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
+
+import { CommonResult } from '@/common/dto';
 import { CodeException } from '@/common/exceptions';
 import { CodeEnum } from '@/common/enum';
 
-import { RightsList } from '@/rights';
+import { DatabaseService } from '@/database/services';
 import { RightCodeSchemaService } from '@/entities/services';
+
+import { defaultIndexes } from '../defaultSystemData';
+import { RightsList } from '@/rights';
 
 import type { RightsProp, RightsConfig } from '@/rights';
 
@@ -85,7 +85,7 @@ export class RepairDataService {
         code: rightInfo.code,
         desc: rightInfo.desc,
         key: rightsKey,
-        ...(category ? { category } : {}),
+        ...(category ? { category } : {}), // 如果category有值则加入该字段,如果没值则不存在该字段
       });
       if (rightInfo.children) {
         rightsList.push(

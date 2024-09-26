@@ -103,7 +103,6 @@ export class SessionGuard implements CanActivate {
     if (!mergeRights) {
       return true;
     }
-    // TODO 这里判断权限,注意权限值是数字类型的,需要转换一下
     return true;
   }
 }
