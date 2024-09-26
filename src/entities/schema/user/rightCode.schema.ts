@@ -13,6 +13,9 @@ export class RightCode extends Document {
   code: string; // 权限内部代码
 
   @Prop()
+  key: string; // 代码中标识的权限的Key
+
+  @Prop()
   description: string; // 权限描述
 
   @Prop()
@@ -23,6 +26,16 @@ export class RightCode extends Document {
 
   @Prop()
   enLabel: string; // 权限英文显示
+}
+
+// 不懂如何挑选出自定义字段的声明出来,或者可以合并声明等,看以后能力了
+export interface RightCodeDoc {
+  code: string;
+  key: string;
+  description: string;
+  category: string;
+  cnLabel: string;
+  enLabel: string;
 }
 
 export const RightCodeSchema = SchemaFactory.createForClass(RightCode);

@@ -12,6 +12,11 @@ import { Connection } from 'mongoose';
 import { CodeException } from '@/common/exceptions';
 import { CodeEnum } from '@/common/enum';
 
+import { RightsList } from '@/rights';
+import { RightCodeSchemaService } from '@/entities/services';
+
+import type { RightsProp, RightsConfig } from '@/rights';
+
 @Injectable()
 export class RepairDataService {
   @Inject()
@@ -19,6 +24,9 @@ export class RepairDataService {
 
   @InjectConnection()
   private readonly mongooseConnection: Connection;
+
+  @Inject()
+  private readonly rightCodeSchemaService: RightCodeSchemaService;
 
   repairBaseData() {
     const resp = new CommonResult();
@@ -51,10 +59,41 @@ export class RepairDataService {
     return resp;
   }
 
-  repairRightsGroup() {
+  async repairRightsGroup() {
     // 包括修复权限代码和默认权限组
     const resp = new CommonResult();
+    const rightsArray = this.getRightsCodeArray(RightsList);
+    for (const rightInfo of rightsArray) {
+      const rightCodeInfo = {
+        code: rightInfo.code,
+        key: rightInfo.key,
+        description: rightInfo.desc,
+        category: rightInfo.category,
+        cnLabel: rightInfo.desc,
+        enLabel: '',
+      };
+      await this.rightCodeSchemaService.createRightCode(rightCodeInfo);
+    }
     return resp;
+  }
+
+  private getRightsCodeArray(defaultRights: RightsConfig, category?: string) {
+    const rightsList: RightsProp[] = [];
+    for (const rightsKey in defaultRights) {
+      const rightInfo = defaultRights[rightsKey];
+      rightsList.push({
+        code: rightInfo.code,
+        desc: rightInfo.desc,
+        key: rightsKey,
+        ...(category ? { category } : {}),
+      });
+      if (rightInfo.children) {
+        rightsList.push(
+          ...this.getRightsCodeArray(rightInfo.children, rightsKey),
+        );
+      }
+    }
+    return rightsList;
   }
 
   doSelfCheck() {
