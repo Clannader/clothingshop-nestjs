@@ -1,6 +1,6 @@
 /**
  * Create by CC on 2022/6/15
  */
-'use strict'
+'use strict';
 
-console.log(typeof +'123456789')
+console.log(typeof +'123456789');

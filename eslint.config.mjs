@@ -40,10 +40,7 @@ export default [
     //   node: true,
     //   jest: true,
     // },
-    files: [
-      'src/**/*.ts',
-      'test/**/*.ts',
-    ],
+    files: ['src/**/*.ts', 'test/**/*.ts'],
     rules: {
       '@typescript-eslint/interface-name-prefix': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
