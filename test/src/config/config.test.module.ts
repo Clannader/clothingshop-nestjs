@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { join } from 'path';
-import { ConfigModule } from 'src/common/modules';
+import { ConfigModule } from '@/common/modules';
 import { TestConfigModule } from './test.config.module';
 import { TestConfigTokenController } from './test.config.token.controller';
 import { TestConfigController } from './test.config.controller';

@@ -99,7 +99,7 @@ describe('LoginController (e2e)', () => {
       .expect((res) => {
         const body = res.body;
         expect(body.code).toEqual(1005);
-        expect(body.msg).toEqual('adminId must be a string');
+        expect(body.msg).toEqual('adminId should not be null or undefined');
         expect(body.timestamp).toBeDefined();
         expect(body.path).toEqual('/cms/api/user/login');
       });
