@@ -12,7 +12,6 @@ const __dirname = path.dirname(__filename);
 export default [
   /** ts推荐配置 */
   ...tsEslint.configs.recommended,
-  eslintParser.configs.recommended,
   /**
    * 配置全局变量
    */
