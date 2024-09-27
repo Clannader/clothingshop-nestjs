@@ -1,3 +1,6 @@
+/**
+ * @see https://www.prettier.cn/docs/options.html
+ */
 module.exports = {
   singleQuote: true,
   trailingComma: 'all',
