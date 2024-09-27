@@ -45,9 +45,11 @@ export class AopLogger extends ConsoleLogger {
     logger.error(AopLogger.getStackTrace(), message);
     const stackList: StackTrace.StackFrame[] = StackTrace.getSync();
     const stackContent = stackList.map((v) => v.source).join('\r\n');
-    console.error(stackContent);
-    if (stack) {
-      console.error(stack);
+    if (process.env.NODE_ENV !== 'test') {
+      console.error(stackContent);
+      if (stack) {
+        console.error(stack);
+      }
     }
   }
 
