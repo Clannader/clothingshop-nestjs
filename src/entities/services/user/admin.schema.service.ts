@@ -4,7 +4,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { AdminModel, Admin } from '../../schema';
+import { AdminModel, Admin, Test, TestModel } from '../../schema';
 import { GlobalService, Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
 import { userNameExp, LoginResult } from '@/common';
@@ -19,6 +19,9 @@ type LoginWhere = {
 export class AdminSchemaService {
   @InjectModel(Admin.name)
   private adminModel: AdminModel;
+
+  @InjectModel(Test.name)
+  private testModel: TestModel;
 
   @Inject()
   private globalService: GlobalService;
@@ -65,6 +68,7 @@ export class AdminSchemaService {
       .catch((err) => [err]);
     const err = findOneResult[0];
     let adminInfo = findOneResult[1];
+    await this.testModel.findOne()
     if (err) {
       return Promise.reject({
         message: err.message,

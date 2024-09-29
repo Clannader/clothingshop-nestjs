@@ -28,6 +28,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       user: this.configService.getSecurityConfig('dbUser'),
       pass: this.configService.getSecurityConfig('dbPws'),
       logger: this.logger,
+      maxIdleTimeMS: 2000,
       connectionFactory: (connection: Connection) => {
         //数据库连接错误时报错
         connection.on('error', function (err) {

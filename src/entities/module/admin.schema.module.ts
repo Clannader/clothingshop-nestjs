@@ -3,12 +3,15 @@
  */
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Admin, AdminSchema } from '../schema';
+import { Admin, AdminSchema, Test, TestSchema } from '../schema';
 import { AdminSchemaService } from '../services';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Admin.name, schema: AdminSchema }]),
+    MongooseModule.forFeature([
+      { name: Admin.name, schema: AdminSchema },
+      { name: Test.name, schema: TestSchema },
+    ]),
   ],
   providers: [AdminSchemaService],
   exports: [AdminSchemaService],
