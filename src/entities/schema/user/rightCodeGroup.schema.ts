@@ -2,7 +2,7 @@
  * Create by CC on 2024/9/19
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, HydratedDocument } from 'mongoose';
 import { groupCodeExp, rightsExp } from '@/common';
 
 @Schema()
@@ -26,6 +26,8 @@ export class RightCodeGroup {
   })
   rightCodes: string[]; // 权限组包含的权限代码
 }
+
+export type RightCodeGroupDocument = HydratedDocument<RightCodeGroup>;
 
 export const RightCodeGroupSchema =
   SchemaFactory.createForClass(RightCodeGroup);

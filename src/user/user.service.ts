@@ -19,7 +19,7 @@ import {
   RespUserRolesDto,
 } from './dto';
 import { AdminSchemaService } from '@/entities/services';
-import { Admin } from '@/entities/schema';
+import { AdminDocument } from '@/entities/schema';
 import { UserSessionService } from './user.session.service';
 import { UserMapper } from './user.mapper';
 
@@ -57,7 +57,7 @@ export class UserService {
       return err;
     }
 
-    const admin: Admin = result.adminInfo;
+    const admin: AdminDocument = result.adminInfo;
     const shop = result.shopInfo; // 以后如果@店铺进来的话,这个shopInfo就是@的店铺信息
     // const otherInfo = result.otherInfo; // 这个其他信息就是展开权限和展开店铺组的其他额外计算信息
     let isUpdate = false; // 判断是否更新用户信息

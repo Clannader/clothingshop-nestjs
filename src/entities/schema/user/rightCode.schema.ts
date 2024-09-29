@@ -2,7 +2,7 @@
  * Create by CC on 2024/9/19
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, HydratedDocument } from 'mongoose';
 
 @Schema()
 export class RightCode {
@@ -27,6 +27,8 @@ export class RightCode {
   @Prop()
   enLabel: string; // 权限英文显示
 }
+
+export type RightCodeDocument = HydratedDocument<RightCode>;
 
 export const RightCodeSchema = SchemaFactory.createForClass(RightCode);
 
