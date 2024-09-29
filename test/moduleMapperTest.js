@@ -5,8 +5,8 @@
 const { pathsToModuleNameMapper } = require('ts-jest/utils');
 const mapper = pathsToModuleNameMapper(
   {
-    "@/*": ['src/*'],
-    "@T/*": ['test/src/*']
+    '@/*': ['src/*'],
+    '@T/*': ['test/src/*'],
   },
   {
     // prefix: '<rootDir>/..', // 如果是test的运行使用这个前缀

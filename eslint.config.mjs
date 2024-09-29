@@ -48,6 +48,7 @@ export default [
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/no-unused-vars': 'off', // 暂时关闭,后面需要开启检测的
     },
   },
   // 忽略文件
