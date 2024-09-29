@@ -2,12 +2,12 @@
  * Create by CC on 2022/6/8
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { UpdateLoginWhere } from '@/common';
 import { UserTypeEnum } from '@/common/enum';
 
 @Schema()
-export class Admin extends Document {
+export class Admin {
   @Prop({
     required: true,
     trim: true, // 去除数据前后的空格
