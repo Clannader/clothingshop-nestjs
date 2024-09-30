@@ -6,7 +6,6 @@ import { Model } from 'mongoose';
 
 @Schema()
 export class TestTeacher {
-  type: string;
   name: string;
   age: number;
   sex: string;

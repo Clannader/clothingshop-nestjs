@@ -24,7 +24,18 @@ export class TestSchemaService {
   @InjectModel(TestStudent.name)
   private testStudentModel: TestStudentModel;
 
-  testFindList() {
-    console.log('11111');
+  async testFindList() {
+    const obj = {
+      name: '111',
+      age: 3,
+      sex: '1',
+      score: 333,
+      teacherId: '33232'
+    }
+    await this.testStudentModel.create(obj)
+    await this.testTeacherModel.create(obj)
+    this.testPersonModel.find().then(result => {
+      console.log(result)
+    })
   }
 }
