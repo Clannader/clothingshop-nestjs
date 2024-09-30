@@ -168,11 +168,11 @@ export async function bootstrap() {
     jsonDocumentUrl: 'swagger-ui/json', // 默认为swagger-ui-json,可以自定义更换
   });
 
-  const server = await app.listen(port).then(server => {
+  const server = await app.listen(port).then((server) => {
     aopLogger.log(`Application is running on: ${hostName}/swagger-ui`);
     aopLogger.log(`SwaggerJson is running on: ${hostName}/swagger-ui/json`);
     aopLogger.log(`Node Version: ${process.version}`);
-    return server
+    return server;
   });
   server.keepAliveTimeout = 10 * 1000; // 设置服务器keep alive 为10s,与客户端TCP保持10s长连接无需握手
 }

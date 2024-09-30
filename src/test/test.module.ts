@@ -5,6 +5,8 @@ import { AdminSchemaModule } from '@/entities/modules';
 // import { ConfigModule } from '../common';
 // import { UserModule } from '../user/user.module';
 
+import { TestSchemaModule } from '@/entities/modules';
+
 @Module({
   imports: [
     // ConfigModule.register({
@@ -13,6 +15,7 @@ import { AdminSchemaModule } from '@/entities/modules';
     //   token: 'TEST_CONFIG',
     // }),
     // UserModule,
+    TestSchemaModule,
     AdminSchemaModule,
     MemoryCacheModule,
   ],
