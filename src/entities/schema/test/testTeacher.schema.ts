@@ -4,8 +4,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { CommonPerson } from './testPerson.schema';
+
 @Schema()
-export class TestTeacher {
+export class TestTeacher extends CommonPerson {
   @Prop()
   teacherId: string;
 }

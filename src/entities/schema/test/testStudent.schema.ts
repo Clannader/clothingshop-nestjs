@@ -4,8 +4,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { CommonPerson } from './testPerson.schema';
+
 @Schema()
-export class TestStudent {
+export class TestStudent extends CommonPerson{
   @Prop()
   score: number;
 }

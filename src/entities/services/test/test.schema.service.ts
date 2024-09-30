@@ -32,8 +32,8 @@ export class TestSchemaService {
       score: 333,
       teacherId: '33232',
     };
-    // await this.testStudentModel.create(obj)
-    // await this.testTeacherModel.create(obj)
+    await this.testStudentModel.create(obj)
+    await this.testTeacherModel.create(obj)
     await this.testPersonModel.find().then((result) => {
       // 这里可以查询全部的数据
       console.log(result);
