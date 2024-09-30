@@ -30,21 +30,21 @@ export class TestSchemaService {
       age: 3,
       sex: '1',
       score: 333,
-      teacherId: '33232'
-    }
+      teacherId: '33232',
+    };
     // await this.testStudentModel.create(obj)
     // await this.testTeacherModel.create(obj)
-    await this.testPersonModel.find().then(result => {
+    await this.testPersonModel.find().then((result) => {
       // 这里可以查询全部的数据
-      console.log(result)
-    })
-    await this.testTeacherModel.find().then(result => {
+      console.log(result);
+    });
+    await this.testTeacherModel.find().then((result) => {
       // 仅查询Teacher的数据
-      console.log(result)
-    })
-    await this.testStudentModel.find().then(result => {
+      console.log(result);
+    });
+    await this.testStudentModel.find().then((result) => {
       // 仅查询Student的数据
-      console.log(result)
-    })
+      console.log(result);
+    });
   }
 }
