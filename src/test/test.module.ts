@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TestController } from './test.controller';
 import { MemoryCacheModule } from '@/cache/modules';
-import { AdminSchemaModule } from 'src/entities/modules';
+import { AdminSchemaModule } from '@/entities/modules';
 // import { ConfigModule } from '../common';
 // import { UserModule } from '../user/user.module';
+
+import { TestSchemaModule } from '@/entities/modules';
 
 @Module({
   imports: [
@@ -13,6 +15,7 @@ import { AdminSchemaModule } from 'src/entities/modules';
     //   token: 'TEST_CONFIG',
     // }),
     // UserModule,
+    TestSchemaModule,
     AdminSchemaModule,
     MemoryCacheModule,
   ],

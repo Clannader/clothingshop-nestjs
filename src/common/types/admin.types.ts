@@ -1,4 +1,4 @@
-import { Admin } from '@/entities/schema';
+import type { AdminDocument } from '@/entities/schema';
 
 export type UpdateLoginWhere = {
   retryNumber?: number;
@@ -11,7 +11,7 @@ export type LoginResult = {
   expireMsg?: string;
   currentDate?: Date;
   code: number;
-  adminInfo: Admin;
+  adminInfo: AdminDocument;
   shopInfo: object | string; //TODO 暂时这样定义,后期改
   otherInfo: {
     rights: string[];

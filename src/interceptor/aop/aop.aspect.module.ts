@@ -3,7 +3,7 @@
  */
 import { Module } from '@nestjs/common';
 import { AopAspect } from './aop.aspect';
-import { AdminAccessModule } from 'src/entities/modules';
+import { AdminAccessModule } from '@/entities/modules';
 
 @Module({
   imports: [AdminAccessModule],

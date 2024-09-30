@@ -4,147 +4,151 @@
  * 如果超过2位,考虑使用字母或者使用2位数,例如 10 01 01 => 100101
  */
 
-type RightsConfig = {
-  [key: string]: {
-    code: string;
-    desc: string;
-    children?: RightsConfig;
-  };
+export type RightsProp = RightsConfigElement & {
+  key: string;
+  category?: string;
 };
 
-export const RightsList: RightsConfig = {
-  OtherSetup: {
-    code: '3000',
-    desc: '其他设置',
-  },
-  SystemDataSetup: {
-    code: '3010',
-    desc: '系统数据设置',
-    children: {
-      // 针对系统中各种杂七杂八的数据配置
-      SystemBaseSetup: {
-        code: '3011',
-        desc: '基础设置',
-      },
-      // 查库依赖包版本
-      PackageVersionSetup: {
-        code: '3012',
-        desc: '获取依赖包版本',
-      },
-      // 后续计划邮箱设置,国家/省份/城市设置,动态参数设置,消息设置,都归属在里面吧
-    },
-  },
-  UserSetup: {
-    code: '3020',
-    desc: '用户管理',
-  },
-  RightsSetup: {
-    code: '3030',
-    desc: '权限设置',
-    children: {
-      RightsGroupSetup: {
-        code: '3031',
-        desc: '权限组设置',
-        children: {
-          RightsGroupCreate: {
-            code: '30311',
-            desc: '新建权限组',
-          },
-          RightsGroupModify: {
-            code: '30312',
-            desc: '编辑权限组',
-          },
-          RightsGroupDelete: {
-            code: '30313',
-            desc: '删除权限组',
-          },
-        },
-      },
-      RightsCodeSetup: {
-        code: '3032',
-        desc: '权限代码设置',
-        children: {
-          RightsCodeModify: {
-            code: '30321',
-            desc: '编辑权限代码',
-          },
-        },
-      },
-    },
-  },
-  RepairData: {
-    code: '3040',
-    desc: '修复系统数据',
-    children: {
-      RepairBaseData: {
-        code: '3041',
-        desc: '修复基础数据',
-      },
-      RepairDBIndex: {
-        code: '3042',
-        desc: '修复数据库索引',
-      },
-      RepairRightsGroup: {
-        code: '3043',
-        desc: '修复权限数据',
-      },
-      SelfCheck: {
-        code: '3044',
-        desc: '自动检查',
-      },
-    },
-  },
-  DatabaseManage: {
-    code: '3050',
-    desc: '数据库管理',
-    children: {
-      DbStatistics: {
-        code: '3051',
-        desc: '数据库统计',
-      },
-      DbIndexManage: {
-        code: '3052',
-        desc: '索引管理',
-      },
-      DbDetails: {
-        code: '3053',
-        desc: '数据库详情',
-      },
-      DbLogs: {
-        code: '3054',
-        desc: '数据库日志',
-      },
-    },
-  },
+type RightsConfigElement = {
+  code: string;
+  desc: string;
+  children?: RightsConfig;
+};
+
+export type RightsConfig = {
+  [key: string]: RightsConfigElement;
 };
 
 // 这里定义的枚举的值是数字,ts编译不过去,坑爹,其实也可以是字符串的
 export enum RightsEnum {
-  OtherSetup = +RightsList.OtherSetup.code,
-  SystemDataSetup = +RightsList.SystemDataSetup.code,
-  SystemBaseSetup = +RightsList.SystemDataSetup.children.SystemBaseSetup.code,
-  PackageVersionSetup = +RightsList.SystemDataSetup.children.PackageVersionSetup
-    .code,
-  UserSetup = +RightsList.UserSetup.code,
-  RightsSetup = +RightsList.RightsSetup.code,
-  RightsGroupSetup = +RightsList.RightsSetup.children.RightsGroupSetup.code,
-  RightsGroupCreate = +RightsList.RightsSetup.children.RightsGroupSetup.children
-    .RightsGroupCreate.code,
-  RightsGroupModify = +RightsList.RightsSetup.children.RightsGroupSetup.children
-    .RightsGroupModify.code,
-  RightsGroupDelete = +RightsList.RightsSetup.children.RightsGroupSetup.children
-    .RightsGroupDelete.code,
-  RightsCodeSetup = +RightsList.RightsSetup.children.RightsCodeSetup.code,
-  RightsCodeModify = +RightsList.RightsSetup.children.RightsCodeSetup.children
-    .RightsCodeModify.code,
-  RepairData = +RightsList.RepairData.code,
-  RepairBaseData = +RightsList.RepairData.children.RepairBaseData.code,
-  RepairDBIndex = +RightsList.RepairData.children.RepairDBIndex.code,
-  RepairRightsGroup = +RightsList.RepairData.children.RepairRightsGroup.code,
-  SelfCheck = +RightsList.RepairData.children.SelfCheck.code,
-  DatabaseManage = +RightsList.DatabaseManage.code,
-  DbStatistics = +RightsList.DatabaseManage.children.DbStatistics.code,
-  DbIndexManage = +RightsList.DatabaseManage.children.DbIndexManage.code,
-  DbDetails = +RightsList.DatabaseManage.children.DbDetails.code,
-  DbLogs = +RightsList.DatabaseManage.children.DbLogs.code,
+  OtherSetup = '3000',
+  SystemDataSetup = '3010',
+  SystemBaseSetup = '3011',
+  PackageVersionSetup = '3012',
+  UserSetup = '3020',
+  RightsSetup = '3030',
+  RightsGroupSetup = '3031',
+  RightsGroupCreate = '30311',
+  RightsGroupModify = '30312',
+  RightsGroupDelete = '30313',
+  RightsCodeSetup = '3032',
+  RightsCodeModify = '30321',
+  RepairData = '3040',
+  RepairBaseData = '3041',
+  RepairDBIndex = '3042',
+  RepairRightsGroup = '3043',
+  SelfCheck = '3044',
+  DatabaseManage = '3050',
+  DbStatistics = '3051',
+  DbIndexManage = '3052',
+  DbDetails = '3053',
+  DbLogs = '3054',
 }
+
+export const RightsList: RightsConfig = {
+  OtherSetup: {
+    code: RightsEnum.OtherSetup, // 3000
+    desc: '其他设置',
+    children: {
+      SystemDataSetup: {
+        code: RightsEnum.SystemDataSetup, // 3010
+        desc: '系统数据设置',
+        children: {
+          // 针对系统中各种杂七杂八的数据配置
+          SystemBaseSetup: {
+            code: RightsEnum.SystemBaseSetup, // 3011
+            desc: '基础设置',
+          },
+          // 查库依赖包版本
+          PackageVersionSetup: {
+            code: RightsEnum.PackageVersionSetup, // 3012
+            desc: '获取依赖包版本',
+          },
+          // 后续计划邮箱设置,国家/省份/城市设置,动态参数设置,消息设置,都归属在里面吧
+        },
+      },
+      UserSetup: {
+        code: RightsEnum.UserSetup, // 3020
+        desc: '用户管理',
+      },
+      RightsSetup: {
+        code: RightsEnum.RightsSetup, // 3030
+        desc: '权限设置',
+        children: {
+          RightsGroupSetup: {
+            code: RightsEnum.RightsGroupSetup, // 3031
+            desc: '权限组设置',
+            children: {
+              RightsGroupCreate: {
+                code: RightsEnum.RightsGroupCreate, // 30311
+                desc: '新建权限组',
+              },
+              RightsGroupModify: {
+                code: RightsEnum.RightsGroupModify, // 30312
+                desc: '编辑权限组',
+              },
+              RightsGroupDelete: {
+                code: RightsEnum.RightsGroupDelete, // 30313
+                desc: '删除权限组',
+              },
+            },
+          },
+          RightsCodeSetup: {
+            code: RightsEnum.RightsCodeSetup, // 3032
+            desc: '权限代码设置',
+            children: {
+              RightsCodeModify: {
+                code: RightsEnum.RightsCodeModify, // 30321
+                desc: '编辑权限代码',
+              },
+            },
+          },
+        },
+      },
+      RepairData: {
+        code: RightsEnum.RepairData, // 3040
+        desc: '修复系统数据',
+        children: {
+          RepairBaseData: {
+            code: RightsEnum.RepairBaseData, // 3041
+            desc: '修复基础数据',
+          },
+          RepairDBIndex: {
+            code: RightsEnum.RepairDBIndex, // 3042
+            desc: '修复数据库索引',
+          },
+          RepairRightsGroup: {
+            code: RightsEnum.RepairRightsGroup, // 3043
+            desc: '修复权限数据',
+          },
+          SelfCheck: {
+            code: RightsEnum.SelfCheck, // 3044
+            desc: '自动检查',
+          },
+        },
+      },
+      DatabaseManage: {
+        code: RightsEnum.DatabaseManage, // 3050
+        desc: '数据库管理',
+        children: {
+          DbStatistics: {
+            code: RightsEnum.DbStatistics, // 3051
+            desc: '数据库统计',
+          },
+          DbIndexManage: {
+            code: RightsEnum.DbIndexManage, // 3052
+            desc: '索引管理',
+          },
+          DbDetails: {
+            code: RightsEnum.DbDetails, // 3053
+            desc: '数据库详情',
+          },
+          DbLogs: {
+            code: RightsEnum.DbLogs, // 3054
+            desc: '数据库日志',
+          },
+        },
+      },
+    },
+  },
+};

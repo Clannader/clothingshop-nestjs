@@ -7,6 +7,9 @@ import { clean } from 'node-xss';
 import { AopLogger } from '@/logger';
 import { AopAspect } from '@/interceptor/aop';
 
+// @ts-ignore
+const cluster = require('node:cluster');
+
 @Injectable()
 export class AopMiddleware implements NestMiddleware {
   private readonly logger = new AopLogger(AopMiddleware.name);
@@ -29,7 +32,9 @@ export class AopMiddleware implements NestMiddleware {
     req.query = JSON.parse(clean(JSON.stringify(req.query)));
     req.body = JSON.parse(clean(JSON.stringify(req.body)));
     if (this.configService.get<boolean>('printUrl', true)) {
-      this.logger.log(`请求:${method} ${url}`);
+      this.logger.log(
+        `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, ${method} 请求: ${url}`,
+      );
     }
 
     req.startTime = new Date();

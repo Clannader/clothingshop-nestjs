@@ -1,13 +1,13 @@
-const path = require('path')
+const path = require('path');
 
-module.exports = function(options) {
+module.exports = function (options) {
   return {
     ...options,
     output: {
       // ...options.output,
       path: path.join(process.cwd(), 'build'),
       // filename: 'main.[chunkhash].js'
-      filename: 'main.js'
+      filename: 'main.js',
     },
     optimization: {
       ...options.optimization,

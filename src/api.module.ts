@@ -2,7 +2,6 @@
  * 这里是cms系统的api模块
  */
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { join } from 'path';
 

@@ -2,15 +2,18 @@
  * Create by CC on 2024/9/19
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Model } from 'mongoose';
+import { Model, HydratedDocument } from 'mongoose';
 
 @Schema()
-export class RightCode extends Document {
+export class RightCode {
   @Prop({
     required: true,
     trim: true,
   })
   code: string; // 权限内部代码
+
+  @Prop()
+  key: string; // 代码中标识的权限的Key
 
   @Prop()
   description: string; // 权限描述
@@ -24,6 +27,8 @@ export class RightCode extends Document {
   @Prop()
   enLabel: string; // 权限英文显示
 }
+
+export type RightCodeDocument = HydratedDocument<RightCode>;
 
 export const RightCodeSchema = SchemaFactory.createForClass(RightCode);
 

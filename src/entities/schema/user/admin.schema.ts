@@ -2,12 +2,12 @@
  * Create by CC on 2022/6/8
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Model } from 'mongoose';
+import { Model, HydratedDocument } from 'mongoose';
 import { UpdateLoginWhere } from '@/common';
 import { UserTypeEnum } from '@/common/enum';
 
 @Schema()
-export class Admin extends Document {
+export class Admin {
   @Prop({
     required: true,
     trim: true, // 去除数据前后的空格
@@ -81,6 +81,8 @@ export class Admin extends Document {
   isFirstLogin: boolean; // 新增用户默认true,设置用户密码时变成true,判断用户是否是第一次登录
   // 则需要修改密码
 }
+
+export type AdminDocument = HydratedDocument<Admin>;
 
 export const AdminSchema = SchemaFactory.createForClass(Admin);
 

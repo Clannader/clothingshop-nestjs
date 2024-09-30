@@ -2,12 +2,12 @@
  * Create by CC on 2022/6/2
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { ipExp } from '@/common';
 import { UserTypeEnum, LogTypeEnum, RequestMethod } from '@/common/enum';
 
 @Schema()
-export class AdminAccess extends Document {
+export class AdminAccess {
   @Prop({ required: true })
   adminId: string; // 用户的唯一ID
 

@@ -5,3 +5,4 @@ export * from './admin.access.module';
 export * from './admin.schema.module';
 export * from './rightCode.schema.module';
 export * from './rightCodeGroup.schema.module';
+export * from './test.schema.module';

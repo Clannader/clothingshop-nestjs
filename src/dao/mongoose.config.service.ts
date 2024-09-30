@@ -24,6 +24,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
     // 参考连接
     // https://www.mongodb.com/zh-cn/docs/drivers/php/laravel-mongodb/v5.x/fundamentals/connection/connection-options/
     // https://www.mongodb.com/zh-cn/docs/drivers/csharp/current/fundamentals/connection/connection-options/
+    // 代码默认10个连接池,每个连接池默认2个连接,如果开启集群,那么每个集群都会创建独立新的连接
     return {
       uri: this.configService.getSecurityConfig('dbUrl'),
       retryDelay: 10 * 1000, // 重连的间隔时间10s
@@ -32,25 +33,35 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       pass: this.configService.getSecurityConfig('dbPws'),
       monitorCommands: false,
       maxIdleTimeMS: 2000, // 空闲连接2秒后关闭
+      maxPoolSize: 10,
+      maxConnecting: 2, // 默认2
       // logger: this.logger, //TODO 暂时注掉再说吧
       connectionFactory: (connection: Connection) => {
         //数据库连接错误时报错
         connection.on('error', function (err) {
-          console.error('数据库出错');
-          console.error(err);
+          if (process.env.NODE_ENV !== 'test') {
+            console.error('数据库出错');
+            console.error(err);
+          }
         });
 
         connection.on('close', function () {
           //self
-          console.error('数据库已关闭');
+          if (process.env.NODE_ENV !== 'test') {
+            console.error('数据库已关闭');
+          }
         });
 
         connection.on('disconnected', function () {
-          console.error('数据库已断开');
+          if (process.env.NODE_ENV !== 'test') {
+            console.error('数据库已断开');
+          }
         });
 
         connection.on('reconnected', function () {
-          console.error('数据库重连成功');
+          if (process.env.NODE_ENV !== 'test') {
+            console.error('数据库重连成功');
+          }
         });
         connection.plugin(monitorPlugin);
 

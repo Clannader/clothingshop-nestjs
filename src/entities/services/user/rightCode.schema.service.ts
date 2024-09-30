@@ -4,7 +4,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { RightCodeModel, RightCode } from '../../schema';
+import { RightCode } from '../../schema';
+import type { RightCodeModel } from '../../schema';
 
 @Injectable()
 export class RightCodeSchemaService {
@@ -13,5 +14,18 @@ export class RightCodeSchemaService {
 
   getModel() {
     return this.rightCodeModel;
+  }
+
+  async createRightCode(rightCodeDoc: RightCode) {
+    // 暂时这样写能把数据进库再说,后期还需要修改
+    const filter = {
+      code: rightCodeDoc.code,
+    };
+    const updateFilter = {
+      $set: rightCodeDoc,
+    };
+    await this.rightCodeModel.findOneAndUpdate(filter, updateFilter, {
+      upsert: true,
+    });
   }
 }

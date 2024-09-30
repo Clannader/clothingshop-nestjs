@@ -2,11 +2,11 @@
  * Create by CC on 2024/9/19
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Model } from 'mongoose';
+import { Model, HydratedDocument } from 'mongoose';
 import { groupCodeExp, rightsExp } from '@/common';
 
 @Schema()
-export class RightCodeGroup extends Document {
+export class RightCodeGroup {
   @Prop({
     required: true,
     trim: true,
@@ -26,6 +26,8 @@ export class RightCodeGroup extends Document {
   })
   rightCodes: string[]; // 权限组包含的权限代码
 }
+
+export type RightCodeGroupDocument = HydratedDocument<RightCodeGroup>;
 
 export const RightCodeGroupSchema =
   SchemaFactory.createForClass(RightCodeGroup);
