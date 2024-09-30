@@ -143,6 +143,9 @@ export class DatabaseService {
 
   getModelMap(): Map<string, ModelMap> {
     const modelMap = new Map<string, ModelMap>();
+    // 最近发现其实model和数据库表名其实是不对等的,所以表名的集合还是以collections为准
+    // console.log(this.mongooseConnection.modelNames())
+    // 由于使用了数据库的鉴别器后,可以把同一个表名的数据拆成多个model
     const collections = this.mongooseConnection.collections; // 所有连接名
     for (const collection in collections) {
       const value = collections[collection] as CustomCollection;

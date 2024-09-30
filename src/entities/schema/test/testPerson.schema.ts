@@ -7,7 +7,7 @@ import { Model } from 'mongoose';
 import { TestStudent } from './testStudent.schema';
 import { TestTeacher } from './testTeacher.schema';
 
-@Schema({ discriminatorKey: 'type' })
+@Schema({ discriminatorKey: 'type' }) // 这里的discriminatorKey是填的是关联的字段名
 export class TestPerson {
   @Prop({
     type: String,

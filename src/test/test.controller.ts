@@ -33,8 +33,6 @@ import { MemoryCacheService } from '@/cache/services';
 import { AdminSchemaService, TestSchemaService } from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
-import { ReqDbStatisticsDto, RespDbStatisticsDto } from '@/database/dto';
-import { ApiRights, RightsEnum } from '@/rights';
 import { CommonResult } from '@/common';
 
 @ApiCommon()
@@ -221,9 +219,9 @@ export class TestController {
   @ApiCustomResponse({
     type: CommonResult,
   })
-  testDatabaseDiscriminators() {
+  async testDatabaseDiscriminators() {
     const resp = new CommonResult();
-    this.testSchemaService.testFindList();
+    await this.testSchemaService.testFindList();
     return resp;
   }
 }

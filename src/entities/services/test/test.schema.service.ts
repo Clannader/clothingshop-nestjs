@@ -35,6 +35,15 @@ export class TestSchemaService {
     await this.testStudentModel.create(obj)
     await this.testTeacherModel.create(obj)
     this.testPersonModel.find().then(result => {
+      // 这里可以查询全部的数据
+      console.log(result)
+    })
+    this.testTeacherModel.find().then(result => {
+      // 仅查询Teacher的数据
+      console.log(result)
+    })
+    this.testStudentModel.find().then(result => {
+      // 仅查询Student的数据
       console.log(result)
     })
   }
