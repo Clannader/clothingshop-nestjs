@@ -7,7 +7,7 @@ import { Model } from 'mongoose';
 import { CommonPerson } from './testPerson.schema';
 
 @Schema()
-export class TestStudent extends CommonPerson{
+export class TestStudent extends CommonPerson {
   @Prop()
   score: number;
 }
