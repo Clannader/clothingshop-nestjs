@@ -156,14 +156,14 @@ export const RightsList: RightsConfig = {
 };
 
 export const getAllRightsCode = () => {
-  const [, codeArr] = Utils.enumToArray(RightsEnum)
-  return codeArr
-}
+  const [, codeArr] = Utils.enumToArray(RightsEnum);
+  return codeArr;
+};
 
 export const RightsGroupList = [
   {
     groupCode: 'SUPERVISOR',
     groupName: '超级管理员',
-    rightCodes: getAllRightsCode()
-  }
-]
+    rightCodes: getAllRightsCode(),
+  },
+];

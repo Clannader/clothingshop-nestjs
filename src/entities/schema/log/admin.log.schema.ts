@@ -14,7 +14,7 @@ export class AdminLog {
     required: true,
     trim: true,
   })
-  adminId: string // 操作员ID
+  adminId: string; // 操作员ID
 
   @Prop()
   adminName: string; // 操作员名字
@@ -33,7 +33,7 @@ export class AdminLog {
   shopId: string; // 操作的店铺ID
 
   @Prop({
-    enum: Utils.enumToArray(LogTypeEnum)[1]
+    enum: Utils.enumToArray(LogTypeEnum)[1],
   })
   type: string; // 操作类型
 
@@ -44,13 +44,13 @@ export class AdminLog {
   processId: string; // 进程ID
 }
 
-export type AdminLogDocument = HydratedDocument<AdminLog>
+export type AdminLogDocument = HydratedDocument<AdminLog>;
 
 export const AdminLogSchema = SchemaFactory.createForClass(AdminLog);
 
-AdminLogSchema.statics.getAliasName = function() {
-  return 'UserLog'
-}
+AdminLogSchema.statics.getAliasName = function () {
+  return 'UserLog';
+};
 
 export interface AdminLogModel extends Model<AdminLog> {
   getAliasName(): string;

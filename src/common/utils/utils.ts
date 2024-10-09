@@ -484,12 +484,12 @@ export class Utils {
 
   // 把枚举类型的值转换成数组
   static enumToArray(enumType: object): [any[], any[]] {
-    const enumKey = []
-    const enumValue = []
+    const enumKey = [];
+    const enumValue = [];
     for (const [key, value] of Object.entries(enumType)) {
-      enumKey.push(key)
-      enumValue.push(value)
+      enumKey.push(key);
+      enumValue.push(value);
     }
-    return [enumKey, enumValue]
+    return [enumKey, enumValue];
   }
 }
