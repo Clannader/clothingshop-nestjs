@@ -152,3 +152,11 @@ export const RightsList: RightsConfig = {
     },
   },
 };
+
+export const getAllRightsCode = () => {
+  const codeArr = []
+  for (const [, code] of Object.entries(RightsEnum)) {
+    codeArr.push(code)
+  }
+  return codeArr
+}

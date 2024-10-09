@@ -1,5 +1,6 @@
 /**
  * Create by CC on 2022/6/2
+ * 记录用户访问的请求日志
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
