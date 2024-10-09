@@ -4,6 +4,8 @@
  * 如果超过2位,考虑使用字母或者使用2位数,例如 10 01 01 => 100101
  */
 
+import { Utils } from '@/common/utils';
+
 export type RightsProp = RightsConfigElement & {
   key: string;
   category?: string;
@@ -154,9 +156,14 @@ export const RightsList: RightsConfig = {
 };
 
 export const getAllRightsCode = () => {
-  const codeArr = []
-  for (const [, code] of Object.entries(RightsEnum)) {
-    codeArr.push(code)
-  }
+  const [, codeArr] = Utils.enumToArray(RightsEnum)
   return codeArr
 }
+
+export const RightsGroupList = [
+  {
+    groupCode: 'SUPERVISOR',
+    groupName: '超级管理员',
+    rightCodes: getAllRightsCode()
+  }
+]

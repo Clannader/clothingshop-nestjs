@@ -14,6 +14,7 @@ import { Request } from 'express';
 import * as os from 'os';
 import { CmsSession } from '../types';
 import { v4 } from 'uuid';
+import { RightsEnum } from '@/rights';
 
 /**
  * 系统工具类
@@ -480,4 +481,15 @@ export class Utils {
   static pick = pick;
 
   static omit = omit;
+
+  // 把枚举类型的值转换成数组
+  static enumToArray(enumType: object): [any[], any[]] {
+    const enumKey = []
+    const enumValue = []
+    for (const [key, value] of Object.entries(enumType)) {
+      enumKey.push(key)
+      enumValue.push(value)
+    }
+    return [enumKey, enumValue]
+  }
 }
