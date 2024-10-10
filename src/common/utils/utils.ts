@@ -14,7 +14,6 @@ import { Request } from 'express';
 import * as os from 'os';
 import { CmsSession } from '../types';
 import { v4 } from 'uuid';
-import { RightsEnum } from '@/rights';
 
 /**
  * 系统工具类

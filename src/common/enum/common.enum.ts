@@ -83,3 +83,11 @@ export enum DbIndexType {
   Normal = 1,
   Difference = 2,
 }
+
+/**
+ * 序列号类型
+ */
+export enum SequenceTypeEnum {
+  Message = 'Message', // 消息ID
+  OrderId = 'OrderId', // 订单号ID
+}
