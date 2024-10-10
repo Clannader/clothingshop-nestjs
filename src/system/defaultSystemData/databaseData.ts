@@ -87,5 +87,5 @@ export const defaultIndexes: IndexSchema[] = [
     options: {
       unique: true,
     },
-  }
+  },
 ];

@@ -11,7 +11,7 @@ import { Utils } from '@/common/utils';
 @Schema()
 export class Sequence {
   @Prop({
-    default: 0
+    default: 0,
   })
   sequenceId: number;
 
@@ -19,18 +19,18 @@ export class Sequence {
   shopId: string;
 
   @Prop({
-    enum: Utils.enumToArray(SequenceTypeEnum)[1]
+    enum: Utils.enumToArray(SequenceTypeEnum)[1],
   })
   type: string;
 }
 
-export  type SequenceDocument = HydratedDocument<Sequence>;
+export type SequenceDocument = HydratedDocument<Sequence>;
 
 export const SequenceSchema = SchemaFactory.createForClass(Sequence);
 
 SequenceSchema.statics.getAliasName = function () {
   return 'CmsSequence';
-}
+};
 
 export interface SequenceModel extends Model<Sequence> {
   getAliasName(): string;

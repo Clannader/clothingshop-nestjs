@@ -16,7 +16,7 @@ export class SystemConfig {
 
   @Prop({
     trim: true,
-    match: codeExp
+    match: codeExp,
   })
   key: string; // 配置的Key
 
@@ -25,9 +25,12 @@ export class SystemConfig {
 
   @Prop({
     trim: true,
-    validate: [function (value: string) {
-      return value.length <= 150
-    }, 'Description length is more than 150.']
+    validate: [
+      function (value: string) {
+        return value.length <= 150;
+      },
+      'Description length is more than 150.',
+    ],
   })
   description: string; // 配置的描述
 
@@ -41,7 +44,7 @@ export const SystemConfigSchema = SchemaFactory.createForClass(SystemConfig);
 
 SystemConfigSchema.statics.getAliasName = function () {
   return 'CmsSystemConfig';
-}
+};
 
 export interface SystemConfigModel extends Model<SystemConfig> {
   getAliasName(): string;
