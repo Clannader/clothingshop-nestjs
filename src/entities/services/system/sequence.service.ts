@@ -31,6 +31,17 @@ export class SequenceSchemaService {
         code: CodeEnum.EMPTY,
       });
     }
+    const typeArray = Utils.enumToArray(SequenceTypeEnum)[1]
+    if (!typeArray.includes(type)) {
+      return Promise.reject({
+        message: this.globalService.serverLang(
+          '类型必须在以下值中选其一:{0}',
+          'system.typeIsEnum',
+          typeArray.join(','),
+        ),
+        code: CodeEnum.FAIL,
+      });
+    }
     const where = {
       type,
       shopId,
