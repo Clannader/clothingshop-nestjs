@@ -112,6 +112,15 @@ export const monitorPlugin = function (schema: Schema): void {
     writeQueryLog.call(this, schema, result);
   });
 
+  schema.pre('findOneAndUpdate', function () {
+    this.setOptions({
+      _lastTime: new Date().getTime(),
+    });
+  });
+  schema.post('findOneAndUpdate', function (result) {
+    writeQueryLog.call(this, schema, result);
+  });
+
   schema.pre('updateOne', function () {
     this.setOptions({
       _lastTime: new Date().getTime(),
