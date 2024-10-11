@@ -2,10 +2,17 @@ import { Injectable, Inject } from '@nestjs/common';
 import * as fs from 'node:fs';
 import * as nodePath from 'node:path';
 
-import { RespWebConfigDto, WebConfigDto, RespPackageVersionDto } from '../dto';
+import {
+  RespWebConfigDto,
+  WebConfigDto,
+  RespPackageVersionDto,
+  RespSequenceResult,
+  ReqSequenceResult,
+} from '../dto';
 
 import { ConfigService } from '@/common/config';
 import { CodeEnum } from '@/common/enum';
+import { SequenceSchemaService } from '@/entities/services';
 
 import * as pkg from '../../../package.json';
 
@@ -13,6 +20,9 @@ import * as pkg from '../../../package.json';
 export class SystemService {
   @Inject()
   private readonly configService: ConfigService;
+
+  @Inject()
+  private readonly sequenceSchemaService: SequenceSchemaService;
 
   getSystemConfig(): RespWebConfigDto {
     const resp = new RespWebConfigDto();
@@ -65,6 +75,18 @@ export class SystemService {
     resp.code = CodeEnum.SUCCESS;
     resp.version = version;
 
+    return resp;
+  }
+
+  async getSequenceNumber(params: ReqSequenceResult) {
+    const resp = new RespSequenceResult();
+    const [err, result] = await this.sequenceSchemaService
+      .getNextSequence(params.type, params.shopId)
+      .then((result) => [null, result])
+      .catch((err) => [err]);
+    console.log(result);
+    resp.sequenceNumber = result;
+    resp.code = CodeEnum.SUCCESS;
     return resp;
   }
 }

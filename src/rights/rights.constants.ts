@@ -45,6 +45,7 @@ export enum RightsEnum {
   DbIndexManage = '3052',
   DbDetails = '3053',
   DbLogs = '3054',
+  GetSequenceNumber = '3060',
 }
 
 export const RightsList: RightsConfig = {
@@ -150,6 +151,10 @@ export const RightsList: RightsConfig = {
             desc: '数据库日志',
           },
         },
+      },
+      GetSequenceNumber: {
+        code: RightsEnum.GetSequenceNumber, // 3060
+        desc: '获取序列号',
       },
     },
   },
