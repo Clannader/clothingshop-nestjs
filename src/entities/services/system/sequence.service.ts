@@ -31,7 +31,7 @@ export class SequenceSchemaService {
         code: CodeEnum.EMPTY,
       });
     }
-    const typeArray = Utils.enumToArray(SequenceTypeEnum)[1]
+    const typeArray = Utils.enumToArray(SequenceTypeEnum)[1];
     if (!typeArray.includes(type)) {
       return Promise.reject({
         message: this.globalService.serverLang(

@@ -3,5 +3,5 @@
  */
 export const system = {
   typeIsEmpty: 'Type cannot be empty',
-  typeIsEnum: 'Type must be one of the following values: {0}'
+  typeIsEnum: 'Type must be one of the following values: {0}',
 };
