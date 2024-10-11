@@ -59,9 +59,11 @@ export class SequenceSchemaService {
       result = {
         shopId,
         type,
-        sequenceId: 0
-      }
+        sequenceId: 0,
+      };
     }
+    // 因为拿到的是旧值,为了与数据库同步,加1即可
+    result.sequenceId++;
     return Promise.resolve(result);
   }
 }

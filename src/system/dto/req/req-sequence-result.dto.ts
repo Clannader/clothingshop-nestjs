@@ -8,7 +8,7 @@ export class ReqSequenceResult {
   /**
    * 类型
    */
-  type: SequenceTypeEnum;
+  type: string;
 
   /**
    * 店铺ID,默认SYSTEM

@@ -11,7 +11,7 @@ import {
 } from '../dto';
 
 import { ConfigService } from '@/common/config';
-import { CodeEnum } from '@/common/enum';
+import { CodeEnum, SequenceTypeEnum } from '@/common/enum';
 import { SequenceSchemaService } from '@/entities/services';
 
 import * as pkg from '../../../package.json';
@@ -80,13 +80,17 @@ export class SystemService {
 
   async getSequenceNumber(params: ReqSequenceResult) {
     const resp = new RespSequenceResult();
+    console.log(params);
     const [err, result] = await this.sequenceSchemaService
-      .getNextSequence(params.type, params.shopId)
+      .getNextSequence(null, params.shopId)
       .then((result) => [null, result])
       .catch((err) => [err]);
-    console.log(result);
-    resp.sequenceNumber = result;
-    resp.code = CodeEnum.SUCCESS;
+    if (err) {
+      resp.code = err.code;
+      resp.msg = err.message;
+      return resp;
+    }
+    resp.sequenceNumber = result.sequenceId;
     return resp;
   }
 }
