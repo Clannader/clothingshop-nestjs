@@ -3,8 +3,10 @@
  */
 import { Module } from '@nestjs/common';
 import { TestTasksService } from '../services';
+import { SequenceSchemaModule } from '@/entities/modules';
 
 @Module({
+  imports: [SequenceSchemaModule],
   providers: [TestTasksService],
 })
 export class TestTasksModule {}

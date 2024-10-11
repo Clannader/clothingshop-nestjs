@@ -11,7 +11,7 @@ import {
 } from '../dto';
 
 import { ConfigService } from '@/common/config';
-import { CodeEnum, SequenceTypeEnum } from '@/common/enum';
+import { CodeEnum } from '@/common/enum';
 import { SequenceSchemaService } from '@/entities/services';
 
 import * as pkg from '../../../package.json';
