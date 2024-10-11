@@ -1,8 +1,11 @@
 /**
  * Create by oliver.wu 2024/10/10
  */
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+
+import { CodeEnum, SequenceTypeEnum } from '@/common/enum';
+import { GlobalService, Utils } from '@/common/utils';
 
 import { SequenceModel, Sequence } from '../../schema';
 
@@ -11,11 +14,23 @@ export class SequenceSchemaService {
   @InjectModel(Sequence.name)
   private sequenceModel: SequenceModel;
 
+  @Inject()
+  private globalService: GlobalService;
+
   getModel() {
     return this.sequenceModel;
   }
 
-  async getNextSequence(type: string, shopId = 'SYSTEM') {
+  async getNextSequence(type: SequenceTypeEnum, shopId = 'SYSTEM') {
+    if (Utils.isEmpty(type)) {
+      return Promise.reject({
+        message: this.globalService.serverLang(
+          '类型不能为空',
+          'system.typeIsEmpty',
+        ),
+        code: CodeEnum.EMPTY,
+      });
+    }
     const where = {
       type,
       shopId,
