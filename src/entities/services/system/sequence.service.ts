@@ -35,6 +35,7 @@ export class SequenceSchemaService {
       type,
       shopId,
     };
+    // TODO 以后估计要限制shopId的值必须在用户的管理范围内
     const updateFilter = {
       $inc: {
         sequenceId: 1,
@@ -43,12 +44,23 @@ export class SequenceSchemaService {
     const updateOptions = {
       upsert: true,
     };
-    const [err, result] = await this.sequenceModel
+    let [err, result] = await this.sequenceModel
       .findOneAndUpdate(where, updateFilter, updateOptions)
       .then((result) => [null, result])
       .catch((err) => [err]);
     if (err) {
-      return Promise.reject(err);
+      return Promise.reject({
+        message: err.message,
+        code: CodeEnum.DB_EXEC_ERROR,
+      });
+    }
+    if (!result) {
+      // 如果没有值说明是新增的
+      result = {
+        shopId,
+        type,
+        sequenceId: 0
+      }
     }
     return Promise.resolve(result);
   }

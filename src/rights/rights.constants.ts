@@ -27,6 +27,7 @@ export enum RightsEnum {
   SystemDataSetup = '3010',
   SystemBaseSetup = '3011',
   PackageVersionSetup = '3012',
+  GetSequenceNumber = '3013',
   UserSetup = '3020',
   RightsSetup = '3030',
   RightsGroupSetup = '3031',
@@ -45,7 +46,6 @@ export enum RightsEnum {
   DbIndexManage = '3052',
   DbDetails = '3053',
   DbLogs = '3054',
-  GetSequenceNumber = '3060',
 }
 
 export const RightsList: RightsConfig = {
@@ -66,6 +66,10 @@ export const RightsList: RightsConfig = {
           PackageVersionSetup: {
             code: RightsEnum.PackageVersionSetup, // 3012
             desc: '获取依赖包版本',
+          },
+          GetSequenceNumber: {
+            code: RightsEnum.GetSequenceNumber, // 3013
+            desc: '获取序列号',
           },
           // 后续计划邮箱设置,国家/省份/城市设置,动态参数设置,消息设置,都归属在里面吧
         },
@@ -151,10 +155,6 @@ export const RightsList: RightsConfig = {
             desc: '数据库日志',
           },
         },
-      },
-      GetSequenceNumber: {
-        code: RightsEnum.GetSequenceNumber, // 3060
-        desc: '获取序列号',
       },
     },
   },
