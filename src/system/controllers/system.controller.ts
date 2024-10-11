@@ -21,7 +21,7 @@ import {
   RespSequenceResult,
   ReqSequenceResult,
 } from '../dto';
-import { SystemService } from '@/system/services/system.service';
+import { SystemService } from '../services/system.service';
 
 @ApiCommon()
 @Controller('/cms/api/system')

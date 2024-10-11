@@ -80,9 +80,8 @@ export class SystemService {
 
   async getSequenceNumber(params: ReqSequenceResult) {
     const resp = new RespSequenceResult();
-    console.log(params);
     const [err, result] = await this.sequenceSchemaService
-      .getNextSequence(null, params.shopId)
+      .getNextSequence(params.type, params.shopId)
       .then((result) => [null, result])
       .catch((err) => [err]);
     if (err) {
