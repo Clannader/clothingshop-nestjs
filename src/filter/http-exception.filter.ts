@@ -10,6 +10,7 @@ import { Request, Response } from 'express';
 import { CodeEnum } from '@/common/enum';
 import { ValidateException } from '@/common/exceptions';
 import { GlobalService } from '@/common/utils';
+import { capitalize } from 'lodash';
 
 @Catch(HttpException, Error)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -24,7 +25,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : CodeEnum.UNKNOWN;
-    const message = exception.message;
+    const message = capitalize(exception.message);
     if (process.env.NODE_ENV !== 'test') {
       console.error(exception.stack);
     }
