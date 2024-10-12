@@ -8,4 +8,9 @@ export class RespSequenceResult extends CommonResult {
    * 序列号
    */
   sequenceNumber: number;
+
+  /**
+   * 类型
+   */
+  type: string;
 }

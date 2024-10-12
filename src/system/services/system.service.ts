@@ -115,6 +115,7 @@ export class SystemService {
       return resp;
     }
     resp.sequenceNumber = result.sequenceId;
+    resp.type = type;
     return resp;
   }
 }
