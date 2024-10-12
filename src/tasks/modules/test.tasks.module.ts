@@ -4,10 +4,10 @@
 import { Module } from '@nestjs/common';
 
 import { TestTasksService } from '../services';
-import { SystemConfigSchemaModule } from '@/entities/modules';
+import { SequenceSchemaModule } from '@/entities/modules';
 
 @Module({
-  imports: [SystemConfigSchemaModule],
+  imports: [SequenceSchemaModule],
   providers: [TestTasksService],
 })
 export class TestTasksModule {}

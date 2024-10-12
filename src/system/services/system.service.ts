@@ -11,10 +11,11 @@ import {
 } from '../dto';
 
 import { ConfigService } from '@/common/config';
-import { CodeEnum } from '@/common/enum';
+import { CodeEnum, SequenceTypeEnum } from '@/common/enum';
 import { SequenceSchemaService } from '@/entities/services';
 
 import * as pkg from '../../../package.json';
+import { GlobalService, Utils } from '@/common/utils';
 
 @Injectable()
 export class SystemService {
@@ -23,6 +24,9 @@ export class SystemService {
 
   @Inject()
   private readonly sequenceSchemaService: SequenceSchemaService;
+
+  @Inject()
+  private readonly globalService: GlobalService;
 
   getSystemConfig(): RespWebConfigDto {
     const resp = new RespWebConfigDto();
@@ -80,8 +84,29 @@ export class SystemService {
 
   async getSequenceNumber(params: ReqSequenceResult) {
     const resp = new RespSequenceResult();
+    const type = params.type;
+    const shopId = params.shopId;
+    if (Utils.isEmpty(type)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        '类型不能为空',
+        'system.typeIsEmpty',
+      );
+      return resp;
+    }
+    const typeArray = Utils.enumToArray(SequenceTypeEnum)[1];
+    if (!typeArray.includes(type)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        '类型必须在以下值中选其一:{0}',
+        'system.typeIsEnum',
+        typeArray.join(','),
+      );
+      return resp;
+    }
+    // TODO 以后估计要限制shopId的值必须在用户的管理范围内
     const [err, result] = await this.sequenceSchemaService
-      .getNextSequence(params.type, params.shopId)
+      .getNextSequence(type, shopId)
       .then((result) => [null, result])
       .catch((err) => [err]);
     if (err) {

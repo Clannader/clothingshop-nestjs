@@ -10,7 +10,9 @@ export class ReqSequenceResult {
   /**
    * 类型
    */
-  @IsDefined()
+  @IsDefined({
+    message: 'system.typeIsEmpty',
+  })
   @IsEnum(SequenceTypeEnum)
   @Expose() // 必须加上这个注解才能给body获取到值
   type: SequenceTypeEnum;

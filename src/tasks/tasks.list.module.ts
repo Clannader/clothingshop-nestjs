@@ -9,4 +9,4 @@ import { TestTasksModule } from './modules';
 @Module({
   imports: [ScheduleModule.forRoot(), TestTasksModule],
 })
-export class TasksModule {}
+export class TasksListModule {}
