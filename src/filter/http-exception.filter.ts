@@ -25,20 +25,21 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : CodeEnum.UNKNOWN;
-    const message = upperFirst(exception.message);
+    const message = exception.message;
     if (process.env.NODE_ENV !== 'test') {
       console.error(exception.stack);
     }
+    const msg =
+      exception instanceof ValidateException
+        ? Utils.lang(
+            this.globalService.getHeadersLanguage(request),
+            message,
+            message,
+          )
+        : message;
     response.status(200).json({
       code: status,
-      msg:
-        exception instanceof ValidateException
-          ? Utils.lang(
-              this.globalService.getHeadersLanguage(request),
-              message,
-              message,
-            )
-          : message,
+      msg: upperFirst(msg),
       timestamp: new Date().toISOString(),
       path: request.url,
     });

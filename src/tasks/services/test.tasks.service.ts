@@ -14,14 +14,14 @@ export class TestTasksService {
 
   @Interval(3000)
   async handleInterval() {
-    const [err, result] = await this.sequenceSchemaService
-      .getNextSequence(SequenceTypeEnum.Message)
-      .then((result) => [null, result])
-      .catch((err) => [err]);
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log(`序列号为:${result.sequenceId}`);
+    // const [err, result] = await this.sequenceSchemaService
+    //   .getNextSequence(SequenceTypeEnum.Message)
+    //   .then((result) => [null, result])
+    //   .catch((err) => [err]);
+    // if (err) {
+    //   console.error(err);
+    //   return;
+    // }
+    // console.log(`序列号为:${result.sequenceId}`);
   }
 }
