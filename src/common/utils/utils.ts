@@ -172,6 +172,8 @@ export class Utils {
     return false;
   }
 
+  static replaceArgsFromJson(str: string): string;
+  static replaceArgsFromJson(str: string, obj: Record<string, any>): string;
   static replaceArgsFromJson(
     str: string,
     obj: Record<string, any>,

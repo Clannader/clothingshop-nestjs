@@ -6,7 +6,6 @@ import * as globalVariable from '../constants';
 import { languageType } from '@/common';
 import { Utils } from '@/common/utils';
 
-
 @Injectable()
 export class GlobalService {
   static GlobalStatic: Record<string, any> = globalVariable;
@@ -18,6 +17,15 @@ export class GlobalService {
    */
   @Inject(REQUEST)
   private readonly request: Request;
+
+  lang(
+    languageType: languageType,
+    origin: string,
+    key: string,
+    ...args: Array<string | number>
+  ) {
+    return Utils.lang(languageType, origin, key, ...args);
+  }
 
   serverLang(origin: string, key: string, ...args: Array<string | number>) {
     return Utils.lang(

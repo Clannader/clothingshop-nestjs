@@ -8,7 +8,6 @@ import { Utils } from '@/common/utils';
 
 @Injectable()
 export class EmailUtils {
-
   getEmailTemplate(
     template: string,
     options: Record<string, any>,
