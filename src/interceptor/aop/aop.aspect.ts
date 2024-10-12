@@ -125,7 +125,7 @@ export class AopAspect {
           ? Utils.piiXmlData(returnData as string, ...piiFields)
           : Utils.piiJsonData(returnData as Record<string, any>, ...piiFields),
         headers: Utils.piiJsonData(headers, ...piiHeaders),
-        serverName: this.configService.get<string>('serverName')
+        serverName: this.configService.get<string>('serverName'),
       };
       if (this.configService.get<boolean>('monitorLog', true)) {
         this.adminAccessService

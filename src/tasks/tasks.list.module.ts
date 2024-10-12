@@ -7,8 +7,11 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TestTasksModule } from './modules';
 
 @Module({
-  imports: [ScheduleModule.forRoot({
-    intervals: false
-  }), TestTasksModule],
+  imports: [
+    ScheduleModule.forRoot({
+      intervals: false,
+    }),
+    TestTasksModule,
+  ],
 })
 export class TasksListModule {}

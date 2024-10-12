@@ -26,7 +26,9 @@ export class TestTasksService {
       console.error(err);
       return;
     }
-    console.log(`服务器ID: ${cluster.worker ? cluster.worker.id : 1}, 序列号为:${result.sequenceId}`);
-    console.log('--------------------------')
+    console.log(
+      `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, 序列号为:${result.sequenceId}`,
+    );
+    console.log('--------------------------');
   }
 }
