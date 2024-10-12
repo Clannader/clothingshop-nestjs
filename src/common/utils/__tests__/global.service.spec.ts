@@ -61,11 +61,11 @@ describe('GlobalService', () => {
   });
 
   it('测试langKey不存在', () => {
-    expect(service.lang('ZH', '测试', 'user.userHello.hehe')).toBe('测试');
+    expect(service.lang('ZH', '测试', 'user.userHello.here')).toBe('测试');
   });
 
   it('测试langKey不存在,带参数', () => {
-    expect(service.lang('ZH', '测试{0}', 'user.userHello.hehe', 10)).toBe(
+    expect(service.lang('ZH', '测试{0}', 'user.userHello.here', 10)).toBe(
       '测试10',
     );
   });

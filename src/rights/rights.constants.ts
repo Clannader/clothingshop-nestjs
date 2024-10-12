@@ -4,6 +4,8 @@
  * 如果超过2位,考虑使用字母或者使用2位数,例如 10 01 01 => 100101
  */
 
+import { Utils } from '@/common/utils';
+
 export type RightsProp = RightsConfigElement & {
   key: string;
   category?: string;
@@ -25,6 +27,7 @@ export enum RightsEnum {
   SystemDataSetup = '3010',
   SystemBaseSetup = '3011',
   PackageVersionSetup = '3012',
+  GetSequenceNumber = '3013',
   UserSetup = '3020',
   RightsSetup = '3030',
   RightsGroupSetup = '3031',
@@ -63,6 +66,10 @@ export const RightsList: RightsConfig = {
           PackageVersionSetup: {
             code: RightsEnum.PackageVersionSetup, // 3012
             desc: '获取依赖包版本',
+          },
+          GetSequenceNumber: {
+            code: RightsEnum.GetSequenceNumber, // 3013
+            desc: '获取序列号',
           },
           // 后续计划邮箱设置,国家/省份/城市设置,动态参数设置,消息设置,都归属在里面吧
         },
@@ -152,3 +159,16 @@ export const RightsList: RightsConfig = {
     },
   },
 };
+
+export const getAllRightsCode = () => {
+  const [, codeArr] = Utils.enumToArray(RightsEnum);
+  return codeArr;
+};
+
+export const RightsGroupList = [
+  {
+    groupCode: 'SUPERVISOR',
+    groupName: '超级管理员',
+    rightCodes: getAllRightsCode(),
+  },
+];

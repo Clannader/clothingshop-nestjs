@@ -129,7 +129,7 @@ export function CustomValidation(
   property: CmsValidationOptions,
   validationOptions?: ValidationOptions,
 ) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'customValidation',
       target: object.constructor,

@@ -13,10 +13,12 @@ import { AopMiddleware, XmlMiddleware } from './middleware';
 import { MongooseConfigModule } from './dao';
 import { AopAspectModule } from './interceptor/aop';
 import { SwaggerModule } from './swagger.module';
+import { TasksListModule } from '@/tasks';
 
 @Module({
   imports: [
     CommonModule,
+    TasksListModule,
     ConfigModule.register({
       iniFilePath: join(process.cwd(), '/config/config.ini'),
       envFilePath:

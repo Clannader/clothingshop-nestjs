@@ -1,5 +1,6 @@
 /**
  * Create by CC on 2022/6/8
+ * 系统用户表
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model, HydratedDocument } from 'mongoose';

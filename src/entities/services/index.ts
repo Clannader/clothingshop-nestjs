@@ -3,4 +3,5 @@
  */
 export * from './log';
 export * from './user';
+export * from './system';
 export * from './test/test.schema.service';

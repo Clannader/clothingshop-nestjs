@@ -78,4 +78,14 @@ export const defaultIndexes: IndexSchema[] = [
       unique: true,
     },
   },
+  {
+    aliasName: 'CmsSequence',
+    fields: {
+      shopId: 1,
+      type: 1,
+    },
+    options: {
+      unique: true,
+    },
+  },
 ];

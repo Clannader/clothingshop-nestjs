@@ -6,3 +6,6 @@ export * from './admin.schema.module';
 export * from './rightCode.schema.module';
 export * from './rightCodeGroup.schema.module';
 export * from './test.schema.module';
+export * from './adminLog.schema.module';
+export * from './sequence.schema.module';
+export * from './systemConfig.schema.module';

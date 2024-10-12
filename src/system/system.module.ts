@@ -3,10 +3,13 @@ import { SystemService, RepairDataService } from './services';
 import { SystemController, RepairDataController } from './controllers';
 
 import { DatabaseModule } from '@/database';
-import { RightCodeSchemaModule } from '@/entities/modules';
+import {
+  RightCodeSchemaModule,
+  SequenceSchemaModule,
+} from '@/entities/modules';
 
 @Module({
-  imports: [DatabaseModule, RightCodeSchemaModule],
+  imports: [DatabaseModule, RightCodeSchemaModule, SequenceSchemaModule],
   controllers: [SystemController, RepairDataController],
   providers: [SystemService, RepairDataService],
   exports: [SystemService],

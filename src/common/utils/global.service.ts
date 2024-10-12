@@ -1,11 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import * as globalVariable from '../constants';
-import { i18n } from '../i18n';
-import { languageType } from '@/common';
-import { Utils } from '@/common/utils';
-import { get } from 'lodash';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
+
+import * as globalVariable from '../constants';
+import { languageType } from '@/common';
+import { Utils } from '@/common/utils';
 
 @Injectable()
 export class GlobalService {
@@ -19,35 +18,19 @@ export class GlobalService {
   @Inject(REQUEST)
   private readonly request: Request;
 
-  /**
-   * 系统的翻译函数
-   * @param languageType 语言类型
-   * @param orgin 原始的中文翻译
-   * @param key 翻译的key
-   * @param args 其他占位符参数
-   */
   lang(
     languageType: languageType,
-    orgin: string,
+    origin: string,
     key: string,
     ...args: Array<string | number>
-  ): string {
-    const properties = i18n[languageType];
-    if (Utils.isEmpty(properties)) {
-      return Utils.replaceArgs(orgin, ...args);
-    }
-    // const langKey = this.parseProperties(properties, key);
-    const langKey = get(properties, key, orgin) as string;
-    // if (typeof langKey !== 'string') {
-    //   return this.replaceArgs(orgin, ...args);
-    // }
-    return Utils.replaceArgs(langKey, ...args);
+  ) {
+    return Utils.lang(languageType, origin, key, ...args);
   }
 
-  serverLang(orgin: string, key: string, ...args: Array<string | number>) {
-    return this.lang(
+  serverLang(origin: string, key: string, ...args: Array<string | number>) {
+    return Utils.lang(
       this.getHeadersLanguage(this.request),
-      orgin,
+      origin,
       key,
       ...args,
     );
@@ -64,6 +47,12 @@ export class GlobalService {
         : 'ZH';
   }
 
+  /**
+   * 通过json的路径获取接送中的key值,{a:{b:{c:2}}}, 'a.b.c' = 2
+   * @param properties
+   * @param key
+   * @private
+   */
   private parseProperties(properties: object, key: string): string | undefined {
     const keyList = key.split('.');
     let temp = properties;

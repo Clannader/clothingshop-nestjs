@@ -1,11 +1,27 @@
-import { Controller, Get, UseInterceptors, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseInterceptors,
+  UseGuards,
+  Post,
+  HttpCode,
+  HttpStatus,
+  Body,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+
 import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
-import { SystemService } from '@/system/services/system.service';
-import { RespWebConfigDto, RespPackageVersionDto } from '../dto';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { ApiRights, RightsEnum } from '@/rights';
+
+import {
+  RespWebConfigDto,
+  RespPackageVersionDto,
+  RespSequenceResult,
+  ReqSequenceResult,
+} from '../dto';
+import { SystemService } from '../services/system.service';
 
 @ApiCommon()
 @Controller('/cms/api/system')
@@ -40,5 +56,19 @@ export class SystemController {
   @ApiRights(RightsEnum.PackageVersionSetup)
   getPackageVersion() {
     return this.systemService.getPackageVersion();
+  }
+
+  @Post('/sequence/getNextNumber')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '获取序列号',
+    description: '根据类型获取唯一序列号',
+  })
+  @ApiCustomResponse({
+    type: RespSequenceResult,
+  })
+  @ApiRights(RightsEnum.GetSequenceNumber)
+  getSequenceNumber(@Body() params: ReqSequenceResult) {
+    return this.systemService.getSequenceNumber(params);
   }
 }
