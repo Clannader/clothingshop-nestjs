@@ -9,7 +9,7 @@ import {
 import { Request, Response } from 'express';
 import { CodeEnum } from '@/common/enum';
 import { ValidateException } from '@/common/exceptions';
-import { GlobalService } from '@/common/utils';
+import { GlobalService, Utils } from '@/common/utils';
 import { upperFirst } from 'lodash';
 
 @Catch(HttpException, Error)
@@ -33,7 +33,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       code: status,
       msg:
         exception instanceof ValidateException
-          ? this.globalService.lang(
+          ? Utils.lang(
               this.globalService.getHeadersLanguage(request),
               message,
               message,

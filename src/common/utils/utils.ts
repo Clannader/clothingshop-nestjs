@@ -1,5 +1,5 @@
 import * as CryptoJS from 'crypto-js';
-import { tripleDES, ipExp, Supervisor_Rights } from '../constants';
+import { tripleDES, ipExp, Supervisor_Rights } from '@/common';
 import {
   get,
   isPlainObject,
@@ -10,10 +10,11 @@ import {
   pick,
   omit,
 } from 'lodash';
-import { Request } from 'express';
+import type { Request } from 'express';
 import * as os from 'os';
-import { CmsSession } from '../types';
+import { CmsSession, languageType } from '../types';
 import { v4 } from 'uuid';
+import { i18n } from '../i18n';
 
 /**
  * 系统工具类
@@ -58,10 +59,8 @@ export class Utils {
    * 3DES加密算法
    * @param str 加密的内容
    * @param tripleKey 加密的key
+   * @param iv
    */
-  static tripleDesEncrypt(str: string): string;
-  static tripleDesEncrypt(str: string, tripleKey: string): string;
-  static tripleDesEncrypt(str: string, tripleKey: string, iv: string): string;
   static tripleDesEncrypt(
     str: string,
     tripleKey: string = tripleDES.key,
@@ -95,10 +94,8 @@ export class Utils {
    * 3DES解密算法
    * @param str 解密内容
    * @param tripleKey 解密的key
+   * @param iv
    */
-  static tripleDesDecrypt(str: string): string;
-  static tripleDesDecrypt(str: string, tripleKey: string): string;
-  static tripleDesDecrypt(str: string, tripleKey: string, iv: string): string;
   static tripleDesDecrypt(
     str: string,
     tripleKey: string = tripleDES.key,
@@ -175,8 +172,6 @@ export class Utils {
     return false;
   }
 
-  static replaceArgsFromJson(str: string): string;
-  static replaceArgsFromJson(str: string, obj: Record<string, any>): string;
   static replaceArgsFromJson(
     str: string,
     obj: Record<string, any>,
@@ -482,7 +477,7 @@ export class Utils {
   static omit = omit;
 
   // 把枚举类型的值转换成数组
-  static enumToArray(enumType: object): [any[], any[]] {
+  static enumToArray(enumType: object): [string[], Array<string | number>] {
     const enumKey = [];
     const enumValue = [];
     for (const [key, value] of Object.entries(enumType)) {
@@ -490,5 +485,30 @@ export class Utils {
       enumValue.push(value);
     }
     return [enumKey, enumValue];
+  }
+
+  /**
+   * 系统的翻译函数
+   * @param languageType 语言类型
+   * @param origin 原始的中文翻译
+   * @param key 翻译的key
+   * @param args 其他占位符参数
+   */
+  static lang(
+    languageType: languageType,
+    origin: string,
+    key: string,
+    ...args: Array<string | number>
+  ): string {
+    const properties = i18n[languageType];
+    if (this.isEmpty(properties)) {
+      return this.replaceArgs(origin, ...args);
+    }
+    // const langKey = this.parseProperties(properties, key); // 该方法在globalService中,已过时
+    const langKey = get(properties, key, origin) as string;
+    // if (typeof langKey !== 'string') {
+    //   return this.replaceArgs(origin, ...args);
+    // }
+    return this.replaceArgs(langKey, ...args);
   }
 }

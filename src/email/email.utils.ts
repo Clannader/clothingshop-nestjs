@@ -4,12 +4,10 @@
 import { render } from 'ejs';
 import { Inject, Injectable } from '@nestjs/common';
 import { languageType } from '@/common';
-import { GlobalService } from '@/common/utils';
+import { Utils } from '@/common/utils';
 
 @Injectable()
 export class EmailUtils {
-  @Inject()
-  private readonly globalService: GlobalService;
 
   getEmailTemplate(
     template: string,
@@ -28,7 +26,7 @@ export class EmailUtils {
           const langKey = langKeyMatch[1];
           content = content.replace(
             v,
-            this.globalService.lang(language, `$t(${langKey})`, langKey),
+            Utils.lang(language, `$t(${langKey})`, langKey),
           );
         }
       });
