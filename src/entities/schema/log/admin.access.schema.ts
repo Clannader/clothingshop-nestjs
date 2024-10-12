@@ -89,6 +89,11 @@ export class AdminAccess {
     // alias: '字段别名'
   })
   headers: Record<string, any>; // 请求头内容
+
+  @Prop({
+    required: true,
+  })
+  serverName: string; // 服务器名,通过config.ini配置
 }
 
 export const AdminAccessSchema = SchemaFactory.createForClass(AdminAccess);
