@@ -81,7 +81,11 @@ export class RepairDataService {
     return resp;
   }
 
-  private getRightsCodeArray(defaultRights: RightsConfig, category?: string, path?: string) {
+  private getRightsCodeArray(
+    defaultRights: RightsConfig,
+    category?: string,
+    path?: string,
+  ) {
     const rightsList: RightsProp[] = [];
     for (const rightsKey in defaultRights) {
       const rightInfo = defaultRights[rightsKey];
@@ -94,7 +98,11 @@ export class RepairDataService {
       });
       if (rightInfo.children) {
         rightsList.push(
-          ...this.getRightsCodeArray(rightInfo.children, rightsKey, path ? `${path}.${rightsKey}` : `${rightsKey}`),
+          ...this.getRightsCodeArray(
+            rightInfo.children,
+            rightsKey,
+            path ? `${path}.${rightsKey}` : `${rightsKey}`,
+          ),
         );
       }
     }

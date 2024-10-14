@@ -66,7 +66,7 @@ export class AopAspect {
         params = req.xmlData;
       }
       const diffTime = Date.now() - req.startTime.getTime();
-      const workerId = cluster?.worker?.id ?? 1
+      const workerId = cluster?.worker?.id ?? 1;
 
       this.logger.log(
         `服务器ID: ${workerId}, 请求响应时间: ${url} ${diffTime}ms`,
