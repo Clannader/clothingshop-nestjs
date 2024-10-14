@@ -69,6 +69,7 @@ export class RepairDataService {
         key: rightInfo.key,
         description: rightInfo.desc,
         category: rightInfo.category,
+        path: rightInfo.path,
         cnLabel: rightInfo.desc,
         enLabel: '',
       };
@@ -80,7 +81,7 @@ export class RepairDataService {
     return resp;
   }
 
-  private getRightsCodeArray(defaultRights: RightsConfig, category?: string) {
+  private getRightsCodeArray(defaultRights: RightsConfig, category?: string, path?: string) {
     const rightsList: RightsProp[] = [];
     for (const rightsKey in defaultRights) {
       const rightInfo = defaultRights[rightsKey];
@@ -89,10 +90,11 @@ export class RepairDataService {
         desc: rightInfo.desc,
         key: rightsKey,
         ...(category ? { category } : {}), // 如果category有值则加入该字段,如果没值则不存在该字段
+        ...(path ? { path: `${path}.${rightsKey}` } : {}),
       });
       if (rightInfo.children) {
         rightsList.push(
-          ...this.getRightsCodeArray(rightInfo.children, rightsKey),
+          ...this.getRightsCodeArray(rightInfo.children, rightsKey, path ? `${path}.${rightsKey}` : `${rightsKey}`),
         );
       }
     }

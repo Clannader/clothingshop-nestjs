@@ -29,7 +29,9 @@ export class AdminLog {
   })
   content: string; // 操作内容
 
-  @Prop()
+  @Prop({
+    required: true,
+  })
   shopId: string; // 操作的店铺ID
 
   @Prop({
@@ -41,7 +43,10 @@ export class AdminLog {
   serverName: string; // 服务器名,例如app1, app2
 
   @Prop()
-  processId: string; // 进程ID
+  workerId: string; // 进程ID
+
+  @Prop()
+  traceId: string; // 日志追踪ID
 }
 
 export type AdminLogDocument = HydratedDocument<AdminLog>;

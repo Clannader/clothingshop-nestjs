@@ -9,6 +9,7 @@ import { Utils } from '@/common/utils';
 export type RightsProp = RightsConfigElement & {
   key: string;
   category?: string;
+  path?: string;
 };
 
 type RightsConfigElement = {
