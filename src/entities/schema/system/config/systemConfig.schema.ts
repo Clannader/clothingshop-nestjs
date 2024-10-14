@@ -5,10 +5,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model, HydratedDocument } from 'mongoose';
 
+import { SystemConfigTypeEnum } from '@/common/enum';
+import { Utils } from '@/common/utils';
 import { codeExp } from '@/common';
 
-@Schema()
-export class SystemConfig {
+export class CommonConfig {
   @Prop({
     required: true,
   })
@@ -33,9 +34,16 @@ export class SystemConfig {
     ],
   })
   description: string; // 配置的描述
+}
 
-  @Prop()
-  groupName: string; // 组名,一级组名为null,二级组名不为null
+@Schema({ discriminatorKey: 'type' })
+export class SystemConfig extends CommonConfig {
+  @Prop({
+    type: String,
+    required: true,
+    enum: Utils.enumToArray(SystemConfigTypeEnum)[1],
+  })
+  type: string;
 }
 
 export type SystemConfigDocument = HydratedDocument<SystemConfig>;

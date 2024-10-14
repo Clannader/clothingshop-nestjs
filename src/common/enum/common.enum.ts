@@ -92,3 +92,18 @@ export enum SequenceTypeEnum {
   OrderId = 'OrderId', // 订单号ID
   TraceId = 'TraceId', // 跟踪轨迹ID
 }
+
+/**
+ * 系统数据类型
+ */
+export enum SystemDataTypeEnum {
+  TimeZone = 'TimeZone', // 时区设置
+}
+
+/**
+ * 系统INI类型
+ */
+export enum SystemConfigTypeEnum {
+  ParentConfig = 'ParentConfig',
+  ChildrenConfig = 'ChildrenConfig',
+}
