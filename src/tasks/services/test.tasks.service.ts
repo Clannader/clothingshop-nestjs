@@ -5,7 +5,10 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 
 import { LogTypeEnum, SequenceTypeEnum } from '@/common/enum';
-import { AdminLogSchemaService, SequenceSchemaService } from '@/entities/services';
+import {
+  AdminLogSchemaService,
+  SequenceSchemaService,
+} from '@/entities/services';
 import type { AdminLog } from '@/entities/schema';
 
 // @ts-ignore
@@ -44,6 +47,6 @@ export class TestTasksService {
       type: LogTypeEnum.Config,
       traceId: Date.now().toString(),
     };
-    await this.adminLogSchemaService.createUserLog(logInfo)
+    await this.adminLogSchemaService.createUserLog(logInfo);
   }
 }

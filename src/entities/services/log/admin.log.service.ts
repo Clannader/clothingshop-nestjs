@@ -25,7 +25,7 @@ export class AdminLogSchemaService {
   createUserLog(logInfo: AdminLog) {
     logInfo.serverName = this.configService.get<string>('serverName');
     logInfo.workerId = cluster?.worker?.id ?? 1;
-    logInfo.date = logInfo?.date ?? new Date()
+    logInfo.date = logInfo?.date ?? new Date();
     return this.adminLogModel.create(logInfo);
   }
 }
