@@ -4,8 +4,9 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 
-import { SequenceTypeEnum } from '@/common/enum';
-import { SequenceSchemaService } from '@/entities/services';
+import { LogTypeEnum, SequenceTypeEnum } from '@/common/enum';
+import { AdminLogSchemaService, SequenceSchemaService } from '@/entities/services';
+import type { AdminLog } from '@/entities/schema';
 
 // @ts-ignore
 const cluster = require('node:cluster');
@@ -14,6 +15,9 @@ const cluster = require('node:cluster');
 export class TestTasksService {
   @Inject()
   private readonly sequenceSchemaService: SequenceSchemaService;
+
+  @Inject()
+  private readonly adminLogSchemaService: AdminLogSchemaService;
 
   @Interval(3000)
   async handleInterval() {
@@ -32,5 +36,14 @@ export class TestTasksService {
     console.log(
       `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, 序列号为:${result.sequenceId}`,
     );
+    const logInfo: AdminLog = {
+      adminId: 'SYSTEM',
+      adminName: 'Supervisor',
+      content: `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, 序列号为:${result.sequenceId}`,
+      shopId: 'SYSTEM',
+      type: LogTypeEnum.Config,
+      traceId: Date.now().toString(),
+    };
+    await this.adminLogSchemaService.createUserLog(logInfo)
   }
 }
