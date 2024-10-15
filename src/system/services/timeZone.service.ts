@@ -40,7 +40,7 @@ export class TimeZoneService {
     const timeZoneParams = params.timeZone;
     const where: SearchTimeZone = {};
     if (!Utils.isEmpty(timeZoneParams)) {
-      where.timeZone = Utils.getIgnoreCase(timeZoneParams);
+      where.timeZone = Utils.getIgnoreCase(timeZoneParams, true);
     }
     let err: any, result: Array<TimeZoneDataDocument>;
     [err, result] = await this.systemDataSchemaService
