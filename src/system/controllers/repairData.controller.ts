@@ -23,7 +23,7 @@ import { CommonResult } from '@/common/dto';
 @ApiTags('RepairController')
 @UseGuards(SessionGuard)
 @UseInterceptors(HttpInterceptor)
-@ApiRights(RightsEnum.RepairData)
+@ApiRights(RightsEnum.OtherSetup, RightsEnum.RepairData)
 export class RepairDataController {
   constructor(private readonly repairService: RepairDataService) {}
 

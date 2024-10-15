@@ -5,14 +5,13 @@
 /documentation
 /certs
 /fileLogs
-/logs
 /build
 /tempUpload
 /pem
 
 # Logs
-logs
 *.log
+server.log*
 npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*

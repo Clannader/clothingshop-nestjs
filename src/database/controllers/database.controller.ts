@@ -31,7 +31,7 @@ import {
 @ApiTags('DatabaseController')
 @UseGuards(SessionGuard)
 @UseInterceptors(HttpInterceptor)
-@ApiRights(RightsEnum.DatabaseManage)
+@ApiRights(RightsEnum.OtherSetup, RightsEnum.DatabaseManage)
 export class DatabaseController {
   constructor(private readonly databaseService: DatabaseService) {}
 

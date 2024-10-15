@@ -3,3 +3,4 @@
  */
 export * from './repairData.controller';
 export * from './system.controller';
+export * from './timeZone.controller';

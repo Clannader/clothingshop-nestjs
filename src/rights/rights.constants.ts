@@ -9,6 +9,7 @@ import { Utils } from '@/common/utils';
 export type RightsProp = RightsConfigElement & {
   key: string;
   category?: string;
+  path?: string;
 };
 
 type RightsConfigElement = {
@@ -28,6 +29,10 @@ export enum RightsEnum {
   SystemBaseSetup = '3011',
   PackageVersionSetup = '3012',
   GetSequenceNumber = '3013',
+  TimeZoneSetup = '3014',
+  TimeZoneList = '30141',
+  TimeZoneCreate = '30142',
+  TimeZoneSync = '30143',
   UserSetup = '3020',
   RightsSetup = '3030',
   RightsGroupSetup = '3031',
@@ -70,6 +75,24 @@ export const RightsList: RightsConfig = {
           GetSequenceNumber: {
             code: RightsEnum.GetSequenceNumber, // 3013
             desc: '获取序列号',
+          },
+          TimeZoneSetup: {
+            code: RightsEnum.TimeZoneSetup, // 3014
+            desc: '时区设置',
+            children: {
+              TimeZoneList: {
+                code: RightsEnum.TimeZoneList, // 30141
+                desc: '时区列表',
+              },
+              TimeZoneCreate: {
+                code: RightsEnum.TimeZoneCreate, // 30142
+                desc: '创建时区',
+              },
+              TimeZoneSync: {
+                code: RightsEnum.TimeZoneSync, // 30143
+                desc: '同步时区数据',
+              },
+            },
           },
           // 后续计划邮箱设置,国家/省份/城市设置,动态参数设置,消息设置,都归属在里面吧
         },

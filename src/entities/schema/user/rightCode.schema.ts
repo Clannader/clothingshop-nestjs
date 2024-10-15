@@ -14,19 +14,22 @@ export class RightCode {
   code: string; // 权限内部代码
 
   @Prop()
-  key: string; // 代码中标识的权限的Key
+  key: string; // 代码中标识的权限枚举的Key
 
   @Prop()
   description: string; // 权限描述
 
   @Prop()
-  category: string; // 权限类别
+  category: string; // 权限的上一级类别Key
 
   @Prop()
   cnLabel: string; // 权限中文显示
 
   @Prop()
   enLabel: string; // 权限英文显示
+
+  @Prop()
+  path: string; // 代码tree的路径,例如x.x.x
 }
 
 export type RightCodeDocument = HydratedDocument<RightCode>;

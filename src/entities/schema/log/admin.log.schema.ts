@@ -16,32 +16,52 @@ export class AdminLog {
   })
   adminId: string; // 操作员ID
 
-  @Prop()
-  adminName: string; // 操作员名字
-
   @Prop({
-    default: new Date(),
+    required: true,
+    trim: true,
   })
-  date: Date; // 操作时间
+  adminName: string; // 操作员名字
 
   @Prop({
     required: true,
   })
+  date?: Date; // 操作时间
+
+  @Prop({
+    required: true,
+    trim: true,
+  })
   content: string; // 操作内容
 
-  @Prop()
+  @Prop({
+    required: true,
+    trim: true,
+  })
   shopId: string; // 操作的店铺ID
 
   @Prop({
+    required: true,
     enum: Utils.enumToArray(LogTypeEnum)[1],
   })
   type: string; // 操作类型
 
-  @Prop()
-  serverName: string; // 服务器名,例如app1, app2
+  @Prop({
+    required: true,
+    trim: true,
+  })
+  serverName?: string; // 服务器名,例如app1, app2
 
-  @Prop()
-  processId: string; // 进程ID
+  @Prop({
+    required: true,
+    trim: true,
+  })
+  workerId?: string; // 进程ID
+
+  @Prop({
+    required: true,
+    trim: true,
+  })
+  traceId: string; // 日志追踪ID
 }
 
 export type AdminLogDocument = HydratedDocument<AdminLog>;

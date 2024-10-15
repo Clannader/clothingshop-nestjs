@@ -4,8 +4,12 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 
-import { SequenceTypeEnum } from '@/common/enum';
-import { SequenceSchemaService } from '@/entities/services';
+import { LogTypeEnum, SequenceTypeEnum } from '@/common/enum';
+import {
+  AdminLogSchemaService,
+  SequenceSchemaService,
+} from '@/entities/services';
+import type { AdminLog } from '@/entities/schema';
 
 // @ts-ignore
 const cluster = require('node:cluster');
@@ -15,9 +19,15 @@ export class TestTasksService {
   @Inject()
   private readonly sequenceSchemaService: SequenceSchemaService;
 
+  @Inject()
+  private readonly adminLogSchemaService: AdminLogSchemaService;
+
   @Interval(3000)
   async handleInterval() {
     // 自从mongodb全部使用await函数后,好像不会同时请求数据库了
+    console.log(
+      `服务器ID: ${cluster.worker ? cluster.worker.id : 1}--------------------------`,
+    );
     const [err, result] = await this.sequenceSchemaService
       .getNextSequence(SequenceTypeEnum.Message)
       .then((result) => [null, result])
@@ -26,7 +36,17 @@ export class TestTasksService {
       console.error(err);
       return;
     }
-    console.log(`服务器ID: ${cluster.worker ? cluster.worker.id : 1}, 序列号为:${result.sequenceId}`);
-    console.log('--------------------------')
+    console.log(
+      `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, 序列号为:${result.sequenceId}`,
+    );
+    const logInfo: AdminLog = {
+      adminId: 'SYSTEM',
+      adminName: 'Supervisor',
+      content: `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, 序列号为:${result.sequenceId}`,
+      shopId: 'SYSTEM',
+      type: LogTypeEnum.Config,
+      traceId: Date.now().toString(),
+    };
+    await this.adminLogSchemaService.createUserLog(logInfo);
   }
 }

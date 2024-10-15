@@ -6,6 +6,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ipExp } from '@/common';
 import { UserTypeEnum, LogTypeEnum, RequestMethod } from '@/common/enum';
+import { Utils } from '@/common/utils';
 
 @Schema()
 export class AdminAccess {
@@ -14,7 +15,7 @@ export class AdminAccess {
 
   @Prop({
     required: true,
-    enum: [UserTypeEnum.SYSTEM, UserTypeEnum.THIRD, UserTypeEnum.OTHER],
+    enum: Utils.enumToArray(UserTypeEnum)[1],
   })
   adminType: string; // 用户类型
 
@@ -48,27 +49,13 @@ export class AdminAccess {
 
   @Prop({
     required: true,
-    enum: [
-      LogTypeEnum.Right,
-      LogTypeEnum.Config,
-      LogTypeEnum.Browser,
-      LogTypeEnum.Interface,
-      LogTypeEnum.ServerLog,
-      LogTypeEnum.User,
-    ],
+    enum: Utils.enumToArray(LogTypeEnum)[1],
   })
   type: string; // 请求类型
 
   @Prop({
     required: true,
-    enum: [
-      RequestMethod.GET,
-      RequestMethod.POST,
-      RequestMethod.PUT,
-      RequestMethod.DELETE,
-      RequestMethod.PATCH,
-      RequestMethod.OPTIONS,
-    ],
+    enum: Utils.enumToArray(RequestMethod)[1],
   })
   method: string; // 请求方式
 
@@ -89,6 +76,17 @@ export class AdminAccess {
     // alias: '字段别名'
   })
   headers: Record<string, any>; // 请求头内容
+
+  @Prop({
+    required: true,
+  })
+  serverName: string; // 服务器名,通过config.ini配置
+
+  @Prop({
+    required: true,
+    default: '1',
+  })
+  workerId: string; // 服务器的进程ID号,只有启动多进程时才会有多个,否则默认都是1
 }
 
 export const AdminAccessSchema = SchemaFactory.createForClass(AdminAccess);

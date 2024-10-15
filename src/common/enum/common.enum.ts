@@ -61,6 +61,7 @@ export enum LogTypeEnum {
   Interface = 'Interface',
   ServerLog = 'ServerLog',
   User = 'User',
+  TimeZone = 'TimeZone',
 }
 
 /**
@@ -90,4 +91,20 @@ export enum DbIndexType {
 export enum SequenceTypeEnum {
   Message = 'Message', // 消息ID
   OrderId = 'OrderId', // 订单号ID
+  TraceId = 'TraceId', // 跟踪轨迹ID
+}
+
+/**
+ * 系统数据类型
+ */
+export enum SystemDataTypeEnum {
+  TimeZoneData = 'TimeZoneData', // 时区设置
+}
+
+/**
+ * 系统INI类型
+ */
+export enum SystemConfigTypeEnum {
+  ParentConfig = 'ParentConfig',
+  ChildrenConfig = 'ChildrenConfig',
 }

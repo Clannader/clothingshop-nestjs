@@ -66,17 +66,18 @@ export class AopAspect {
         params = req.xmlData;
       }
       const diffTime = Date.now() - req.startTime.getTime();
+      const workerId = cluster?.worker?.id ?? 1;
 
       this.logger.log(
-        `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, 请求响应时间: ${url} ${diffTime}ms`,
+        `服务器ID: ${workerId}, 请求响应时间: ${url} ${diffTime}ms`,
       );
 
       if (!session) {
         session = {
           adminId:
-            (req.headers['adminId'] as string) || req.body['adminId'] || 'NULL',
+            (req.headers['adminId'] as string) ?? req.body['adminId'] ?? 'NULL',
           shopId:
-            (req.headers['shopId'] as string) || req.body['shopId'] || 'NULL',
+            (req.headers['shopId'] as string) ?? req.body['shopId'] ?? 'NULL',
           adminType: UserTypeEnum.OTHER,
         };
       }
@@ -125,6 +126,8 @@ export class AopAspect {
           ? Utils.piiXmlData(returnData as string, ...piiFields)
           : Utils.piiJsonData(returnData as Record<string, any>, ...piiFields),
         headers: Utils.piiJsonData(headers, ...piiHeaders),
+        serverName: this.configService.get<string>('serverName'),
+        workerId,
       };
       if (this.configService.get<boolean>('monitorLog', true)) {
         this.adminAccessService
