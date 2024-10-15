@@ -28,7 +28,7 @@ import { SystemService } from '../services/system.service';
 @ApiTags('SystemController')
 @UseGuards(SessionGuard)
 @UseInterceptors(HttpInterceptor)
-@ApiRights(RightsEnum.SystemDataSetup)
+@ApiRights(RightsEnum.OtherSetup, RightsEnum.SystemDataSetup)
 export class SystemController {
   constructor(private readonly systemService: SystemService) {}
 

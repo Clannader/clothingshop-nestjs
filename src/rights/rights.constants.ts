@@ -29,6 +29,7 @@ export enum RightsEnum {
   SystemBaseSetup = '3011',
   PackageVersionSetup = '3012',
   GetSequenceNumber = '3013',
+  TimeZoneSetup = '3014',
   UserSetup = '3020',
   RightsSetup = '3030',
   RightsGroupSetup = '3031',
@@ -72,6 +73,10 @@ export const RightsList: RightsConfig = {
             code: RightsEnum.GetSequenceNumber, // 3013
             desc: '获取序列号',
           },
+          TimeZoneSetup: {
+            code: RightsEnum.TimeZoneSetup,
+            desc: '时区设置'
+          }
           // 后续计划邮箱设置,国家/省份/城市设置,动态参数设置,消息设置,都归属在里面吧
         },
       },
