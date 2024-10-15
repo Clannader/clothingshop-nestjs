@@ -30,6 +30,8 @@ export enum RightsEnum {
   PackageVersionSetup = '3012',
   GetSequenceNumber = '3013',
   TimeZoneSetup = '3014',
+  TimeZoneList = '30141',
+  TimeZoneCreate = '30142',
   UserSetup = '3020',
   RightsSetup = '3030',
   RightsGroupSetup = '3031',
@@ -74,9 +76,19 @@ export const RightsList: RightsConfig = {
             desc: '获取序列号',
           },
           TimeZoneSetup: {
-            code: RightsEnum.TimeZoneSetup,
-            desc: '时区设置'
-          }
+            code: RightsEnum.TimeZoneSetup, // 3014
+            desc: '时区设置',
+            children: {
+              TimeZoneList: {
+                code: RightsEnum.TimeZoneList, // 30141
+                desc: '时区列表',
+              },
+              TimeZoneCreate: {
+                code: RightsEnum.TimeZoneCreate, // 30142
+                desc: '创建时区',
+              },
+            },
+          },
           // 后续计划邮箱设置,国家/省份/城市设置,动态参数设置,消息设置,都归属在里面吧
         },
       },

@@ -27,7 +27,7 @@ export class TimeZoneData extends CommonData {
 
 export const TimeZoneDataSchema = SchemaFactory.createForClass(TimeZoneData);
 
-TimeZoneDataSchema.statics.getAliasName = function() {
+TimeZoneDataSchema.statics.getAliasName = function () {
   return 'TimeZoneData';
 };
 
