@@ -33,7 +33,7 @@ export class UserController {
   @ApiCustomResponse({
     type: RespUserSearchDto,
   })
-  @ApiRights(RightsEnum.UserSetup)
+  @ApiRights(RightsEnum.OtherSetup, RightsEnum.UserSetup)
   getUsersList(@Query() params: ReqUserSearchDto) {
     return this.userService.getUsersList(params);
   }

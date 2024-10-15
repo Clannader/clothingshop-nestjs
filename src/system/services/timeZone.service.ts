@@ -5,7 +5,7 @@ import { Injectable, Inject } from '@nestjs/common';
 
 import { CommonResult } from '@/common/dto';
 import { GlobalService, Utils } from '@/common/utils';
-import { LogTypeEnum } from '@/common/enum';
+import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { CmsSession } from '@/common';
 
 import { SystemDataSchemaService } from '@/entities/services';
@@ -13,7 +13,15 @@ import { TimeZoneData } from '@/entities/schema';
 import { UserLogsService } from '@/logs';
 
 import { defaultTimeZone } from '../defaultSystemData';
-import { ReqTimeZoneListDto, ReqTimeZoneCreateDto } from '../dto';
+import {
+  ReqTimeZoneListDto,
+  ReqTimeZoneCreateDto,
+  RespTimeZoneListDto,
+} from '../dto';
+
+type SearchTimeZone = {
+  timeZone?: Record<string, any>;
+};
 
 @Injectable()
 export class TimeZoneService {
@@ -26,8 +34,24 @@ export class TimeZoneService {
   @Inject()
   private readonly globalService: GlobalService;
 
-  getTimeZoneList(params: ReqTimeZoneListDto) {
-    const resp = new CommonResult();
+  async getTimeZoneList(params: ReqTimeZoneListDto) {
+    const resp = new RespTimeZoneListDto();
+    const timeZoneParams = params.timeZone;
+    const where: SearchTimeZone = {};
+    if (!Utils.isEmpty(timeZoneParams)) {
+      where.timeZone = Utils.getIgnoreCase(timeZoneParams);
+    }
+    const [err, result] = await this.systemDataSchemaService
+      .getTimeZoneDataModel()
+      .find(where, { __v: 0 })
+      .sort({ _id: -1 })
+      .then((result) => [null, result])
+      .catch((err) => [err]);
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      return resp;
+    }
+    resp.timeZones = result;
     return resp;
   }
 
