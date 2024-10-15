@@ -15,12 +15,12 @@ export class UserLogsService {
 
   writeUserLog(content: string, type: LogTypeEnum) {
     const logInfo: AdminLog = {
-      adminId: '',
-      adminName: '',
+      adminId: '22',
+      adminName: '33',
       content,
-      shopId: '',
+      shopId: '44',
       type,
-      traceId: '',
+      traceId: '33',
     };
     return this.adminLogSchemaService.createUserLog(logInfo);
   }
