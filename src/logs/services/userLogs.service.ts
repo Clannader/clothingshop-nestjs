@@ -20,9 +20,8 @@ export class UserLogsService {
       content,
       shopId: '',
       type,
-      traceId: ''
-    }
-    return this.adminLogSchemaService.createUserLog(logInfo)
+      traceId: '',
+    };
+    return this.adminLogSchemaService.createUserLog(logInfo);
   }
-
 }

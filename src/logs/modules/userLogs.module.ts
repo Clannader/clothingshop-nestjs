@@ -3,9 +3,7 @@
  */
 import { Module } from '@nestjs/common';
 
-import {
-  AdminLogSchemaModule,
-} from '@/entities/modules';
+import { AdminLogSchemaModule } from '@/entities/modules';
 import { UserLogsService } from '../services';
 
 @Module({
