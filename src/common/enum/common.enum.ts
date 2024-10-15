@@ -61,6 +61,7 @@ export enum LogTypeEnum {
   Interface = 'Interface',
   ServerLog = 'ServerLog',
   User = 'User',
+  TimeZone = 'TimeZone',
 }
 
 /**
@@ -97,7 +98,7 @@ export enum SequenceTypeEnum {
  * 系统数据类型
  */
 export enum SystemDataTypeEnum {
-  TimeZone = 'TimeZone', // 时区设置
+  TimeZoneData = 'TimeZoneData', // 时区设置
 }
 
 /**

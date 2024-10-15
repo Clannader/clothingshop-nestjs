@@ -22,7 +22,7 @@ export class AdminLog {
   @Prop({
     default: new Date(),
   })
-  date: Date; // 操作时间
+  date?: Date; // 操作时间
 
   @Prop({
     required: true,
@@ -40,10 +40,10 @@ export class AdminLog {
   type: string; // 操作类型
 
   @Prop()
-  serverName: string; // 服务器名,例如app1, app2
+  serverName?: string; // 服务器名,例如app1, app2
 
   @Prop()
-  workerId: string; // 进程ID
+  workerId?: string; // 进程ID
 
   @Prop()
   traceId: string; // 日志追踪ID

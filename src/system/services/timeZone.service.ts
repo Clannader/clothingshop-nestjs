@@ -4,19 +4,26 @@
 import { Injectable, Inject } from '@nestjs/common';
 
 import { CommonResult } from '@/common/dto';
-import { CodeException } from '@/common/exceptions';
-import { CodeEnum } from '@/common/enum';
+import { GlobalService, Utils } from '@/common/utils';
 
 import { SystemDataSchemaService } from '@/entities/services';
-import type { TimeZoneDataDocument } from '@/entities/schema';
+import { TimeZoneData } from '@/entities/schema';
+import { UserLogsService } from '@/logs';
 
 import { defaultTimeZone } from '../defaultSystemData';
 import { ReqTimeZoneListDto, ReqTimeZoneCreateDto } from '../dto';
+import { LogTypeEnum } from '@/common/enum';
 
 @Injectable()
 export class TimeZoneService {
   @Inject()
   private readonly systemDataSchemaService: SystemDataSchemaService;
+
+  @Inject()
+  private readonly userLogsService: UserLogsService;
+
+  @Inject()
+  private readonly globalService: GlobalService;
 
   getTimeZoneList(params: ReqTimeZoneListDto) {
     const resp = new CommonResult();
@@ -46,9 +53,23 @@ export class TimeZoneService {
 
   async syncTimeZoneData() {
     // 同步默认时区数据到数据库中
-    const syncSuccessResult = []
+    let syncSuccessNumber = 0;
     for (const timeZoneInfo of defaultTimeZone) {
-      await this.systemDataSchemaService.syncTimeZoneObject(<TimeZoneDataDocument>timeZoneInfo)
+      const [, result] = await this.systemDataSchemaService
+        .syncTimeZoneObject(<TimeZoneData>timeZoneInfo)
+        .then((result) => [null, result])
+        .catch((err) => [err]);
+      if (Utils.isEmpty(result)) {
+        syncSuccessNumber++;
+      }
+    }
+    if (syncSuccessNumber > 0) {
+      const content = this.globalService.serverLang(
+        '成功同步{0}条默认时区数据',
+        'timeZone.syncSuccess',
+        syncSuccessNumber,
+      );
+      await this.userLogsService.writeUserLog(content, LogTypeEnum.TimeZone);
     }
     return new CommonResult();
   }

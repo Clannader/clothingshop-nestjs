@@ -7,6 +7,7 @@ import {
 } from './controllers';
 
 import { DatabaseModule } from '@/database';
+import { UserLogsModule } from '@/logs';
 import {
   RightCodeSchemaModule,
   SequenceSchemaModule,
@@ -19,6 +20,7 @@ import {
     RightCodeSchemaModule,
     SequenceSchemaModule,
     SystemDataSchemaModule,
+    UserLogsModule,
   ],
   controllers: [SystemController, RepairDataController, TimeZoneController],
   providers: [SystemService, RepairDataService, TimeZoneService],
