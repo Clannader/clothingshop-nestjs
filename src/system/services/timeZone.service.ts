@@ -9,7 +9,7 @@ import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { CmsSession } from '@/common';
 
 import { SystemDataSchemaService } from '@/entities/services';
-import { TimeZoneData } from '@/entities/schema';
+import { TimeZoneData, TimeZoneDataDocument } from '@/entities/schema';
 import { UserLogsService } from '@/logs';
 
 import { defaultTimeZone } from '../defaultSystemData';
@@ -17,6 +17,7 @@ import {
   ReqTimeZoneListDto,
   ReqTimeZoneCreateDto,
   RespTimeZoneListDto,
+  ListTimeZoneDto,
 } from '../dto';
 
 type SearchTimeZone = {
@@ -41,7 +42,8 @@ export class TimeZoneService {
     if (!Utils.isEmpty(timeZoneParams)) {
       where.timeZone = Utils.getIgnoreCase(timeZoneParams);
     }
-    const [err, result] = await this.systemDataSchemaService
+    let err: any, result: Array<TimeZoneDataDocument>;
+    [err, result] = await this.systemDataSchemaService
       .getTimeZoneDataModel()
       .find(where, { __v: 0 })
       .sort({ _id: -1 })
@@ -51,7 +53,17 @@ export class TimeZoneService {
       resp.code = CodeEnum.DB_EXEC_ERROR;
       return resp;
     }
-    resp.timeZones = result;
+    const timeZones: ListTimeZoneDto[] = [];
+    for (const row of result) {
+      timeZones.push({
+        id: row.id,
+        timeZoneName: row.timeZone,
+        summerTime: row.summer,
+        winterTime: row.winter,
+      });
+    }
+    resp.timeZones = timeZones;
+    resp.total = result.length;
     return resp;
   }
 
