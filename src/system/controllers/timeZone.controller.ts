@@ -64,7 +64,21 @@ export class TimeZoneController {
     type: RespTimeZoneCreateDto,
   })
   @ApiRights(RightsEnum.TimeZoneCreate)
-  getSequenceNumber(@Body() params: ReqTimeZoneCreateDto) {
+  createTimeZone(@Body() params: ReqTimeZoneCreateDto) {
     return this.timeZoneService.createTimeZone(params);
+  }
+
+  @Post('/syncData')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '同步时区数据',
+    description: '同步默认的时区数据到数据库中',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  @ApiRights(RightsEnum.TimeZoneSync)
+  syncTimeZoneData() {
+    return this.timeZoneService.syncTimeZoneData();
   }
 }

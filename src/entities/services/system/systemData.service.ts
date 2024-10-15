@@ -10,6 +10,7 @@ import {
   TimeZoneData,
   TimeZoneDataModel,
 } from '../../schema';
+import type { TimeZoneDataDocument } from '../../schema';
 
 @Injectable()
 export class SystemDataSchemaService {
@@ -25,5 +26,16 @@ export class SystemDataSchemaService {
 
   getTimeZoneDataModel() {
     return this.timeZoneDataModel;
+  }
+
+  // 同步时区数据
+  syncTimeZoneObject(timeZoneInfo: TimeZoneDataDocument) {
+    const where = {
+      timeZone: timeZoneInfo.timeZone,
+    }
+    const updateObject = {
+      $set: timeZoneInfo
+    }
+    return this.timeZoneDataModel.findOneAndUpdate(where, updateObject, {upsert: true});
   }
 }

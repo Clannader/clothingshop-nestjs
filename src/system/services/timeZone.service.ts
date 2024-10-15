@@ -8,6 +8,7 @@ import { CodeException } from '@/common/exceptions';
 import { CodeEnum } from '@/common/enum';
 
 import { SystemDataSchemaService } from '@/entities/services';
+import type { TimeZoneDataDocument } from '@/entities/schema';
 
 import { defaultTimeZone } from '../defaultSystemData';
 import { ReqTimeZoneListDto, ReqTimeZoneCreateDto } from '../dto';
@@ -43,8 +44,12 @@ export class TimeZoneService {
     return new CommonResult();
   }
 
-  syncTimeZoneData() {
+  async syncTimeZoneData() {
     // 同步默认时区数据到数据库中
+    const syncSuccessResult = []
+    for (const timeZoneInfo of defaultTimeZone) {
+      await this.systemDataSchemaService.syncTimeZoneObject(<TimeZoneDataDocument>timeZoneInfo)
+    }
     return new CommonResult();
   }
 }

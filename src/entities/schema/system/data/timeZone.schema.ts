@@ -2,7 +2,7 @@
  * Create by oliver.wu 2024/10/14
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { HydratedDocument, Model } from 'mongoose';
 
 import { CommonData } from './systemData.schema';
 import { timeZoneExp } from '@/common';
@@ -24,6 +24,8 @@ export class TimeZoneData extends CommonData {
   })
   winter: string; // 冬令时
 }
+
+export type TimeZoneDataDocument = HydratedDocument<TimeZoneData>;
 
 export const TimeZoneDataSchema = SchemaFactory.createForClass(TimeZoneData);
 
