@@ -14,8 +14,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
-import { CommonResult } from '@/common';
+import { ApiCommon, ApiCustomResponse, UserSession } from '@/common/decorator';
+import { CmsSession, CommonResult } from '@/common';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { ApiRights, RightsEnum } from '@/rights';
@@ -78,7 +78,7 @@ export class TimeZoneController {
     type: CommonResult,
   })
   @ApiRights(RightsEnum.TimeZoneSync)
-  syncTimeZoneData() {
-    return this.timeZoneService.syncTimeZoneData();
+  syncTimeZoneData(@UserSession() session: CmsSession) {
+    return this.timeZoneService.syncTimeZoneData(session);
   }
 }

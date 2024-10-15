@@ -7,20 +7,21 @@ import { AdminLogSchemaService } from '@/entities/services';
 import type { AdminLog } from '@/entities/schema';
 
 import { LogTypeEnum } from '@/common/enum';
+import { CmsSession } from '@/common';
 
 @Injectable()
 export class UserLogsService {
   @Inject()
   private readonly adminLogSchemaService: AdminLogSchemaService;
 
-  writeUserLog(content: string, type: LogTypeEnum) {
+  writeUserLog(session: CmsSession, type: LogTypeEnum, content: string) {
     const logInfo: AdminLog = {
-      adminId: '22',
-      adminName: '33',
+      adminId: session.adminId,
+      adminName: session.adminName,
       content,
-      shopId: '44',
+      shopId: session.shopId,
       type,
-      traceId: '33',
+      traceId: Date.now().toString(),
     };
     return this.adminLogSchemaService.createUserLog(logInfo);
   }

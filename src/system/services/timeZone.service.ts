@@ -5,6 +5,8 @@ import { Injectable, Inject } from '@nestjs/common';
 
 import { CommonResult } from '@/common/dto';
 import { GlobalService, Utils } from '@/common/utils';
+import { LogTypeEnum } from '@/common/enum';
+import { CmsSession } from '@/common';
 
 import { SystemDataSchemaService } from '@/entities/services';
 import { TimeZoneData } from '@/entities/schema';
@@ -12,7 +14,6 @@ import { UserLogsService } from '@/logs';
 
 import { defaultTimeZone } from '../defaultSystemData';
 import { ReqTimeZoneListDto, ReqTimeZoneCreateDto } from '../dto';
-import { LogTypeEnum } from '@/common/enum';
 
 @Injectable()
 export class TimeZoneService {
@@ -51,7 +52,7 @@ export class TimeZoneService {
     return new CommonResult();
   }
 
-  async syncTimeZoneData() {
+  async syncTimeZoneData(session: CmsSession) {
     // 同步默认时区数据到数据库中
     let syncSuccessNumber = 0;
     for (const timeZoneInfo of defaultTimeZone) {
@@ -69,7 +70,11 @@ export class TimeZoneService {
         'timeZone.syncSuccess',
         syncSuccessNumber,
       );
-      await this.userLogsService.writeUserLog(content, LogTypeEnum.TimeZone);
+      await this.userLogsService.writeUserLog(
+        session,
+        LogTypeEnum.TimeZone,
+        content,
+      );
     }
     return new CommonResult();
   }
