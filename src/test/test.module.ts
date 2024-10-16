@@ -4,6 +4,7 @@ import { MemoryCacheModule } from '@/cache/modules';
 import { AdminSchemaModule } from '@/entities/modules';
 // import { ConfigModule } from '../common';
 // import { UserModule } from '../user/user.module';
+import { TestService } from './test.service';
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { AdminSchemaModule } from '@/entities/modules';
     MemoryCacheModule,
   ],
   controllers: [TestController],
-  providers: [],
+  providers: [TestService],
 })
 export class TestModule {}

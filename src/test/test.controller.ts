@@ -36,6 +36,7 @@ import { AdminSchemaService } from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
 import { CmsSession, CommonResult } from '@/common';
+import { TestService } from './test.service';
 
 @ApiCommon()
 @Controller('/cms')
@@ -58,6 +59,9 @@ export class TestController {
 
   @Inject()
   private readonly adminSchemaService: AdminSchemaService;
+
+  @Inject()
+  private readonly testService: TestService;
 
   private readonly logger = new AopLogger(TestController.name);
 
@@ -241,7 +245,9 @@ export class TestController {
         ),
     );
     console.log(id + '------' + this.globalService.i);
+    console.log(id + '------' + this.testService.testI);
     this.globalService.i++;
+    this.testService.testI++;
     await sleep(+id);
     console.log(
       id +
@@ -253,6 +259,22 @@ export class TestController {
         ),
     );
     console.log(id + '------' + this.globalService.i);
+    console.log(id + '------' + this.testService.testI);
+    // 假设传入5和3秒,多实例的时候结果应该是
+    // 5(s) ---- 3(i) 初始值是3,第一次进来没i++,所以是3, i++后,第二次进来由于是单例,所以是新的对象还是3, 之后执行i++, 变成4, 所以后面都输出的是4
+    // 3(s) ---- 3(i)
+    // 3(s)---- 4(i)
+    // 5(s) ---- 4(i)
+
+    // 如果是单例时,输出
+    // 5(s) ---- 3(i) 初始值是3,第一次进来没i++,所以是3, i++后,第二次进来值变了,变成4, 4之后执行i++, 变成5, 所以后面都输出的是5
+    // 3(s) ---- 4(i)
+    // 3(s) ---- 5(i)
+    // 5(s) ---- 5(i)
+
+    // 总结可以使用session传参,session是独立的,如果想省事,只能是Service变成多实例化了
+    // 这里还有一个问题要思考,如果A是多实例的,那么B引入了A,B会是多实例还是单例???
+    // 事实证明,B是多实例的
     return new CommonResult();
   }
 }
