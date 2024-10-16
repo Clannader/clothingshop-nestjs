@@ -16,6 +16,7 @@ export class CommonConfig {
   shopId: string;
 
   @Prop({
+    required: true,
     trim: true,
     match: codeExp,
   })

@@ -8,7 +8,9 @@ import { CommonConfig } from './systemConfig.schema';
 
 @Schema()
 export class ChildrenConfig extends CommonConfig {
-  @Prop()
+  @Prop({
+    required: true,
+  })
   groupName: string; // 组名,一级组名为null,二级组名不为null
 }
 

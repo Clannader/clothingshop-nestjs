@@ -5,7 +5,7 @@ import { CommonResult } from '@/common';
 
 export class RespTimeZoneCreateDto extends CommonResult {
   /**
-   * 返回创建新的时区ID值
+   * 返回时区的ID值
    */
   id: string;
 }

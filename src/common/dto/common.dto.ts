@@ -20,4 +20,8 @@ export class CommonResult {
    * 发生异常时的请求路径
    */
   path?: string;
+
+  isSuccess() {
+    return this.code === CodeEnum.SUCCESS;
+  }
 }

@@ -8,5 +8,10 @@ export class RespTimeZoneListDto extends CommonResult {
   /**
    * 时区列表
    */
-  timeZones: ListTimeZoneDto;
+  timeZones: ListTimeZoneDto[];
+
+  /**
+   * 总数
+   */
+  total: number;
 }

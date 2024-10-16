@@ -33,6 +33,8 @@ export enum RightsEnum {
   TimeZoneList = '30141',
   TimeZoneCreate = '30142',
   TimeZoneSync = '30143',
+  TimeZoneModify = '30144',
+  TimeZoneDelete = '30145',
   UserSetup = '3020',
   RightsSetup = '3030',
   RightsGroupSetup = '3031',
@@ -91,6 +93,14 @@ export const RightsList: RightsConfig = {
               TimeZoneSync: {
                 code: RightsEnum.TimeZoneSync, // 30143
                 desc: '同步时区数据',
+              },
+              TimeZoneModify: {
+                code: RightsEnum.TimeZoneModify, // 30144
+                desc: '编辑时区数据',
+              },
+              TimeZoneDelete: {
+                code: RightsEnum.TimeZoneDelete, // 30144
+                desc: '删除时区数据',
               },
             },
           },

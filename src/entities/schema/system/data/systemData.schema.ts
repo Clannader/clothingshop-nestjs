@@ -30,6 +30,10 @@ SystemDataSchema.statics.getAliasName = function () {
   return 'SystemData';
 };
 
+SystemDataSchema.virtual('id').get(function () {
+  return this._id.toString();
+});
+
 export interface SystemDataModel extends Model<SystemData> {
   getAliasName(): string;
 }

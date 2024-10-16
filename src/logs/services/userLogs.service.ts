@@ -21,7 +21,7 @@ export class UserLogsService {
       content,
       shopId: session.shopId,
       type,
-      traceId: Date.now().toString(),
+      traceId: Date.now().toString(), // TODO 以后需要修改这个traceId的逻辑
     };
     return this.adminLogSchemaService.createUserLog(logInfo);
   }

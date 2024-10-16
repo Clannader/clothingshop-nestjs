@@ -30,7 +30,7 @@ import {
 import { UserSessionDto } from '@/user/dto';
 import { XmlInterceptor } from '@/interceptor/xml';
 import { MemoryCacheService } from '@/cache/services';
-import { AdminSchemaService, TestSchemaService } from '@/entities/services';
+import { AdminSchemaService } from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
 import { CommonResult } from '@/common';
@@ -50,9 +50,6 @@ export class TestController {
 
   @Inject()
   private readonly configService: ConfigService;
-
-  @Inject()
-  private readonly testSchemaService: TestSchemaService;
 
   // @Inject('TEST_CONFIG')
   // private readonly config2Service: ConfigService;
@@ -207,21 +204,6 @@ export class TestController {
     resp.rows = 23;
     await this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
     console.log(this.memoryCacheService.getAllCacheKeys());
-    return resp;
-  }
-
-  @Post('/api/test/database/discriminators')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: '测试数据表鉴别器',
-    description: '测试数据表鉴别器功能',
-  })
-  @ApiCustomResponse({
-    type: CommonResult,
-  })
-  async testDatabaseDiscriminators() {
-    const resp = new CommonResult();
-    await this.testSchemaService.testFindList();
     return resp;
   }
 }

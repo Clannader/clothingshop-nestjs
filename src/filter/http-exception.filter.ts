@@ -31,11 +31,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
     const msg =
       exception instanceof ValidateException
-        ? Utils.lang(
-            this.globalService.getHeadersLanguage(request),
-            message,
-            message,
-          )
+        ? Utils.lang(Utils.getHeadersLanguage(request), message, message)
         : message;
     response.status(200).json({
       code: status,

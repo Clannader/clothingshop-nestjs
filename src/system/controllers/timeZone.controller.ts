@@ -9,13 +9,20 @@ import {
   HttpStatus,
   Post,
   Query,
+  Put,
+  Delete,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { ApiCommon, ApiCustomResponse, UserSession } from '@/common/decorator';
-import { CmsSession, CommonResult } from '@/common';
+import {
+  CmsSession,
+  CommonResult,
+  DeleteResultDto,
+  RespErrorResult,
+} from '@/common';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { ApiRights, RightsEnum } from '@/rights';
@@ -26,7 +33,10 @@ import {
   RespTimeZoneListDto,
   ReqTimeZoneCreateDto,
   RespTimeZoneCreateDto,
+  ReqTimeZoneModifyDto,
+  RespTimeZoneAllDto,
 } from '../dto';
+import { Utils } from '@/common/utils';
 
 @ApiCommon()
 @Controller('/cms/api/timeZone')
@@ -54,6 +64,35 @@ export class TimeZoneController {
     return this.timeZoneService.getTimeZoneList(params);
   }
 
+  @Get('/allList')
+  @ApiOperation({
+    summary: '获取全部的时区对象',
+    description: '测试获取全部时区,后期更换其他controller调用',
+  })
+  @ApiCustomResponse({
+    type: RespTimeZoneAllDto,
+  })
+  getAllTimeZone() {
+    return this.timeZoneService.getAllTimeZone();
+  }
+
+  @Post('/checkInfo')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '校验时区数据',
+    description: '校验时区数据',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  checkInfoTimeZone(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqTimeZoneModifyDto,
+  ) {
+    const isNew = Utils.isEmpty(params.id);
+    return this.timeZoneService.checkInfoTimeZone(session, params, isNew, true);
+  }
+
   @Post('/create')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -64,8 +103,45 @@ export class TimeZoneController {
     type: RespTimeZoneCreateDto,
   })
   @ApiRights(RightsEnum.TimeZoneCreate)
-  createTimeZone(@Body() params: ReqTimeZoneCreateDto) {
-    return this.timeZoneService.createTimeZone(params);
+  createTimeZone(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqTimeZoneCreateDto,
+  ) {
+    return this.timeZoneService.saveTimeZone(session, params, true);
+  }
+
+  @Put('/modify')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '编辑时区',
+    description: '编辑已存在的时区',
+  })
+  @ApiCustomResponse({
+    type: RespTimeZoneCreateDto,
+  })
+  @ApiRights(RightsEnum.TimeZoneModify)
+  modifyTimeZone(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqTimeZoneModifyDto,
+  ) {
+    return this.timeZoneService.saveTimeZone(session, params, false);
+  }
+
+  @Delete('/delete')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '删除时区',
+    description: '删除一条时区设置',
+  })
+  @ApiCustomResponse({
+    type: RespErrorResult,
+  })
+  @ApiRights(RightsEnum.TimeZoneDelete)
+  deleteTimeZone(
+    @UserSession() session: CmsSession,
+    @Body() params: DeleteResultDto,
+  ) {
+    return this.timeZoneService.deleteTimeZone(session, params);
   }
 
   @Post('/syncData')

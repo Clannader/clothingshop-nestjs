@@ -29,22 +29,11 @@ export class GlobalService {
 
   serverLang(origin: string, key: string, ...args: Array<string | number>) {
     return Utils.lang(
-      this.getHeadersLanguage(this.request),
+      Utils.getHeadersLanguage(this.request),
       origin,
       key,
       ...args,
     );
-  }
-
-  getHeadersLanguage(request: Request): languageType {
-    const headerLanguage = request.headers['language'];
-    return Utils.isEmpty(headerLanguage)
-      ? 'ZH'
-      : ['ZH', 'EN'].includes(
-            typeof headerLanguage === 'string' ? headerLanguage : 'ZH',
-          )
-        ? (headerLanguage as languageType)
-        : 'ZH';
   }
 
   /**
