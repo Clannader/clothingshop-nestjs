@@ -9,6 +9,7 @@ import {
   HttpStatus,
   Post,
   Query,
+  Put,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -26,6 +27,8 @@ import {
   RespTimeZoneListDto,
   ReqTimeZoneCreateDto,
   RespTimeZoneCreateDto,
+  ReqTimeZoneModifyDto,
+  RespTimeZoneAllDto,
 } from '../dto';
 
 @ApiCommon()
@@ -54,6 +57,18 @@ export class TimeZoneController {
     return this.timeZoneService.getTimeZoneList(params);
   }
 
+  @Get('/allList')
+  @ApiOperation({
+    summary: '获取全部的时区对象',
+    description: '测试获取全部时区,后期更换其他controller调用',
+  })
+  @ApiCustomResponse({
+    type: RespTimeZoneAllDto,
+  })
+  getAllTimeZone() {
+    return this.timeZoneService.getAllTimeZone();
+  }
+
   @Post('/create')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -66,6 +81,20 @@ export class TimeZoneController {
   @ApiRights(RightsEnum.TimeZoneCreate)
   createTimeZone(@Body() params: ReqTimeZoneCreateDto) {
     return this.timeZoneService.createTimeZone(params);
+  }
+
+  @Put('/modify')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '编辑时区',
+    description: '编辑已存在的时区',
+  })
+  @ApiCustomResponse({
+    type: RespTimeZoneCreateDto,
+  })
+  @ApiRights(RightsEnum.TimeZoneModify)
+  modifyTimeZone(@Body() params: ReqTimeZoneModifyDto) {
+    return this.timeZoneService.modifyTimeZone(params);
   }
 
   @Post('/syncData')

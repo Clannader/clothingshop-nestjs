@@ -18,6 +18,9 @@ import {
   ReqTimeZoneCreateDto,
   RespTimeZoneListDto,
   ListTimeZoneDto,
+  ReqTimeZoneModifyDto,
+  RespTimeZoneAllDto,
+  CreateTimeZoneDto,
 } from '../dto';
 
 type SearchTimeZone = {
@@ -68,15 +71,38 @@ export class TimeZoneService {
     return resp;
   }
 
-  getTimeZoneArray() {
-    return new CommonResult();
+  async getAllTimeZone() {
+    const resp = new RespTimeZoneAllDto();
+    const results: CreateTimeZoneDto[] = [];
+
+    let err: any, result: Array<TimeZoneDataDocument>;
+    [err, result] = await Utils.toPromise(
+      this.systemDataSchemaService
+        .getTimeZoneDataModel()
+        .find({}, { __v: 0, _id: 0 })
+        .sort({ summer: 1 }),
+    );
+    if (err) {
+      resp.timeZones = results;
+      return resp;
+    }
+    for (const row of result) {
+      results.push({
+        timeZoneName: row.timeZone,
+        summerTime: row.summer,
+        winterTime: row.winter,
+      });
+    }
+
+    resp.timeZones = results;
+    return resp;
   }
 
   createTimeZone(params: ReqTimeZoneCreateDto) {
     return new CommonResult();
   }
 
-  modifyTimeZone() {
+  modifyTimeZone(params: ReqTimeZoneModifyDto) {
     return new CommonResult();
   }
 
