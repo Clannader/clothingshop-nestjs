@@ -20,7 +20,7 @@ import {
   ListTimeZoneDto,
   ReqTimeZoneModifyDto,
   RespTimeZoneAllDto,
-  CreateTimeZoneDto,
+  CreateTimeZoneDto, RespTimeZoneCreateDto,
 } from '../dto';
 
 type SearchTimeZone = {
@@ -73,7 +73,7 @@ export class TimeZoneService {
 
   async getAllTimeZone() {
     const resp = new RespTimeZoneAllDto();
-    const results: CreateTimeZoneDto[] = [];
+    const timeZones: CreateTimeZoneDto[] = [];
 
     let err: any, result: Array<TimeZoneDataDocument>;
     [err, result] = await Utils.toPromise(
@@ -83,36 +83,48 @@ export class TimeZoneService {
         .sort({ summer: 1 }),
     );
     if (err) {
-      resp.timeZones = results;
+      resp.timeZones = timeZones;
       return resp;
     }
     for (const row of result) {
-      results.push({
+      timeZones.push({
         timeZoneName: row.timeZone,
         summerTime: row.summer,
         winterTime: row.winter,
       });
     }
 
-    resp.timeZones = results;
+    resp.timeZones = timeZones;
     return resp;
   }
 
-  createTimeZone(params: ReqTimeZoneCreateDto) {
-    return new CommonResult();
-  }
+  saveTimeZone(params: ReqTimeZoneModifyDto, isNew: boolean) {
+    const resp = new RespTimeZoneCreateDto();
 
-  modifyTimeZone(params: ReqTimeZoneModifyDto) {
-    return new CommonResult();
+    const checkResp = this.checkInfoTimeZone(params, isNew, false)
+
+    if (!checkResp.isSuccess()) {
+      resp.code = checkResp.code;
+      resp.msg = checkResp.msg;
+      return resp;
+    }
+    resp.id = checkResp.id
+    return resp;
   }
 
   deleteTimeZone() {
     return new CommonResult();
   }
 
-  checkTimeZone() {
-    // 校验时区数据
-    return new CommonResult();
+  /**
+   * 校验时区数据以及保存数据
+   * @param params 编辑对象
+   * @param isNew 是否是新建
+   * @param isCheck 是否是仅检查
+   */
+  checkInfoTimeZone(params: ReqTimeZoneModifyDto, isNew: boolean, isCheck: boolean) {
+    const resp = new RespTimeZoneCreateDto()
+    return resp;
   }
 
   async syncTimeZoneData(session: CmsSession) {

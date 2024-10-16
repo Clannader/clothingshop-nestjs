@@ -30,6 +30,7 @@ import {
   ReqTimeZoneModifyDto,
   RespTimeZoneAllDto,
 } from '../dto';
+import { Utils } from '@/common/utils';
 
 @ApiCommon()
 @Controller('/cms/api/timeZone')
@@ -69,6 +70,20 @@ export class TimeZoneController {
     return this.timeZoneService.getAllTimeZone();
   }
 
+  @Post('/checkInfo')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '校验时区数据',
+    description: '校验时区数据',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  checkInfoTimeZone(@Body() params: ReqTimeZoneModifyDto) {
+    const isNew = Utils.isEmpty(params.id);
+    return this.timeZoneService.checkInfoTimeZone(params, isNew, true);
+  }
+
   @Post('/create')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -80,7 +95,7 @@ export class TimeZoneController {
   })
   @ApiRights(RightsEnum.TimeZoneCreate)
   createTimeZone(@Body() params: ReqTimeZoneCreateDto) {
-    return this.timeZoneService.createTimeZone(params);
+    return this.timeZoneService.saveTimeZone(params, true);
   }
 
   @Put('/modify')
@@ -94,7 +109,7 @@ export class TimeZoneController {
   })
   @ApiRights(RightsEnum.TimeZoneModify)
   modifyTimeZone(@Body() params: ReqTimeZoneModifyDto) {
-    return this.timeZoneService.modifyTimeZone(params);
+    return this.timeZoneService.saveTimeZone(params, false);
   }
 
   @Post('/syncData')
