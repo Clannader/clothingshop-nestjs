@@ -3,7 +3,7 @@
  */
 import { Injectable, Inject } from '@nestjs/common';
 
-import { CommonResult, DeleteResultDto } from '@/common/dto';
+import { CommonResult, DeleteResultDto, RespErrorResult } from '@/common/dto';
 import { GlobalService, Utils } from '@/common/utils';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { CmsSession } from '@/common';
@@ -15,7 +15,6 @@ import { UserLogsService } from '@/logs';
 import { defaultTimeZone } from '../defaultSystemData';
 import {
   ReqTimeZoneListDto,
-  ReqTimeZoneCreateDto,
   RespTimeZoneListDto,
   ListTimeZoneDto,
   ReqTimeZoneModifyDto,
@@ -113,8 +112,98 @@ export class TimeZoneService {
     return resp;
   }
 
-  deleteTimeZone(params: DeleteResultDto) {
-    return new CommonResult();
+  async deleteTimeZone(session: CmsSession, params: DeleteResultDto) {
+    const resp = new RespErrorResult();
+    const idsParams = params.ids;
+    if (!Array.isArray(idsParams) || idsParams.length === 0) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        'Ids不能为空',
+        'common.idsIsEmpty',
+      );
+      return resp;
+    }
+    const where = {
+      $in: idsParams,
+    };
+    const fields = {
+      timeZone: 1,
+    };
+    let err: any, timeZoneList: Array<TimeZoneDataDocument>;
+    [err, timeZoneList] = await Utils.toPromise(
+      this.systemDataSchemaService.getTimeZoneDataModel().find(where, fields),
+    );
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    const writeLogResult = [];
+    const errResult = [];
+    const timeZoneNameList = [];
+    const timeZoneExistId = [];
+
+    for (const timeZoneInfo of timeZoneList) {
+      timeZoneNameList.push(timeZoneInfo.timeZone);
+      timeZoneExistId.push(timeZoneInfo.id);
+    }
+
+    if (timeZoneExistId.length !== idsParams.length) {
+      // 存在 不存在的id数据
+      for (const id of idsParams) {
+        if (!timeZoneExistId.includes(id)) {
+          errResult.push(
+            `(${id}) ` +
+              this.globalService.serverLang(
+                '该时区不存在',
+                'timeZone.isNotExist',
+              ),
+          );
+        }
+      }
+    }
+
+    // TODO 以后要新增店铺列表如果使用到该时区不能删除的逻辑
+    // const existShopList = await fineExistShop(timeZoneNameList)
+    // const timeZoneShopMap = new Map()
+    // for (const shopInfo of existShopList) {
+    //   if (timeZoneShopMap.has(shopInfo.timeZone)) {
+    //     timeZoneShopMap.get(shopInfo.timeZone).push(shopInfo.shopId)
+    //   } else {
+    //     timeZoneShopMap.set(shopInfo.timeZone, [shopInfo.shopId])
+    //   }
+    // }
+    // if (timeZoneShopMap.size > 0) {
+    //   // 时区有被店铺使用则无法删除
+    //   for (const [key, value] of timeZoneShopMap) {
+    //     errResult.push(this.globalService.serverLang('{0}时区已被以下店铺使用:{1}', key, value.join(',')))
+    //   }
+    //   return res.send({code: 0, msg: errResult.join(',')})
+    // }
+
+    for (const timeZoneObj of timeZoneList) {
+      await timeZoneObj.deleteOne();
+      writeLogResult.push(timeZoneObj.timeZone);
+    }
+
+    if (writeLogResult.length > 0) {
+      // 只要有一个删除成功就算成功
+      const content = this.globalService.serverLang(
+        '删除时区:({0})',
+        writeLogResult.join(','),
+      );
+      await this.userLogsService.writeUserLog(
+        session,
+        LogTypeEnum.TimeZone,
+        content,
+      );
+    } else {
+      // 这里是删除全部都失败的情况
+      resp.code = CodeEnum.FAIL;
+      resp.errResult = errResult;
+      return resp;
+    }
+    return resp;
   }
 
   /**

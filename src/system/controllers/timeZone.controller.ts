@@ -128,8 +128,11 @@ export class TimeZoneController {
     type: RespErrorResult,
   })
   @ApiRights(RightsEnum.TimeZoneDelete)
-  deleteTimeZone(@Body() params: DeleteResultDto) {
-    return this.timeZoneService.deleteTimeZone(params);
+  deleteTimeZone(
+    @UserSession() session: CmsSession,
+    @Body() params: DeleteResultDto,
+  ) {
+    return this.timeZoneService.deleteTimeZone(session, params);
   }
 
   @Post('/syncData')
