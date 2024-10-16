@@ -124,7 +124,9 @@ export class TimeZoneService {
       return resp;
     }
     const where = {
-      $in: idsParams,
+      _id: {
+        $in: idsParams,
+      },
     };
     const fields = {
       timeZone: 1,
@@ -190,6 +192,7 @@ export class TimeZoneService {
       // 只要有一个删除成功就算成功
       const content = this.globalService.serverLang(
         '删除时区:({0})',
+        'timeZone.deleteLog',
         writeLogResult.join(','),
       );
       await this.userLogsService.writeUserLog(
