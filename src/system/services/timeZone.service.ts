@@ -215,7 +215,7 @@ export class TimeZoneService {
 
   /**
    * 校验时区数据以及保存数据
-   * @param session 回话对象
+   * @param session 会话对象
    * @param params 编辑对象
    * @param isNew 是否是新建
    * @param isCheck 是否是仅检查
