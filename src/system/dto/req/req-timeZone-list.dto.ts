@@ -8,5 +8,5 @@ export class ReqTimeZoneListDto {
    * 搜索的时区名
    */
   @Expose()
-  timeZone: string;
+  timeZone?: string;
 }

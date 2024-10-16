@@ -51,6 +51,7 @@ export class TimeZoneService {
       .catch((err) => [err]);
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
       return resp;
     }
     const timeZones: ListTimeZoneDto[] = [];
