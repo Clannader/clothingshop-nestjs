@@ -9,7 +9,9 @@ import { Utils } from '../utils';
 export const UserSession = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext) => {
     const request: RequestSession = ctx.switchToHttp().getRequest();
-    return request.session.adminSession;
+    const session = request.session.adminSession;
+    session.language = Utils.getHeadersLanguage(request);
+    return session;
   },
 );
 

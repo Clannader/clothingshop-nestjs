@@ -529,4 +529,15 @@ export class Utils {
         return [err, undefined];
       });
   }
+
+  static getHeadersLanguage(request: Request): languageType {
+    const headerLanguage = request.headers['language'];
+    return this.isEmpty(headerLanguage)
+      ? 'ZH'
+      : ['ZH', 'EN'].includes(
+            typeof headerLanguage === 'string' ? headerLanguage : 'ZH',
+          )
+        ? (headerLanguage as languageType)
+        : 'ZH';
+  }
 }
