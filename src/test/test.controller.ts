@@ -8,8 +8,9 @@ import {
   Get,
   Query,
   UseInterceptors,
+  Param,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { ConfigService } from '@/common/config';
 import { CodeEnum } from '@/common/enum';
 import { GlobalService } from '@/common/utils';
@@ -17,6 +18,7 @@ import {
   ApiCommon,
   ApiCustomResponse,
   ApiGenericsResponse,
+  UserSession,
   XmlData,
   XmlJsonData,
 } from '@/common/decorator';
@@ -33,7 +35,7 @@ import { MemoryCacheService } from '@/cache/services';
 import { AdminSchemaService } from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
-import { CommonResult } from '@/common';
+import { CmsSession, CommonResult } from '@/common';
 
 @ApiCommon()
 @Controller('/cms')
@@ -142,7 +144,7 @@ export class TestController {
     // resp.rows = xmlJsonData.xml.age;
     // return resp;
 
-    const test = () => {
+    const test = (): Record<string, any> => {
       return new Promise((resolve, reject) => {
         reject({});
       });
@@ -205,5 +207,52 @@ export class TestController {
     await this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
     console.log(this.memoryCacheService.getAllCacheKeys());
     return resp;
+  }
+
+  @ApiExcludeEndpoint() // 可以在swagger中隐藏接口,但是该接口是有效的
+  @Post('/api/test/instance/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '测试Service是否是多实例还是单实例',
+    description: '测试Service是否是多实例还是单实例',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  async testInstance(
+    @UserSession() session: CmsSession,
+    @Param('id') id: number,
+  ) {
+    console.log(typeof id); // 这里要注意的是虽然ts断言类型是number,但是实际上拿到的类型还是string
+
+    const sleep = (id) => {
+      return new Promise((resolve) => {
+        setTimeout(resolve, id * 1000);
+      });
+    };
+
+    console.log(
+      id +
+        '------' +
+        this.globalService.sessionLang(
+          session,
+          'Ids不能为空',
+          'common.idsIsEmpty',
+        ),
+    );
+    console.log(id + '------' + this.globalService.i);
+    this.globalService.i++;
+    await sleep(+id);
+    console.log(
+      id +
+        '------' +
+        this.globalService.sessionLang(
+          session,
+          'Ids不能为空',
+          'common.idsIsEmpty',
+        ),
+    );
+    console.log(id + '------' + this.globalService.i);
+    return new CommonResult();
   }
 }
