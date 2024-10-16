@@ -116,6 +116,16 @@ export const monitorPlugin = function (schema: Schema): void {
     this.setOptions({
       _lastTime: new Date().getTime(),
     });
+    // 如果参数里面设置了{upsert: true}, __v则不会加1,就算数据库中有数据也不会加1,因为这个参数的意思就是新建
+    // 所以只有findOneAndUpdate加了upsert参数后就认为是新建了,会重置所有字段的值,所以每次运行都只能设置成0
+    const $where = this.getUpdate();
+    // 更新时版本号自动加1
+    this.setUpdate({
+      ...$where,
+      $inc: {
+        [versionKey]: 1,
+      },
+    });
   });
   schema.post('findOneAndUpdate', function (result) {
     writeQueryLog.call(this, schema, result);
