@@ -10,13 +10,19 @@ import {
   Post,
   Query,
   Put,
+  Delete,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { ApiCommon, ApiCustomResponse, UserSession } from '@/common/decorator';
-import { CmsSession, CommonResult } from '@/common';
+import {
+  CmsSession,
+  CommonResult,
+  DeleteResultDto,
+  RespErrorResult,
+} from '@/common';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { ApiRights, RightsEnum } from '@/rights';
@@ -110,6 +116,20 @@ export class TimeZoneController {
   @ApiRights(RightsEnum.TimeZoneModify)
   modifyTimeZone(@Body() params: ReqTimeZoneModifyDto) {
     return this.timeZoneService.saveTimeZone(params, false);
+  }
+
+  @Delete('/delete')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '删除时区',
+    description: '删除一条时区设置',
+  })
+  @ApiCustomResponse({
+    type: RespErrorResult,
+  })
+  @ApiRights(RightsEnum.TimeZoneDelete)
+  deleteTimeZone(@Body() params: DeleteResultDto) {
+    return this.timeZoneService.deleteTimeZone(params);
   }
 
   @Post('/syncData')

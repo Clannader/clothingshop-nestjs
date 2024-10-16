@@ -3,7 +3,7 @@
  */
 import { Injectable, Inject } from '@nestjs/common';
 
-import { CommonResult } from '@/common/dto';
+import { CommonResult, DeleteResultDto } from '@/common/dto';
 import { GlobalService, Utils } from '@/common/utils';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { CmsSession } from '@/common';
@@ -20,7 +20,8 @@ import {
   ListTimeZoneDto,
   ReqTimeZoneModifyDto,
   RespTimeZoneAllDto,
-  CreateTimeZoneDto, RespTimeZoneCreateDto,
+  CreateTimeZoneDto,
+  RespTimeZoneCreateDto,
 } from '../dto';
 
 type SearchTimeZone = {
@@ -101,18 +102,18 @@ export class TimeZoneService {
   saveTimeZone(params: ReqTimeZoneModifyDto, isNew: boolean) {
     const resp = new RespTimeZoneCreateDto();
 
-    const checkResp = this.checkInfoTimeZone(params, isNew, false)
+    const checkResp = this.checkInfoTimeZone(params, isNew, false);
 
     if (!checkResp.isSuccess()) {
       resp.code = checkResp.code;
       resp.msg = checkResp.msg;
       return resp;
     }
-    resp.id = checkResp.id
+    resp.id = checkResp.id;
     return resp;
   }
 
-  deleteTimeZone() {
+  deleteTimeZone(params: DeleteResultDto) {
     return new CommonResult();
   }
 
@@ -122,8 +123,12 @@ export class TimeZoneService {
    * @param isNew 是否是新建
    * @param isCheck 是否是仅检查
    */
-  checkInfoTimeZone(params: ReqTimeZoneModifyDto, isNew: boolean, isCheck: boolean) {
-    const resp = new RespTimeZoneCreateDto()
+  checkInfoTimeZone(
+    params: ReqTimeZoneModifyDto,
+    isNew: boolean,
+    isCheck: boolean,
+  ) {
+    const resp = new RespTimeZoneCreateDto();
     return resp;
   }
 

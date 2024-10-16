@@ -525,7 +525,7 @@ export class Utils {
           const parsedError = Object.assign({}, err, errorExt);
           return [parsedError, undefined];
         }
-        console.error(err)
+        console.error(err);
         return [err, undefined];
       });
   }
