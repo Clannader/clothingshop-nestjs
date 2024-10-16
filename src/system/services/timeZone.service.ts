@@ -98,10 +98,14 @@ export class TimeZoneService {
     return resp;
   }
 
-  saveTimeZone(params: ReqTimeZoneModifyDto, isNew: boolean) {
+  saveTimeZone(
+    session: CmsSession,
+    params: ReqTimeZoneModifyDto,
+    isNew: boolean,
+  ) {
     const resp = new RespTimeZoneCreateDto();
 
-    const checkResp = this.checkInfoTimeZone(params, isNew, false);
+    const checkResp = this.checkInfoTimeZone(session, params, isNew, false);
 
     if (!checkResp.isSuccess()) {
       resp.code = checkResp.code;
@@ -211,11 +215,13 @@ export class TimeZoneService {
 
   /**
    * 校验时区数据以及保存数据
+   * @param session 回话对象
    * @param params 编辑对象
    * @param isNew 是否是新建
    * @param isCheck 是否是仅检查
    */
   checkInfoTimeZone(
+    session: CmsSession,
     params: ReqTimeZoneModifyDto,
     isNew: boolean,
     isCheck: boolean,

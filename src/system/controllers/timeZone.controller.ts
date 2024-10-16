@@ -85,9 +85,12 @@ export class TimeZoneController {
   @ApiCustomResponse({
     type: CommonResult,
   })
-  checkInfoTimeZone(@Body() params: ReqTimeZoneModifyDto) {
+  checkInfoTimeZone(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqTimeZoneModifyDto,
+  ) {
     const isNew = Utils.isEmpty(params.id);
-    return this.timeZoneService.checkInfoTimeZone(params, isNew, true);
+    return this.timeZoneService.checkInfoTimeZone(session, params, isNew, true);
   }
 
   @Post('/create')
@@ -100,8 +103,11 @@ export class TimeZoneController {
     type: RespTimeZoneCreateDto,
   })
   @ApiRights(RightsEnum.TimeZoneCreate)
-  createTimeZone(@Body() params: ReqTimeZoneCreateDto) {
-    return this.timeZoneService.saveTimeZone(params, true);
+  createTimeZone(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqTimeZoneCreateDto,
+  ) {
+    return this.timeZoneService.saveTimeZone(session, params, true);
   }
 
   @Put('/modify')
@@ -114,8 +120,11 @@ export class TimeZoneController {
     type: RespTimeZoneCreateDto,
   })
   @ApiRights(RightsEnum.TimeZoneModify)
-  modifyTimeZone(@Body() params: ReqTimeZoneModifyDto) {
-    return this.timeZoneService.saveTimeZone(params, false);
+  modifyTimeZone(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqTimeZoneModifyDto,
+  ) {
+    return this.timeZoneService.saveTimeZone(session, params, false);
   }
 
   @Delete('/delete')
