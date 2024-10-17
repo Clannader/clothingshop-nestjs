@@ -142,10 +142,11 @@ export class TimeZoneService {
       resp.msg = err.message;
       return resp;
     }
-    const writeLogResult = [];
-    const errResult = [];
-    const timeZoneNameList = [];
-    const timeZoneExistId = [];
+    const writeLogResult = []; // 写log时需要的timeZone名称
+    const errResult = []; // 错误集合
+    const timeZoneNameList = []; // 查询是否存在时区的条件
+    const timeZoneExistId = []; // 已经存在的时区ID
+    const deleteTimeZoneId: string[] = []; // 需要删除的时区ID
 
     for (const timeZoneInfo of timeZoneList) {
       timeZoneNameList.push(timeZoneInfo.timeZone);
@@ -189,6 +190,7 @@ export class TimeZoneService {
     for (const timeZoneObj of timeZoneList) {
       await timeZoneObj.deleteOne();
       writeLogResult.push(timeZoneObj.timeZone);
+      deleteTimeZoneId.push(timeZoneObj.id);
     }
 
     if (writeLogResult.length > 0) {
@@ -203,6 +205,7 @@ export class TimeZoneService {
         session,
         LogTypeEnum.TimeZone,
         content,
+        deleteTimeZoneId,
       );
     } else {
       // 这里是删除全部都失败的情况

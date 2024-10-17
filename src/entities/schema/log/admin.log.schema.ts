@@ -62,6 +62,11 @@ export class AdminLog {
     trim: true,
   })
   traceId: string; // 日志追踪ID
+
+  @Prop({
+    type: Array,
+  })
+  linkId?: string[]; // 关联其他表的_id
 }
 
 export type AdminLogDocument = HydratedDocument<AdminLog>;
