@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { AdminModel, Admin } from '../../schema';
 import { GlobalService, Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
-import { userNameExp, LoginResult } from '@/common';
+import { userNameExp, LoginResult, languageType } from '@/common';
 import validator from 'validator';
 
 type LoginWhere = {
@@ -27,10 +27,14 @@ export class AdminSchemaService {
     return this.adminModel;
   }
 
-  async loginSystem(adminId: string): Promise<LoginResult> {
+  async loginSystem(
+    language: languageType,
+    adminId: string,
+  ): Promise<LoginResult> {
     if (Utils.isEmpty(adminId)) {
       return Promise.reject({
-        message: this.globalService.serverLang(
+        message: this.globalService.lang(
+          language,
           '用户名不能为空',
           'user.isEmptyUserName',
         ),
@@ -39,7 +43,8 @@ export class AdminSchemaService {
     }
     if (!adminId.match(userNameExp)) {
       return Promise.reject({
-        message: this.globalService.serverLang(
+        message: this.globalService.lang(
+          language,
           '用户名含有非法字符',
           'user.invUserName',
         ),
@@ -87,7 +92,8 @@ export class AdminSchemaService {
         adminInfo = superInfo;
       } else {
         return Promise.reject({
-          message: this.globalService.serverLang(
+          message: this.globalService.lang(
+            language,
             '用户名或密码错误',
             'user.invPassword',
           ),

@@ -238,27 +238,27 @@ export class TestController {
     console.log(
       id +
         '------' +
-        this.globalService.sessionLang(
+        this.globalService.serverLang(
           session,
           'Ids不能为空',
           'common.idsIsEmpty',
         ),
     );
-    console.log(id + '------' + this.globalService.i);
+    // console.log(id + '------' + this.globalService.i);
     console.log(id + '------' + this.testService.testI);
-    this.globalService.i++;
+    // this.globalService.i++;
     this.testService.testI++;
     await sleep(+id);
     console.log(
       id +
         '------' +
-        this.globalService.sessionLang(
+        this.globalService.serverLang(
           session,
           'Ids不能为空',
           'common.idsIsEmpty',
         ),
     );
-    console.log(id + '------' + this.globalService.i);
+    // console.log(id + '------' + this.globalService.i);
     console.log(id + '------' + this.testService.testI);
     // 假设传入5和3秒,多实例的时候结果应该是
     // 5(s) ---- 3(i) 初始值是3,第一次进来没i++,所以是3, i++后,第二次进来由于是单例,所以是新的对象还是3, 之后执行i++, 变成4, 所以后面都输出的是4

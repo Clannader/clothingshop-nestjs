@@ -8,6 +8,7 @@ import {
   UpdateLoginWhere,
   LoginResult,
   SECRET_CONFIG,
+  languageType,
 } from '@/common';
 import { CodeEnum, UserTypeEnum } from '@/common/enum';
 import { ConfigService } from '@/common/config';
@@ -46,11 +47,14 @@ export class UserService {
     return resp;
   }
 
-  async userLogin(params: ReqUserLoginDto): Promise<LoginResult> {
+  async userLogin(
+    language: languageType,
+    params: ReqUserLoginDto,
+  ): Promise<LoginResult> {
     const adminId = params.adminId;
     const password = params.adminPws;
     const [err, result]: LoginResult[] = await this.adminSchemaService
-      .loginSystem(adminId)
+      .loginSystem(language, adminId)
       .then((result) => [null, result])
       .catch((err) => [err]);
     if (err) {
@@ -70,7 +74,8 @@ export class UserService {
     if (!Utils.isEmpty(lockTime)) {
       if (moment().isBefore(moment(lockTime))) {
         result.code = CodeEnum.FAIL;
-        result.message = this.globalService.serverLang(
+        result.message = this.globalService.lang(
+          language,
           '该用户已锁定于{0},请在{1}分钟后重试',
           'user.lockTimeBySeconds',
           moment(lockTime).format('YYYY-MM-DD HH:mm:ss,SSS'),
@@ -93,18 +98,21 @@ export class UserService {
       updateWhere.lockTime = lockTime;
       isUpdate = true;
       if (retryNumber < 5) {
-        result.message = this.globalService.serverLang(
+        result.message = this.globalService.lang(
+          language,
           '用户名或密码错误',
           'user.invPassword',
         );
       } else if (retryNumber < 10 && retryNumber >= 5) {
-        result.message = this.globalService.serverLang(
+        result.message = this.globalService.lang(
+          language,
           '用户名或密码错误, 今日还可输错{0}次',
           'user.retryPws',
           10 - retryNumber,
         );
       } else if (retryNumber >= 10) {
-        result.message = this.globalService.serverLang(
+        result.message = this.globalService.lang(
+          language,
           '该用户已锁定于{0}',
           'user.lockTime',
           moment(lockTime).format('YYYY-MM-DD HH:mm:ss,SSS'),
@@ -120,7 +128,8 @@ export class UserService {
     if (Utils.isEmpty(result.message)) {
       // 避免密码错误了,还会返回其他的错误信息
       if (admin.adminStatus === false) {
-        result.message = this.globalService.serverLang(
+        result.message = this.globalService.lang(
+          language,
           '用户未激活',
           'user.invStatus',
         );
@@ -128,19 +137,22 @@ export class UserService {
         !params.allowThirdUser &&
         admin.adminType === UserTypeEnum.THIRD
       ) {
-        result.message = this.globalService.serverLang(
+        result.message = this.globalService.lang(
+          language,
           '第三方用户不能登录系统',
           'user.thirdUser',
         );
       } else if (shop === null) {
         // 这里判断是否@店铺,是判断shop这个值是不是undefined还是null,undefined就是没有@,null就是@了店铺的
-        result.message = this.globalService.serverLang(
+        result.message = this.globalService.lang(
+          language,
           '店铺不存在',
           'user.noExistShop',
         );
       } else if (!Utils.isEmpty(expireTime)) {
         if (moment(expireTime).isBefore(moment())) {
-          result.message = this.globalService.serverLang(
+          result.message = this.globalService.lang(
+            language,
             '该用户已过期',
             'user.expireTime',
           );
@@ -148,13 +160,15 @@ export class UserService {
           // 计算距离过期还有多少天
           const diffDays = moment(expireTime).diff(moment(), 'days');
           if (diffDays >= 1 && diffDays <= 7) {
-            expireMsg = this.globalService.serverLang(
+            expireMsg = this.globalService.lang(
+              language,
               '该用户还有 {0} 天过期,请尽快联系管理员',
               'user.expireMsg',
               diffDays,
             );
           } else if (diffDays === 0) {
-            expireMsg = this.globalService.serverLang(
+            expireMsg = this.globalService.lang(
+              language,
               '该用户今天即将到期,请尽快联系管理员',
               'user.expireTodayMsg',
             );

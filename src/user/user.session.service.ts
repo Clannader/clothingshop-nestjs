@@ -9,6 +9,8 @@ import { GlobalService } from '@/common/utils';
 import { CONFIG_SECRET } from '@/common/config';
 import * as jwt from 'jsonwebtoken';
 
+import type { languageType } from '@/common';
+
 @Injectable()
 export class UserSessionService {
   @Inject()
@@ -26,19 +28,19 @@ export class UserSessionService {
     });
   }
 
-  verifyToken(token: string) {
+  verifyToken(language: languageType, token: string) {
     try {
       return jwt.verify(token, this.secretConfig['tripleKey']) as any;
     } catch ({ name, message }) {
       if (name === 'TokenExpiredError') {
         throw new CodeException(
           CodeEnum.TOKEN_EXPIRED,
-          this.globalService.serverLang('Token过期', 'user.tokenExpired'),
+          this.globalService.lang(language, 'Token过期', 'user.tokenExpired'),
         );
       }
       throw new CodeException(
         CodeEnum.INVALID_TOKEN,
-        this.globalService.serverLang('无效的Token', 'user.tokenInvalid'),
+        this.globalService.lang(language, '无效的Token', 'user.tokenInvalid'),
       );
     }
   }

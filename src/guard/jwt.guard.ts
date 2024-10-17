@@ -26,10 +26,12 @@ export class JwtGuard implements CanActivate {
     const http = context.switchToHttp();
     const req: RequestSession = http.getRequest();
     const authHeader = req.headers['authorization'] as string;
+    const language = Utils.getHeadersLanguage(req);
     if (Utils.isEmpty(authHeader)) {
       throw new CodeException(
         CodeEnum.INVALID_HEADERS,
-        this.globalService.serverLang(
+        this.globalService.lang(
+          language,
           '缺少Authorization请求头',
           'user.missAuthRequest',
         ),
@@ -40,25 +42,25 @@ export class JwtGuard implements CanActivate {
     if (!matches) {
       throw new CodeException(
         CodeEnum.INVALID_TOKEN,
-        this.globalService.serverLang('无效的授权', 'user.invalidAuth'),
+        this.globalService.lang(language, '无效的授权', 'user.invalidAuth'),
       );
     }
     const [, name, value] = matches;
     if ('bearer' !== name.toLowerCase()) {
       throw new CodeException(
         CodeEnum.INVALID_TOKEN,
-        this.globalService.serverLang('无效的授权', 'user.invalidAuth'),
+        this.globalService.lang(language, '无效的授权', 'user.invalidAuth'),
       );
     }
     const { /*iat, exp, */ expires, ...jwtSession } =
-      this.userSessionService.verifyToken(value);
+      this.userSessionService.verifyToken(language, value);
     delete jwtSession.iat;
     delete jwtSession.exp;
     if (!Utils.isEmpty(expires)) {
       // 如果expires不为空,说明使用的是refreshToken进来,不能访问业务
       throw new CodeException(
         CodeEnum.INVALID_TOKEN,
-        this.globalService.serverLang('无效的Token', 'user.tokenInvalid'),
+        this.globalService.lang(language, '无效的Token', 'user.tokenInvalid'),
       );
     }
     // 这里还要校验jwtSession里面的值
@@ -79,7 +81,7 @@ export class JwtGuard implements CanActivate {
       if (Utils.isEmpty(get(jwtSession, v))) {
         throw new CodeException(
           CodeEnum.INVALID_TOKEN,
-          this.globalService.serverLang('无效的Token', 'user.tokenInvalid'),
+          this.globalService.lang(language, '无效的Token', 'user.tokenInvalid'),
         );
       }
     });

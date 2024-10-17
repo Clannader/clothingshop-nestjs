@@ -33,10 +33,12 @@ export class SessionGuard implements CanActivate {
     const http = context.switchToHttp();
     const req: RequestSession = http.getRequest();
     // const res: Response = http.getResponse();
+    const language = Utils.getHeadersLanguage(req);
     if (!Utils.isHasJsonHeader()) {
       throw new CodeException(
         CodeEnum.INVALID_HEADERS,
-        this.globalService.serverLang(
+        this.globalService.lang(
+          language,
           '缺少content-type头信息',
           'user.invContent',
         ),
@@ -45,7 +47,8 @@ export class SessionGuard implements CanActivate {
     if (!Utils.isHasRequestedHeader(req)) {
       throw new CodeException(
         CodeEnum.INVALID_HEADERS,
-        this.globalService.serverLang(
+        this.globalService.lang(
+          language,
           '缺少x-requested-with头信息',
           'user.invRequest',
         ),
@@ -56,7 +59,7 @@ export class SessionGuard implements CanActivate {
       await this.userSessionService.deleteSession(req);
       throw new CodeException(
         CodeEnum.INVALID_SESSION,
-        this.globalService.serverLang('无效的凭证', 'user.invSession'),
+        this.globalService.lang(language, '无效的凭证', 'user.invSession'),
       );
     }
     const currentDate = new Date();
@@ -65,7 +68,7 @@ export class SessionGuard implements CanActivate {
       await this.userSessionService.deleteSession(req);
       throw new CodeException(
         CodeEnum.SESSION_EXPIRED,
-        this.globalService.serverLang('凭证过期', 'user.sessionExp'),
+        this.globalService.lang(language, '凭证过期', 'user.sessionExp'),
       );
     }
     if (adminSession.isFirstLogin && req.url !== logoutUrl) {
@@ -73,7 +76,8 @@ export class SessionGuard implements CanActivate {
       // 考虑前端的调用roles接口看看是否有问题
       throw new CodeException(
         CodeEnum.FIRST_LOGIN,
-        this.globalService.serverLang(
+        this.globalService.lang(
+          language,
           '用户第一次登录，请修改密码',
           'user.isFirstLogin',
         ),

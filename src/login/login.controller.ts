@@ -14,10 +14,11 @@ import {
   RequestSession,
   sessionSecret,
   LoginResult,
+  languageType,
 } from '@/common';
 import { Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
-import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
+import { ApiCommon, ApiCustomResponse, UserLanguage } from '@/common/decorator';
 import { UserService, UserMapper } from '@/user';
 import { ReqUserLoginDto, RespUserLoginDto } from '@/user/dto';
 import { HttpInterceptor } from '@/interceptor/http';
@@ -40,8 +41,15 @@ export class LoginController {
     type: RespUserLoginDto,
   })
   @ApiCommon({ showCredential: false })
-  async userLogin(@Body() params: ReqUserLoginDto, @Req() req: RequestSession) {
-    const result: LoginResult = await this.userService.userLogin(params);
+  async userLogin(
+    @Body() params: ReqUserLoginDto,
+    @Req() req: RequestSession,
+    @UserLanguage() language: languageType,
+  ) {
+    const result: LoginResult = await this.userService.userLogin(
+      language,
+      params,
+    );
     const resp = new RespUserLoginDto();
     if (result.code !== CodeEnum.SUCCESS) {
       resp.code = result.code;

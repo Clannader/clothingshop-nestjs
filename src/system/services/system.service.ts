@@ -16,6 +16,7 @@ import { SequenceSchemaService } from '@/entities/services';
 
 import * as pkg from '../../../package.json';
 import { GlobalService, Utils } from '@/common/utils';
+import { CmsSession } from '@/common';
 
 @Injectable()
 export class SystemService {
@@ -82,13 +83,14 @@ export class SystemService {
     return resp;
   }
 
-  async getSequenceNumber(params: ReqSequenceResult) {
+  async getSequenceNumber(session: CmsSession, params: ReqSequenceResult) {
     const resp = new RespSequenceResult();
     const type = params.type;
     const shopId = params.shopId;
     if (Utils.isEmpty(type)) {
       resp.code = CodeEnum.EMPTY;
       resp.msg = this.globalService.serverLang(
+        session,
         '类型不能为空',
         'system.typeIsEmpty',
       );
@@ -98,6 +100,7 @@ export class SystemService {
     if (!typeArray.includes(type)) {
       resp.code = CodeEnum.FAIL;
       resp.msg = this.globalService.serverLang(
+        session,
         '类型必须在以下值中选其一:{0}',
         'system.typeIsEnum',
         typeArray.join(','),

@@ -122,6 +122,7 @@ export class TimeZoneService {
     if (!Array.isArray(idsParams) || idsParams.length === 0) {
       resp.code = CodeEnum.EMPTY;
       resp.msg = this.globalService.serverLang(
+        session,
         'Ids不能为空',
         'common.idsIsEmpty',
       );
@@ -161,6 +162,7 @@ export class TimeZoneService {
           errResult.push(
             `(${id}) ` +
               this.globalService.serverLang(
+                session,
                 '该时区不存在',
                 'timeZone.isNotExist',
               ),
@@ -195,6 +197,7 @@ export class TimeZoneService {
     if (writeLogResult.length > 0) {
       // 只要有一个删除成功就算成功
       const content = this.globalService.serverLang(
+        session,
         '删除时区:({0})',
         'timeZone.deleteLog',
         writeLogResult.join(','),
@@ -244,6 +247,7 @@ export class TimeZoneService {
     }
     if (syncSuccessNumber > 0) {
       const content = this.globalService.serverLang(
+        session,
         '成功同步{0}条默认时区数据',
         'timeZone.syncSuccess',
         syncSuccessNumber,

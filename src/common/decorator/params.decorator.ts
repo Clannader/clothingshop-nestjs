@@ -15,6 +15,13 @@ export const UserSession = createParamDecorator(
   },
 );
 
+export const UserLanguage = createParamDecorator(
+  (_data: unknown, ctx: ExecutionContext) => {
+    const request: RequestSession = ctx.switchToHttp().getRequest();
+    return Utils.getHeadersLanguage(request);
+  },
+);
+
 export const XmlData = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext) => {
     const request: RequestSession = ctx.switchToHttp().getRequest();
