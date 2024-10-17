@@ -28,6 +28,13 @@ type SearchTimeZone = {
   timeZone?: Record<string, any>;
 };
 
+type CheckTimeZone = {
+  timeZone: string,
+  _id?: {
+    $ne: string;
+  };
+}
+
 @Injectable()
 export class TimeZoneService {
   @Inject()
@@ -344,9 +351,8 @@ export class TimeZoneService {
     }
 
     // 再判断时区名有没有重复的逻辑
-    const where = {
-      timeZone: params.timeZoneName,
-      _id: undefined,
+    const where: CheckTimeZone = {
+      timeZone: params.timeZoneName
     };
     if (!isNew) {
       where._id = {
@@ -362,15 +368,29 @@ export class TimeZoneService {
       resp.msg = errFind.message;
       return resp;
     }
-    console.log(count);
+    if (count > 0) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '时区({0})已重复',
+        'timeZone.nameIsExists',
+        params.timeZoneName,
+      );
+      return resp;
+    }
 
     if (isCheck) {
       return resp;
     }
 
     if (isNew) {
+      const createTimeZone = {
+        timeZone: params.timeZoneName,
+        summer: params.summerTime,
+        winter: params.winterTime
+      }
       const [errCreate, createObj] = await Utils.toPromise(
-        this.systemDataSchemaService.getTimeZoneDataModel().create(params),
+        this.systemDataSchemaService.getTimeZoneDataModel().create(createTimeZone),
       );
       if (errCreate) {
         resp.code = CodeEnum.DB_EXEC_ERROR;
