@@ -45,13 +45,12 @@ export class TimeZoneService {
     if (!Utils.isEmpty(timeZoneParams)) {
       where.timeZone = Utils.getIgnoreCase(timeZoneParams, true);
     }
-    let err: any, result: Array<TimeZoneDataDocument>;
-    [err, result] = await this.systemDataSchemaService
-      .getTimeZoneDataModel()
-      .find(where, { __v: 0 })
-      .sort({ _id: -1 })
-      .then((result) => [null, result])
-      .catch((err) => [err]);
+    const [err, result] = await Utils.toPromise(
+      this.systemDataSchemaService
+        .getTimeZoneDataModel()
+        .find(where, { __v: 0 })
+        .sort({ _id: -1 }),
+    );
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
       resp.msg = err.message;
@@ -75,8 +74,7 @@ export class TimeZoneService {
     const resp = new RespTimeZoneAllDto();
     const timeZones: CreateTimeZoneDto[] = [];
 
-    let err: any, result: Array<TimeZoneDataDocument>;
-    [err, result] = await Utils.toPromise(
+    const [err, result] = await Utils.toPromise(
       this.systemDataSchemaService
         .getTimeZoneDataModel()
         .find({}, { __v: 0, _id: 0 })
@@ -136,8 +134,7 @@ export class TimeZoneService {
     const fields = {
       timeZone: 1,
     };
-    let err: any, timeZoneList: Array<TimeZoneDataDocument>;
-    [err, timeZoneList] = await Utils.toPromise(
+    const [err, timeZoneList] = await Utils.toPromise(
       this.systemDataSchemaService.getTimeZoneDataModel().find(where, fields),
     );
     if (err) {
@@ -238,8 +235,9 @@ export class TimeZoneService {
     let syncSuccessNumber = 0;
     for (const timeZoneInfo of defaultTimeZone) {
       const [, result] = await Utils.toPromise(
-        this.systemDataSchemaService
-          .syncTimeZoneObject(<TimeZoneData>timeZoneInfo)
+        this.systemDataSchemaService.syncTimeZoneObject(
+          <TimeZoneData>timeZoneInfo,
+        ),
       );
       if (Utils.isEmpty(result)) {
         syncSuccessNumber++;

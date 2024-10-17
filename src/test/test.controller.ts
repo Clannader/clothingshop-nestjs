@@ -17,7 +17,8 @@ import { GlobalService, Utils } from '@/common/utils';
 import {
   ApiCommon,
   ApiCustomResponse,
-  ApiGenericsResponse, UserLanguage,
+  ApiGenericsResponse,
+  UserLanguage,
   UserSession,
   XmlData,
   XmlJsonData,
@@ -236,7 +237,7 @@ export class TestController {
     @UserLanguage() language: LanguageType,
   ) {
     // console.log(typeof id); // 这里要注意的是虽然ts断言类型是number,但是实际上拿到的类型还是string
-    console.log(language)
+    console.log(language);
 
     // const sleep = (id) => {
     //   return new Promise((resolve) => {
@@ -288,7 +289,7 @@ export class TestController {
     const [err, result] = await Utils.toPromise(
       this.systemDataSchemaService.getTimeZoneDataModel().findOneAndUpdate(
         // {_id: '67107f5a38c50a30d2d58e2b'},
-        {timeZone:'Europe/London2'},
+        { timeZone: 'Europe/London2' },
         {
           $set: {
             timeZone: 'Europe/London2',
@@ -299,7 +300,7 @@ export class TestController {
           //   summer: '+13:00' // 数据库中没有值,执行创建才会把这个字段set进去
           // }
         },
-        { upsert: true } // 每一次更新都会插入相同的_id,根据更新条件插入的,如果数据库没有值则插入$setOnInsert的值,如果有值则仅更新$set
+        { upsert: true }, // 每一次更新都会插入相同的_id,根据更新条件插入的,如果数据库没有值则插入$setOnInsert的值,如果有值则仅更新$set
       ),
     );
     if (result) {

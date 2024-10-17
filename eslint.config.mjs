@@ -53,7 +53,7 @@ export default [
   },
   // 忽略文件
   {
-    ignores: ['node_modules', 'dist', 'build', 'public'],
+    ignores: ['node_modules', 'dist', 'build', 'public', 'documentation'],
   },
   /**
    * prettier 配置
