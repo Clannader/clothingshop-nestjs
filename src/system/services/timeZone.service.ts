@@ -2,11 +2,12 @@
  * Create by oliver.wu 2024/10/15
  */
 import { Injectable, Inject } from '@nestjs/common';
+import { instanceToInstance } from 'class-transformer';
 
 import { CommonResult, DeleteResultDto, RespErrorResult } from '@/common/dto';
 import { GlobalService, Utils } from '@/common/utils';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
-import { CmsSession } from '@/common';
+import { CmsSession, timeZoneExp } from '@/common';
 
 import { SystemDataSchemaService } from '@/entities/services';
 import { TimeZoneData, TimeZoneDataDocument } from '@/entities/schema';
@@ -27,6 +28,13 @@ type SearchTimeZone = {
   timeZone?: Record<string, any>;
 };
 
+type CheckTimeZone = {
+  timeZone: string;
+  _id?: {
+    $ne: string;
+  };
+};
+
 @Injectable()
 export class TimeZoneService {
   @Inject()
@@ -45,13 +53,12 @@ export class TimeZoneService {
     if (!Utils.isEmpty(timeZoneParams)) {
       where.timeZone = Utils.getIgnoreCase(timeZoneParams, true);
     }
-    let err: any, result: Array<TimeZoneDataDocument>;
-    [err, result] = await this.systemDataSchemaService
-      .getTimeZoneDataModel()
-      .find(where, { __v: 0 })
-      .sort({ _id: -1 })
-      .then((result) => [null, result])
-      .catch((err) => [err]);
+    const [err, result] = await Utils.toPromise(
+      this.systemDataSchemaService
+        .getTimeZoneDataModel()
+        .find(where, { __v: 0 })
+        .sort({ _id: -1 }),
+    );
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
       resp.msg = err.message;
@@ -75,8 +82,7 @@ export class TimeZoneService {
     const resp = new RespTimeZoneAllDto();
     const timeZones: CreateTimeZoneDto[] = [];
 
-    let err: any, result: Array<TimeZoneDataDocument>;
-    [err, result] = await Utils.toPromise(
+    const [err, result] = await Utils.toPromise(
       this.systemDataSchemaService
         .getTimeZoneDataModel()
         .find({}, { __v: 0, _id: 0 })
@@ -98,14 +104,19 @@ export class TimeZoneService {
     return resp;
   }
 
-  saveTimeZone(
+  async saveTimeZone(
     session: CmsSession,
     params: ReqTimeZoneModifyDto,
     isNew: boolean,
   ) {
     const resp = new RespTimeZoneCreateDto();
 
-    const checkResp = this.checkInfoTimeZone(session, params, isNew, false);
+    const checkResp = await this.checkInfoTimeZone(
+      session,
+      params,
+      isNew,
+      false,
+    );
 
     if (!checkResp.isSuccess()) {
       resp.code = checkResp.code;
@@ -122,6 +133,7 @@ export class TimeZoneService {
     if (!Array.isArray(idsParams) || idsParams.length === 0) {
       resp.code = CodeEnum.EMPTY;
       resp.msg = this.globalService.serverLang(
+        session,
         'Ids不能为空',
         'common.idsIsEmpty',
       );
@@ -135,8 +147,7 @@ export class TimeZoneService {
     const fields = {
       timeZone: 1,
     };
-    let err: any, timeZoneList: Array<TimeZoneDataDocument>;
-    [err, timeZoneList] = await Utils.toPromise(
+    const [err, timeZoneList] = await Utils.toPromise(
       this.systemDataSchemaService.getTimeZoneDataModel().find(where, fields),
     );
     if (err) {
@@ -144,10 +155,11 @@ export class TimeZoneService {
       resp.msg = err.message;
       return resp;
     }
-    const writeLogResult = [];
-    const errResult = [];
-    const timeZoneNameList = [];
-    const timeZoneExistId = [];
+    const writeLogResult = []; // 写log时需要的timeZone名称
+    const errResult = []; // 错误集合
+    const timeZoneNameList = []; // 查询是否存在时区的条件
+    const timeZoneExistId = []; // 已经存在的时区ID
+    const deleteTimeZoneId: string[] = []; // 需要删除的时区ID
 
     for (const timeZoneInfo of timeZoneList) {
       timeZoneNameList.push(timeZoneInfo.timeZone);
@@ -161,6 +173,7 @@ export class TimeZoneService {
           errResult.push(
             `(${id}) ` +
               this.globalService.serverLang(
+                session,
                 '该时区不存在',
                 'timeZone.isNotExist',
               ),
@@ -190,11 +203,13 @@ export class TimeZoneService {
     for (const timeZoneObj of timeZoneList) {
       await timeZoneObj.deleteOne();
       writeLogResult.push(timeZoneObj.timeZone);
+      deleteTimeZoneId.push(timeZoneObj.id);
     }
 
     if (writeLogResult.length > 0) {
       // 只要有一个删除成功就算成功
       const content = this.globalService.serverLang(
+        session,
         '删除时区:({0})',
         'timeZone.deleteLog',
         writeLogResult.join(','),
@@ -203,6 +218,7 @@ export class TimeZoneService {
         session,
         LogTypeEnum.TimeZone,
         content,
+        deleteTimeZoneId,
       );
     } else {
       // 这里是删除全部都失败的情况
@@ -220,13 +236,176 @@ export class TimeZoneService {
    * @param isNew 是否是新建
    * @param isCheck 是否是仅检查
    */
-  checkInfoTimeZone(
+  async checkInfoTimeZone(
     session: CmsSession,
     params: ReqTimeZoneModifyDto,
     isNew: boolean,
     isCheck: boolean,
   ) {
     const resp = new RespTimeZoneCreateDto();
+    // 判断是否是新建还是编辑,如果是编辑,id必填
+    const id = params.id;
+    if (!isNew && Utils.isEmpty(params.id)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        'ID值不能为空',
+        'common.idIsEmpty',
+      );
+      return resp;
+    }
+    let oldTimeZone: TimeZoneDataDocument,
+      newTimeZone: TimeZoneDataDocument,
+      err: Error;
+    if (!isNew) {
+      // 如果是编辑,判断id值是否存在该时区
+      [err, oldTimeZone] = await Utils.toPromise(
+        this.systemDataSchemaService.getTimeZoneDataModel().findById(id),
+      );
+      if (err) {
+        resp.code = CodeEnum.DB_EXEC_ERROR;
+        resp.msg = err.message;
+        return resp;
+      }
+      if (Utils.isEmpty(oldTimeZone)) {
+        resp.code = CodeEnum.FAIL;
+        resp.msg = this.globalService.serverLang(
+          session,
+          '该时区不存在',
+          'timeZone.isNotExist',
+        );
+        return resp;
+      }
+      newTimeZone = instanceToInstance(oldTimeZone); // 可以克隆查回来的数据库对象
+      if (!Utils.isEmpty(params.timeZoneName)) {
+        newTimeZone.timeZone = params.timeZoneName;
+      } else {
+        // 因为编辑这些字段可不传,不传时使用数据库的旧值,如果传则修改查回来的数据库的值
+        params.timeZoneName = oldTimeZone.timeZone;
+      }
+
+      if (!Utils.isEmpty(params.summerTime)) {
+        newTimeZone.summer = params.summerTime;
+      } else {
+        params.summerTime = oldTimeZone.summer;
+      }
+
+      if (!Utils.isEmpty(params.winterTime)) {
+        newTimeZone.winter = params.winterTime;
+      } else {
+        params.winterTime = oldTimeZone.winter;
+      }
+    }
+
+    // 新旧都需要字段进行字段校验
+    if (Utils.isEmpty(params.timeZoneName)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '时区名称不能为空',
+        'timeZone.nameIsNotEmpty',
+      );
+      return resp;
+    }
+    if (Utils.isEmpty(params.summerTime)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '夏令时不能为空',
+        'timeZone.summerIsNotEmpty',
+      );
+      return resp;
+    }
+    if (Utils.isEmpty(params.winterTime)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '冬令时不能为空',
+        'timeZone.winterIsNotEmpty',
+      );
+      return resp;
+    }
+
+    if (!timeZoneExp.test(params.summerTime)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '夏令时格式错误',
+        'timeZone.summerFormatError',
+      );
+      return resp;
+    }
+    if (!timeZoneExp.test(params.winterTime)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '冬令时格式错误',
+        'timeZone.winterFormatError',
+      );
+      return resp;
+    }
+
+    // TODO 后期判断如果修复时区名要判断是否有店铺使用
+    if (!isNew && newTimeZone.timeZone !== oldTimeZone.timeZone) {
+      // do something
+    }
+
+    // 再判断时区名有没有重复的逻辑
+    const where: CheckTimeZone = {
+      timeZone: params.timeZoneName,
+    };
+    if (!isNew) {
+      where._id = {
+        $ne: params.id,
+      };
+    }
+
+    const [errFind, count] = await Utils.toPromise(
+      this.systemDataSchemaService.getTimeZoneDataModel().countDocuments(where),
+    );
+    if (errFind) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = errFind.message;
+      return resp;
+    }
+    if (count > 0) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '时区({0})已重复',
+        'timeZone.nameIsExists',
+        params.timeZoneName,
+      );
+      return resp;
+    }
+
+    if (isCheck) {
+      return resp;
+    }
+
+    if (isNew) {
+      const createTimeZone = {
+        timeZone: params.timeZoneName,
+        summer: params.summerTime,
+        winter: params.winterTime,
+      };
+      const [errCreate, createObj] = await Utils.toPromise(
+        this.systemDataSchemaService
+          .getTimeZoneDataModel()
+          .create(createTimeZone),
+      );
+      if (errCreate) {
+        resp.code = CodeEnum.DB_EXEC_ERROR;
+        resp.msg = errCreate.message;
+        return resp;
+      }
+      resp.id = createObj.id;
+      // 写日志...
+    } else {
+      await newTimeZone.save();
+      resp.id = newTimeZone.id;
+      // 写日志...
+    }
     return resp;
   }
 
@@ -234,16 +413,18 @@ export class TimeZoneService {
     // 同步默认时区数据到数据库中
     let syncSuccessNumber = 0;
     for (const timeZoneInfo of defaultTimeZone) {
-      const [, result] = await this.systemDataSchemaService
-        .syncTimeZoneObject(<TimeZoneData>timeZoneInfo)
-        .then((result) => [null, result])
-        .catch((err) => [err]);
+      const [, result] = await Utils.toPromise(
+        this.systemDataSchemaService.syncTimeZoneObject(
+          <TimeZoneData>timeZoneInfo,
+        ),
+      );
       if (Utils.isEmpty(result)) {
         syncSuccessNumber++;
       }
     }
     if (syncSuccessNumber > 0) {
       const content = this.globalService.serverLang(
+        session,
         '成功同步{0}条默认时区数据',
         'timeZone.syncSuccess',
         syncSuccessNumber,

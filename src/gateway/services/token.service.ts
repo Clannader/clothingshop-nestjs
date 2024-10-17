@@ -3,7 +3,7 @@
  */
 import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CmsSession } from '@/common';
+import { CmsSession, LanguageType } from '@/common';
 import { CodeEnum } from '@/common/enum';
 import { CodeException } from '@/common/exceptions';
 import { GlobalService } from '@/common/utils';
@@ -27,21 +27,22 @@ export class TokenService {
 
   /**
    * 校验token
+   * @param language
    * @param token
    */
-  verifyToken(token: string) {
+  verifyToken(language: LanguageType, token: string) {
     try {
       return this.jwtService.verify(token);
     } catch ({ name, message }) {
       if (name === 'TokenExpiredError') {
         throw new CodeException(
           CodeEnum.TOKEN_EXPIRED,
-          this.globalService.serverLang('Token过期', 'user.tokenExpired'),
+          this.globalService.lang(language, 'Token过期', 'user.tokenExpired'),
         );
       }
       throw new CodeException(
         CodeEnum.INVALID_TOKEN,
-        this.globalService.serverLang('无效的Token', 'user.tokenInvalid'),
+        this.globalService.lang(language, '无效的Token', 'user.tokenInvalid'),
       );
     }
   }

@@ -35,8 +35,10 @@ import {
   RespTimeZoneCreateDto,
   ReqTimeZoneModifyDto,
   RespTimeZoneAllDto,
+  ReqTimeZoneCheckDto,
 } from '../dto';
 import { Utils } from '@/common/utils';
+import { plainToInstance } from 'class-transformer';
 
 @ApiCommon()
 @Controller('/cms/api/timeZone')
@@ -87,10 +89,16 @@ export class TimeZoneController {
   })
   checkInfoTimeZone(
     @UserSession() session: CmsSession,
-    @Body() params: ReqTimeZoneModifyDto,
+    @Body() params: ReqTimeZoneCheckDto,
   ) {
     const isNew = Utils.isEmpty(params.id);
-    return this.timeZoneService.checkInfoTimeZone(session, params, isNew, true);
+    const modifyParams = plainToInstance(ReqTimeZoneModifyDto, params);
+    return this.timeZoneService.checkInfoTimeZone(
+      session,
+      modifyParams,
+      isNew,
+      true,
+    );
   }
 
   @Post('/create')
@@ -107,7 +115,8 @@ export class TimeZoneController {
     @UserSession() session: CmsSession,
     @Body() params: ReqTimeZoneCreateDto,
   ) {
-    return this.timeZoneService.saveTimeZone(session, params, true);
+    const modifyParams = plainToInstance(ReqTimeZoneModifyDto, params);
+    return this.timeZoneService.saveTimeZone(session, modifyParams, true);
   }
 
   @Put('/modify')

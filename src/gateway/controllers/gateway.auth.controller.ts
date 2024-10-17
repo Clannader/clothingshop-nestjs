@@ -11,8 +11,13 @@ import {
   Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { LoginResult, CmsSession, RequestSession } from '@/common';
-import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
+import {
+  LoginResult,
+  CmsSession,
+  RequestSession,
+  LanguageType,
+} from '@/common';
+import { ApiCommon, ApiCustomResponse, UserLanguage } from '@/common/decorator';
 import { CodeEnum } from '@/common/enum';
 import { ConfigService } from '@/common/config';
 import { Utils, GlobalService } from '@/common/utils';
@@ -54,9 +59,13 @@ export class GatewayAuthController {
   async authorizeLogin(
     @Body() params: ReqUserLoginDto,
     @Req() req: RequestSession,
+    @UserLanguage() language: LanguageType,
   ) {
     params.allowThirdUser = true;
-    const result: LoginResult = await this.userService.userLogin(params);
+    const result: LoginResult = await this.userService.userLogin(
+      language,
+      params,
+    );
     const resp = new RespJwtTokenDto();
     if (result.code !== CodeEnum.SUCCESS) {
       resp.code = result.code;
@@ -102,9 +111,13 @@ export class GatewayAuthController {
   @ApiCustomResponse({
     type: RespJwtTokenDto,
   })
-  async refreshToken(@Body() params: ReqRefreshTokenDto) {
+  async refreshToken(
+    @UserLanguage() language: LanguageType,
+    @Body() params: ReqRefreshTokenDto,
+  ) {
     // iat是开始时间 exp是结束时间, expires是session里面的有效期,只有refreshToken里面才会有值
     const { iat, /*exp, */ expires, ...result } = this.tokenService.verifyToken(
+      language,
       params.refreshToken,
     );
     delete result.exp;
@@ -117,7 +130,8 @@ export class GatewayAuthController {
     if (Utils.isEmpty(expires)) {
       // 如果expires是空的说明传进来的是accessToken,不能刷新token
       resp.code = CodeEnum.INVALID_TOKEN;
-      resp.msg = this.globalService.serverLang(
+      resp.msg = this.globalService.lang(
+        language,
         '无效的Token',
         'user.tokenInvalid',
       );
@@ -150,7 +164,8 @@ export class GatewayAuthController {
       .then((result) => result);
     if (cacheToken) {
       resp.code = CodeEnum.INVALID_TOKEN;
-      resp.msg = this.globalService.serverLang(
+      resp.msg = this.globalService.lang(
+        language,
         '无效的Token',
         'user.tokenInvalid',
       );

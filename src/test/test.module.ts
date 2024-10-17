@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TestController } from './test.controller';
 import { MemoryCacheModule } from '@/cache/modules';
-import { AdminSchemaModule } from '@/entities/modules';
+import { AdminSchemaModule, SystemDataSchemaModule } from '@/entities/modules';
 // import { ConfigModule } from '../common';
 // import { UserModule } from '../user/user.module';
+import { TestService } from './test.service';
 
 @Module({
   imports: [
@@ -15,8 +16,9 @@ import { AdminSchemaModule } from '@/entities/modules';
     // UserModule,
     AdminSchemaModule,
     MemoryCacheModule,
+    SystemDataSchemaModule,
   ],
   controllers: [TestController],
-  providers: [],
+  providers: [TestService],
 })
 export class TestModule {}

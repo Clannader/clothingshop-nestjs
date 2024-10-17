@@ -8,15 +8,18 @@ import {
   Get,
   Query,
   UseInterceptors,
+  Param,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { ConfigService } from '@/common/config';
 import { CodeEnum } from '@/common/enum';
-import { GlobalService } from '@/common/utils';
+import { GlobalService, Utils } from '@/common/utils';
 import {
   ApiCommon,
   ApiCustomResponse,
   ApiGenericsResponse,
+  UserLanguage,
+  UserSession,
   XmlData,
   XmlJsonData,
 } from '@/common/decorator';
@@ -30,10 +33,15 @@ import {
 import { UserSessionDto } from '@/user/dto';
 import { XmlInterceptor } from '@/interceptor/xml';
 import { MemoryCacheService } from '@/cache/services';
-import { AdminSchemaService } from '@/entities/services';
+import {
+  AdminSchemaService,
+  SystemDataSchemaService,
+} from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
-import { CommonResult } from '@/common';
+import { CmsSession, CommonResult, LanguageType, timeZoneExp } from '@/common';
+import { TestService } from './test.service';
+import { Prop } from '@nestjs/mongoose';
 
 @ApiCommon()
 @Controller('/cms')
@@ -56,6 +64,12 @@ export class TestController {
 
   @Inject()
   private readonly adminSchemaService: AdminSchemaService;
+
+  @Inject()
+  private readonly testService: TestService;
+
+  @Inject()
+  private readonly systemDataSchemaService: SystemDataSchemaService;
 
   private readonly logger = new AopLogger(TestController.name);
 
@@ -142,7 +156,7 @@ export class TestController {
     // resp.rows = xmlJsonData.xml.age;
     // return resp;
 
-    const test = () => {
+    const test = (): Record<string, any> => {
       return new Promise((resolve, reject) => {
         reject({});
       });
@@ -205,5 +219,92 @@ export class TestController {
     await this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
     console.log(this.memoryCacheService.getAllCacheKeys());
     return resp;
+  }
+
+  @ApiExcludeEndpoint() // 可以在swagger中隐藏接口,但是该接口是有效的
+  @Post('/api/test/instance/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '测试Service是否是多实例还是单实例',
+    description: '测试Service是否是多实例还是单实例',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  async testInstance(
+    @UserSession() session: CmsSession,
+    @Param('id') id: number,
+    @UserLanguage() language: LanguageType,
+  ) {
+    // console.log(typeof id); // 这里要注意的是虽然ts断言类型是number,但是实际上拿到的类型还是string
+    console.log(language);
+
+    // const sleep = (id) => {
+    //   return new Promise((resolve) => {
+    //     setTimeout(resolve, id * 1000);
+    //   });
+    // };
+
+    // console.log(
+    //   id +
+    //     '------' +
+    //     this.globalService.serverLang(
+    //       session,
+    //       'Ids不能为空',
+    //       'common.idsIsEmpty',
+    //     ),
+    // );
+    // console.log(id + '------' + this.globalService.i);
+    // console.log(id + '------' + this.testService.testI);
+    // this.globalService.i++;
+    // this.testService.testI++;
+    // await sleep(+id);
+    // console.log(
+    //   id +
+    //     '------' +
+    //     this.globalService.serverLang(
+    //       session,
+    //       'Ids不能为空',
+    //       'common.idsIsEmpty',
+    //     ),
+    // );
+    // console.log(id + '------' + this.globalService.i);
+    // console.log(id + '------' + this.testService.testI);
+    // 假设传入5和3秒,多实例的时候结果应该是
+    // 5(s) ---- 3(i) 初始值是3,第一次进来没i++,所以是3, i++后,第二次进来由于是单例,所以是新的对象还是3, 之后执行i++, 变成4, 所以后面都输出的是4
+    // 3(s) ---- 3(i)
+    // 3(s)---- 4(i)
+    // 5(s) ---- 4(i)
+
+    // 如果是单例时,输出
+    // 5(s) ---- 3(i) 初始值是3,第一次进来没i++,所以是3, i++后,第二次进来值变了,变成4, 4之后执行i++, 变成5, 所以后面都输出的是5
+    // 3(s) ---- 4(i)
+    // 3(s) ---- 5(i)
+    // 5(s) ---- 5(i)
+
+    // 总结可以使用session传参,session是独立的,如果想省事,只能是Service变成多实例化了
+    // 这里还有一个问题要思考,如果A是多实例的,那么B引入了A,B会是多实例还是单例???
+    // 事实证明,B是多实例的
+
+    // const [, result] = await Utils.toPromise(
+    //   this.systemDataSchemaService.getTimeZoneDataModel().updateOne(
+    //     // {_id: '67107f5a38c50a30d2d58e2b'},
+    //     { timeZone: 'Europe/London2' },
+    //     {
+    //       $set: {
+    //         timeZone: 'Europe/London2',
+    //         summer: '+01:00', // 已知:$setOnInsert有的更新字段,$set不能有.如果数据库中有值,仅更新$set的字段,不会更新$setOnInsert
+    //       },
+    //       $setOnInsert: {
+    //         winter: '+00:00' // 数据库中没有值,执行创建才会把这个字段set进去
+    //       },
+    //     },
+    //     { upsert: true }, // 每一次更新都会插入相同的_id,根据更新条件插入的,如果数据库没有值则插入$setOnInsert的值,如果有值则仅更新$set
+    //   ),
+    // );
+    // if (result) {
+    //   console.log(result);
+    // }
+    return new CommonResult();
   }
 }

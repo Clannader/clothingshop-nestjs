@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
-import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
+import { ApiCommon, ApiCustomResponse, UserSession } from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { ApiRights, RightsEnum } from '@/rights';
@@ -22,6 +22,7 @@ import {
   ReqSequenceResult,
 } from '../dto';
 import { SystemService } from '../services/system.service';
+import { CmsSession } from '@/common';
 
 @ApiCommon()
 @Controller('/cms/api/system')
@@ -68,7 +69,10 @@ export class SystemController {
     type: RespSequenceResult,
   })
   @ApiRights(RightsEnum.GetSequenceNumber)
-  getSequenceNumber(@Body() params: ReqSequenceResult) {
-    return this.systemService.getSequenceNumber(params);
+  getSequenceNumber(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqSequenceResult,
+  ) {
+    return this.systemService.getSequenceNumber(session, params);
   }
 }

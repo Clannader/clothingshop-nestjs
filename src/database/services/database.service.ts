@@ -20,6 +20,7 @@ import { CodeEnum, DbIndexType } from '@/common/enum';
 
 import { defaultIndexes } from '@/system/defaultSystemData';
 import type { IndexOptions, IndexSchema } from '@/system/defaultSystemData';
+import { CmsSession } from '@/common';
 
 export type ModelMap = {
   modelName: string;
@@ -42,7 +43,7 @@ export class DatabaseService {
   @Inject()
   private globalService: GlobalService;
 
-  async getDbStatistics(params: ReqDbStatisticsDto) {
+  async getDbStatistics(session: CmsSession, params: ReqDbStatisticsDto) {
     const resp = new RespDbStatisticsDto();
     const collectionStatistics: DbStatisticsDto[] = [];
     const aliasNames = params.aliasNames;
@@ -64,6 +65,7 @@ export class DatabaseService {
       throw new CodeException(
         CodeEnum.DB_VERSION_ERROR,
         this.globalService.serverLang(
+          session,
           '数据库版本必须6.x以上,当前数据库版本:{0}',
           'dbInfo.versionError',
           buildInfo.version,

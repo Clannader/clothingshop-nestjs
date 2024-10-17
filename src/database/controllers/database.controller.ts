@@ -12,7 +12,7 @@ import {
   Body,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
+import { ApiCommon, ApiCustomResponse, UserSession } from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { ApiRights, RightsEnum } from '@/rights';
@@ -25,6 +25,7 @@ import {
   ReqDbStatisticsDto,
   RespDbIndexesListDto,
 } from '../dto';
+import { CmsSession } from '@/common';
 
 @ApiCommon()
 @Controller('/cms/api/database')
@@ -45,8 +46,11 @@ export class DatabaseController {
     type: RespDbStatisticsDto,
   })
   @ApiRights(RightsEnum.DbStatistics)
-  getDbStatistics(@Body() params: ReqDbStatisticsDto) {
-    return this.databaseService.getDbStatistics(params);
+  getDbStatistics(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqDbStatisticsDto,
+  ) {
+    return this.databaseService.getDbStatistics(session, params);
   }
 
   @Post('/indexes/list')
