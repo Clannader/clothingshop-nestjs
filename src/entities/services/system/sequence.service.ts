@@ -46,9 +46,9 @@ export class SequenceSchemaService {
     }
     if (result) {
       // 如果没有值说明是新增的
+      // 因为拿到的是旧值,为了与数据库同步,加1即可
       respResult.sequenceId = result.sequenceId++
     }
-    // 因为拿到的是旧值,为了与数据库同步,加1即可
     return Promise.resolve(respResult);
   }
 }
