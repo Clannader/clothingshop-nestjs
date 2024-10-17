@@ -13,7 +13,7 @@ import {
 import { ApiOperation, ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { ConfigService } from '@/common/config';
 import { CodeEnum } from '@/common/enum';
-import { GlobalService } from '@/common/utils';
+import { GlobalService, Utils } from '@/common/utils';
 import {
   ApiCommon,
   ApiCustomResponse,
@@ -32,11 +32,12 @@ import {
 import { UserSessionDto } from '@/user/dto';
 import { XmlInterceptor } from '@/interceptor/xml';
 import { MemoryCacheService } from '@/cache/services';
-import { AdminSchemaService } from '@/entities/services';
+import { AdminSchemaService, SystemDataSchemaService } from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
-import { CmsSession, CommonResult } from '@/common';
+import { CmsSession, CommonResult, timeZoneExp } from '@/common';
 import { TestService } from './test.service';
+import { Prop } from '@nestjs/mongoose';
 
 @ApiCommon()
 @Controller('/cms')
@@ -62,6 +63,9 @@ export class TestController {
 
   @Inject()
   private readonly testService: TestService;
+
+  @Inject()
+  private readonly systemDataSchemaService: SystemDataSchemaService;
 
   private readonly logger = new AopLogger(TestController.name);
 
@@ -275,6 +279,26 @@ export class TestController {
     // 总结可以使用session传参,session是独立的,如果想省事,只能是Service变成多实例化了
     // 这里还有一个问题要思考,如果A是多实例的,那么B引入了A,B会是多实例还是单例???
     // 事实证明,B是多实例的
+
+    const [err, result] = await Utils.toPromise(
+      this.systemDataSchemaService.getTimeZoneDataModel().updateOne(
+        {_id: '67107f5a38c50a30d2d58e2b'},
+        {
+          $set: {
+            timeZone: 'uu',
+            winter: '+11:00' // 已知:$setOnInsert有的更新字段,$set不能有.如果数据库中有值,仅更新$set的字段,不会更新$setOnInsert
+          },
+          $setOnInsert: {
+            summer: '+13:00' // 数据库中没有值,执行创建才会把这个字段set进去
+          }
+        },
+        { upsert: true } // 每一次更新都会插入相同的_id,根据更新条件插入的,如果数据库没有值则插入$setOnInsert的值,如果有值则仅更新$set
+      ),
+    );
+    if (result) {
+      console.log(result);
+    }
+
     return new CommonResult();
   }
 }

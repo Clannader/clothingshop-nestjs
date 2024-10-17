@@ -94,6 +94,15 @@ export const defaultIndexes: IndexSchema[] = [
       type: 1,
     },
   },
+  {
+    aliasName: 'SystemData',
+    fields: {
+      timeZone: 1,
+    },
+    options: {
+      unique: true,
+    },
+  },
 ];
 
 export type TimeZoneSchema = {
