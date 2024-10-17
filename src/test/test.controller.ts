@@ -17,7 +17,7 @@ import { GlobalService, Utils } from '@/common/utils';
 import {
   ApiCommon,
   ApiCustomResponse,
-  ApiGenericsResponse,
+  ApiGenericsResponse, UserLanguage,
   UserSession,
   XmlData,
   XmlJsonData,
@@ -38,7 +38,7 @@ import {
 } from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
-import { CmsSession, CommonResult, timeZoneExp } from '@/common';
+import { CmsSession, CommonResult, languageType, timeZoneExp } from '@/common';
 import { TestService } from './test.service';
 import { Prop } from '@nestjs/mongoose';
 
@@ -233,40 +233,42 @@ export class TestController {
   async testInstance(
     @UserSession() session: CmsSession,
     @Param('id') id: number,
+    @UserLanguage() language: languageType,
   ) {
-    console.log(typeof id); // 这里要注意的是虽然ts断言类型是number,但是实际上拿到的类型还是string
+    // console.log(typeof id); // 这里要注意的是虽然ts断言类型是number,但是实际上拿到的类型还是string
+    console.log(language)
 
-    const sleep = (id) => {
-      return new Promise((resolve) => {
-        setTimeout(resolve, id * 1000);
-      });
-    };
+    // const sleep = (id) => {
+    //   return new Promise((resolve) => {
+    //     setTimeout(resolve, id * 1000);
+    //   });
+    // };
 
-    console.log(
-      id +
-        '------' +
-        this.globalService.serverLang(
-          session,
-          'Ids不能为空',
-          'common.idsIsEmpty',
-        ),
-    );
+    // console.log(
+    //   id +
+    //     '------' +
+    //     this.globalService.serverLang(
+    //       session,
+    //       'Ids不能为空',
+    //       'common.idsIsEmpty',
+    //     ),
+    // );
     // console.log(id + '------' + this.globalService.i);
-    console.log(id + '------' + this.testService.testI);
+    // console.log(id + '------' + this.testService.testI);
     // this.globalService.i++;
-    this.testService.testI++;
-    await sleep(+id);
-    console.log(
-      id +
-        '------' +
-        this.globalService.serverLang(
-          session,
-          'Ids不能为空',
-          'common.idsIsEmpty',
-        ),
-    );
+    // this.testService.testI++;
+    // await sleep(+id);
+    // console.log(
+    //   id +
+    //     '------' +
+    //     this.globalService.serverLang(
+    //       session,
+    //       'Ids不能为空',
+    //       'common.idsIsEmpty',
+    //     ),
+    // );
     // console.log(id + '------' + this.globalService.i);
-    console.log(id + '------' + this.testService.testI);
+    // console.log(id + '------' + this.testService.testI);
     // 假设传入5和3秒,多实例的时候结果应该是
     // 5(s) ---- 3(i) 初始值是3,第一次进来没i++,所以是3, i++后,第二次进来由于是单例,所以是新的对象还是3, 之后执行i++, 变成4, 所以后面都输出的是4
     // 3(s) ---- 3(i)
@@ -284,32 +286,25 @@ export class TestController {
     // 事实证明,B是多实例的
 
     const [err, result] = await Utils.toPromise(
-      // this.systemDataSchemaService.getTimeZoneDataModel().findOneAndUpdate(
-      //   // {_id: '67107f5a38c50a30d2d58e2b'},
-      //   {timeZone:'Europe/London2'},
-      //   {
-      //     $set: {
-      //       timeZone: 'Europe/London2',
-      //       summer: '+01:00', // 夏令时
-      //       winter: '+00:00', // 已知:$setOnInsert有的更新字段,$set不能有.如果数据库中有值,仅更新$set的字段,不会更新$setOnInsert
-      //     },
-      //     // $setOnInsert: {
-      //     //   summer: '+13:00' // 数据库中没有值,执行创建才会把这个字段set进去
-      //     // }
-      //   },
-      //   { upsert: true } // 每一次更新都会插入相同的_id,根据更新条件插入的,如果数据库没有值则插入$setOnInsert的值,如果有值则仅更新$set
-      // ),
-      this.systemDataSchemaService.syncTimeZoneObject({
-        timeZone: 'Europe/London2',
-        summer: '+01:00', // 夏令时
-        winter: '+00:00',
-        description: '',
-      }),
+      this.systemDataSchemaService.getTimeZoneDataModel().findOneAndUpdate(
+        // {_id: '67107f5a38c50a30d2d58e2b'},
+        {timeZone:'Europe/London2'},
+        {
+          $set: {
+            timeZone: 'Europe/London2',
+            summer: '+01:00', // 夏令时
+            winter: '+00:00', // 已知:$setOnInsert有的更新字段,$set不能有.如果数据库中有值,仅更新$set的字段,不会更新$setOnInsert
+          },
+          // $setOnInsert: {
+          //   summer: '+13:00' // 数据库中没有值,执行创建才会把这个字段set进去
+          // }
+        },
+        { upsert: true } // 每一次更新都会插入相同的_id,根据更新条件插入的,如果数据库没有值则插入$setOnInsert的值,如果有值则仅更新$set
+      ),
     );
     if (result) {
       console.log(result);
     }
-
     return new CommonResult();
   }
 }
