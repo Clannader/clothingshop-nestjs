@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { CodeEnum, SequenceTypeEnum } from '@/common/enum';
-import { SequenceModel, Sequence } from '../../schema';
+import { SequenceModel, Sequence, SequenceSchema } from '../../schema';
 import { Utils } from '@/common/utils';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class SequenceSchemaService {
     const updateOptions = {
       upsert: true,
     };
-    let [err, result] = await Utils.toPromise(
+    const [err, result] = await Utils.toPromise(
       this.sequenceModel.findOneAndUpdate(where, updateFilter, updateOptions),
     );
     if (err) {
@@ -39,16 +39,16 @@ export class SequenceSchemaService {
         code: CodeEnum.DB_EXEC_ERROR,
       });
     }
-    if (!result) {
+    const respResult = {
+      shopId,
+      type,
+      sequenceId: 0
+    }
+    if (result) {
       // 如果没有值说明是新增的
-      // result = {
-      //   shopId,
-      //   type,
-      //   sequenceId: 0,
-      // };
+      respResult.sequenceId = result.sequenceId++
     }
     // 因为拿到的是旧值,为了与数据库同步,加1即可
-    result.sequenceId++;
-    return Promise.resolve(result);
+    return Promise.resolve(respResult);
   }
 }
