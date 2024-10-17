@@ -9,7 +9,7 @@ import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { CmsSession } from '@/common';
 
 import { SystemDataSchemaService } from '@/entities/services';
-import { TimeZoneData, TimeZoneDataDocument } from '@/entities/schema';
+import { TimeZoneData } from '@/entities/schema';
 import { UserLogsService } from '@/logs';
 
 import { defaultTimeZone } from '../defaultSystemData';
