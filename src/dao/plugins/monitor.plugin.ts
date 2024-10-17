@@ -119,6 +119,7 @@ export const monitorPlugin = function (schema: Schema): void {
     // 如果参数里面设置了{upsert: true}, __v则不会加1,就算数据库中有数据也不会加1,因为这个参数的意思就是新建
     // 所以只有findOneAndUpdate加了upsert参数后就认为是新建了,会重置所有字段的值,所以每次运行都只能设置成0
     const $where = this.getUpdate();
+    delete $where['$setOnInsert'][versionKey];
     // 更新时版本号自动加1
     this.setUpdate({
       ...$where,
@@ -136,6 +137,8 @@ export const monitorPlugin = function (schema: Schema): void {
       _lastTime: new Date().getTime(),
     });
     const $where = this.getUpdate();
+    // 更新时如果加上{upsert: true},需要删除$setOnInsert里面的__v,不然报异常
+    delete $where['$setOnInsert'][versionKey];
     // 更新时版本号自动加1
     this.setUpdate({
       ...$where,
