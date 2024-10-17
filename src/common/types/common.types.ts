@@ -48,7 +48,6 @@ export type ExcludeUndefinedIf<
 
 export type KeyOf<T> = keyof T extends never ? string : keyof T;
 
-export type ErrorPromise = {
-  message: string;
+export type ErrorPromise = Error & {
   code: number;
 };

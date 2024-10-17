@@ -108,10 +108,9 @@ export class SystemService {
       return resp;
     }
     // TODO 以后估计要限制shopId的值必须在用户的管理范围内
-    const [err, result] = await this.sequenceSchemaService
-      .getNextSequence(type, shopId)
-      .then((result) => [null, result])
-      .catch((err) => [err]);
+    const [err, result] = await Utils.toPromise(
+      this.sequenceSchemaService.getNextSequence(type, shopId),
+    );
     if (err) {
       resp.code = err.code;
       resp.msg = err.message;

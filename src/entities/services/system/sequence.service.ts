@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { CodeEnum, SequenceTypeEnum } from '@/common/enum';
-import { SequenceModel, Sequence, SequenceSchema } from '../../schema';
+import { SequenceModel, Sequence } from '../../schema';
 import { Utils } from '@/common/utils';
 
 @Injectable()

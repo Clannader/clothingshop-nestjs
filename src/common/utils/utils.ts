@@ -12,7 +12,7 @@ import {
 } from 'lodash';
 import type { Request } from 'express';
 import * as os from 'os';
-import { CmsSession, LanguageType } from '../types';
+import { CmsSession, LanguageType, ErrorPromise } from '../types';
 import { v4 } from 'uuid';
 import { i18n } from '../i18n';
 
@@ -514,7 +514,7 @@ export class Utils {
     return this.replaceArgs(langKey, ...args);
   }
 
-  static async toPromise<T, U = Error>(
+  static async toPromise<T, U = ErrorPromise>(
     promise: Promise<T>,
     errorExt?: object,
   ): Promise<[U, undefined] | [null, T]> {
