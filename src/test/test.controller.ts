@@ -32,7 +32,10 @@ import {
 import { UserSessionDto } from '@/user/dto';
 import { XmlInterceptor } from '@/interceptor/xml';
 import { MemoryCacheService } from '@/cache/services';
-import { AdminSchemaService, SystemDataSchemaService } from '@/entities/services';
+import {
+  AdminSchemaService,
+  SystemDataSchemaService,
+} from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
 import { CmsSession, CommonResult, timeZoneExp } from '@/common';
@@ -281,19 +284,27 @@ export class TestController {
     // 事实证明,B是多实例的
 
     const [err, result] = await Utils.toPromise(
-      this.systemDataSchemaService.getTimeZoneDataModel().updateOne(
-        {_id: '67107f5a38c50a30d2d58e2b'},
-        {
-          $set: {
-            timeZone: 'uu',
-            winter: '+11:00' // 已知:$setOnInsert有的更新字段,$set不能有.如果数据库中有值,仅更新$set的字段,不会更新$setOnInsert
-          },
-          $setOnInsert: {
-            summer: '+13:00' // 数据库中没有值,执行创建才会把这个字段set进去
-          }
-        },
-        { upsert: true } // 每一次更新都会插入相同的_id,根据更新条件插入的,如果数据库没有值则插入$setOnInsert的值,如果有值则仅更新$set
-      ),
+      // this.systemDataSchemaService.getTimeZoneDataModel().findOneAndUpdate(
+      //   // {_id: '67107f5a38c50a30d2d58e2b'},
+      //   {timeZone:'Europe/London2'},
+      //   {
+      //     $set: {
+      //       timeZone: 'Europe/London2',
+      //       summer: '+01:00', // 夏令时
+      //       winter: '+00:00', // 已知:$setOnInsert有的更新字段,$set不能有.如果数据库中有值,仅更新$set的字段,不会更新$setOnInsert
+      //     },
+      //     // $setOnInsert: {
+      //     //   summer: '+13:00' // 数据库中没有值,执行创建才会把这个字段set进去
+      //     // }
+      //   },
+      //   { upsert: true } // 每一次更新都会插入相同的_id,根据更新条件插入的,如果数据库没有值则插入$setOnInsert的值,如果有值则仅更新$set
+      // ),
+      this.systemDataSchemaService.syncTimeZoneObject({
+        timeZone: 'Europe/London2',
+        summer: '+01:00', // 夏令时
+        winter: '+00:00',
+        description: '',
+      }),
     );
     if (result) {
       console.log(result);

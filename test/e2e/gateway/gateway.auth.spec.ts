@@ -47,7 +47,10 @@ describe('GatewayAuthController (e2e)', () => {
         expect(body.accessToken).not.toBeNull();
         expect(body.refreshToken).not.toBeNull();
         const accessSession = tokenService.verifyToken('ZH', body.accessToken);
-        const refreshSession = tokenService.verifyToken('ZH', body.refreshToken);
+        const refreshSession = tokenService.verifyToken(
+          'ZH',
+          body.refreshToken,
+        );
         expect(accessSession.expires).toBeUndefined();
         expect(refreshSession.expires).not.toBeNull();
         expect(accessSession.exp - accessSession.iat).toBe(accessExpires);

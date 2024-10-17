@@ -237,10 +237,10 @@ export class TimeZoneService {
     // 同步默认时区数据到数据库中
     let syncSuccessNumber = 0;
     for (const timeZoneInfo of defaultTimeZone) {
-      const [, result] = await this.systemDataSchemaService
-        .syncTimeZoneObject(<TimeZoneData>timeZoneInfo)
-        .then((result) => [null, result])
-        .catch((err) => [err]);
+      const [, result] = await Utils.toPromise(
+        this.systemDataSchemaService
+          .syncTimeZoneObject(<TimeZoneData>timeZoneInfo)
+      );
       if (Utils.isEmpty(result)) {
         syncSuccessNumber++;
       }
