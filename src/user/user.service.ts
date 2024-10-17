@@ -8,7 +8,7 @@ import {
   UpdateLoginWhere,
   LoginResult,
   SECRET_CONFIG,
-  languageType,
+  LanguageType,
 } from '@/common';
 import { CodeEnum, UserTypeEnum } from '@/common/enum';
 import { ConfigService } from '@/common/config';
@@ -48,7 +48,7 @@ export class UserService {
   }
 
   async userLogin(
-    language: languageType,
+    language: LanguageType,
     params: ReqUserLoginDto,
   ): Promise<LoginResult> {
     const adminId = params.adminId;

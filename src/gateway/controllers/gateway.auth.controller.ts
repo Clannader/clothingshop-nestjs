@@ -15,7 +15,7 @@ import {
   LoginResult,
   CmsSession,
   RequestSession,
-  languageType,
+  LanguageType,
 } from '@/common';
 import { ApiCommon, ApiCustomResponse, UserLanguage } from '@/common/decorator';
 import { CodeEnum } from '@/common/enum';
@@ -59,7 +59,7 @@ export class GatewayAuthController {
   async authorizeLogin(
     @Body() params: ReqUserLoginDto,
     @Req() req: RequestSession,
-    @UserLanguage() language: languageType,
+    @UserLanguage() language: LanguageType,
   ) {
     params.allowThirdUser = true;
     const result: LoginResult = await this.userService.userLogin(
@@ -112,7 +112,7 @@ export class GatewayAuthController {
     type: RespJwtTokenDto,
   })
   async refreshToken(
-    @UserLanguage() language: languageType,
+    @UserLanguage() language: LanguageType,
     @Body() params: ReqRefreshTokenDto,
   ) {
     // iat是开始时间 exp是结束时间, expires是session里面的有效期,只有refreshToken里面才会有值

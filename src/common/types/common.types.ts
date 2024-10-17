@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Session, Store } from 'express-session';
+import { LanguageEnum } from '../enum';
 
 export interface CmsSession {
   readonly adminId?: string;
@@ -16,7 +17,7 @@ export interface CmsSession {
   readonly requestHost?: string;
   readonly sessionId?: string;
   readonly credential?: string;
-  language?: languageType;
+  language?: LanguageType;
   expires?: number;
 }
 
@@ -36,7 +37,7 @@ export interface CmsResponse extends Response {
   returnData: string;
 }
 
-export type languageType = 'ZH' | 'EN';
+export type LanguageType = keyof typeof LanguageEnum;
 
 export type NoInferType<T> = [T][T extends any ? 0 : never];
 

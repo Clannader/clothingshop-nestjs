@@ -14,7 +14,7 @@ import {
   RequestSession,
   sessionSecret,
   LoginResult,
-  languageType,
+  LanguageType,
 } from '@/common';
 import { Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
@@ -44,7 +44,7 @@ export class LoginController {
   async userLogin(
     @Body() params: ReqUserLoginDto,
     @Req() req: RequestSession,
-    @UserLanguage() language: languageType,
+    @UserLanguage() language: LanguageType,
   ) {
     const result: LoginResult = await this.userService.userLogin(
       language,

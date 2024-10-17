@@ -38,7 +38,7 @@ import {
 } from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
-import { CmsSession, CommonResult, languageType, timeZoneExp } from '@/common';
+import { CmsSession, CommonResult, LanguageType, timeZoneExp } from '@/common';
 import { TestService } from './test.service';
 import { Prop } from '@nestjs/mongoose';
 
@@ -233,7 +233,7 @@ export class TestController {
   async testInstance(
     @UserSession() session: CmsSession,
     @Param('id') id: number,
-    @UserLanguage() language: languageType,
+    @UserLanguage() language: LanguageType,
   ) {
     // console.log(typeof id); // 这里要注意的是虽然ts断言类型是number,但是实际上拿到的类型还是string
     console.log(language)

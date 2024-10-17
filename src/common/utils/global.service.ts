@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 // import { Request } from 'express';
 
 import * as globalVariable from '../constants';
-import { languageType, CmsSession } from '@/common';
+import { LanguageType, CmsSession } from '@/common';
 import { Utils } from '@/common/utils';
 
 @Injectable()
@@ -20,12 +20,12 @@ export class GlobalService {
   // private readonly request: Request;
 
   lang(
-    languageType: languageType,
+    language: LanguageType,
     origin: string,
     key: string,
     ...args: Array<string | number>
   ) {
-    return Utils.lang(languageType, origin, key, ...args);
+    return Utils.lang(language, origin, key, ...args);
   }
 
   serverLang(

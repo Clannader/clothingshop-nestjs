@@ -12,7 +12,7 @@ import {
 } from 'lodash';
 import type { Request } from 'express';
 import * as os from 'os';
-import { CmsSession, languageType } from '../types';
+import { CmsSession, LanguageType } from '../types';
 import { v4 } from 'uuid';
 import { i18n } from '../i18n';
 
@@ -491,18 +491,18 @@ export class Utils {
 
   /**
    * 系统的翻译函数
-   * @param languageType 语言类型
+   * @param language 语言类型
    * @param origin 原始的中文翻译
    * @param key 翻译的key
    * @param args 其他占位符参数
    */
   static lang(
-    languageType: languageType,
+    language: LanguageType,
     origin: string,
     key: string,
     ...args: Array<string | number>
   ): string {
-    const properties = i18n[languageType];
+    const properties = i18n[language];
     if (this.isEmpty(properties)) {
       return this.replaceArgs(origin, ...args);
     }
@@ -530,14 +530,14 @@ export class Utils {
       });
   }
 
-  static getHeadersLanguage(request: Request): languageType {
+  static getHeadersLanguage(request: Request): LanguageType {
     const headerLanguage = request.headers['language'];
     return this.isEmpty(headerLanguage)
       ? 'ZH'
       : ['ZH', 'EN'].includes(
             typeof headerLanguage === 'string' ? headerLanguage : 'ZH',
           )
-        ? (headerLanguage as languageType)
+        ? (headerLanguage as LanguageType)
         : 'ZH';
   }
 }

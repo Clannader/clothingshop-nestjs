@@ -3,7 +3,7 @@
  */
 import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CmsSession, languageType } from '@/common';
+import { CmsSession, LanguageType } from '@/common';
 import { CodeEnum } from '@/common/enum';
 import { CodeException } from '@/common/exceptions';
 import { GlobalService } from '@/common/utils';
@@ -30,7 +30,7 @@ export class TokenService {
    * @param language
    * @param token
    */
-  verifyToken(language: languageType, token: string) {
+  verifyToken(language: LanguageType, token: string) {
     try {
       return this.jwtService.verify(token);
     } catch ({ name, message }) {

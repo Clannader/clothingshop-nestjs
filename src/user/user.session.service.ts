@@ -9,7 +9,7 @@ import { GlobalService } from '@/common/utils';
 import { CONFIG_SECRET } from '@/common/config';
 import * as jwt from 'jsonwebtoken';
 
-import type { languageType } from '@/common';
+import type { LanguageType } from '@/common';
 
 @Injectable()
 export class UserSessionService {
@@ -28,7 +28,7 @@ export class UserSessionService {
     });
   }
 
-  verifyToken(language: languageType, token: string) {
+  verifyToken(language: LanguageType, token: string) {
     try {
       return jwt.verify(token, this.secretConfig['tripleKey']) as any;
     } catch ({ name, message }) {

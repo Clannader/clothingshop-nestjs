@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { AdminModel, Admin } from '../../schema';
 import { GlobalService, Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
-import { userNameExp, LoginResult, languageType } from '@/common';
+import { userNameExp, LoginResult, LanguageType } from '@/common';
 import validator from 'validator';
 
 type LoginWhere = {
@@ -28,7 +28,7 @@ export class AdminSchemaService {
   }
 
   async loginSystem(
-    language: languageType,
+    language: LanguageType,
     adminId: string,
   ): Promise<LoginResult> {
     if (Utils.isEmpty(adminId)) {

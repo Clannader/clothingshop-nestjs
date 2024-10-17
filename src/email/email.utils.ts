@@ -3,7 +3,7 @@
  */
 import { render } from 'ejs';
 import { Inject, Injectable } from '@nestjs/common';
-import { languageType } from '@/common';
+import { LanguageType } from '@/common';
 import { Utils } from '@/common/utils';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class EmailUtils {
   getEmailTemplate(
     template: string,
     options: Record<string, any>,
-    language: languageType = 'ZH',
+    language: LanguageType = 'ZH',
   ) {
     let content = render(template, {
       options,

@@ -51,6 +51,8 @@ export enum LanguageEnum {
   ZH = 'ZH',
 }
 
+export type G = keyof typeof LanguageEnum
+
 /**
  * 日志类型
  */
