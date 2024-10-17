@@ -42,12 +42,12 @@ export class SequenceSchemaService {
     const respResult = {
       shopId,
       type,
-      sequenceId: 0
-    }
+      sequenceId: 0,
+    };
     if (result) {
       // 如果没有值说明是新增的
       // 因为拿到的是旧值,为了与数据库同步,加1即可
-      respResult.sequenceId = result.sequenceId++
+      respResult.sequenceId = result.sequenceId++;
     }
     return Promise.resolve(respResult);
   }
