@@ -1,19 +1,20 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Inject,
+  Param,
   Post,
-  Get,
   Query,
   UseInterceptors,
-  Param,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@/common/config';
 import { CodeEnum } from '@/common/enum';
-import { GlobalService, Utils } from '@/common/utils';
+import { GlobalService } from '@/common/utils';
 import {
   ApiCommon,
   ApiCustomResponse,
@@ -24,10 +25,13 @@ import {
   XmlJsonData,
 } from '@/common/decorator';
 import {
+  ReqSerializerRoleEntityDto,
+  ReqSerializerUserEntityDto,
   ReqTestSchemaDto,
+  RespObjectDto,
+  RespSerializerUserEntityDto,
   RespTestSchemaDto,
   TestSchemaDto,
-  RespObjectDto,
 } from './dto';
 // import { cloneClass } from './utils/test.utils';
 import { UserSessionDto } from '@/user/dto';
@@ -39,9 +43,8 @@ import {
 } from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
-import { CmsSession, CommonResult, LanguageType, timeZoneExp } from '@/common';
+import { CmsSession, CommonResult, LanguageType } from '@/common';
 import { TestService } from './test.service';
-import { Prop } from '@nestjs/mongoose';
 
 @ApiCommon()
 @Controller('/cms')
@@ -306,5 +309,31 @@ export class TestController {
     //   console.log(result);
     // }
     return new CommonResult();
+  }
+
+  @Post('/api/test/serializer')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '测试nestjs请求和响应序列化问题',
+    description: '测试nestjs请求和响应序列化问题',
+  })
+  @ApiCustomResponse({
+    type: RespSerializerUserEntityDto,
+  })
+  @UseInterceptors(ClassSerializerInterceptor)
+  testSerializer() {
+    const resp = new RespSerializerUserEntityDto();
+    const role = new ReqSerializerRoleEntityDto({
+      id: 1,
+      name: 'admin',
+    });
+    resp.user = new ReqSerializerUserEntityDto({
+      id: 1,
+      firstName: 'Kamil',
+      lastName: 'Mystical',
+      password: 'password',
+      role: role,
+    });
+    return resp;
   }
 }
