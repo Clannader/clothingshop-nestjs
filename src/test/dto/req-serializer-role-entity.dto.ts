@@ -8,7 +8,7 @@ export class ReqSerializerRoleEntityDto {
   id: number;
 
   /**
-   * 姓名
+   * 权限名
    */
   name: string;
 

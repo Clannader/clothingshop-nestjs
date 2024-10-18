@@ -3,6 +3,7 @@
  */
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { ReqSerializerRoleEntityDto } from './req-serializer-role-entity.dto';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 
 export class ReqSerializerUserEntityDto {
   /**
@@ -20,15 +21,35 @@ export class ReqSerializerUserEntityDto {
    */
   lastName: string;
 
-  @Exclude()
+  /**
+   * 密码
+   */
+  @ApiHideProperty() // 这个才是swagger隐藏字段的修饰器
+  @Exclude() // 这个是响应时排除该字段,swagger上还是会显示该字段
   password: string;
 
+  /**
+   * 姓名全名
+   */
   @Expose()
+  @ApiProperty({
+    name: 'fullName',
+    type: 'string',
+    description: '姓名全名',
+  })
   get fullName(): string {
     return `${this.firstName} ${this.lastName}`;
   }
 
-  @Transform(({ value }) => value.name)
+  /**
+   * 权限值
+   */
+  @ApiProperty({
+    name: 'role',
+    type: 'string',
+    description: '权限值',
+  })
+  @Transform(({ value }) => value.name) // 对内是对象,响应回去是该对象的name属性值
   role: ReqSerializerRoleEntityDto;
 
   constructor(partial: Partial<ReqSerializerUserEntityDto>) {

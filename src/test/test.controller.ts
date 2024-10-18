@@ -324,11 +324,11 @@ export class TestController {
   testSerializer() {
     const resp = new RespSerializerUserEntityDto();
     const role = new ReqSerializerRoleEntityDto({
-      id: 1,
+      id: 8888,
       name: 'admin',
     });
     resp.user = new ReqSerializerUserEntityDto({
-      id: 1,
+      id: 123456,
       firstName: 'Kamil',
       lastName: 'Mystical',
       password: 'password',
