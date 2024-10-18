@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   UseInterceptors,
+  Headers,
 } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@/common/config';
@@ -31,6 +32,7 @@ import {
   RespSerializerUserEntityDto,
   RespTestSchemaDto,
   TestSchemaDto,
+  ReqSerializerParamsDto,
 } from './dto';
 // import { cloneClass } from './utils/test.utils';
 import { UserSessionDto } from '@/user/dto';
@@ -87,16 +89,17 @@ export class TestController {
     @Body() params: ReqTestSchemaDto,
     @XmlData() xmlData: string,
     @XmlJsonData() xmlJsonData: Record<string, any>,
-    // @Headers('language') lang: string,
+    @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();
     const result = new TestSchemaDto();
     result.age = 20;
     result.password = '123';
     result.username = '123';
-    // console.log(params);
-    // console.log(xmlData);
-    // console.log(xmlJsonData);
+    console.log(params);
+    console.log(xmlData);
+    console.log(xmlJsonData);
+    console.log(lang)
     // const clone = cloneClass(RespTestSchemaDto);
     // console.log(Reflect.getMetadataKeys(clone));
     // const dbUser: string = this.configService.get<string>('dbUser');
@@ -158,16 +161,16 @@ export class TestController {
     // resp.rows = xmlJsonData.xml.age;
     // return resp;
 
-    const test = (): Record<string, any> => {
-      return new Promise((resolve, reject) => {
-        reject({});
-      });
-    };
-    const testResult: Record<string, any> = await test()
-      .then((res) => res)
-      .catch((err) => err);
+    // const test = (): Record<string, any> => {
+    //   return new Promise((resolve, reject) => {
+    //     reject({});
+    //   });
+    // };
+    // const testResult: Record<string, any> = await test()
+    //   .then((res) => res)
+    //   .catch((err) => err);
     // throw new CodeException(CodeEnum.TOKEN_EXPIRED, '哈哈')
-    console.log(testResult.name.age);
+    // console.log(testResult.name.age);
     // const name = testResult?.name?.age
     // this.logger.error(name)
     // this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
@@ -175,18 +178,18 @@ export class TestController {
     // const value = await this.memoryCacheService.getMemoryCache('23444')
     // console.log(value)
     // console.log(keys)
-    const findResult /*[err, findResult]*/ = await this.adminSchemaService
-      .getModel()
-      .countDocuments({ adminId: 'SUPERVISOR' }); // .then((result) => [null, result]).catch(err => [err])
+    // const findResult /*[err, findResult]*/ = await this.adminSchemaService
+    //   .getModel()
+    //   .countDocuments({ adminId: 'SUPERVISOR' }); // .then((result) => [null, result]).catch(err => [err])
     // console.log(err)
     // console.log('1111')
     // console.log(findResult)
-    if (findResult) {
+    // if (findResult) {
       // throw err
       // this.logger.error(err)
       // console.log(err)
-    }
-    console.log(findResult);
+    // }
+    // console.log(findResult);
     return resp;
   }
 
@@ -319,7 +322,8 @@ export class TestController {
   @ApiCustomResponse({
     type: RespSerializerUserEntityDto,
   })
-  testSerializer() {
+  testSerializer(@Body() params: ReqSerializerParamsDto) {
+    console.log(params)
     const resp = new RespSerializerUserEntityDto();
     const role = new ReqSerializerRoleEntityDto({
       id: 8888,

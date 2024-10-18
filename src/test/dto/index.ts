@@ -6,3 +6,4 @@ export * from './resp-object.dto';
 export * from './req-serializer-user-entity.dto';
 export * from './req-serializer-role-entity.dto';
 export * from './resp-serializer-user-entity.dto';
+export * from './req-serializer-params.dto';
