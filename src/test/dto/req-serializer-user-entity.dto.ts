@@ -22,6 +22,17 @@ export class ReqSerializerUserEntityDto {
   lastName: string;
 
   /**
+   * 用户状态
+   */
+  @ApiProperty({
+    name: 'userStatus',
+    type: 'boolean',
+    description: '用户状态',
+  })
+  @Expose({ name: 'userStatus' }) // 用这个修改响应回去的字段名
+  status: boolean;
+
+  /**
    * 密码
    */
   @ApiHideProperty() // 这个才是swagger隐藏字段的修饰器

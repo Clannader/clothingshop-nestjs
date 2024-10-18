@@ -1,6 +1,5 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpCode,
@@ -320,7 +319,6 @@ export class TestController {
   @ApiCustomResponse({
     type: RespSerializerUserEntityDto,
   })
-  @UseInterceptors(ClassSerializerInterceptor)
   testSerializer() {
     const resp = new RespSerializerUserEntityDto();
     const role = new ReqSerializerRoleEntityDto({
@@ -329,6 +327,7 @@ export class TestController {
     });
     resp.user = new ReqSerializerUserEntityDto({
       id: 123456,
+      status: true,
       firstName: 'Kamil',
       lastName: 'Mystical',
       password: 'password',
