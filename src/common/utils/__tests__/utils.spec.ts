@@ -146,6 +146,7 @@ describe('Utils', () => {
     expect(Utils.isEmpty('test', true)).toBe(false);
     expect(Utils.isEmpty([], true)).toBe(true);
     expect(Utils.isEmpty(123, true)).toBe(false);
+    expect(Utils.isEmpty(0)).toBe(false);
     expect(Utils.isEmpty({}, true)).toBe(false);
 
     const map = new Map();
