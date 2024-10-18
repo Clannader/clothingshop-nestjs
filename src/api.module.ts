@@ -1,8 +1,13 @@
 /**
  * 这里是cms系统的api模块
  */
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import {
+  Module,
+  NestModule,
+  MiddlewareConsumer,
+  ClassSerializerInterceptor,
+} from '@nestjs/common';
+import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 import { join } from 'path';
 
 import { HttpExceptionFilter } from './filter';
@@ -42,6 +47,10 @@ import { TasksListModule } from '@/tasks';
     {
       provide: APP_PIPE,
       useClass: ValidationPipe,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
     },
   ],
 })

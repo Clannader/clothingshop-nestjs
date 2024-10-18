@@ -1,19 +1,20 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Inject,
+  Param,
   Post,
-  Get,
   Query,
   UseInterceptors,
-  Param,
+  Headers,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@/common/config';
 import { CodeEnum } from '@/common/enum';
-import { GlobalService, Utils } from '@/common/utils';
+import { GlobalService } from '@/common/utils';
 import {
   ApiCommon,
   ApiCustomResponse,
@@ -24,10 +25,14 @@ import {
   XmlJsonData,
 } from '@/common/decorator';
 import {
+  ReqSerializerRoleEntityDto,
+  ReqSerializerUserEntityDto,
   ReqTestSchemaDto,
+  RespObjectDto,
+  RespSerializerUserEntityDto,
   RespTestSchemaDto,
   TestSchemaDto,
-  RespObjectDto,
+  ReqSerializerParamsDto,
 } from './dto';
 // import { cloneClass } from './utils/test.utils';
 import { UserSessionDto } from '@/user/dto';
@@ -39,9 +44,8 @@ import {
 } from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
-import { CmsSession, CommonResult, LanguageType, timeZoneExp } from '@/common';
+import { CmsSession, CommonResult, LanguageType } from '@/common';
 import { TestService } from './test.service';
-import { Prop } from '@nestjs/mongoose';
 
 @ApiCommon()
 @Controller('/cms')
@@ -85,16 +89,17 @@ export class TestController {
     @Body() params: ReqTestSchemaDto,
     @XmlData() xmlData: string,
     @XmlJsonData() xmlJsonData: Record<string, any>,
-    // @Headers('language') lang: string,
+    @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();
     const result = new TestSchemaDto();
     result.age = 20;
     result.password = '123';
     result.username = '123';
-    // console.log(params);
-    // console.log(xmlData);
-    // console.log(xmlJsonData);
+    console.log(params);
+    console.log(xmlData);
+    console.log(xmlJsonData);
+    console.log(lang);
     // const clone = cloneClass(RespTestSchemaDto);
     // console.log(Reflect.getMetadataKeys(clone));
     // const dbUser: string = this.configService.get<string>('dbUser');
@@ -156,16 +161,16 @@ export class TestController {
     // resp.rows = xmlJsonData.xml.age;
     // return resp;
 
-    const test = (): Record<string, any> => {
-      return new Promise((resolve, reject) => {
-        reject({});
-      });
-    };
-    const testResult: Record<string, any> = await test()
-      .then((res) => res)
-      .catch((err) => err);
+    // const test = (): Record<string, any> => {
+    //   return new Promise((resolve, reject) => {
+    //     reject({});
+    //   });
+    // };
+    // const testResult: Record<string, any> = await test()
+    //   .then((res) => res)
+    //   .catch((err) => err);
     // throw new CodeException(CodeEnum.TOKEN_EXPIRED, '哈哈')
-    console.log(testResult.name.age);
+    // console.log(testResult.name.age);
     // const name = testResult?.name?.age
     // this.logger.error(name)
     // this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
@@ -173,18 +178,18 @@ export class TestController {
     // const value = await this.memoryCacheService.getMemoryCache('23444')
     // console.log(value)
     // console.log(keys)
-    const findResult /*[err, findResult]*/ = await this.adminSchemaService
-      .getModel()
-      .countDocuments({ adminId: 'SUPERVISOR' }); // .then((result) => [null, result]).catch(err => [err])
+    // const findResult /*[err, findResult]*/ = await this.adminSchemaService
+    //   .getModel()
+    //   .countDocuments({ adminId: 'SUPERVISOR' }); // .then((result) => [null, result]).catch(err => [err])
     // console.log(err)
     // console.log('1111')
     // console.log(findResult)
-    if (findResult) {
-      // throw err
-      // this.logger.error(err)
-      // console.log(err)
-    }
-    console.log(findResult);
+    // if (findResult) {
+    // throw err
+    // this.logger.error(err)
+    // console.log(err)
+    // }
+    // console.log(findResult);
     return resp;
   }
 
@@ -306,5 +311,32 @@ export class TestController {
     //   console.log(result);
     // }
     return new CommonResult();
+  }
+
+  @Post('/api/test/serializer')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '测试nestjs请求和响应序列化问题',
+    description: '测试nestjs请求和响应序列化问题',
+  })
+  @ApiCustomResponse({
+    type: RespSerializerUserEntityDto,
+  })
+  testSerializer(@Body() params: ReqSerializerParamsDto) {
+    console.log(params);
+    const resp = new RespSerializerUserEntityDto();
+    const role = new ReqSerializerRoleEntityDto({
+      id: 8888,
+      name: 'admin',
+    });
+    resp.user = new ReqSerializerUserEntityDto({
+      id: 123456,
+      status: true,
+      firstName: 'Kamil',
+      lastName: 'Mystical',
+      password: 'password',
+      role: role,
+    });
+    return resp;
   }
 }

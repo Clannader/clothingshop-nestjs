@@ -141,6 +141,7 @@ export const monitorPlugin = function (schema: Schema): void {
     });
     const $where = this.getUpdate();
     // 更新时如果加上{upsert: true},需要删除$setOnInsert里面的__v,不然报异常
+    // 其实这里不应该用Utils.isEmpty,应该用判断是否还有这个节点的方法判断,但是由于值是0,也不是不可以将就
     if (!Utils.isEmpty($where?.['$setOnInsert']?.[versionKey])) {
       delete $where['$setOnInsert'][versionKey];
     }
