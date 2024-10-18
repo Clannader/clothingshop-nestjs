@@ -99,7 +99,7 @@ export class TestController {
     console.log(params);
     console.log(xmlData);
     console.log(xmlJsonData);
-    console.log(lang)
+    console.log(lang);
     // const clone = cloneClass(RespTestSchemaDto);
     // console.log(Reflect.getMetadataKeys(clone));
     // const dbUser: string = this.configService.get<string>('dbUser');
@@ -185,9 +185,9 @@ export class TestController {
     // console.log('1111')
     // console.log(findResult)
     // if (findResult) {
-      // throw err
-      // this.logger.error(err)
-      // console.log(err)
+    // throw err
+    // this.logger.error(err)
+    // console.log(err)
     // }
     // console.log(findResult);
     return resp;
@@ -323,7 +323,7 @@ export class TestController {
     type: RespSerializerUserEntityDto,
   })
   testSerializer(@Body() params: ReqSerializerParamsDto) {
-    console.log(params)
+    console.log(params);
     const resp = new RespSerializerUserEntityDto();
     const role = new ReqSerializerRoleEntityDto({
       id: 8888,
