@@ -1,0 +1,28 @@
+1.review导入类型和类的区分 √
+2.重新分类引入,拆分多个类别,不耦合在一起,例如commom什么都有,应该common/config,common/enum √
+3.研究一下如何判断是测试模式还是开发模式,屏蔽测试模式下的报错 √
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm warn deprecated csurf@1.11.0: Please use another csrf package
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated vis@4.21.0: Please consider using https://github.com/visjs
+
+4.目前升级mongoose时,logger日志类注释调了,后期看如何改动
+5.后期新增读取config.ini的类,单独可以运行获取数据,配置是否多进程和单进程启动,使用cluster进行多进程 √
+6.目前发现不管是修复索引还是获取数据库表,不懂是代码没有使用表还是mongodb认为没有数据就不返回该表的信息
+需要后期测试 √
+7.更新jest后,package.json的jest配置有所变化部分配置已经不生效了,需要有空研究一下 √
+
+任务
+1.写sequence的controller,新增测试定时任务@nestjs/schedule,新增定时任务测试sequence获取id问题 √
+2.写系统配置相关接口,新增写日志,check方法,新增编辑删除等接口
+3.思考时区设置,货币设置,国家,省份,城市设置的表结构如何设计,考虑一个表能兼容2-4级阶层的数据,也能同一个表存杂七杂八的数据,并且有独立的字段
+4.使用async await时的then和catch如何优雅的返回断言类型 √ 暂时解决
+5.思考如何定义内部值和对外值,参考java的@JsonProperty(value="status"),swagger定义res_status,但是返回status,参考使用class-transformer
+确实需要考虑序列化和反序列化的问题,不管是req还是resp都可以做到字段的隐藏和修改 √
+6.测试每天凌晨0点的定时器功能
+7.nestjs/axios
+8.是否考虑每个表都有一个更新时间的字段
+9.多台服务器如何同步相同的某个时间
