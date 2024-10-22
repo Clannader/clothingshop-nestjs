@@ -11,53 +11,62 @@ import { Utils } from '@/common/utils';
 @Schema()
 export class AdminLog {
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   adminId: string; // 操作员ID
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   adminName: string; // 操作员名字
 
   @Prop({
+    type: Date,
     required: true,
   })
   date?: Date; // 操作时间
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   content: string; // 操作内容
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   shopId: string; // 操作的店铺ID
 
   @Prop({
+    type: String,
     required: true,
     enum: Utils.enumToArray(LogTypeEnum)[1],
   })
   type: string; // 操作类型
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   serverName?: string; // 服务器名,例如app1, app2
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   workerId?: string; // 进程ID
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })

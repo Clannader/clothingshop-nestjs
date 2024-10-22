@@ -463,7 +463,7 @@ export class TimeZoneService {
 
   async syncTimeZoneData(session: CmsSession) {
     // 同步默认时区数据到数据库中
-    const successTimeZone = []
+    const successTimeZone: string[] = [];
     for (const timeZoneInfo of defaultTimeZone) {
       const [, result] = await Utils.toPromise(
         this.systemDataSchemaService.syncTimeZoneObject(
@@ -474,7 +474,7 @@ export class TimeZoneService {
       // 后期已存在数据时不想返回,为了体现每次修复实际更新几个数据
       // 如果设置了,就会导致每次都有返回,每次都写日志
       // 其实考虑实际每次都写日志也算是正常的
-      successTimeZone.push(result.id)
+      successTimeZone.push(result.id);
     }
     if (successTimeZone.length > 0) {
       const content = this.globalService.serverLang(
@@ -487,7 +487,7 @@ export class TimeZoneService {
         session,
         LogTypeEnum.TimeZone,
         content,
-        successTimeZone
+        successTimeZone,
       );
     }
     return new CommonResult();

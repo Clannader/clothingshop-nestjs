@@ -10,79 +10,95 @@ import { Utils } from '@/common/utils';
 
 @Schema()
 export class AdminAccess {
-  @Prop({ required: true })
+  @Prop({
+    type: String,
+    required: true,
+    trim: true,
+  })
   adminId: string; // 用户的唯一ID
 
   @Prop({
+    type: String,
     required: true,
     enum: Utils.enumToArray(UserTypeEnum)[1],
   })
   adminType: string; // 用户类型
 
   @Prop({
+    type: String,
     required: true,
+    trim: true,
   })
   shopId: string; // 操作的店铺ID
 
   @Prop({
+    type: Date,
     required: true,
   })
   date: Date; // 访问时间
 
   @Prop({
+    type: String,
     required: true,
     match: ipExp,
   })
   ip: string; // ip地址
 
   @Prop({
+    type: String,
     required: true,
+    trim: true,
   })
   url: string; // 请求地址
 
   @Prop({
+    type: Object, // TODO 以后思考如何自定义一种Json的key value类型作为数据库类型
     required: true,
-    type: Object,
     default: {},
   })
   params: Record<string, any> | string; // 请求内容参数
 
   @Prop({
+    type: String,
     required: true,
     enum: Utils.enumToArray(LogTypeEnum)[1],
   })
   type: string; // 请求类型
 
   @Prop({
+    type: String,
     required: true,
     enum: Utils.enumToArray(RequestMethod)[1],
   })
   method: string; // 请求方式
 
   @Prop({
+    type: Number,
     required: true,
   })
   timestamp: number; // 请求时间
 
   @Prop({
-    required: true,
     type: Object,
+    required: true,
   })
   send: Record<string, any> | string; // 请求返回内容
 
   @Prop({
-    required: true,
     type: Object,
+    required: true,
     // alias: '字段别名'
   })
   headers: Record<string, any>; // 请求头内容
 
   @Prop({
+    type: String,
     required: true,
   })
   serverName: string; // 服务器名,通过config.ini配置
 
   @Prop({
+    type: String,
     required: true,
     default: '1',
   })

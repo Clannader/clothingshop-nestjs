@@ -8,25 +8,28 @@ import { Model, HydratedDocument } from 'mongoose';
 @Schema()
 export class DeleteLog {
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   modelName: string; // 表名
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   keyWords: string; // 搜索关键字
 
   @Prop({
+    type: Date,
     required: true,
   })
   deleteDate?: Date; // 删除时间
 
   @Prop({
-    required: true,
     type: Object,
+    required: true,
     default: {},
   })
   searchWhere: Record<string, any>; // 查数据的条件
