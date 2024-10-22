@@ -114,6 +114,11 @@ export type TimeZoneSchema = {
 // 默认时区设置
 export const defaultTimeZone: TimeZoneSchema[] = [
   {
+    timeZone: 'America/Scoresbysund',
+    summer: '+00:00',
+    winter: '-01:00',
+  },
+  {
     timeZone: 'Europe/London',
     summer: '+01:00', // 夏令时
     winter: '+00:00', // 冬令时
@@ -134,14 +139,14 @@ export const defaultTimeZone: TimeZoneSchema[] = [
     winter: '+03:00',
   },
   {
-    timeZone: 'Asia/Tehran',
-    summer: '+04:30',
-    winter: '+03:30',
-  },
-  {
     timeZone: 'Europe/Astrakhan',
     summer: '+04:00',
     winter: '+04:00',
+  },
+  {
+    timeZone: 'Asia/Tehran',
+    summer: '+04:30',
+    winter: '+03:30',
   },
   {
     timeZone: 'Asia/Kabul',
@@ -204,6 +209,11 @@ export const defaultTimeZone: TimeZoneSchema[] = [
     winter: '+09:30',
   },
   {
+    timeZone: 'Australia/Brisbane',
+    summer: '+10:00',
+    winter: '+10:00',
+  },
+  {
     timeZone: 'Australia/Broken_Hill',
     summer: '+10:30',
     winter: '+9:30',
@@ -212,11 +222,6 @@ export const defaultTimeZone: TimeZoneSchema[] = [
     timeZone: 'Australia/Adelaide',
     summer: '+10:30',
     winter: '+9:30',
-  },
-  {
-    timeZone: 'Australia/Brisbane',
-    summer: '+10:00',
-    winter: '10:00',
   },
   {
     timeZone: 'Australia/Melbourne',
@@ -254,34 +259,19 @@ export const defaultTimeZone: TimeZoneSchema[] = [
     winter: '+12:45',
   },
   {
-    timeZone: 'Pacific/Tahiti',
-    summer: '-10:00',
-    winter: '-10:00',
-  },
-  {
-    timeZone: 'Pacific/Marquesas',
-    summer: '-09:30',
-    winter: '-09:30',
-  },
-  {
-    timeZone: 'America/Scoresbysund',
-    summer: '+00:00',
-    winter: '-01:00',
-  },
-  {
     timeZone: 'America/Noronha',
     summer: '-02:00',
     winter: '-02:00',
   },
   {
-    timeZone: 'America/Araguaina',
-    summer: '-03:00',
-    winter: '-03:00',
-  },
-  {
     timeZone: 'America/St_Johns',
     summer: '-02:30',
     winter: '-03:30',
+  },
+  {
+    timeZone: 'America/Araguaina',
+    summer: '-03:00',
+    winter: '-03:00',
   },
   {
     timeZone: 'America/Halifax',
@@ -314,13 +304,18 @@ export const defaultTimeZone: TimeZoneSchema[] = [
     winter: '-09:00',
   },
   {
+    timeZone: 'America/Adak',
+    summer: '-09:00',
+    winter: '-10:00',
+  },
+  {
     timeZone: 'Pacific/Marquesas',
     summer: '-09:30',
     winter: '-09:30',
   },
   {
-    timeZone: 'America/Adak',
-    summer: '-09:00',
+    timeZone: 'Pacific/Tahiti',
+    summer: '-10:00',
     winter: '-10:00',
   },
   {
