@@ -8,7 +8,7 @@ import { omit } from 'lodash';
 
 const logger = Log4js.getLogger('fileLogs');
 const parserLog =
-  '[{methodName}]-[{modelName}]-[{result}]-[{query}]-[{projection}]-[{options}]-[{params}]-[{diffTime}]';
+  '[{type}]-[{modelName}]-[{methodName}]-[{params}]-[{query}]-[{projection}]-[{options}]-[{result}]-[{id}]-[{diffTime}]';
 
 type schemaConfig = {
   statics: {
@@ -181,6 +181,7 @@ const writeQueryLog = function (schema: schemaConfig, result: any) {
     options: JSON.stringify(options),
     params: this.getUpdate() ? JSON.stringify(this.getUpdate()) : '',
     diffTime: new Date().getTime() - _lastTime,
+    type: 'QueryLog',
   };
   logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
 };
@@ -193,6 +194,8 @@ const writeDocumentLog = function (schema: schemaConfig, result: any) {
     result: JSON.stringify(cloneResult),
     params: JSON.stringify(omit(cloneResult, '_id', '__v')),
     diffTime: new Date().getTime() - this.$locals.lastTime,
+    id: cloneResult._id,
+    type: 'DocumentLog',
   };
   logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
 };

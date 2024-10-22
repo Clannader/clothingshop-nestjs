@@ -9,7 +9,7 @@ export class TestTwoAdapter extends AbstractTestAdapter {
   }
 
   getUserList() {
-    return ['fd', 'fasdf', 'cvc', 'jkjh'];
+    return ['one ', 'two', 'three', 'four'];
   }
 
   getAdapter(): string {
