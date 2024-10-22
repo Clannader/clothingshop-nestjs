@@ -37,7 +37,7 @@ export class SystemDataSchemaService {
     };
     return this.timeZoneDataModel.findOneAndUpdate(where, updateObject, {
       upsert: true,
-      // select: '_id', // 返回那些字段
+      select: '_id', // 返回那些字段
       returnDocument: 'after', // 返回更新之后的文档
     });
   }
