@@ -3,3 +3,4 @@
  */
 export * from './admin.access.schema';
 export * from './admin.log.schema';
+export * from './delete.log.schema';

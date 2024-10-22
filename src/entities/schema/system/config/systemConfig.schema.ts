@@ -11,21 +11,27 @@ import { codeExp } from '@/common';
 
 export class CommonConfig {
   @Prop({
+    type: String,
     required: true,
+    trim: true,
   })
   shopId: string;
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
     match: codeExp,
   })
   key: string; // 配置的Key
 
-  @Prop()
+  @Prop({
+    type: String,
+  })
   value: string; // 配置的value
 
   @Prop({
+    type: String,
     trim: true,
     validate: [
       function (value: string) {
@@ -33,6 +39,7 @@ export class CommonConfig {
       },
       'Description length is more than 150.',
     ],
+    default: '',
   })
   description: string; // 配置的描述
 }

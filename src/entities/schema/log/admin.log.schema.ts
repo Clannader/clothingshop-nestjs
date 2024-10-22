@@ -11,60 +11,71 @@ import { Utils } from '@/common/utils';
 @Schema()
 export class AdminLog {
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   adminId: string; // 操作员ID
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   adminName: string; // 操作员名字
 
   @Prop({
+    type: Date,
     required: true,
   })
   date?: Date; // 操作时间
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   content: string; // 操作内容
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   shopId: string; // 操作的店铺ID
 
   @Prop({
+    type: String,
     required: true,
     enum: Utils.enumToArray(LogTypeEnum)[1],
   })
   type: string; // 操作类型
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   serverName?: string; // 服务器名,例如app1, app2
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   workerId?: string; // 进程ID
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   traceId: string; // 日志追踪ID
 
   @Prop({
-    type: Array,
+    // 这样写类型才是有效的,并且如果传入string,会自动转成数组存储
+    // 如果写成type: Array无效,如果传入string,则会以string的类型存到数据库中
+    type: [String],
   })
   linkId?: string[]; // 关联其他表的_id
 }

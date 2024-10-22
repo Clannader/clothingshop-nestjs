@@ -8,7 +8,7 @@ import { ConfigService } from '@/common/config';
 import { Injectable, Inject } from '@nestjs/common';
 import { AopLogger } from '@/logger';
 import * as onFinished from 'on-finished';
-import { AdminAccessService } from '@/entities/services';
+import { AdminAccessSchemaService } from '@/entities/services';
 
 // @ts-ignore
 const cluster = require('node:cluster'); // 不明白这个包的引入问题,后期有解决办法修改了再说吧
@@ -21,7 +21,7 @@ export class AopAspect {
   private configService: ConfigService;
 
   @Inject()
-  private adminAccessService: AdminAccessService;
+  private adminAccessSchemaService: AdminAccessSchemaService;
 
   logAspect(req: RequestSession, res: CmsResponse): void {
     const now = new Date();
@@ -130,7 +130,7 @@ export class AopAspect {
         workerId,
       };
       if (this.configService.get<boolean>('monitorLog', true)) {
-        this.adminAccessService
+        this.adminAccessSchemaService
           .getModel()
           .create(createParams)
           .then()

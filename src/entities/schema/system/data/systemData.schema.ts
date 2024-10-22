@@ -10,7 +10,11 @@ import { Utils } from '@/common/utils';
 
 // 定义其他公共字段类
 export class CommonData {
-  @Prop({ trim: true, default: '' })
+  @Prop({
+    type: String,
+    trim: true,
+    default: '',
+  })
   description: string;
 }
 
@@ -30,9 +34,9 @@ SystemDataSchema.statics.getAliasName = function () {
   return 'SystemData';
 };
 
-SystemDataSchema.virtual('id').get(function () {
-  return this._id.toString();
-});
+// SystemDataSchema.virtual('id').get(function () {
+//   return this._id.toString();
+// });
 
 export interface SystemDataModel extends Model<SystemData> {
   getAliasName(): string;

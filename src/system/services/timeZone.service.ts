@@ -9,7 +9,10 @@ import { GlobalService, Utils } from '@/common/utils';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { CmsSession, timeZoneExp } from '@/common';
 
-import { SystemDataSchemaService } from '@/entities/services';
+import {
+  DeleteLogSchemaService,
+  SystemDataSchemaService,
+} from '@/entities/services';
 import { TimeZoneData, TimeZoneDataDocument } from '@/entities/schema';
 import { UserLogsService } from '@/logs';
 
@@ -42,6 +45,9 @@ export class TimeZoneService {
 
   @Inject()
   private readonly userLogsService: UserLogsService;
+
+  @Inject()
+  private readonly deleteLogSchemaService: DeleteLogSchemaService;
 
   @Inject()
   private readonly globalService: GlobalService;
@@ -200,10 +206,21 @@ export class TimeZoneService {
     //   return res.send({code: 0, msg: errResult.join(',')})
     // }
 
+    const modelName = this.systemDataSchemaService
+      .getTimeZoneDataModel()
+      .getAliasName();
     for (const timeZoneObj of timeZoneList) {
       await timeZoneObj.deleteOne();
       writeLogResult.push(timeZoneObj.timeZone);
       deleteTimeZoneId.push(timeZoneObj.id);
+      await this.deleteLogSchemaService.createDeleteLog({
+        modelName,
+        keyWords: timeZoneObj.timeZone,
+        searchWhere: {
+          timeZone: timeZoneObj.timeZone,
+        },
+        id: timeZoneObj.id,
+      });
     }
 
     if (writeLogResult.length > 0) {
@@ -402,43 +419,75 @@ export class TimeZoneService {
       resp.id = createObj.id;
       // 写日志...
       // 这里写日志考虑几个问题
-      // 1.可以查看某个表的修改记录,使用linkId关联查询,应该不需要记录哪个表,如果记录删除,确实无法查看
-      // 2.如果多条修改合成一条修改记录则linkId存多个即可
+      // 1.可以查看某个表的修改记录,使用linkId关联查询,应该不需要记录哪个表,如果记录删除,确实无法查看 √
+      // 2.如果多条修改合成一条修改记录则linkId存多个即可 √
       // 3.考虑一个业务产生的日志链问题,把请求和日志关联起来,可查看某个请求产生了多少日志
-      // 4.新建日志是否记录整个对象到数据库中??以后可以查看对象的生命周期的修改记录
-      // 5.删除记录是否另存一个表,这样可以通过这个表寻找被删的记录的linkId
+      // 4.新建日志是否记录整个对象到数据库中??以后可以查看对象的生命周期的修改记录 √ 不考虑
+      // 5.删除记录是否另存一个表,这样可以通过这个表寻找被删的记录的linkId √
+      const content = this.globalService.serverLang(
+        session,
+        '新建时区:({0})',
+        'timeZone.createLog',
+        createObj.timeZone,
+      );
+      await this.userLogsService.writeUserLog(
+        session,
+        LogTypeEnum.TimeZone,
+        content,
+        createObj.id,
+      );
     } else {
       await newTimeZone.save();
       resp.id = newTimeZone.id;
       // 写日志...
+      const contentArray = [
+        this.globalService.serverLang(
+          session,
+          '编辑时区:({0})',
+          'timeZone.modifiedLog',
+          newTimeZone.timeZone,
+        ),
+      ];
+      contentArray.push(...this.globalService.compareObjectWriteLog(TimeZoneData, oldTimeZone, newTimeZone))
+      if (contentArray.length > 1) {
+        await this.userLogsService.writeUserLog(
+          session,
+          LogTypeEnum.TimeZone,
+          contentArray.join('\r\n'),
+          newTimeZone.id,
+        );
+      }
     }
     return resp;
   }
 
   async syncTimeZoneData(session: CmsSession) {
     // 同步默认时区数据到数据库中
-    let syncSuccessNumber = 0;
+    const successTimeZone: string[] = [];
     for (const timeZoneInfo of defaultTimeZone) {
       const [, result] = await Utils.toPromise(
         this.systemDataSchemaService.syncTimeZoneObject(
           <TimeZoneData>timeZoneInfo,
         ),
       );
-      if (Utils.isEmpty(result)) {
-        syncSuccessNumber++;
-      }
+      // 这里可以设置每次都返回更新后的文档,但是之前的需求是只想第一次新建时返回
+      // 后期已存在数据时不想返回,为了体现每次修复实际更新几个数据
+      // 如果设置了,就会导致每次都有返回,每次都写日志
+      // 其实考虑实际每次都写日志也算是正常的
+      successTimeZone.push(result.id);
     }
-    if (syncSuccessNumber > 0) {
+    if (successTimeZone.length > 0) {
       const content = this.globalService.serverLang(
         session,
         '成功同步{0}条默认时区数据',
         'timeZone.syncSuccess',
-        syncSuccessNumber,
+        successTimeZone.length,
       );
       await this.userLogsService.writeUserLog(
         session,
         LogTypeEnum.TimeZone,
         content,
+        successTimeZone,
       );
     }
     return new CommonResult();

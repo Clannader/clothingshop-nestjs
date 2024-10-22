@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Type } from '@nestjs/common';
 // import { REQUEST } from '@nestjs/core';
 // import { Request } from 'express';
 
@@ -59,5 +59,17 @@ export class GlobalService {
       });
     }
     return temp && temp.toString();
+  }
+
+  /**
+   * 比较对象写日志
+   */
+  compareObjectWriteLog<TClass = any>(target: Type<TClass>, oldObject: TClass, newObject: TClass) : string[] {
+    // 初步参数定义:表的class,新值,旧值
+    // 逻辑,通过class获取所有的字段,遍历字段名,判断是否含有改字段,然后判断新旧值差异
+    // 通过注解在class上的@xxxx('翻译', 'xx.xx') => 某字段: {0} -> {1}
+    // 判断字段类型如果是数组,则变成新增xx,删除xx,改xx,如果是日期则格式化,如果是其他则另做打算
+    // 然后返回数组
+    return []
   }
 }
