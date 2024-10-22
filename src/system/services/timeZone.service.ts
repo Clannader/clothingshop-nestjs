@@ -9,7 +9,10 @@ import { GlobalService, Utils } from '@/common/utils';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { CmsSession, timeZoneExp } from '@/common';
 
-import { SystemDataSchemaService } from '@/entities/services';
+import {
+  DeleteLogSchemaService,
+  SystemDataSchemaService,
+} from '@/entities/services';
 import { TimeZoneData, TimeZoneDataDocument } from '@/entities/schema';
 import { UserLogsService } from '@/logs';
 
@@ -42,6 +45,9 @@ export class TimeZoneService {
 
   @Inject()
   private readonly userLogsService: UserLogsService;
+
+  @Inject()
+  private readonly deleteLogSchemaService: DeleteLogSchemaService;
 
   @Inject()
   private readonly globalService: GlobalService;
@@ -200,10 +206,21 @@ export class TimeZoneService {
     //   return res.send({code: 0, msg: errResult.join(',')})
     // }
 
+    const modelName = this.systemDataSchemaService
+      .getTimeZoneDataModel()
+      .getAliasName();
     for (const timeZoneObj of timeZoneList) {
       await timeZoneObj.deleteOne();
       writeLogResult.push(timeZoneObj.timeZone);
       deleteTimeZoneId.push(timeZoneObj.id);
+      await this.deleteLogSchemaService.createDeleteLog({
+        modelName,
+        keyWords: timeZoneObj.timeZone,
+        searchWhere: {
+          timeZone: timeZoneObj.timeZone,
+        },
+        id: timeZoneObj.id,
+      });
     }
 
     if (writeLogResult.length > 0) {

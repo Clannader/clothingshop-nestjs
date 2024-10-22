@@ -12,6 +12,7 @@ import {
   RightCodeSchemaModule,
   SequenceSchemaModule,
   SystemDataSchemaModule,
+  DeleteLogSchemaModule,
 } from '@/entities/modules';
 
 @Module({
@@ -20,6 +21,7 @@ import {
     RightCodeSchemaModule,
     SequenceSchemaModule,
     SystemDataSchemaModule,
+    DeleteLogSchemaModule,
     UserLogsModule,
   ],
   controllers: [SystemController, RepairDataController, TimeZoneController],

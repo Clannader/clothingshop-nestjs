@@ -3,3 +3,4 @@
  */
 export * from './admin.access.service';
 export * from './admin.log.service';
+export * from './delete.log.service';

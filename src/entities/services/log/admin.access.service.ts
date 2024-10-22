@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { AdminAccessModel, AdminAccess } from '../../schema';
 
 @Injectable()
-export class AdminAccessService {
+export class AdminAccessSchemaService {
   @InjectModel(AdminAccess.name)
   private adminAccessModel: AdminAccessModel;
 

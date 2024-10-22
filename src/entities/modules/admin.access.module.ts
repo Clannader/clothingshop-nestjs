@@ -4,7 +4,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AdminAccess, AdminAccessSchema } from '../schema';
-import { AdminAccessService } from '../services';
+import { AdminAccessSchemaService } from '../services';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { AdminAccessService } from '../services';
       { name: AdminAccess.name, schema: AdminAccessSchema },
     ]),
   ],
-  providers: [AdminAccessService],
-  exports: [AdminAccessService],
+  providers: [AdminAccessSchemaService],
+  exports: [AdminAccessSchemaService],
 })
 export class AdminAccessModule {}
