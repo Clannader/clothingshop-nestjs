@@ -446,8 +446,8 @@ export class TimeZoneService {
           '编辑时区:({0})',
           'timeZone.modifiedLog',
           newTimeZone.timeZone,
-        )
-      ]
+        ),
+      ];
 
       if (contentArray.length > 1) {
         await this.userLogsService.writeUserLog(
