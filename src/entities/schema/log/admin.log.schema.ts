@@ -64,7 +64,9 @@ export class AdminLog {
   traceId: string; // 日志追踪ID
 
   @Prop({
-    type: Array,
+    // 这样写类型才是有效的,并且如果传入string,会自动转成数组存储
+    // 如果写成type: Array无效,如果传入string,则会以string的类型存到数据库中
+    type: [String],
   })
   linkId?: string[]; // 关联其他表的_id
 }
