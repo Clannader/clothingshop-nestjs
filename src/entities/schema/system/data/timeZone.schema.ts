@@ -10,12 +10,14 @@ import { timeZoneExp } from '@/common';
 @Schema()
 export class TimeZoneData extends CommonData {
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   timeZone: string; // 时区名称
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
     match: timeZoneExp,
@@ -23,6 +25,7 @@ export class TimeZoneData extends CommonData {
   summer: string; // 夏令时
 
   @Prop({
+    type: String,
     required: true,
     trim: true,
     match: timeZoneExp,

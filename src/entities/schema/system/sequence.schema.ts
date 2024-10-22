@@ -11,16 +11,20 @@ import { Utils } from '@/common/utils';
 @Schema()
 export class Sequence {
   @Prop({
+    type: Number,
     default: 0,
   })
   sequenceId: number;
 
   @Prop({
+    type: String,
     required: true,
+    trim: true,
   })
   shopId: string;
 
   @Prop({
+    type: String,
     required: true,
     enum: Utils.enumToArray(SequenceTypeEnum)[1], // 这个校验是有效果的,只不过如果使用findAndUpdate插入是无法触发mongodb内部的校验器的,只能使用create才有效
   })

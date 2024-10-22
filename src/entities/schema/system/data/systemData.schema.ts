@@ -10,7 +10,11 @@ import { Utils } from '@/common/utils';
 
 // 定义其他公共字段类
 export class CommonData {
-  @Prop({ trim: true, default: '' })
+  @Prop({
+    type: String,
+    trim: true,
+    default: '',
+  })
   description: string;
 }
 

@@ -9,6 +9,7 @@ import { groupCodeExp, rightsExp } from '@/common';
 @Schema()
 export class RightCodeGroup {
   @Prop({
+    type: String,
     required: true,
     trim: true,
     unique: true, // 唯一
@@ -17,11 +18,13 @@ export class RightCodeGroup {
   groupCode: string; // 权限组名代码
 
   @Prop({
+    type: String,
     trim: true,
   })
   groupName: string; // 权限组描述
 
   @Prop({
+    type: [String],
     default: [],
     match: rightsExp,
   })
