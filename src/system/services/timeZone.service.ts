@@ -419,15 +419,44 @@ export class TimeZoneService {
       resp.id = createObj.id;
       // 写日志...
       // 这里写日志考虑几个问题
-      // 1.可以查看某个表的修改记录,使用linkId关联查询,应该不需要记录哪个表,如果记录删除,确实无法查看
-      // 2.如果多条修改合成一条修改记录则linkId存多个即可
+      // 1.可以查看某个表的修改记录,使用linkId关联查询,应该不需要记录哪个表,如果记录删除,确实无法查看 √
+      // 2.如果多条修改合成一条修改记录则linkId存多个即可 √
       // 3.考虑一个业务产生的日志链问题,把请求和日志关联起来,可查看某个请求产生了多少日志
-      // 4.新建日志是否记录整个对象到数据库中??以后可以查看对象的生命周期的修改记录
-      // 5.删除记录是否另存一个表,这样可以通过这个表寻找被删的记录的linkId
+      // 4.新建日志是否记录整个对象到数据库中??以后可以查看对象的生命周期的修改记录 √ 不考虑
+      // 5.删除记录是否另存一个表,这样可以通过这个表寻找被删的记录的linkId √
+      const content = this.globalService.serverLang(
+        session,
+        '新建时区:({0})',
+        'timeZone.createLog',
+        createObj.timeZone,
+      );
+      await this.userLogsService.writeUserLog(
+        session,
+        LogTypeEnum.TimeZone,
+        content,
+        createObj.id,
+      );
     } else {
       await newTimeZone.save();
       resp.id = newTimeZone.id;
       // 写日志...
+      const contentArray = [
+        this.globalService.serverLang(
+          session,
+          '编辑时区:({0})',
+          'timeZone.modifiedLog',
+          newTimeZone.timeZone,
+        )
+      ]
+
+      if (contentArray.length > 1) {
+        await this.userLogsService.writeUserLog(
+          session,
+          LogTypeEnum.TimeZone,
+          contentArray.join('\r\n'),
+          newTimeZone.id,
+        );
+      }
     }
     return resp;
   }
