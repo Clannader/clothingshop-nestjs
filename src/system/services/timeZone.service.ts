@@ -463,28 +463,31 @@ export class TimeZoneService {
 
   async syncTimeZoneData(session: CmsSession) {
     // 同步默认时区数据到数据库中
-    let syncSuccessNumber = 0;
+    const successTimeZone = []
     for (const timeZoneInfo of defaultTimeZone) {
       const [, result] = await Utils.toPromise(
         this.systemDataSchemaService.syncTimeZoneObject(
           <TimeZoneData>timeZoneInfo,
         ),
       );
-      if (Utils.isEmpty(result)) {
-        syncSuccessNumber++;
-      }
+      // 这里可以设置每次都返回更新后的文档,但是之前的需求是只想第一次新建时返回
+      // 后期已存在数据时不想返回,为了体现每次修复实际更新几个数据
+      // 如果设置了,就会导致每次都有返回,每次都写日志
+      // 其实考虑实际每次都写日志也算是正常的
+      successTimeZone.push(result.id)
     }
-    if (syncSuccessNumber > 0) {
+    if (successTimeZone.length > 0) {
       const content = this.globalService.serverLang(
         session,
         '成功同步{0}条默认时区数据',
         'timeZone.syncSuccess',
-        syncSuccessNumber,
+        successTimeZone.length,
       );
       await this.userLogsService.writeUserLog(
         session,
         LogTypeEnum.TimeZone,
         content,
+        successTimeZone
       );
     }
     return new CommonResult();
