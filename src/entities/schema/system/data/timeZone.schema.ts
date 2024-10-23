@@ -6,6 +6,7 @@ import { HydratedDocument, Model, InferRawDocType } from 'mongoose';
 
 import { CommonData } from './systemData.schema';
 import { timeZoneExp } from '@/common';
+import { WriteLog } from '@/common/decorator';
 
 @Schema()
 export class TimeZoneData extends CommonData {
@@ -13,6 +14,10 @@ export class TimeZoneData extends CommonData {
     type: String,
     required: true,
     trim: true,
+  })
+  @WriteLog({
+    origin: '时区名称',
+    key: 'timeZone.timeZoneLabel',
   })
   timeZone: string; // 时区名称
 
@@ -22,6 +27,10 @@ export class TimeZoneData extends CommonData {
     trim: true,
     match: timeZoneExp,
   })
+  @WriteLog({
+    origin: '夏令时',
+    key: 'timeZone.summerLabel',
+  })
   summer: string; // 夏令时
 
   @Prop({
@@ -29,6 +38,10 @@ export class TimeZoneData extends CommonData {
     required: true,
     trim: true,
     match: timeZoneExp,
+  })
+  @WriteLog({
+    origin: '冬令时',
+    key: 'timeZone.winterLabel',
   })
   winter: string; // 冬令时
 
