@@ -86,7 +86,7 @@ export class GlobalService {
       const oldValue = oldObject[metaData.propertyName];
       const newValue = newObject[metaData.propertyName];
       const title = this.serverLang(session, metaData.origin, metaData.key); // 字段翻译
-      if (propertyType === String) {
+      if ([String, Number].includes(propertyType)) {
         if (oldValue !== newValue) {
           logArray.push(
             `${title}: ${oldValue ?? 'null'} -> ${newValue ?? 'null'}`,
