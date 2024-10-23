@@ -6,11 +6,17 @@ import { RequestSession } from '../types/common.types';
 import { parseString } from 'xml2js';
 import { Utils } from '../utils';
 
+// @ts-ignore
+const cluster = require('node:cluster');
+
 export const UserSession = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext) => {
     const request: RequestSession = ctx.switchToHttp().getRequest();
     const session = request.session.adminSession;
+    const workerId = cluster?.worker?.id ?? 1;
     session.language = Utils.getHeadersLanguage(request);
+    session.requestId = Utils.getSha1Uuid(session.sessionId); // 每次请求都赋予一个唯一的请求ID
+    session.workerId = workerId;
     return session;
   },
 );

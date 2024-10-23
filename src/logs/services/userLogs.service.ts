@@ -4,10 +4,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 
 import { AdminLogSchemaService } from '@/entities/services';
-import type { AdminLog, AdminLogDocument } from '@/entities/schema';
+import type { AdminLog } from '@/entities/schema';
 
 import { LogTypeEnum } from '@/common/enum';
 import { CmsSession } from '@/common';
+import { TraceIdCacheService } from '@/cache/services';
 
 type LinkIdObj = {
   linkId?: string[];
@@ -18,7 +19,10 @@ export class UserLogsService {
   @Inject()
   private readonly adminLogSchemaService: AdminLogSchemaService;
 
-  writeUserLog(
+  @Inject()
+  private readonly traceIdCacheService: TraceIdCacheService;
+
+  async writeUserLog(
     session: CmsSession,
     type: LogTypeEnum,
     content: string,
@@ -42,7 +46,7 @@ export class UserLogsService {
       shopId: session.shopId,
       type,
       ...linkIdObj,
-      traceId: Date.now().toString(), // TODO 以后需要修改这个traceId的逻辑,考虑pid+Date.now()??
+      traceId: await this.traceIdCacheService.getTraceIdCache(session),
     };
     return this.adminLogSchemaService.createUserLog(logInfo);
   }

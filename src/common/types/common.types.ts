@@ -18,6 +18,8 @@ export interface CmsSession {
   readonly sessionId?: string;
   readonly credential?: string;
   language?: LanguageType;
+  requestId?: string; // 请求ID
+  workerId?: string; // 进程ID
   expires?: number;
 }
 
