@@ -448,7 +448,15 @@ export class TimeZoneService {
           newTimeZone.timeZone,
         ),
       ];
-      contentArray.push(...this.globalService.compareObjectWriteLog(session, TimeZoneData, oldTimeZone, newTimeZone))
+      contentArray.push(
+        ...this.globalService.compareObjectWriteLog(
+          session,
+          TimeZoneData,
+          oldTimeZone,
+          newTimeZone,
+        ),
+      );
+      console.log(contentArray);
       if (contentArray.length > 1) {
         await this.userLogsService.writeUserLog(
           session,

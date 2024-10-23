@@ -6,7 +6,7 @@ import { HydratedDocument, Model, InferRawDocType } from 'mongoose';
 
 import { CommonData } from './systemData.schema';
 import { timeZoneExp } from '@/common';
-import { WriteLog } from '@/common/decorator'
+import { WriteLog } from '@/common/decorator';
 
 @Schema()
 export class TimeZoneData extends CommonData {
