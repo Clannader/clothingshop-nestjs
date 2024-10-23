@@ -456,7 +456,6 @@ export class TimeZoneService {
           newTimeZone,
         ),
       );
-      console.log(contentArray);
       if (contentArray.length > 1) {
         await this.userLogsService.writeUserLog(
           session,
