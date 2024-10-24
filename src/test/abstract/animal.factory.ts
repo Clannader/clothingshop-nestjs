@@ -20,6 +20,8 @@ export class AnimalFactory {
       return this.catService;
     } else if (type === 'dog') {
       return this.dogService;
+    } else {
+      throw new Error(`Cannot find animal instance: ${type}`);
     }
   }
 }
