@@ -46,6 +46,7 @@ import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
 import { CmsSession, CommonResult, LanguageType } from '@/common';
 import { TestService } from './test.service';
+import { AnimalFactory, Animal } from '@/test/abstract';
 
 @ApiCommon()
 @Controller('/cms')
@@ -74,6 +75,9 @@ export class TestController {
 
   @Inject()
   private readonly systemDataSchemaService: SystemDataSchemaService;
+
+  @Inject()
+  private readonly animalFactory: AnimalFactory;
 
   private readonly logger = new AopLogger(TestController.name);
 
@@ -173,17 +177,17 @@ export class TestController {
     // console.log(testResult.name.age);
     // const name = testResult?.name?.age
     // this.logger.error(name)
-    await this.memoryCacheService.setMemoryCache(params.testField, {
-      name: params.testField,
-    });
-    const keys = await this.memoryCacheService.getAllCacheKeys();
-    const value = await this.memoryCacheService.getMemoryCache(
-      params.testField,
-    );
-    console.log(params.testField);
-    console.log(value);
-    console.log(keys);
-    console.log(await this.memoryCacheService.getMemoryCache('oliver'));
+    // await this.memoryCacheService.setMemoryCache(params.testField, {
+    //   name: params.testField,
+    // });
+    // const keys = await this.memoryCacheService.getAllCacheKeys();
+    // const value = await this.memoryCacheService.getMemoryCache(
+    //   params.testField,
+    // );
+    // console.log(params.testField);
+    // console.log(value);
+    // console.log(keys);
+    // console.log(await this.memoryCacheService.getMemoryCache('oliver'));
     // const findResult /*[err, findResult]*/ = await this.adminSchemaService
     //   .getModel()
     //   .countDocuments({ adminId: 'SUPERVISOR' }); // .then((result) => [null, result]).catch(err => [err])
@@ -196,6 +200,12 @@ export class TestController {
     // console.log(err)
     // }
     // console.log(findResult);
+
+    let animal: Animal = this.animalFactory.getAnimalInstance(params.testField);
+    console.log(animal.getName());
+    console.log(animal.getFullName());
+    console.log(await animal.getSequenceAnimal());
+
     return resp;
   }
 

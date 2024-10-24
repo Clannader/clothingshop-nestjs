@@ -5,6 +5,7 @@ import { AdminSchemaModule, SystemDataSchemaModule } from '@/entities/modules';
 // import { ConfigModule } from '../common';
 // import { UserModule } from '../user/user.module';
 import { TestService } from './test.service';
+import { AnimalFactoryModule } from './abstract/animal.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { TestService } from './test.service';
     AdminSchemaModule,
     MemoryCacheModule,
     SystemDataSchemaModule,
+    AnimalFactoryModule,
   ],
   controllers: [TestController],
   providers: [TestService],
