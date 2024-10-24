@@ -96,10 +96,10 @@ export class TestController {
     result.age = 20;
     result.password = '123';
     result.username = '123';
-    console.log(params);
-    console.log(xmlData);
-    console.log(xmlJsonData);
-    console.log(lang);
+    // console.log(params);
+    // console.log(xmlData);
+    // console.log(xmlJsonData);
+    // console.log(lang);
     // const clone = cloneClass(RespTestSchemaDto);
     // console.log(Reflect.getMetadataKeys(clone));
     // const dbUser: string = this.configService.get<string>('dbUser');
@@ -173,11 +173,12 @@ export class TestController {
     // console.log(testResult.name.age);
     // const name = testResult?.name?.age
     // this.logger.error(name)
-    // this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
-    // const keys = await this.memoryCacheService.getAllCacheKeys();
-    // const value = await this.memoryCacheService.getMemoryCache('23444')
-    // console.log(value)
-    // console.log(keys)
+    await this.memoryCacheService.setMemoryCache(params.testField, { name: '' });
+    const keys = await this.memoryCacheService.getAllCacheKeys();
+    const value = await this.memoryCacheService.getMemoryCache(params.testField);
+    console.log(params.testField)
+    console.log(value)
+    console.log(keys)
     // const findResult /*[err, findResult]*/ = await this.adminSchemaService
     //   .getModel()
     //   .countDocuments({ adminId: 'SUPERVISOR' }); // .then((result) => [null, result]).catch(err => [err])

@@ -1,14 +1,17 @@
 // import { TestSchemaDto } from './test-schema.dto';
+import { Expose } from 'class-transformer';
 
 export class ReqTestSchemaDto {
   /**
    * 测试字段
    */
+  @Expose()
   testField: string;
 
   /**
    * 测试数字
    */
+  @Expose()
   testNumber: number;
 
   /**
