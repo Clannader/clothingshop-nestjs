@@ -11,12 +11,12 @@ export class TokenCacheService {
   @Inject(TOKEN_CACHE_MANAGER)
   private readonly cacheManager: Cache;
 
-  async setTokenCache(key: string, value: any) {
+  async setTokenCache(key: string, value: string) {
     await this.cacheManager.set(key, value);
   }
 
   getTokenCache(key: string) {
-    return this.cacheManager.get(key);
+    return this.cacheManager.get<string>(key);
   }
 
   getAllCacheKeys() {
