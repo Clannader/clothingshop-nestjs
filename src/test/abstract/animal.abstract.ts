@@ -9,7 +9,7 @@ import { SequenceTypeEnum } from '@/common/enum';
 @Injectable()
 export abstract class Animal {
   @Inject()
-  private readonly sequenceSchemaService: SequenceSchemaService;
+  protected readonly sequenceSchemaService: SequenceSchemaService;
 
   abstract getName(): string;
 
