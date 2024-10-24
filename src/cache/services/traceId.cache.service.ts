@@ -19,7 +19,7 @@ export class TraceIdCacheService {
 
   async setTraceIdCache(session: CmsSession, traceId: string) {
     if (Utils.isEmpty(traceId) || !/^\d{15}#\d+$/.test(traceId)) {
-      return
+      return;
     }
     await this.cacheManager.set(session.requestId, traceId);
   }
@@ -29,22 +29,25 @@ export class TraceIdCacheService {
     let traceId: string = await this.cacheManager.get<string>(key);
     const now = Date.now();
     if (Utils.isEmpty(traceId)) {
-      traceId = this.configService.get<string>('serverId').toString() + session.workerId.toString() + now.toString() + '#1';
+      traceId =
+        this.configService.get<string>('serverId').toString() +
+        session.workerId.toString() +
+        now.toString() +
+        '#1';
     } else {
-      const [tempTraceId, number] = traceId.split('#')
+      const [tempTraceId, number] = traceId.split('#');
       const sequence: number = isUpdate ? +number + 1 : +number;
       traceId = tempTraceId + '#' + sequence;
     }
-    await this.setTraceIdCache(session, traceId)
+    await this.setTraceIdCache(session, traceId);
     return traceId;
   }
 
   getTraceIdStore() {
-    return this.cacheManager.store
+    return this.cacheManager.store;
   }
 
   async deleteTraceIdCache(session: CmsSession) {
     await this.getTraceIdStore().del(session.requestId);
   }
-
 }

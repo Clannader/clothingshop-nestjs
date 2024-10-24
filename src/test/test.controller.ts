@@ -173,13 +173,17 @@ export class TestController {
     // console.log(testResult.name.age);
     // const name = testResult?.name?.age
     // this.logger.error(name)
-    await this.memoryCacheService.setMemoryCache(params.testField, { name: params.testField });
+    await this.memoryCacheService.setMemoryCache(params.testField, {
+      name: params.testField,
+    });
     const keys = await this.memoryCacheService.getAllCacheKeys();
-    const value = await this.memoryCacheService.getMemoryCache(params.testField);
-    console.log(params.testField)
-    console.log(value)
-    console.log(keys)
-    console.log(await this.memoryCacheService.getMemoryCache('oliver'))
+    const value = await this.memoryCacheService.getMemoryCache(
+      params.testField,
+    );
+    console.log(params.testField);
+    console.log(value);
+    console.log(keys);
+    console.log(await this.memoryCacheService.getMemoryCache('oliver'));
     // const findResult /*[err, findResult]*/ = await this.adminSchemaService
     //   .getModel()
     //   .countDocuments({ adminId: 'SUPERVISOR' }); // .then((result) => [null, result]).catch(err => [err])
