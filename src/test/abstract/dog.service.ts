@@ -1,9 +1,8 @@
 /**
  * Create by oliver.wu 2024/10/24
  */
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Animal } from './animal.abstract';
-import { SequenceSchemaService } from '@/entities/services';
 import { SequenceTypeEnum } from '@/common/enum';
 
 @Injectable()
