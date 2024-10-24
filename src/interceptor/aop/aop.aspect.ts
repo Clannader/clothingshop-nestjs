@@ -9,6 +9,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { AopLogger } from '@/logger';
 import * as onFinished from 'on-finished';
 import { AdminAccessSchemaService } from '@/entities/services';
+import { TraceIdCacheService } from '@/cache/services';
 
 // @ts-ignore
 const cluster = require('node:cluster'); // 不明白这个包的引入问题,后期有解决办法修改了再说吧
@@ -22,6 +23,9 @@ export class AopAspect {
 
   @Inject()
   private adminAccessSchemaService: AdminAccessSchemaService;
+
+  @Inject()
+  private readonly traceIdCacheService: TraceIdCacheService;
 
   logAspect(req: RequestSession, res: CmsResponse): void {
     const now = new Date();
@@ -71,6 +75,8 @@ export class AopAspect {
       this.logger.log(
         `服务器ID: ${workerId}, 请求响应时间: ${url} ${diffTime}ms`,
       );
+      // 删除traceId,traceId逻辑仅只有请求时有效,请求结束后可以删除
+      this.traceIdCacheService.deleteTraceIdCache(session).then();
 
       if (!session) {
         session = {

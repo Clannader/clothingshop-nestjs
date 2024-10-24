@@ -4,8 +4,9 @@
 import { Module } from '@nestjs/common';
 
 import { AdminLogSchemaModule } from '@/entities/modules';
-import { UserLogsService } from '../services';
 import { TraceIdCacheModule } from '@/cache/modules';
+
+import { UserLogsService } from '../services';
 
 @Module({
   imports: [AdminLogSchemaModule, TraceIdCacheModule],
