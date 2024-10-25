@@ -14,10 +14,11 @@ import { Observable, firstValueFrom } from 'rxjs';
 import { TokenCacheService } from '@/cache/services';
 import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
 import { Utils } from '@/common/utils';
-import { ErrorPromise } from '@/common';
+import { CmsSession, ErrorPromise } from '@/common';
 
 @Injectable()
 export abstract class HttpAbstractService {
+  public session: CmsSession;
 
   public constructor(
     @Inject(AXIOS_INSTANCE_TOKEN)
@@ -26,15 +27,17 @@ export abstract class HttpAbstractService {
     @Inject()
     protected readonly tokenCacheService: TokenCacheService,
   ) {
-    this.initConfig();
     this.initInterceptor();
   }
 
-  abstract initConfig(): void;
+  abstract initConfig(session: CmsSession, config?: AxiosRequestConfig): void;
 
   abstract initInterceptor(): void;
 
-  abstract responseResult<T>(targetRequest: Observable<AxiosResponse<T>>, respData: AxiosResponse<T>): Promise<ErrorPromise | AxiosResponse<T>>;
+  abstract responseResult<T>(
+    targetRequest: Observable<AxiosResponse<T>>,
+    respData: AxiosResponse<T>,
+  ): Promise<ErrorPromise | AxiosResponse<T>>;
 
   public get axiosRef(): AxiosInstance {
     return this.service;
@@ -76,19 +79,17 @@ export abstract class HttpAbstractService {
     });
   }
 
-  get<T = any>(
-    url: string,
-  ): Promise<ErrorPromise | AxiosResponse<T>>;
+  get<T = any>(url: string): Promise<ErrorPromise | AxiosResponse<T>>;
   get<T = any, D = any>(
     url: string,
     config: AxiosRequestConfig<D>,
-  ): Promise<ErrorPromise | AxiosResponse<T>>
+  ): Promise<ErrorPromise | AxiosResponse<T>>;
   async get<T = any, D = any>(
     url: string,
     config?: AxiosRequestConfig<D>,
   ): Promise<ErrorPromise | AxiosResponse<T>> {
     const getObservable = this.makeObservable<T>(this.service.get, url, config);
-    const [err, result] = await Utils.toPromise(firstValueFrom(getObservable))
+    const [err, result] = await Utils.toPromise(firstValueFrom(getObservable));
     if (err) {
       return Promise.reject(err);
     }
@@ -96,10 +97,7 @@ export abstract class HttpAbstractService {
   }
 
   post<T = any>(url: string): Promise<AxiosResponse<T>>;
-  post<T = any, D = any>(
-    url: string,
-    data: D,
-  ): Promise<AxiosResponse<T, D>>;
+  post<T = any, D = any>(url: string, data: D): Promise<AxiosResponse<T, D>>;
   post<T = any, D = any>(
     url: string,
     data: D,
@@ -110,12 +108,16 @@ export abstract class HttpAbstractService {
     data: any = {},
     config?: AxiosRequestConfig,
   ): Promise<ErrorPromise | AxiosResponse<T>> {
-    const postObservable = this.makeObservable<T>(this.service.post, url, data, config);
-    const [err, result] = await Utils.toPromise(firstValueFrom(postObservable))
+    const postObservable = this.makeObservable<T>(
+      this.service.post,
+      url,
+      data,
+      config,
+    );
+    const [err, result] = await Utils.toPromise(firstValueFrom(postObservable));
     if (err) {
       return Promise.reject(err);
     }
     return this.responseResult(postObservable, result);
   }
-
 }

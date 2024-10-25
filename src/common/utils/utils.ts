@@ -21,7 +21,6 @@ import { AopLogger } from '@/logger';
  * 系统工具类
  */
 export class Utils {
-
   private static readonly logger = new AopLogger(Utils.name);
 
   /**

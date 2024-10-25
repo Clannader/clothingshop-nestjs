@@ -5,20 +5,22 @@ import { Injectable } from '@nestjs/common';
 
 import { HttpAbstractService } from './http.abstract.service';
 import { Observable } from 'rxjs';
-import { AxiosResponse } from 'axios';
-import { ErrorPromise } from '@/common';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { CmsSession, ErrorPromise } from '@/common';
 
 @Injectable()
 export class StagingHttpService extends HttpAbstractService {
-  initInterceptor() {
+  initInterceptor() {}
 
+  initConfig(session: CmsSession, config: AxiosRequestConfig = {}) {
+    this.session = session;
+    this.service.defaults.baseURL = config.baseURL;
   }
 
-  initConfig() {
-    this.service.defaults.baseURL = 'http://localhost:3000';
-  }
-
-  responseResult<T>(targetRequest: Observable<AxiosResponse<T>>, respData: AxiosResponse<T>): Promise<ErrorPromise | AxiosResponse<T>> {
+  responseResult<T>(
+    targetRequest: Observable<AxiosResponse<T>>,
+    respData: AxiosResponse<T>,
+  ): Promise<ErrorPromise | AxiosResponse<T>> {
     return Promise.resolve(respData);
   }
 }
