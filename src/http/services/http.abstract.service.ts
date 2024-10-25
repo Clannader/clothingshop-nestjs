@@ -78,16 +78,21 @@ export abstract class HttpAbstractService {
 
   get<T = any>(
     url: string,
-  ): Observable<AxiosResponse<T>>;
+  ): Promise<ErrorPromise | AxiosResponse<T>>;
   get<T = any, D = any>(
     url: string,
     config: AxiosRequestConfig<D>,
-  ): Observable<AxiosResponse<T, D>>
-  get<T = any, D = any>(
+  ): Promise<ErrorPromise | AxiosResponse<T>>
+  async get<T = any, D = any>(
     url: string,
     config?: AxiosRequestConfig<D>,
-  ): Observable<AxiosResponse<T, D>> {
-    return this.makeObservable<T>(this.service.get, url, config);
+  ): Promise<ErrorPromise | AxiosResponse<T>> {
+    const getObservable = this.makeObservable<T>(this.service.get, url, config);
+    const [err, result] = await Utils.toPromise(firstValueFrom(getObservable))
+    if (err) {
+      return Promise.reject(err);
+    }
+    return this.responseResult(getObservable, result);
   }
 
   post<T = any>(url: string): Promise<AxiosResponse<T>>;

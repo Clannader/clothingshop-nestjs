@@ -22,6 +22,6 @@ export class JwtHttpService extends HttpAbstractService {
   }
 
   responseResult<T>(targetRequest: Observable<AxiosResponse<T>>, respData: AxiosResponse<T>): Promise<ErrorPromise | AxiosResponse<T>> {
-    return Promise.resolve(undefined);
+    return Promise.resolve(respData);
   }
 }
