@@ -32,6 +32,9 @@ import { MemoryCacheService } from '@/cache/services';
 import { AdminSchemaService } from '@/entities/services';
 import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
+import { HttpService } from '@nestjs/axios';
+import { map } from 'rxjs/operators';
+import axios from 'axios';
 
 @ApiCommon()
 @Controller('/cms')
@@ -39,6 +42,9 @@ import { AopLogger } from '@/logger';
 export class TestController {
   @Inject()
   private readonly globalService: GlobalService;
+
+  @Inject()
+  private readonly httpService: HttpService;
 
   @Inject()
   private readonly memoryCacheService: MemoryCacheService;
@@ -140,16 +146,16 @@ export class TestController {
     // resp.rows = xmlJsonData.xml.age;
     // return resp;
 
-    const test = () => {
-      return new Promise((resolve, reject) => {
-        reject({});
-      });
-    };
-    const testResult: Record<string, any> = await test()
-      .then((res) => res)
-      .catch((err) => err);
+    // const test = () => {
+    //   return new Promise((resolve, reject) => {
+    //     reject({});
+    //   });
+    // };
+    // const testResult: Record<string, any> = await test()
+    //   .then((res) => res)
+    //   .catch((err) => err);
     // throw new CodeException(CodeEnum.TOKEN_EXPIRED, '哈哈')
-    console.log(testResult.name.age);
+    // console.log(testResult.name.age);
     // const name = testResult?.name?.age
     // this.logger.error(name)
     // this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
@@ -157,18 +163,48 @@ export class TestController {
     // const value = await this.memoryCacheService.getMemoryCache('23444')
     // console.log(value)
     // console.log(keys)
-    const findResult /*[err, findResult]*/ = await this.adminSchemaService
-      .getModel()
-      .count({ adminId: 'SUPERVISOR' }); // .then((result) => [null, result]).catch(err => [err])
+    // const findResult /*[err, findResult]*/ = await this.adminSchemaService
+    //   .getModel()
+    //   .count({ adminId: 'SUPERVISOR' }); // .then((result) => [null, result]).catch(err => [err])
     // console.log(err)
     // console.log('1111')
     // console.log(findResult)
-    if (findResult) {
+    // if (findResult) {
       // throw err
       // this.logger.error(err)
       // console.log(err)
-    }
-    console.log(findResult);
+    // }
+    // console.log(findResult);
+    console.log(params.testField)
+    const data = this.httpService.get(
+      // 'http://localhost:3000/cms/h5/api/system/config/search',
+      '/cms/h5/api/system/config/search',
+      // {
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'X-Requested-With': 'XMLHttpRequest',
+      //     'credential': 's:pfDwcQoF-39kuZqDk4_DtYz1PTcr5dSS.ojJyk4bNfbl289SNxImKGcC7gg1KbAzNtO9FAZ7V5+g'
+      //   }
+      // }
+      )
+    data.subscribe(value => {
+      console.log(value.data)
+    })
+    data.subscribe(value => {
+      console.log(value.data)
+    })
+    // axios({
+    //   url: 'http://localhost:3000/cms/h5/api/system/config/search',
+    //   method: 'get',
+    //   timeout: 30000,
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'X-Requested-With': 'XMLHttpRequest',
+    //     'credential': 's:7xKqrkMLFpCmTsw9qm7iuoTiUTc8r5Y8.hXZECXxV88quNb9bERo9wVrQHnss2l5hSrcoSUvTNUI'
+    //   }
+    // }).then(resp => {
+    //   // console.log(resp.data)
+    // })
     return resp;
   }
 

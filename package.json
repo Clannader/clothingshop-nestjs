@@ -24,6 +24,7 @@
     "compodoc": "npx compodoc -p tsconfig.json -s"
   },
   "dependencies": {
+    "@nestjs/axios": "^3.1.0",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/jwt": "^8.0.1",
@@ -33,7 +34,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.2.1",
     "agentkeepalive": "^4.5.0",
-    "axios": "^0.27.2",
+    "axios": "^1.7.7",
     "body-parser": "^1.20.0",
     "cache-manager": "^4.1.0",
     "class-transformer": "^0.5.1",
