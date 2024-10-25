@@ -20,7 +20,7 @@ export class StagingHttpService extends HttpAbstractService {
   responseResult<T>(
     targetRequest: Observable<AxiosResponse<T>>,
     respData: AxiosResponse<T>,
-  ): Promise<ErrorPromise | AxiosResponse<T>> {
+  ): Promise<AxiosResponse<T>> {
     return Promise.resolve(respData);
   }
 }

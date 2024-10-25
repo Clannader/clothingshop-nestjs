@@ -32,7 +32,7 @@ export class LocalhostHttpService extends HttpAbstractService {
             (await this.tokenCacheService.getTokenCache('supervisor-SYSTEM')) ??
             '';
         }
-        config.headers['language'] = 'ZH'; // 后期再考虑翻译吧
+        config.headers['language'] = this.session.language; // 后期再考虑翻译吧
         return config;
       },
       (error) => {
@@ -53,7 +53,7 @@ export class LocalhostHttpService extends HttpAbstractService {
   responseResult(
     targetRequest: Observable<AxiosResponse>,
     respData: AxiosResponse,
-  ): Promise<ErrorPromise | AxiosResponse> {
+  ): Promise<AxiosResponse> {
     const data: CommonResult = respData.data;
     const code = data.code;
     if (!Utils.isEmpty(code)) {

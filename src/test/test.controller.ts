@@ -225,10 +225,10 @@ export class TestController {
     const [err, list] = await Utils.toPromise(
       this.httpFactoryService
         .getHttpService(session, params.testField)
-        .post('/cms/api/timeZone/allList'),
+        .get('/cms/api/timeZone/allList'),
     );
     // console.error(err)
-    console.log(list);
+    console.log(list.data)
 
     return resp;
   }
