@@ -228,7 +228,7 @@ export class TestController {
         .get('/cms/api/timeZone/allList'),
     );
     // console.error(err)
-    console.log(list.data)
+    console.log(list.data);
 
     return resp;
   }

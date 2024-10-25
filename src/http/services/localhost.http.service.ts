@@ -13,7 +13,7 @@ import { Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
 
 import { HttpAbstractService } from './http.abstract.service';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class LocalhostHttpService extends HttpAbstractService {
@@ -59,8 +59,39 @@ export class LocalhostHttpService extends HttpAbstractService {
     if (!Utils.isEmpty(code)) {
       if (CodeEnum.INVALID_SESSION === code) {
         // 无效的登录,需要重新登录
+        return this.loginAction(targetRequest);
       }
     }
     return Promise.resolve(respData);
+  }
+
+  private async loginAction(targetRequest: Observable<AxiosResponse>) {
+    const loginParams = {
+      adminId: 'Supervisor',
+      adminPws:
+        '043a718774c572bd8a25adbeb1bfcd5c0256ae11cecf9f9c3f925d0e52beaf89',
+    };
+    const loginObservable = this.makeObservable(
+      this.service.post,
+      '/cms/api/user/login',
+      loginParams,
+    );
+    const [err, result] = await Utils.toPromise(
+      firstValueFrom(loginObservable),
+    );
+    if (err) {
+      return Promise.reject(err);
+    }
+    await this.tokenCacheService.setTokenCache(
+      'supervisor-SYSTEM',
+      result.data['credential'],
+    );
+    const [errResp, respResult] = await Utils.toPromise(
+      firstValueFrom(targetRequest),
+    );
+    if (errResp) {
+      return Promise.reject(errResp);
+    }
+    return Promise.resolve(respResult);
   }
 }
