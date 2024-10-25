@@ -1,28 +1,20 @@
 /**
  * Create by oliver.wu 2024/10/24
  */
-import { Inject, Injectable } from '@nestjs/common';
-import { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
-import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
+import { Injectable } from '@nestjs/common';
+import { InternalAxiosRequestConfig } from 'axios';
 
 import { CommonResult } from '@/common';
-import { TokenCacheService } from '@/cache/services';
 import { Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
 
+import { HttpAbstractService } from './http.abstract.service';
+
 @Injectable()
-export class LocalhostHttpService {
-  constructor(
-    @Inject(AXIOS_INSTANCE_TOKEN)
-    private readonly service: AxiosInstance,
+export class LocalhostHttpService extends HttpAbstractService {
 
-    @Inject()
-    private readonly tokenCacheService: TokenCacheService,
-  ) {
-    this.initInterceptor();
-  }
-
-  private initInterceptor() {
+  initInterceptor() {
+    this.service.defaults.baseURL = 'http://localhost:3000';
     this.service.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {
         if (Utils.isEmpty(config.headers['credential'])) {
@@ -54,15 +46,4 @@ export class LocalhostHttpService {
     );
   }
 
-  request = this.service.request
-  delete = this.service.delete
-  head = this.service.head
-  options = this.service.options
-  post = this.service.post;
-  get = this.service.get;
-  put = this.service.put
-  patch = this.service.patch
-  postForm = this.service.postForm
-  putForm = this.service.putForm
-  patchForm = this.service.patchForm
 }

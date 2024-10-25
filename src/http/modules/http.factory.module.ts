@@ -1,22 +1,22 @@
 /**
- * Create by oliver.wu 2024/10/24
+ * Create by oliver.wu 2024/10/25
  */
 import { Module } from '@nestjs/common';
-import Axios from 'axios';
 
 import { TokenCacheModule } from '@/cache/modules';
 
-import { LocalhostHttpService } from '../services';
+import { HttpFactoryService, LocalhostHttpService } from '../services';
 import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
+import Axios from 'axios';
 
 @Module({
   imports: [TokenCacheModule],
   providers: [
+    HttpFactoryService,
     LocalhostHttpService,
     {
       provide: AXIOS_INSTANCE_TOKEN,
       useValue: Axios.create({
-        baseURL: 'http://localhost:3000',
         timeout: 30 * 1000,
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
@@ -25,6 +25,6 @@ import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
       }),
     },
   ],
-  exports: [LocalhostHttpService],
+  exports: [HttpFactoryService],
 })
-export class LocalhostHttpModule {}
+export class HttpFactoryModule{}

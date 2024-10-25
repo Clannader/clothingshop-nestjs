@@ -47,7 +47,7 @@ import { AopLogger } from '@/logger';
 import { CmsSession, CommonResult, LanguageType } from '@/common';
 import { TestService } from './test.service';
 import { AnimalFactory, Animal } from './abstract';
-import { LocalhostHttpService } from '@/http';
+import { HttpFactoryService } from '@/http';
 
 @ApiCommon()
 @Controller('/cms')
@@ -81,7 +81,7 @@ export class TestController {
   private readonly animalFactory: AnimalFactory;
 
   @Inject()
-  private readonly localhostHttpService: LocalhostHttpService;
+  private readonly httpFactoryService: HttpFactoryService;
 
   private readonly logger = new AopLogger(TestController.name);
 
@@ -205,14 +205,15 @@ export class TestController {
     // }
     // console.log(findResult);
 
-    let animal: Animal = this.animalFactory.getAnimalInstance(params.testField);
-    console.log(animal.getName());
-    console.log(animal.getFullName());
-    console.log(await animal.getSequenceAnimal());
+    // let animal: Animal = this.animalFactory.getAnimalInstance(params.testField);
+    // console.log(animal.getName());
+    // console.log(animal.getFullName());
+    // console.log(await animal.getSequenceAnimal());
 
-    this.localhostHttpService
+    // TODO
+    this.httpFactoryService.getHttpService('localhost')
       .post('/ifc/web/HotelList/getHotelList', {})
-      .then((result) => console.log(result.data.total));
+      .then((result) => console.log(result.data.total)).catch(err => console.log(err));
 
     return resp;
   }

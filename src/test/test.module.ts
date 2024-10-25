@@ -6,7 +6,7 @@ import { AdminSchemaModule, SystemDataSchemaModule } from '@/entities/modules';
 // import { UserModule } from '../user/user.module';
 import { TestService } from './test.service';
 import { AnimalFactoryModule } from './abstract';
-import { LocalhostHttpModule } from '@/http';
+import { HttpFactoryModule } from '@/http';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { LocalhostHttpModule } from '@/http';
     MemoryCacheModule,
     SystemDataSchemaModule,
     AnimalFactoryModule,
-    LocalhostHttpModule,
+    HttpFactoryModule,
   ],
   controllers: [TestController],
   providers: [TestService],
