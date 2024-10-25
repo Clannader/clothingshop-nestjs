@@ -14,7 +14,7 @@ import {
 import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@/common/config';
 import { CodeEnum } from '@/common/enum';
-import { GlobalService } from '@/common/utils';
+import { GlobalService, Utils } from '@/common/utils';
 import {
   ApiCommon,
   ApiCustomResponse,
@@ -95,6 +95,7 @@ export class TestController {
   // @UseInterceptors(XmlInterceptor) // 拦截器返回XML格式的报文
   async testingPost(
     @Body() params: ReqTestSchemaDto,
+    @UserSession() session: CmsSession,
     // @XmlData() xmlData: string,
     // @XmlJsonData() xmlJsonData: Record<string, any>,
     // @Headers('language') lang: string,
@@ -210,19 +211,23 @@ export class TestController {
     // console.log(animal.getFullName());
     // console.log(await animal.getSequenceAnimal());
 
-    this.httpFactoryService
-      .getHttpService(params.testField)
-      .post('/ifc/web/HotelList/getHotelList')
-      .subscribe({
-        next: (res) => {
-          console.log(res);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
-    // .then((result) => console.log(result.data.total))
-    // .catch((err) => console.log(err));
+    // this.httpFactoryService
+    //   .getHttpService(params.testField)
+    //   .post('/ifc/web/HotelList/getHotelList')
+    //   .subscribe({
+    //     next: (res) => {
+    //       console.log(res);
+    //     },
+    //     error: (err) => {
+    //       console.log(err);
+    //     },
+    //   });
+    const [err, list] = await Utils.toPromise(
+      this.httpFactoryService.getHttpService(params.testField)
+        .post('/cms/api/timeZone/allList')
+    )
+    // console.error(err)
+    // console.log(list)
 
     return resp;
   }

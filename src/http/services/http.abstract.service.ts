@@ -9,13 +9,16 @@ import Axios, {
   AxiosRequestConfig,
   CancelTokenSource,
 } from 'axios';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 
 import { TokenCacheService } from '@/cache/services';
 import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
+import { Utils } from '@/common/utils';
+import { ErrorPromise } from '@/common';
 
 @Injectable()
 export abstract class HttpAbstractService {
+
   public constructor(
     @Inject(AXIOS_INSTANCE_TOKEN)
     protected readonly service: AxiosInstance,
@@ -23,8 +26,11 @@ export abstract class HttpAbstractService {
     @Inject()
     protected readonly tokenCacheService: TokenCacheService,
   ) {
+    this.initConfig();
     this.initInterceptor();
   }
+
+  abstract initConfig(): void;
 
   abstract initInterceptor(): void;
 
@@ -75,29 +81,33 @@ export abstract class HttpAbstractService {
     return this.makeObservable<T>(this.service.get, url, config);
   }
 
-  post<T = any>(url: string): Observable<AxiosResponse<T>>;
+  post<T = any>(url: string): Promise<AxiosResponse<T>>;
   post<T = any, D = any>(
     url: string,
     data: D,
-    config?: AxiosRequestConfig<D>,
-  ): Observable<AxiosResponse<T, D>>;
-  post<T = any>(
+  ): Promise<AxiosResponse<T, D>>;
+  post<T = any, D = any>(
+    url: string,
+    data: D,
+    config: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T, D>>;
+  async post<T = any>(
     url: string,
     data: any = {},
     config?: AxiosRequestConfig,
-  ): Observable<AxiosResponse<T>> {
-    return this.makeObservable<T>(this.service.post, url, data, config);
+  ): Promise<ErrorPromise | AxiosResponse<T>> {
+    const postObservable = this.makeObservable<T>(this.service.post, url, data, config);
+    const [err, result] = await Utils.toPromise(firstValueFrom(postObservable))
+    // console.log(err)
+    if (err) {
+      return Promise.reject(err);
+    }
+    this.responseResult(postObservable, result)
+    return Promise.resolve(result);
   }
 
-  public request = this.service.request;
-  public delete = this.service.delete;
-  public head = this.service.head;
-  public options = this.service.options;
-  // public post = this.service.post;
-  // public get = this.service.get;
-  public put = this.service.put;
-  public patch = this.service.patch;
-  public postForm = this.service.postForm;
-  public putForm = this.service.putForm;
-  public patchForm = this.service.patchForm;
+  private responseResult(targetRequest: Observable<AxiosResponse>, respData: AxiosResponse) {
+    // console.log(respData)
+  }
+
 }

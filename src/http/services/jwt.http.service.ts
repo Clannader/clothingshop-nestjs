@@ -11,6 +11,10 @@ import { HttpAbstractService } from './http.abstract.service';
 @Injectable()
 export class JwtHttpService extends HttpAbstractService {
   initInterceptor() {
+
+  }
+
+  initConfig() {
     this.service.defaults.baseURL = 'http://localhost:3000';
   }
 }

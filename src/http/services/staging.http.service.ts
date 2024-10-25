@@ -8,6 +8,10 @@ import { HttpAbstractService } from './http.abstract.service';
 @Injectable()
 export class StagingHttpService extends HttpAbstractService {
   initInterceptor() {
+
+  }
+
+  initConfig() {
     this.service.defaults.baseURL = 'http://localhost:3000';
   }
 }
