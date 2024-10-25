@@ -13,7 +13,7 @@ import {
 } from '../services';
 import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
 import Axios from 'axios';
-import * as keepAliveHttpAgent from 'agentkeepalive'
+import * as keepAliveHttpAgent from 'agentkeepalive';
 
 @Module({
   imports: [TokenCacheModule],
@@ -28,9 +28,9 @@ import * as keepAliveHttpAgent from 'agentkeepalive'
         const httpOptions: keepAliveHttpAgent.HttpOptions = {
           maxSockets: 4,
           keepAlive: true,
-        }
-        const httpAgent = new keepAliveHttpAgent(httpOptions)
-        const httpsAgent = new keepAliveHttpAgent.HttpsAgent(httpOptions)
+        };
+        const httpAgent = new keepAliveHttpAgent(httpOptions);
+        const httpsAgent = new keepAliveHttpAgent.HttpsAgent(httpOptions);
         return Axios.create({
           httpAgent,
           httpsAgent,
@@ -39,7 +39,7 @@ import * as keepAliveHttpAgent from 'agentkeepalive'
             'Content-Type': 'application/json;charset=UTF-8',
             'X-Requested-With': 'XMLHttpRequest',
           },
-        })
+        });
       },
     },
   ],

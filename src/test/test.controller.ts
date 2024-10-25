@@ -212,9 +212,17 @@ export class TestController {
 
     this.httpFactoryService
       .getHttpService(params.testField)
-      .post('/ifc/web/HotelList/getHotelList', {})
-      .then((result) => console.log(result.data.total))
-      .catch((err) => console.log(err));
+      .post('/ifc/web/HotelList/getHotelList')
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    // .then((result) => console.log(result.data.total))
+    // .catch((err) => console.log(err));
 
     return resp;
   }
