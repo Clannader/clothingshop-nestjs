@@ -7,5 +7,5 @@ export const timeZone = {
   timeZoneLabel: '时区名称',
   summerLabel: '夏令时',
   winterLabel: '冬令时',
-  modifiedLog: '编辑时区:({0})'
+  modifiedLog: '编辑时区:({0})',
 };

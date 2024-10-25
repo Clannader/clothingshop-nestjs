@@ -92,6 +92,7 @@ export enum SequenceTypeEnum {
   Message = 'Message', // 消息ID
   OrderId = 'OrderId', // 订单号ID
   TraceId = 'TraceId', // 跟踪轨迹ID
+  AnimalId = 'AnimalId', // 抽象类测试ID
 }
 
 /**

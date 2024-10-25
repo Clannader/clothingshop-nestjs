@@ -14,7 +14,7 @@ import {
 import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@/common/config';
 import { CodeEnum } from '@/common/enum';
-import { GlobalService } from '@/common/utils';
+import { GlobalService, Utils } from '@/common/utils';
 import {
   ApiCommon,
   ApiCustomResponse,
@@ -46,6 +46,8 @@ import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
 import { CmsSession, CommonResult, LanguageType } from '@/common';
 import { TestService } from './test.service';
+import { AnimalFactory, Animal } from './abstract';
+import { HttpFactoryService } from '@/http';
 
 @ApiCommon()
 @Controller('/cms')
@@ -75,6 +77,12 @@ export class TestController {
   @Inject()
   private readonly systemDataSchemaService: SystemDataSchemaService;
 
+  @Inject()
+  private readonly animalFactory: AnimalFactory;
+
+  @Inject()
+  private readonly httpFactoryService: HttpFactoryService;
+
   private readonly logger = new AopLogger(TestController.name);
 
   @Post('/gateway/test/post')
@@ -84,22 +92,23 @@ export class TestController {
     description: '测试泛型接口',
   })
   @ApiGenericsResponse(RespTestSchemaDto, TestSchemaDto)
-  @UseInterceptors(XmlInterceptor) // 拦截器返回XML格式的报文
+  // @UseInterceptors(XmlInterceptor) // 拦截器返回XML格式的报文
   async testingPost(
     @Body() params: ReqTestSchemaDto,
-    @XmlData() xmlData: string,
-    @XmlJsonData() xmlJsonData: Record<string, any>,
-    @Headers('language') lang: string,
+    @UserSession() session: CmsSession,
+    // @XmlData() xmlData: string,
+    // @XmlJsonData() xmlJsonData: Record<string, any>,
+    // @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();
     const result = new TestSchemaDto();
     result.age = 20;
     result.password = '123';
     result.username = '123';
-    console.log(params);
-    console.log(xmlData);
-    console.log(xmlJsonData);
-    console.log(lang);
+    // console.log(params);
+    // console.log(xmlData);
+    // console.log(xmlJsonData);
+    // console.log(lang);
     // const clone = cloneClass(RespTestSchemaDto);
     // console.log(Reflect.getMetadataKeys(clone));
     // const dbUser: string = this.configService.get<string>('dbUser');
@@ -126,14 +135,14 @@ export class TestController {
     // this.config2Service.set('config2', '成功了');
     // console.log(this.config2Service.getInternalConfig());
     // console.log(this.configService.get<number>('fsd'));
-    // this.configService.set('HH', 'ahdhfdf')
+    // this.configService.set('HH', 'monitorLog')
     // console.log(this.configService.getInternalConfig())
     // this.configService.set<boolean>('boolean', false)
     // this.configService.set<number>('number', 120)
     // this.configService.set<string>('string', '4578')
     // this.configService.set('boolean2', false)
     // this.configService.set('number2', 120)
-    // this.configService.set('string2', 'trtgfsgf')
+    // this.configService.set('string2', 'monitorLog')
 
     // const fun = function() {
     //   return new Promise(resolve => {
@@ -155,7 +164,7 @@ export class TestController {
     // console.log(process.env['NO_COLOR'])
     // console.log(isColorAllowed() ? 'true' : 'false')
     // console.log(process.env['NODE_ENV'])
-    // throw new Error('fdsfdsfds')
+    // throw new Error('monitorLog')
     resp.code = CodeEnum.SUCCESS;
     resp.result = result;
     // resp.rows = xmlJsonData.xml.age;
@@ -173,11 +182,17 @@ export class TestController {
     // console.log(testResult.name.age);
     // const name = testResult?.name?.age
     // this.logger.error(name)
-    // this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
+    // await this.memoryCacheService.setMemoryCache(params.testField, {
+    //   name: params.testField,
+    // });
     // const keys = await this.memoryCacheService.getAllCacheKeys();
-    // const value = await this.memoryCacheService.getMemoryCache('23444')
-    // console.log(value)
-    // console.log(keys)
+    // const value = await this.memoryCacheService.getMemoryCache(
+    //   params.testField,
+    // );
+    // console.log(params.testField);
+    // console.log(value);
+    // console.log(keys);
+    // console.log(await this.memoryCacheService.getMemoryCache('oliver'));
     // const findResult /*[err, findResult]*/ = await this.adminSchemaService
     //   .getModel()
     //   .countDocuments({ adminId: 'SUPERVISOR' }); // .then((result) => [null, result]).catch(err => [err])
@@ -190,6 +205,31 @@ export class TestController {
     // console.log(err)
     // }
     // console.log(findResult);
+
+    // let animal: Animal = this.animalFactory.getAnimalInstance(params.testField);
+    // console.log(animal.getName());
+    // console.log(animal.getFullName());
+    // console.log(await animal.getSequenceAnimal());
+
+    // this.httpFactoryService
+    //   .getHttpService(params.testField)
+    //   .post('/ifc/web/HotelList/getHotelList')
+    //   .subscribe({
+    //     next: (res) => {
+    //       console.log(res);
+    //     },
+    //     error: (err) => {
+    //       console.log(err);
+    //     },
+    //   });
+    const [err, list] = await Utils.toPromise(
+      this.httpFactoryService
+        .getHttpService(session, params.testField)
+        .get('/cms/api/timeZone/allList'),
+    );
+    // console.error(err)
+    console.log(list.data);
+
     return resp;
   }
 
