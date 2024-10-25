@@ -15,11 +15,15 @@ import * as os from 'os';
 import { CmsSession, LanguageType, ErrorPromise } from '../types';
 import { v4 } from 'uuid';
 import { i18n } from '../i18n';
+import { AopLogger } from '@/logger';
 
 /**
  * 系统工具类
  */
 export class Utils {
+
+  private static readonly logger = new AopLogger(Utils.name);
+
   /**
    * 转义32位和64位系统时的斜杠
    * @param path 需要转义的路径
@@ -525,7 +529,7 @@ export class Utils {
           const parsedError = Object.assign({}, err, errorExt);
           return [parsedError, undefined];
         }
-        console.error(err);
+        this.logger.error(err);
         return [err, undefined];
       });
   }
