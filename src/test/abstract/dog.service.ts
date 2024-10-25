@@ -12,15 +12,10 @@ export class DogService extends Animal {
   }
 
   async getSequenceAnimal() {
-    await this.sequenceSchemaService.getNextSequence(
-      SequenceTypeEnum.AnimalId,
-    );
-    await this.sequenceSchemaService.getNextSequence(
-      SequenceTypeEnum.AnimalId,
-    );
+    await this.sequenceSchemaService.getNextSequence(SequenceTypeEnum.AnimalId);
+    await this.sequenceSchemaService.getNextSequence(SequenceTypeEnum.AnimalId);
     return this.sequenceSchemaService.getNextSequence(
       SequenceTypeEnum.AnimalId,
     );
   }
-
 }

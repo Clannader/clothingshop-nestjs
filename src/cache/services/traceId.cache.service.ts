@@ -48,6 +48,8 @@ export class TraceIdCacheService {
   }
 
   async deleteTraceIdCache(session: CmsSession) {
-    await this.getTraceIdStore().del(session.requestId);
+    if (!Utils.isEmpty(session?.requestId)) {
+      await this.getTraceIdStore().del(session.requestId);
+    }
   }
 }

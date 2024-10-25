@@ -46,7 +46,8 @@ import { AopLogger } from '@/logger';
 // import { UserService } from '../user/user.service';
 import { CmsSession, CommonResult, LanguageType } from '@/common';
 import { TestService } from './test.service';
-import { AnimalFactory, Animal } from '@/test/abstract';
+import { AnimalFactory, Animal } from './abstract';
+import { LocalhostHttpService } from '@/http';
 
 @ApiCommon()
 @Controller('/cms')
@@ -78,6 +79,9 @@ export class TestController {
 
   @Inject()
   private readonly animalFactory: AnimalFactory;
+
+  @Inject()
+  private readonly localhostHttpService: LocalhostHttpService;
 
   private readonly logger = new AopLogger(TestController.name);
 
@@ -130,14 +134,14 @@ export class TestController {
     // this.config2Service.set('config2', '成功了');
     // console.log(this.config2Service.getInternalConfig());
     // console.log(this.configService.get<number>('fsd'));
-    // this.configService.set('HH', 'ahdhfdf')
+    // this.configService.set('HH', 'monitorLog')
     // console.log(this.configService.getInternalConfig())
     // this.configService.set<boolean>('boolean', false)
     // this.configService.set<number>('number', 120)
     // this.configService.set<string>('string', '4578')
     // this.configService.set('boolean2', false)
     // this.configService.set('number2', 120)
-    // this.configService.set('string2', 'trtgfsgf')
+    // this.configService.set('string2', 'monitorLog')
 
     // const fun = function() {
     //   return new Promise(resolve => {
@@ -159,7 +163,7 @@ export class TestController {
     // console.log(process.env['NO_COLOR'])
     // console.log(isColorAllowed() ? 'true' : 'false')
     // console.log(process.env['NODE_ENV'])
-    // throw new Error('fdsfdsfds')
+    // throw new Error('monitorLog')
     resp.code = CodeEnum.SUCCESS;
     resp.result = result;
     // resp.rows = xmlJsonData.xml.age;
@@ -205,6 +209,10 @@ export class TestController {
     console.log(animal.getName());
     console.log(animal.getFullName());
     console.log(await animal.getSequenceAnimal());
+
+    this.localhostHttpService
+      .post('/ifc/web/HotelList/getHotelList', {})
+      .then((result) => console.log(result.data.total));
 
     return resp;
   }
