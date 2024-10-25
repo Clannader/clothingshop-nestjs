@@ -92,12 +92,12 @@ export class TestController {
     description: '测试泛型接口',
   })
   @ApiGenericsResponse(RespTestSchemaDto, TestSchemaDto)
-  @UseInterceptors(XmlInterceptor) // 拦截器返回XML格式的报文
+  // @UseInterceptors(XmlInterceptor) // 拦截器返回XML格式的报文
   async testingPost(
     @Body() params: ReqTestSchemaDto,
-    @XmlData() xmlData: string,
-    @XmlJsonData() xmlJsonData: Record<string, any>,
-    @Headers('language') lang: string,
+    // @XmlData() xmlData: string,
+    // @XmlJsonData() xmlJsonData: Record<string, any>,
+    // @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();
     const result = new TestSchemaDto();
@@ -210,10 +210,11 @@ export class TestController {
     // console.log(animal.getFullName());
     // console.log(await animal.getSequenceAnimal());
 
-    // TODO
-    this.httpFactoryService.getHttpService('localhost')
+    this.httpFactoryService
+      .getHttpService(params.testField)
       .post('/ifc/web/HotelList/getHotelList', {})
-      .then((result) => console.log(result.data.total)).catch(err => console.log(err));
+      .then((result) => console.log(result.data.total))
+      .catch((err) => console.log(err));
 
     return resp;
   }

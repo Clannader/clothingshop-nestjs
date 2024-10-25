@@ -12,7 +12,6 @@ import { HttpAbstractService } from './http.abstract.service';
 
 @Injectable()
 export class LocalhostHttpService extends HttpAbstractService {
-
   initInterceptor() {
     this.service.defaults.baseURL = 'http://localhost:3000';
     this.service.interceptors.request.use(
@@ -45,5 +44,4 @@ export class LocalhostHttpService extends HttpAbstractService {
       },
     );
   }
-
 }

@@ -5,7 +5,12 @@ import { Module } from '@nestjs/common';
 
 import { TokenCacheModule } from '@/cache/modules';
 
-import { HttpFactoryService, LocalhostHttpService } from '../services';
+import {
+  HttpFactoryService,
+  LocalhostHttpService,
+  StagingHttpService,
+  JwtHttpService,
+} from '../services';
 import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
 import Axios from 'axios';
 
@@ -14,6 +19,8 @@ import Axios from 'axios';
   providers: [
     HttpFactoryService,
     LocalhostHttpService,
+    StagingHttpService,
+    JwtHttpService,
     {
       provide: AXIOS_INSTANCE_TOKEN,
       useValue: Axios.create({
@@ -27,4 +34,4 @@ import Axios from 'axios';
   ],
   exports: [HttpFactoryService],
 })
-export class HttpFactoryModule{}
+export class HttpFactoryModule {}

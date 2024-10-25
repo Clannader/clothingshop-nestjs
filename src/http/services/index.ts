@@ -4,3 +4,5 @@
 export * from './localhost.http.service';
 export * from './http.factory.service';
 export * from './http.abstract.service';
+export * from './jwt.http.service';
+export * from './staging.http.service';
