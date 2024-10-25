@@ -13,6 +13,7 @@ import {
 } from '../services';
 import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
 import Axios from 'axios';
+import * as keepAliveHttpAgent from 'agentkeepalive'
 
 @Module({
   imports: [TokenCacheModule],
@@ -23,13 +24,23 @@ import Axios from 'axios';
     JwtHttpService,
     {
       provide: AXIOS_INSTANCE_TOKEN,
-      useValue: Axios.create({
-        timeout: 30 * 1000,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-      }),
+      useFactory: () => {
+        const httpOptions: keepAliveHttpAgent.HttpOptions = {
+          maxSockets: 4,
+          keepAlive: true,
+        }
+        const httpAgent = new keepAliveHttpAgent(httpOptions)
+        const httpsAgent = new keepAliveHttpAgent.HttpsAgent(httpOptions)
+        return Axios.create({
+          httpAgent,
+          httpsAgent,
+          timeout: 30 * 1000,
+          headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+        })
+      },
     },
   ],
   exports: [HttpFactoryService],
