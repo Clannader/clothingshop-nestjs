@@ -4,6 +4,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { HttpAbstractService } from './http.abstract.service';
+import { Observable } from 'rxjs';
+import { AxiosResponse } from 'axios';
+import { ErrorPromise } from '@/common';
 
 @Injectable()
 export class StagingHttpService extends HttpAbstractService {
@@ -13,5 +16,9 @@ export class StagingHttpService extends HttpAbstractService {
 
   initConfig() {
     this.service.defaults.baseURL = 'http://localhost:3000';
+  }
+
+  responseResult<T>(targetRequest: Observable<AxiosResponse<T>>, respData: AxiosResponse<T>): Promise<ErrorPromise | AxiosResponse<T>> {
+    return Promise.resolve(undefined);
   }
 }

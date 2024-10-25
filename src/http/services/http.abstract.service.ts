@@ -34,6 +34,8 @@ export abstract class HttpAbstractService {
 
   abstract initInterceptor(): void;
 
+  abstract responseResult<T>(targetRequest: Observable<AxiosResponse<T>>, respData: AxiosResponse<T>): Promise<ErrorPromise | AxiosResponse<T>>;
+
   public get axiosRef(): AxiosInstance {
     return this.service;
   }
@@ -74,6 +76,13 @@ export abstract class HttpAbstractService {
     });
   }
 
+  get<T = any>(
+    url: string,
+  ): Observable<AxiosResponse<T>>;
+  get<T = any, D = any>(
+    url: string,
+    config: AxiosRequestConfig<D>,
+  ): Observable<AxiosResponse<T, D>>
   get<T = any, D = any>(
     url: string,
     config?: AxiosRequestConfig<D>,
@@ -98,16 +107,10 @@ export abstract class HttpAbstractService {
   ): Promise<ErrorPromise | AxiosResponse<T>> {
     const postObservable = this.makeObservable<T>(this.service.post, url, data, config);
     const [err, result] = await Utils.toPromise(firstValueFrom(postObservable))
-    // console.log(err)
     if (err) {
       return Promise.reject(err);
     }
-    this.responseResult(postObservable, result)
-    return Promise.resolve(result);
-  }
-
-  private responseResult(targetRequest: Observable<AxiosResponse>, respData: AxiosResponse) {
-    // console.log(respData)
+    return this.responseResult(postObservable, result);
   }
 
 }
