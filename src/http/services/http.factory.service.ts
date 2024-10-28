@@ -50,4 +50,17 @@ export class HttpFactoryService {
     httpService.initConfig(session, config);
     return httpService;
   }
+
+  getLocalhostService(session: CmsSession): LocalhostHttpService {
+    return this.getHttpService(session, 'localhost') as LocalhostHttpService;
+  }
+
+  getStagingService(session: CmsSession): StagingHttpService {
+    return this.getHttpService(session, 'staging') as StagingHttpService;
+  }
+
+  getJwtService(session: CmsSession): JwtHttpService {
+    return this.getHttpService(session, 'jwt') as JwtHttpService;
+  }
+
 }

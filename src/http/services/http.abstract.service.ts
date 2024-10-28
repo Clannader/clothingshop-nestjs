@@ -120,4 +120,55 @@ export abstract class HttpAbstractService {
     }
     return this.responseResult(postObservable, result);
   }
+
+  delete<T = any>(url: string): Promise<AxiosResponse<T>>;
+  delete<T = any, D = any>(url: string, data: D): Promise<AxiosResponse<T, D>>;
+  delete<T = any, D = any>(
+    url: string,
+    data: D,
+    config: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T, D>>;
+  async delete<T = any>(
+    url: string,
+    data: any = {},
+    config?: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T>> {
+    const deleteObservable = this.makeObservable<T>(
+      this.service.delete,
+      url,
+      data,
+      config,
+    );
+    const [err, result] = await Utils.toPromise(firstValueFrom(deleteObservable));
+    if (err) {
+      return Promise.reject(err);
+    }
+    return this.responseResult(deleteObservable, result);
+  }
+
+  put<T = any>(url: string): Promise<AxiosResponse<T>>;
+  put<T = any, D = any>(url: string, data: D): Promise<AxiosResponse<T, D>>;
+  put<T = any, D = any>(
+    url: string,
+    data: D,
+    config: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T, D>>;
+  async put<T = any>(
+    url: string,
+    data: any = {},
+    config?: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T>> {
+    const putObservable = this.makeObservable<T>(
+      this.service.put,
+      url,
+      data,
+      config,
+    );
+    const [err, result] = await Utils.toPromise(firstValueFrom(putObservable));
+    if (err) {
+      return Promise.reject(err);
+    }
+    return this.responseResult(putObservable, result);
+  }
+
 }

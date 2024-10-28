@@ -222,13 +222,17 @@ export class TestController {
     //       console.log(err);
     //     },
     //   });
-    const [err, list] = await Utils.toPromise(
-      this.httpFactoryService
-        .getHttpService(session, params.testField)
-        .get('/cms/api/timeZone/allList'),
-    );
+    // const [err, list] = await Utils.toPromise(
+    //   this.httpFactoryService
+    //     .getHttpService(session, params.testField)
+    //     .get('/cms/api/timeZone/allList'),
+    // );
     // console.error(err)
-    console.log(list.data);
+    // console.log(list.data);
+    const getAllList = this.httpFactoryService.getHttpService(session, params.testField).get('/cms/api/timeZone/allList')
+    Promise.all([getAllList, getAllList, getAllList, getAllList, getAllList]).then(result => {
+      console.log(result);
+    })
 
     return resp;
   }
