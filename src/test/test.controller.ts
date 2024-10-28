@@ -230,14 +230,13 @@ export class TestController {
     // console.error(err)
     // console.log(list.data);
     const getAllList = this.httpFactoryService
-      .getHttpService(session, params.testField)
-      .get('/cms/api/timeZone/allList');
-    Promise.all([
-      getAllList,
-      getAllList,
-      getAllList,
-      getAllList,
-      getAllList,
+      .getHttpService(session, params.testField);
+    await Promise.all([
+      getAllList.get('/cms/api/timeZone/allList'),
+      getAllList.get('/cms/api/timeZone/allList'),
+      getAllList.get('/cms/api/timeZone/allList'),
+      getAllList.get('/cms/api/timeZone/allList'),
+      getAllList.get('/cms/api/timeZone/allList'),
     ]).then((result) => {
       result.forEach((value) => {
         console.log(value.data);

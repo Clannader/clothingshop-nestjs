@@ -71,6 +71,7 @@ export class LocalhostHttpService extends HttpAbstractService {
       adminPws:
         '043a718774c572bd8a25adbeb1bfcd5c0256ae11cecf9f9c3f925d0e52beaf89',
     };
+    // TODO 这里还缺少重试的次数,报错最多重试3次
     const loginObservable = this.makeObservable(
       this.service.post,
       '/cms/api/user/login',

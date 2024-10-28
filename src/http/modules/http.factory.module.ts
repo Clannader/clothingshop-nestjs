@@ -26,7 +26,7 @@ import * as keepAliveHttpAgent from 'agentkeepalive';
       provide: AXIOS_INSTANCE_TOKEN,
       useFactory: () => {
         const httpOptions: keepAliveHttpAgent.HttpOptions = {
-          maxSockets: 4,
+          maxSockets: 100, // TODO 后期可以通过config.ini配置
           keepAlive: true,
         };
         const httpAgent = new keepAliveHttpAgent(httpOptions);
