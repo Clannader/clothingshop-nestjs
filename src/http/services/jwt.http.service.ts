@@ -13,17 +13,17 @@ import { CmsSession, ErrorPromise } from '@/common';
 
 @Injectable()
 export class JwtHttpService extends HttpAbstractService {
-  initInterceptor() {}
-
   initConfig(session: CmsSession, config: AxiosRequestConfig = {}) {
     this.session = session;
     this.service.defaults.baseURL = config.baseURL;
   }
 
-  responseResult<T>(
-    targetRequest: Observable<AxiosResponse<T>>,
-    respData: AxiosResponse<T>,
-  ): Promise<AxiosResponse<T>> {
+  initInterceptor() {}
+
+  responseResult(
+    targetRequest: Observable<AxiosResponse>,
+    respData: AxiosResponse,
+  ): Promise<AxiosResponse> {
     return Promise.resolve(respData);
   }
 }
