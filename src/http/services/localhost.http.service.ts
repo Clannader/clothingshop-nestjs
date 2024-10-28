@@ -32,7 +32,7 @@ export class LocalhostHttpService extends HttpAbstractService {
             (await this.tokenCacheService.getTokenCache('supervisor-SYSTEM')) ??
             '';
         }
-        config.headers['language'] = this.session.language; // 后期再考虑翻译吧
+        config.headers['language'] = this.session?.language ?? 'ZH'; // 后期再考虑翻译吧
         return config;
       },
       (error) => {
