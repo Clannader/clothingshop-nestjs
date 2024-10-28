@@ -26,9 +26,7 @@ export abstract class HttpAbstractService {
 
     @Inject()
     protected readonly tokenCacheService: TokenCacheService,
-  ) {
-    this.initInterceptor();
-  }
+  ) {}
 
   abstract initConfig(session: CmsSession, config?: AxiosRequestConfig): void;
 

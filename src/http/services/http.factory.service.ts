@@ -48,7 +48,11 @@ export class HttpFactoryService {
       throw new Error(`Cannot find http service instance: ${shopType}`);
     }
     // TODO 新增缓存Map<type, Map<username, service>>
+    // axios的对象是同一个,如果多次使用拦截器会把其他实现类的也add进去了
+    httpService.axiosRef.interceptors.request.clear();
+    httpService.axiosRef.interceptors.response.clear();
     httpService.initConfig(session, config);
+    httpService.initInterceptor();
     return httpService;
   }
 
