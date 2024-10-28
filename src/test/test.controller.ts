@@ -277,7 +277,7 @@ export class TestController {
       }
     } else if (params.testField === 'staging') {
       [err, respResult] = await Utils.toPromise(
-        service.post<RespTimeZoneAllDto>('/ifc/web/HotelList/getHotelList'),
+        service.post('/ifc/web/HotelList/getHotelList'),
       );
       if (err) {
         console.error(err.message);

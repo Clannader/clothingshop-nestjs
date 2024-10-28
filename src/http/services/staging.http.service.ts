@@ -12,7 +12,6 @@ import {
 } from 'axios';
 import { CmsSession, CommonResult, ErrorPromise } from '@/common';
 import { Utils } from '@/common/utils';
-import { CodeEnum } from '@/common/enum';
 
 @Injectable()
 export class StagingHttpService extends HttpAbstractService {
