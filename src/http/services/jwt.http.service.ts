@@ -94,7 +94,7 @@ export class JwtHttpService extends HttpAbstractService {
     const refreshParams = {
       refreshToken:
         (await this.tokenCacheService.getTokenCache(
-          'supervisor-accessToken',
+          'supervisor-refreshToken',
         )) ?? '',
     };
     const refreshObservable = this.makeObservable(
