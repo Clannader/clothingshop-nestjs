@@ -15,12 +15,6 @@ import { Utils } from '@/common/utils';
 
 @Injectable()
 export class StagingHttpService extends HttpAbstractService {
-  initConfig(session: CmsSession, config: AxiosRequestConfig = {}) {
-    this.session = session;
-    this.service.defaults.baseURL = config.baseURL;
-    this.initInterceptor();
-  }
-
   initInterceptor() {
     this.service.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {

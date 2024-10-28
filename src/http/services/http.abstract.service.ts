@@ -28,7 +28,14 @@ export abstract class HttpAbstractService {
     protected readonly tokenCacheService: TokenCacheService,
   ) {}
 
-  abstract initConfig(session: CmsSession, config?: AxiosRequestConfig): void;
+  initConfig(session: CmsSession, config?: AxiosRequestConfig) {
+    // axios的对象是同一个,如果多次使用拦截器会把其他实现类的也add进去了
+    this.service.interceptors.request.clear();
+    this.service.interceptors.response.clear();
+    this.session = session;
+    this.service.defaults.baseURL = config.baseURL;
+    this.initInterceptor();
+  };
 
   abstract initInterceptor(): void;
 

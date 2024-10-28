@@ -8,17 +8,10 @@ import { Injectable } from '@nestjs/common';
 
 import { HttpAbstractService } from './http.abstract.service';
 import { Observable } from 'rxjs';
-import { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { CmsSession, ErrorPromise } from '@/common';
+import { AxiosResponse } from 'axios';
 
 @Injectable()
 export class JwtHttpService extends HttpAbstractService {
-  initConfig(session: CmsSession, config: AxiosRequestConfig = {}) {
-    this.session = session;
-    this.service.defaults.baseURL = config.baseURL;
-    this.initInterceptor();
-  }
-
   initInterceptor() {}
 
   responseResult(
