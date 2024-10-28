@@ -1,9 +1,6 @@
 /**
  * Create by oliver.wu 2024/10/25
  */
-/**
- * Create by oliver.wu 2024/10/24
- */
 import { Injectable } from '@nestjs/common';
 
 import { HttpAbstractService } from './http.abstract.service';

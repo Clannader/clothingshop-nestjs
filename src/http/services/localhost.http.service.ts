@@ -3,12 +3,11 @@
  */
 import { Injectable } from '@nestjs/common';
 import {
-  AxiosRequestConfig,
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios';
 
-import { CmsSession, CommonResult, ErrorPromise } from '@/common';
+import { CommonResult } from '@/common';
 import { Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
 
