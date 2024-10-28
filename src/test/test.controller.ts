@@ -261,25 +261,28 @@ export class TestController {
     //   console.log(list.data);
     // }
 
-    const service = this.httpFactoryService.getHttpService(session, params.testField)
-    let err, respResult
+    const service = this.httpFactoryService.getHttpService(
+      session,
+      params.testField,
+    );
+    let err, respResult;
     if (params.testField === 'localhost') {
       [err, respResult] = await Utils.toPromise(
-        service.get<RespTimeZoneAllDto>('/cms/api/timeZone/allList')
-      )
+        service.get<RespTimeZoneAllDto>('/cms/api/timeZone/allList'),
+      );
       if (err) {
         console.error(err.message);
       } else {
-        console.log(respResult.data.timeZones.length)
+        console.log(respResult.data.timeZones.length);
       }
     } else if (params.testField === 'staging') {
       [err, respResult] = await Utils.toPromise(
-        service.post<RespTimeZoneAllDto>('/ifc/web/HotelList/getHotelList')
-      )
+        service.post<RespTimeZoneAllDto>('/ifc/web/HotelList/getHotelList'),
+      );
       if (err) {
         console.error(err.message);
       } else {
-        console.log(respResult.data.total)
+        console.log(respResult.data.total);
       }
     }
 

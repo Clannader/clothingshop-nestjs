@@ -11,7 +11,12 @@ import {
   StagingHttpService,
   JwtHttpService,
 } from '../services';
-import { AXIOS_INSTANCE_TOKEN, Localhost_Token, Staging_Token, Jwt_Token } from '../http.constants';
+import {
+  AXIOS_INSTANCE_TOKEN,
+  Localhost_Token,
+  Staging_Token,
+  Jwt_Token,
+} from '../http.constants';
 import Axios from 'axios';
 import * as keepAliveHttpAgent from 'agentkeepalive';
 

@@ -5,7 +5,11 @@ import { Injectable } from '@nestjs/common';
 
 import { HttpAbstractService } from './http.abstract.service';
 import { firstValueFrom, Observable } from 'rxjs';
-import { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import {
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios';
 import { CmsSession, CommonResult, ErrorPromise } from '@/common';
 import { Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
