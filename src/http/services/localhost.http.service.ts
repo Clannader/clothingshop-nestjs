@@ -2,10 +2,7 @@
  * Create by oliver.wu 2024/10/24
  */
 import { Injectable } from '@nestjs/common';
-import {
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-} from 'axios';
+import { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
 import { CommonResult } from '@/common';
 import { Utils } from '@/common/utils';
@@ -76,6 +73,10 @@ export class LocalhostHttpService extends HttpAbstractService {
     );
     if (err) {
       return Promise.reject(err);
+    }
+    const respData = result.data;
+    if (CodeEnum.SUCCESS !== respData.code) {
+      return Promise.reject(result);
     }
     await this.tokenCacheService.setTokenCache(
       'supervisor-SYSTEM',

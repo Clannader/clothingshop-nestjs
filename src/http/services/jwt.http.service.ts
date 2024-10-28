@@ -69,6 +69,10 @@ export class JwtHttpService extends HttpAbstractService {
     if (err) {
       return Promise.reject(err);
     }
+    const respData = result.data;
+    if (CodeEnum.SUCCESS !== respData.code) {
+      return Promise.reject(result);
+    }
     await this.tokenCacheService.setTokenCache(
       'supervisor-accessToken',
       result.data['accessToken'],
@@ -88,9 +92,10 @@ export class JwtHttpService extends HttpAbstractService {
 
   private async refreshToken(targetRequest: Observable<AxiosResponse>) {
     const refreshParams = {
-      refreshToken: await this.tokenCacheService.getTokenCache(
-        'supervisor-refreshToken',
-      ),
+      refreshToken:
+        (await this.tokenCacheService.getTokenCache(
+          'supervisor-accessToken',
+        )) ?? '',
     };
     const refreshObservable = this.makeObservable(
       this.service.post,
@@ -102,6 +107,15 @@ export class JwtHttpService extends HttpAbstractService {
     );
     if (err) {
       return Promise.reject(err);
+    }
+    // TODO 需要判断返回的结果是否正确才能存缓存
+    // 判断code是否成功,token是否有效和是否过期才能set到缓存中
+    // 如果刷新token时,token无效则去登录
+    const respData = result.data;
+    const code = respData.code;
+    if (CodeEnum.INVALID_TOKEN === code || CodeEnum.TOKEN_EXPIRED === code) {
+      // 无效的登录,需要重新登录
+      return this.loginAction(targetRequest);
     }
     await this.tokenCacheService.setTokenCache(
       'supervisor-accessToken',

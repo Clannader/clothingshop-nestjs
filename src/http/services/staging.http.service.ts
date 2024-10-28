@@ -5,12 +5,10 @@ import { Injectable } from '@nestjs/common';
 
 import { HttpAbstractService } from './http.abstract.service';
 import { firstValueFrom, Observable } from 'rxjs';
-import {
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-} from 'axios';
+import { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { CommonResult } from '@/common';
 import { Utils } from '@/common/utils';
+import { CodeEnum } from '@/common/enum';
 
 @Injectable()
 export class StagingHttpService extends HttpAbstractService {
@@ -65,6 +63,10 @@ export class StagingHttpService extends HttpAbstractService {
     );
     if (err) {
       return Promise.reject(err);
+    }
+    const respData = result.data;
+    if (302 !== respData.code) {
+      return Promise.reject(result);
     }
     await this.tokenCacheService.setTokenCache(
       'supervisor-super',
