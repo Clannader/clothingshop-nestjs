@@ -11,7 +11,12 @@ import {
   StagingHttpService,
   JwtHttpService,
 } from '../services';
-import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
+import {
+  AXIOS_INSTANCE_TOKEN,
+  Localhost_Token,
+  Staging_Token,
+  Jwt_Token,
+} from '../http.constants';
 import Axios from 'axios';
 import * as keepAliveHttpAgent from 'agentkeepalive';
 
@@ -19,14 +24,23 @@ import * as keepAliveHttpAgent from 'agentkeepalive';
   imports: [TokenCacheModule],
   providers: [
     HttpFactoryService,
-    LocalhostHttpService,
-    StagingHttpService,
-    JwtHttpService,
+    {
+      provide: Localhost_Token,
+      useClass: LocalhostHttpService,
+    },
+    {
+      provide: Staging_Token,
+      useClass: StagingHttpService,
+    },
+    {
+      provide: Jwt_Token,
+      useClass: JwtHttpService,
+    },
     {
       provide: AXIOS_INSTANCE_TOKEN,
       useFactory: () => {
         const httpOptions: keepAliveHttpAgent.HttpOptions = {
-          maxSockets: 4,
+          maxSockets: 100, // TODO 后期可以通过config.ini配置
           keepAlive: true,
         };
         const httpAgent = new keepAliveHttpAgent(httpOptions);

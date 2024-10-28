@@ -48,6 +48,8 @@ import { CmsSession, CommonResult, LanguageType } from '@/common';
 import { TestService } from './test.service';
 import { AnimalFactory, Animal } from './abstract';
 import { HttpFactoryService } from '@/http';
+import { RespTimeZoneAllDto } from '@/system/dto';
+import { HttpInterceptor } from '@/interceptor/http';
 
 @ApiCommon()
 @Controller('/cms')
@@ -93,6 +95,7 @@ export class TestController {
   })
   @ApiGenericsResponse(RespTestSchemaDto, TestSchemaDto)
   // @UseInterceptors(XmlInterceptor) // 拦截器返回XML格式的报文
+  @UseInterceptors(HttpInterceptor)
   async testingPost(
     @Body() params: ReqTestSchemaDto,
     @UserSession() session: CmsSession,
@@ -222,13 +225,66 @@ export class TestController {
     //       console.log(err);
     //     },
     //   });
-    const [err, list] = await Utils.toPromise(
-      this.httpFactoryService
-        .getHttpService(session, params.testField)
-        .get('/cms/api/timeZone/allList'),
+
+    // console.log(this.httpFactoryService
+    //   .getHttpService(session, params.testField) instanceof LocalhostHttpService)
+    // const [err, list] = await Utils.toPromise(
+    //   this.httpFactoryService
+    //     .getHttpService(session, params.testField)
+    //     .get<RespTimeZoneAllDto>('/cms/api/timeZone/allList'),
+    // );
+    // // console.error(err)
+    // console.log(list.data.timeZones.length);
+
+    // const getAllList = this.httpFactoryService
+    //   .getHttpService(session, params.testField);
+    // await Promise.all([
+    //   getAllList.get('/cms/api/timeZone/allList'),
+    //   getAllList.get('/cms/api/timeZone/allList'),
+    //   getAllList.get('/cms/api/timeZone/allList'),
+    //   getAllList.get('/cms/api/timeZone/allList'),
+    //   getAllList.get('/cms/api/timeZone/allList'),
+    // ]).then((result) => {
+    //   result.forEach((value) => {
+    //     console.log(value.data.timeZones.length);
+    //   });
+    // });
+
+    // const [err, list] = await Utils.toPromise(
+    //   this.httpFactoryService
+    //     .getHttpService(session, params.testField)
+    //     .post('/ifc/web/HotelList/getHotelList'),
+    // );
+    // if (err) {
+    //   console.log(err.message)
+    // } else {
+    //   console.log(list.data);
+    // }
+
+    const service = this.httpFactoryService.getHttpService(
+      session,
+      params.testField,
     );
-    // console.error(err)
-    console.log(list.data);
+    let err, respResult;
+    if (params.testField === 'localhost') {
+      [err, respResult] = await Utils.toPromise(
+        service.get<RespTimeZoneAllDto>('/cms/api/timeZone/allList'),
+      );
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log(respResult.data.timeZones.length);
+      }
+    } else if (params.testField === 'staging') {
+      [err, respResult] = await Utils.toPromise(
+        service.post('/ifc/web/HotelList/getHotelList'),
+      );
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log(respResult.data.total);
+      }
+    }
 
     return resp;
   }

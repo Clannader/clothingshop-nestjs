@@ -10,16 +10,17 @@ import { JwtHttpService } from './jwt.http.service';
 import type { HttpAbstractService } from './http.abstract.service';
 import { CmsSession } from '@/common';
 import { AxiosRequestConfig } from 'axios';
+import { Localhost_Token, Staging_Token, Jwt_Token } from '../http.constants';
 
 @Injectable()
 export class HttpFactoryService {
-  @Inject()
+  @Inject(Localhost_Token)
   private readonly localhostHttpService: LocalhostHttpService;
 
-  @Inject()
+  @Inject(Staging_Token)
   private readonly stagingHttpService: StagingHttpService;
 
-  @Inject()
+  @Inject(Jwt_Token)
   private readonly jwtHttpService: JwtHttpService;
 
   getHttpService(session: CmsSession, shopType: string): HttpAbstractService {
@@ -49,5 +50,17 @@ export class HttpFactoryService {
     // TODO 新增缓存Map<type, Map<username, service>>
     httpService.initConfig(session, config);
     return httpService;
+  }
+
+  getLocalhostService(session: CmsSession): LocalhostHttpService {
+    return this.getHttpService(session, 'localhost') as LocalhostHttpService;
+  }
+
+  getStagingService(session: CmsSession): StagingHttpService {
+    return this.getHttpService(session, 'staging') as StagingHttpService;
+  }
+
+  getJwtService(session: CmsSession): JwtHttpService {
+    return this.getHttpService(session, 'jwt') as JwtHttpService;
   }
 }
