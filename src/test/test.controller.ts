@@ -284,6 +284,15 @@ export class TestController {
       } else {
         console.log(respResult.data.total);
       }
+    } else if (params.testField === 'jwt') {
+      [err, respResult] = await Utils.toPromise(
+        service.get('/gateway/api/system/config/search'),
+      );
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log(respResult.data.config);
+      }
     }
 
     return resp;
