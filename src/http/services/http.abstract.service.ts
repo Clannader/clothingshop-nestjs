@@ -139,7 +139,9 @@ export abstract class HttpAbstractService {
       data,
       config,
     );
-    const [err, result] = await Utils.toPromise(firstValueFrom(deleteObservable));
+    const [err, result] = await Utils.toPromise(
+      firstValueFrom(deleteObservable),
+    );
     if (err) {
       return Promise.reject(err);
     }
@@ -170,5 +172,4 @@ export abstract class HttpAbstractService {
     }
     return this.responseResult(putObservable, result);
   }
-
 }

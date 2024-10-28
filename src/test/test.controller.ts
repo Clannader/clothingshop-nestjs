@@ -229,10 +229,20 @@ export class TestController {
     // );
     // console.error(err)
     // console.log(list.data);
-    const getAllList = this.httpFactoryService.getHttpService(session, params.testField).get('/cms/api/timeZone/allList')
-    Promise.all([getAllList, getAllList, getAllList, getAllList, getAllList]).then(result => {
-      console.log(result);
-    })
+    const getAllList = this.httpFactoryService
+      .getHttpService(session, params.testField)
+      .get('/cms/api/timeZone/allList');
+    Promise.all([
+      getAllList,
+      getAllList,
+      getAllList,
+      getAllList,
+      getAllList,
+    ]).then((result) => {
+      result.forEach((value) => {
+        console.log(value.data);
+      });
+    });
 
     return resp;
   }

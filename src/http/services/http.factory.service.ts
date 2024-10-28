@@ -62,5 +62,4 @@ export class HttpFactoryService {
   getJwtService(session: CmsSession): JwtHttpService {
     return this.getHttpService(session, 'jwt') as JwtHttpService;
   }
-
 }
