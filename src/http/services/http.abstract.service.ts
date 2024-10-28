@@ -35,7 +35,7 @@ export abstract class HttpAbstractService {
     this.session = session;
     this.service.defaults.baseURL = config.baseURL;
     this.initInterceptor();
-  };
+  }
 
   abstract initInterceptor(): void;
 
