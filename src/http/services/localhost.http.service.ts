@@ -20,6 +20,7 @@ export class LocalhostHttpService extends HttpAbstractService {
   initConfig(session: CmsSession, config: AxiosRequestConfig = {}) {
     this.session = session;
     this.service.defaults.baseURL = config.baseURL;
+    this.initInterceptor();
   }
 
   initInterceptor() {

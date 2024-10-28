@@ -52,7 +52,7 @@ export class HttpFactoryService {
     httpService.axiosRef.interceptors.request.clear();
     httpService.axiosRef.interceptors.response.clear();
     httpService.initConfig(session, config);
-    httpService.initInterceptor();
+    // httpService.initInterceptor(); // 改成放在实现类调用吧
     return httpService;
   }
 
