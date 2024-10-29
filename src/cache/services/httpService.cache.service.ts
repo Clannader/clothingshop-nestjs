@@ -15,7 +15,7 @@ export class HttpServiceCacheService {
   private readonly cacheManager: Cache;
 
   private getCacheKey(options: ServiceOptions) {
-    return `${options.serviceType}-${options.userName}-${options.shopId}`
+    return `${options.serviceType}-${options.userName}-${options.shopId}`;
   }
 
   async setHttpServiceCache(options: ServiceOptions, value: ServiceCache) {
@@ -28,16 +28,29 @@ export class HttpServiceCacheService {
 
   async getServiceCache(options: ServiceOptions): Promise<HttpAbstractService> {
     const cache = await this.getHttpServiceCache(options);
-    return cache?.service
+    return cache?.service;
   }
 
   async getServiceOptions(options: ServiceOptions): Promise<ServiceOptions> {
     const cache = await this.getHttpServiceCache(options);
-    return cache?.options
+    return cache?.options;
   }
 
   async getServiceToken(options: ServiceOptions) {
     const cache = await this.getHttpServiceCache(options);
     return omit(cache, 'service', 'options');
+  }
+
+  async setServiceToken(
+    options: ServiceOptions,
+    value: Pick<ServiceCache, 'accessToken' | 'refreshToken' | 'credential'>,
+  ) {
+    const cache = await this.getHttpServiceCache(options);
+    if (cache) {
+      for (const key in value) {
+        cache[key] = value[key];
+      }
+      await this.setHttpServiceCache(options, cache);
+    }
   }
 }

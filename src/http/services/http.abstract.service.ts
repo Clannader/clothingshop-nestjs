@@ -30,7 +30,11 @@ export abstract class HttpAbstractService {
     protected readonly httpServiceCacheService: HttpServiceCacheService,
   ) {}
 
-  initConfig(session: CmsSession, options: ServiceOptions, config?: AxiosRequestConfig) {
+  initConfig(
+    session: CmsSession,
+    options: ServiceOptions,
+    config?: AxiosRequestConfig,
+  ) {
     // axios的对象是同一个,如果多次使用拦截器会把其他实现类的也add进去了
     // 使用Scope.TRANSIENT就可以每次注入都是新的对象了
     // this.service.interceptors.request.clear();

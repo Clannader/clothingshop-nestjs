@@ -20,9 +20,8 @@ export class JwtHttpService extends HttpAbstractService {
             // TODO 这里应该使用的是登录第三方的用户和店铺ID做key值,而不是当前session的用户
             // 应该使用的是initConfig获取到的数据库的用户名和店铺ID
             'Bearer ' +
-            ((await this.tokenCacheService.getTokenCache(
-              'supervisor-accessToken',
-            )) ?? '');
+            ((await this.httpServiceCacheService.getServiceToken(this.options))
+              ?.accessToken ?? '');
         }
         config.headers['language'] = this.session?.language ?? 'ZH'; // 后期再考虑翻译吧
         return config;
@@ -53,9 +52,8 @@ export class JwtHttpService extends HttpAbstractService {
 
   private async loginAction(targetRequest: Observable<AxiosResponse>) {
     const loginParams = {
-      adminId: 'Supervisor',
-      adminPws:
-        '043a718774c572bd8a25adbeb1bfcd5c0256ae11cecf9f9c3f925d0e52beaf89',
+      adminId: this.options.userName,
+      adminPws: this.options.password,
     };
     // TODO 这里还缺少重试的次数,报错最多重试3次
     const loginObservable = this.makeObservable(
@@ -73,14 +71,10 @@ export class JwtHttpService extends HttpAbstractService {
     if (CodeEnum.SUCCESS !== respData.code) {
       return Promise.reject(result);
     }
-    await this.tokenCacheService.setTokenCache(
-      'supervisor-accessToken',
-      result.data['accessToken'],
-    );
-    await this.tokenCacheService.setTokenCache(
-      'supervisor-refreshToken',
-      result.data['refreshToken'],
-    );
+    await this.httpServiceCacheService.setServiceToken(this.options, {
+      accessToken: result.data['accessToken'],
+      refreshToken: result.data['refreshToken'],
+    });
     const [errResp, respResult] = await Utils.toPromise(
       firstValueFrom(targetRequest),
     );
@@ -93,9 +87,8 @@ export class JwtHttpService extends HttpAbstractService {
   private async refreshToken(targetRequest: Observable<AxiosResponse>) {
     const refreshParams = {
       refreshToken:
-        (await this.tokenCacheService.getTokenCache(
-          'supervisor-refreshToken',
-        )) ?? '',
+        (await this.httpServiceCacheService.getServiceToken(this.options))
+          ?.refreshToken ?? '',
     };
     const refreshObservable = this.makeObservable(
       this.service.post,
@@ -117,14 +110,10 @@ export class JwtHttpService extends HttpAbstractService {
       // 无效的登录,需要重新登录
       return this.loginAction(targetRequest);
     }
-    await this.tokenCacheService.setTokenCache(
-      'supervisor-accessToken',
-      result.data['accessToken'],
-    );
-    await this.tokenCacheService.setTokenCache(
-      'supervisor-refreshToken',
-      result.data['refreshToken'],
-    );
+    await this.httpServiceCacheService.setServiceToken(this.options, {
+      accessToken: result.data['accessToken'],
+      refreshToken: result.data['refreshToken'],
+    });
     const [errResp, respResult] = await Utils.toPromise(
       firstValueFrom(targetRequest),
     );

@@ -47,7 +47,7 @@ import { AopLogger } from '@/logger';
 import { CmsSession, CommonResult, LanguageType } from '@/common';
 import { TestService } from './test.service';
 import { AnimalFactory, Animal } from './abstract';
-import { HttpFactoryService } from '@/http';
+import { HttpFactoryService, ServiceType } from '@/http';
 import { RespTimeZoneAllDto } from '@/system/dto';
 import { HttpInterceptor } from '@/interceptor/http';
 
@@ -264,9 +264,9 @@ export class TestController {
     //   console.log(list.data);
     // }
 
-    const service = this.httpFactoryService.getHttpService(
+    const service = await this.httpFactoryService.getHttpService(
       session,
-      params.testField,
+      <ServiceType>params.testField,
     );
     let err, respResult;
     if (params.testField === 'localhost') {
@@ -331,7 +331,7 @@ export class TestController {
     const resp = new RespObjectDto();
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
-    await this.memoryCacheService.setMemoryCache('23444', { dfff: '' });
+    await this.memoryCacheService.setMemoryCache('23444', { diff: '' });
     console.log(this.memoryCacheService.getAllCacheKeys());
     return resp;
   }

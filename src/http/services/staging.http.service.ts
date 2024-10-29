@@ -19,8 +19,8 @@ export class StagingHttpService extends HttpAbstractService {
           config.headers['cloudparams'] =
             // TODO 这里应该使用的是登录第三方的用户和店铺ID做key值,而不是当前session的用户
             // 应该使用的是initConfig获取到的数据库的用户名和店铺ID
-            (await this.tokenCacheService.getTokenCache('supervisor-super')) ??
-            '';
+            (await this.httpServiceCacheService.getServiceToken(this.options))
+              ?.credential ?? '';
         }
         config.headers['language'] = this.session?.language ?? 'ZH'; // 后期再考虑翻译吧
         return config;
@@ -48,9 +48,8 @@ export class StagingHttpService extends HttpAbstractService {
 
   private async loginAction(targetRequest: Observable<AxiosResponse>) {
     const loginParams = {
-      userid: 'Supervisor',
-      password:
-        '73d1b1b1bc1dabfb97f216d897b7968e44b06457920f00f2dc6c1ed3be25ad4c',
+      userid: this.options.userName,
+      password: this.options.password,
     };
     // TODO 这里还缺少重试的次数,报错最多重试3次
     const loginObservable = this.makeObservable(
@@ -68,10 +67,9 @@ export class StagingHttpService extends HttpAbstractService {
     if (302 !== respData.code) {
       return Promise.reject(result);
     }
-    await this.tokenCacheService.setTokenCache(
-      'supervisor-super',
-      result.data['params']['session'],
-    );
+    await this.httpServiceCacheService.setServiceToken(this.options, {
+      credential: result.data['params']['session'],
+    });
     const [errResp, respResult] = await Utils.toPromise(
       firstValueFrom(targetRequest),
     );

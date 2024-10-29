@@ -10,12 +10,12 @@ export type ServiceOptions = {
   userName?: string;
   shopId?: string;
   password?: string;
-}
+};
 
 export type ServiceCache = {
-  service: HttpAbstractService,
-  options: ServiceOptions,
-  credential?: string,
-  accessToken?: string,
-  refreshToken?: string,
-}
+  service: HttpAbstractService;
+  options: ServiceOptions;
+  credential?: string;
+  accessToken?: string;
+  refreshToken?: string;
+};
