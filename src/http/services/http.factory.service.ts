@@ -47,7 +47,7 @@ export class HttpFactoryService {
           host: 'localhost',
           port: 5000,
           protocol: 'http:',
-        }
+        },
       };
       options.userName = 'Supervisor';
       options.password =
@@ -60,7 +60,7 @@ export class HttpFactoryService {
           host: 'localhost',
           port: 3000,
           protocol: 'http:',
-        }
+        },
       };
       options.userName = 'Supervisor';
       options.password =

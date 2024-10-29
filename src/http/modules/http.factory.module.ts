@@ -36,7 +36,7 @@ import * as tunnel from 'tunnel';
         const httpsOptions: KeepAliveHttpAgent.HttpsOptions = {
           ...httpOptions,
           rejectUnauthorized: false,
-        }
+        };
         const httpAgent = new KeepAliveHttpAgent(httpOptions);
         const httpsAgent = new KeepAliveHttpAgent.HttpsAgent(httpsOptions);
         // const tunnelingAgent = tunnel.httpOverHttp({
