@@ -13,7 +13,7 @@ import {
 } from '../services';
 import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
 import Axios from 'axios';
-import * as keepAliveHttpAgent from 'agentkeepalive';
+import * as KeepAliveHttpAgent from 'agentkeepalive';
 
 @Module({
   imports: [HttpServiceCacheModule],
@@ -26,12 +26,14 @@ import * as keepAliveHttpAgent from 'agentkeepalive';
       scope: Scope.TRANSIENT, // 每次注入时都是一个新的对象
       provide: AXIOS_INSTANCE_TOKEN,
       useFactory: () => {
-        const httpOptions: keepAliveHttpAgent.HttpOptions = {
+        const httpOptions: KeepAliveHttpAgent.HttpOptions = {
           maxSockets: 100, // TODO 后期可以通过config.ini配置
+          maxFreeSockets: 10,
+          freeSocketKeepAliveTimeout: 30 * 1000, // free socket keepalive for 30 seconds
           keepAlive: true,
         };
-        const httpAgent = new keepAliveHttpAgent(httpOptions);
-        const httpsAgent = new keepAliveHttpAgent.HttpsAgent(httpOptions);
+        const httpAgent = new KeepAliveHttpAgent(httpOptions);
+        const httpsAgent = new KeepAliveHttpAgent.HttpsAgent(httpOptions);
         return Axios.create({
           httpAgent,
           httpsAgent,
