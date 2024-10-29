@@ -4,3 +4,4 @@
 export * from './http.constants';
 export * from './modules';
 export * from './services';
+export * from './http.types';

@@ -11,7 +11,7 @@ import Axios, {
 } from 'axios';
 import { Observable, firstValueFrom } from 'rxjs';
 
-import { TokenCacheService } from '@/cache/services';
+import { HttpServiceCacheService } from '@/cache/services';
 import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
 import { ServiceOptions } from '../http.types';
 import { Utils } from '@/common/utils';
@@ -27,7 +27,7 @@ export abstract class HttpAbstractService {
     protected readonly service: AxiosInstance,
 
     @Inject()
-    protected readonly tokenCacheService: TokenCacheService,
+    protected readonly httpServiceCacheService: HttpServiceCacheService,
   ) {}
 
   initConfig(session: CmsSession, options: ServiceOptions, config?: AxiosRequestConfig) {
