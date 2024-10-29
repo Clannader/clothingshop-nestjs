@@ -3,7 +3,7 @@
  */
 import { Module, Scope } from '@nestjs/common';
 
-import { TokenCacheModule } from '@/cache/modules';
+import { HttpServiceCacheModule } from '@/cache/modules';
 
 import {
   HttpFactoryService,
@@ -16,7 +16,7 @@ import Axios from 'axios';
 import * as keepAliveHttpAgent from 'agentkeepalive';
 
 @Module({
-  imports: [TokenCacheModule],
+  imports: [HttpServiceCacheModule],
   providers: [
     HttpFactoryService,
     LocalhostHttpService,

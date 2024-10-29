@@ -159,6 +159,7 @@ export class GatewayAuthController {
     // 也不至于目前这种可以产生多个新的token.并且内存管理以后要是使用radis的话,就可以控制生成一个了
 
     // 这里第一步通过解析出来的sessionId,从内存中获取refreshToken,如果没有,则正常生成,如果有,则返回token无效,禁止多次刷新
+    // 这里使用token缓存的逻辑是每一次登录的refreshToken只能刷新一次而已
     const cacheToken = await this.tokenCacheService
       .getTokenCache(result.sessionId)
       .then((result) => result);
