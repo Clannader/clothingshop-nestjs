@@ -32,8 +32,12 @@ import * as KeepAliveHttpAgent from 'agentkeepalive';
           freeSocketKeepAliveTimeout: 30 * 1000, // free socket keepalive for 30 seconds
           keepAlive: true,
         };
+        const httpsOptions: KeepAliveHttpAgent.HttpsOptions = {
+          ...httpOptions,
+          rejectUnauthorized: false,
+        }
         const httpAgent = new KeepAliveHttpAgent(httpOptions);
-        const httpsAgent = new KeepAliveHttpAgent.HttpsAgent(httpOptions);
+        const httpsAgent = new KeepAliveHttpAgent.HttpsAgent(httpsOptions);
         return Axios.create({
           httpAgent,
           httpsAgent,
