@@ -39,7 +39,10 @@ import * as tunnel from 'tunnel';
         };
         const httpAgent = new KeepAliveHttpAgent(httpOptions);
         const httpsAgent = new KeepAliveHttpAgent.HttpsAgent(httpsOptions);
+        // 忘记如何测试tunnel的代理了...
+        // 如果代理不通,可换成tunnel
         // const tunnelingAgent = tunnel.httpOverHttp({
+        //   maxSockets: 100,
         //   proxy: {
         //     host: '10.3.8.50',
         //     port: 3000,
