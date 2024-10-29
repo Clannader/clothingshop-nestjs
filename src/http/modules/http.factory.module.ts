@@ -14,6 +14,7 @@ import {
 import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
 import Axios from 'axios';
 import * as KeepAliveHttpAgent from 'agentkeepalive';
+import * as tunnel from 'tunnel';
 
 @Module({
   imports: [HttpServiceCacheModule],
@@ -38,9 +39,19 @@ import * as KeepAliveHttpAgent from 'agentkeepalive';
         }
         const httpAgent = new KeepAliveHttpAgent(httpOptions);
         const httpsAgent = new KeepAliveHttpAgent.HttpsAgent(httpsOptions);
+        // const tunnelingAgent = tunnel.httpOverHttp({
+        //   proxy: {
+        //     host: '10.3.8.50',
+        //     port: 3000,
+        //   }
+        // })
+        // console.log(tunnelingAgent)
         return Axios.create({
           httpAgent,
           httpsAgent,
+          // 如果使用tunnel代理,需要配置下面2个配置
+          // httpAgent: tunnelingAgent,
+          // proxy: false,
           timeout: 30 * 1000,
           headers: {
             'Content-Type': 'application/json;charset=UTF-8',

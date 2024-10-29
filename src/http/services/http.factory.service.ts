@@ -41,7 +41,8 @@ export class HttpFactoryService {
     };
     if (shopType === 'localhost') {
       config = {
-        baseURL: 'http://localhost:5004',
+        baseURL: 'http://localhost:5005',
+        // axios的代理只是替换了url,使用代理的地址访问出去而已
         proxy: {
           host: 'localhost',
           port: 5000,
@@ -54,7 +55,7 @@ export class HttpFactoryService {
       options.shopId = 'SYSTEM';
     } else if (shopType === 'staging') {
       config = {
-        baseURL: 'http://localhost:5000',
+        baseURL: 'http://localhost:5005',
         proxy: {
           host: 'localhost',
           port: 3000,
