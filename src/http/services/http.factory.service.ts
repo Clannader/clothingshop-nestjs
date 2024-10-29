@@ -41,7 +41,12 @@ export class HttpFactoryService {
     };
     if (shopType === 'localhost') {
       config = {
-        baseURL: 'http://localhost:5000',
+        baseURL: 'http://localhost:5004',
+        proxy: {
+          host: 'localhost',
+          port: 5000,
+          protocol: 'http:',
+        }
       };
       options.userName = 'Supervisor';
       options.password =

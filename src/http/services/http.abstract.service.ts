@@ -42,6 +42,7 @@ export abstract class HttpAbstractService {
     this.session = session;
     this.options = options;
     this.service.defaults.baseURL = config.baseURL;
+    this.service.defaults.proxy = config.proxy;
     this.initInterceptor();
   }
 
