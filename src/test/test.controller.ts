@@ -297,12 +297,12 @@ export class TestController {
         console.log(respResult.data.config);
       }
     }
-    console.log(await this.tokenCacheService.getAllCacheKeys());
-    console.log(service.axiosRef.interceptors);
-    const jwtService = await this.httpFactoryService.getJwtService(session)
-    jwtService.get('/gateway/api/system/config/search').then(result => {
-      console.log(result.data)
-    })
+    // console.log(await this.tokenCacheService.getAllCacheKeys());
+    // console.log(service.axiosRef.interceptors);
+    // const jwtService = await this.httpFactoryService.getJwtService(session)
+    // jwtService.get('/gateway/api/system/config/search').then(result => {
+    //   console.log(result.data)
+    // })
 
     return resp;
   }
