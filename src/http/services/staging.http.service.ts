@@ -5,13 +5,10 @@ import { Injectable } from '@nestjs/common';
 
 import { HttpAbstractService } from './http.abstract.service';
 import { firstValueFrom, Observable } from 'rxjs';
-import {
-  AxiosRequestConfig,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-} from 'axios';
-import { CmsSession, CommonResult, ErrorPromise } from '@/common';
+import { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import { CommonResult } from '@/common';
 import { Utils } from '@/common/utils';
+import { CodeEnum } from '@/common/enum';
 
 @Injectable()
 export class StagingHttpService extends HttpAbstractService {
@@ -22,8 +19,8 @@ export class StagingHttpService extends HttpAbstractService {
           config.headers['cloudparams'] =
             // TODO 这里应该使用的是登录第三方的用户和店铺ID做key值,而不是当前session的用户
             // 应该使用的是initConfig获取到的数据库的用户名和店铺ID
-            (await this.tokenCacheService.getTokenCache('supervisor-super')) ??
-            '';
+            (await this.httpServiceCacheService.getServiceToken(this.options))
+              ?.credential ?? '';
         }
         config.headers['language'] = this.session?.language ?? 'ZH'; // 后期再考虑翻译吧
         return config;
@@ -32,11 +29,6 @@ export class StagingHttpService extends HttpAbstractService {
         return Promise.reject(error);
       },
     );
-  }
-
-  initConfig(session: CmsSession, config: AxiosRequestConfig = {}) {
-    this.session = session;
-    this.service.defaults.baseURL = config.baseURL;
   }
 
   responseResult(
@@ -56,9 +48,8 @@ export class StagingHttpService extends HttpAbstractService {
 
   private async loginAction(targetRequest: Observable<AxiosResponse>) {
     const loginParams = {
-      userid: 'Supervisor',
-      password:
-        '73d1b1b1bc1dabfb97f216d897b7968e44b06457920f00f2dc6c1ed3be25ad4c',
+      userid: this.options.userName,
+      password: this.options.password,
     };
     // TODO 这里还缺少重试的次数,报错最多重试3次
     const loginObservable = this.makeObservable(
@@ -72,10 +63,14 @@ export class StagingHttpService extends HttpAbstractService {
     if (err) {
       return Promise.reject(err);
     }
-    await this.tokenCacheService.setTokenCache(
-      'supervisor-super',
-      result.data['params']['session'],
-    );
+    const respData = result.data;
+    if (302 !== respData.code) {
+      // TODO 这个错误需要重新思考处理,如果密码错误时
+      return Promise.reject(result);
+    }
+    await this.httpServiceCacheService.setServiceToken(this.options, {
+      credential: result.data['params']['session'],
+    });
     const [errResp, respResult] = await Utils.toPromise(
       firstValueFrom(targetRequest),
     );

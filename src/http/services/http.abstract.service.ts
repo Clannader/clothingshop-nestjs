@@ -11,26 +11,39 @@ import Axios, {
 } from 'axios';
 import { Observable, firstValueFrom } from 'rxjs';
 
-import { TokenCacheService } from '@/cache/services';
+import { HttpServiceCacheService } from '@/cache/services';
 import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
+import { ServiceOptions } from '../http.types';
 import { Utils } from '@/common/utils';
-import { CmsSession, ErrorPromise } from '@/common';
+import { CmsSession } from '@/common';
 
 @Injectable()
 export abstract class HttpAbstractService {
   public session: CmsSession;
+  public options: ServiceOptions;
 
   public constructor(
     @Inject(AXIOS_INSTANCE_TOKEN)
     protected readonly service: AxiosInstance,
 
     @Inject()
-    protected readonly tokenCacheService: TokenCacheService,
+    protected readonly httpServiceCacheService: HttpServiceCacheService,
+  ) {}
+
+  initConfig(
+    session: CmsSession,
+    options: ServiceOptions,
+    config?: AxiosRequestConfig,
   ) {
+    // axios的对象是同一个,如果多次使用拦截器会把其他实现类的也add进去了
+    // 使用Scope.TRANSIENT就可以每次注入都是新的对象了
+    // this.service.interceptors.request.clear();
+    // this.service.interceptors.response.clear();
+    this.session = session;
+    this.options = options;
+    this.service.defaults.baseURL = config.baseURL;
     this.initInterceptor();
   }
-
-  abstract initConfig(session: CmsSession, config?: AxiosRequestConfig): void;
 
   abstract initInterceptor(): void;
 
@@ -89,11 +102,7 @@ export abstract class HttpAbstractService {
     config?: AxiosRequestConfig<D>,
   ): Promise<AxiosResponse<T>> {
     const getObservable = this.makeObservable<T>(this.service.get, url, config);
-    const [err, result] = await Utils.toPromise(firstValueFrom(getObservable));
-    if (err) {
-      return Promise.reject(err);
-    }
-    return this.responseResult(getObservable, result);
+    return this.requestToPromise(getObservable);
   }
 
   post<T = any>(url: string): Promise<AxiosResponse<T>>;
@@ -114,11 +123,7 @@ export abstract class HttpAbstractService {
       data,
       config,
     );
-    const [err, result] = await Utils.toPromise(firstValueFrom(postObservable));
-    if (err) {
-      return Promise.reject(err);
-    }
-    return this.responseResult(postObservable, result);
+    return this.requestToPromise(postObservable);
   }
 
   delete<T = any>(url: string): Promise<AxiosResponse<T>>;
@@ -139,13 +144,7 @@ export abstract class HttpAbstractService {
       data,
       config,
     );
-    const [err, result] = await Utils.toPromise(
-      firstValueFrom(deleteObservable),
-    );
-    if (err) {
-      return Promise.reject(err);
-    }
-    return this.responseResult(deleteObservable, result);
+    return this.requestToPromise(deleteObservable);
   }
 
   put<T = any>(url: string): Promise<AxiosResponse<T>>;
@@ -166,10 +165,16 @@ export abstract class HttpAbstractService {
       data,
       config,
     );
-    const [err, result] = await Utils.toPromise(firstValueFrom(putObservable));
+    return this.requestToPromise(putObservable);
+  }
+
+  private async requestToPromise<T>(
+    targetRequest: Observable<AxiosResponse<T>>,
+  ): Promise<AxiosResponse<T>> {
+    const [err, result] = await Utils.toPromise(firstValueFrom(targetRequest));
     if (err) {
       return Promise.reject(err);
     }
-    return this.responseResult(putObservable, result);
+    return this.responseResult(targetRequest, result);
   }
 }
