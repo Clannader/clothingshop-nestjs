@@ -37,7 +37,7 @@ import {
 // import { cloneClass } from './utils/test.utils';
 import { UserSessionDto } from '@/user/dto';
 import { XmlInterceptor } from '@/interceptor/xml';
-import { MemoryCacheService } from '@/cache/services';
+import { MemoryCacheService, TokenCacheService } from '@/cache/services';
 import {
   AdminSchemaService,
   SystemDataSchemaService,
@@ -84,6 +84,9 @@ export class TestController {
 
   @Inject()
   private readonly httpFactoryService: HttpFactoryService;
+
+  @Inject()
+  protected readonly tokenCacheService: TokenCacheService;
 
   private readonly logger = new AopLogger(TestController.name);
 
@@ -294,6 +297,8 @@ export class TestController {
         console.log(respResult.data.config);
       }
     }
+    console.log(await this.tokenCacheService.getAllCacheKeys());
+    console.log(service.axiosRef.interceptors);
 
     return resp;
   }

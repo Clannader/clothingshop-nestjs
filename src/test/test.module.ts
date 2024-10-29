@@ -7,6 +7,7 @@ import { AdminSchemaModule, SystemDataSchemaModule } from '@/entities/modules';
 import { TestService } from './test.service';
 import { AnimalFactoryModule } from './abstract';
 import { HttpFactoryModule } from '@/http';
+import { TokenCacheModule } from '@/cache/modules';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { HttpFactoryModule } from '@/http';
     SystemDataSchemaModule,
     AnimalFactoryModule,
     HttpFactoryModule,
+    TokenCacheModule,
   ],
   controllers: [TestController],
   providers: [TestService],
