@@ -8,7 +8,6 @@ import { firstValueFrom, Observable } from 'rxjs';
 import { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { CommonResult } from '@/common';
 import { Utils } from '@/common/utils';
-import { CodeEnum } from '@/common/enum';
 
 @Injectable()
 export class StagingHttpService extends HttpAbstractService {
