@@ -10,6 +10,7 @@ import { JwtHttpService } from './jwt.http.service';
 import type { HttpAbstractService } from './http.abstract.service';
 import { CmsSession } from '@/common';
 import { AxiosRequestConfig } from 'axios';
+import { ServiceOptions, ServiceType } from '../http.types';
 
 @Injectable()
 export class HttpFactoryService {
@@ -22,27 +23,36 @@ export class HttpFactoryService {
   @Inject()
   private readonly jwtHttpService: JwtHttpService;
 
-  getHttpService(session: CmsSession, shopType: string): HttpAbstractService {
+  getHttpService(session: CmsSession, shopType: ServiceType): HttpAbstractService {
     // TODO 以后这里传入session,等各种参数,以及查库操作,并且存缓存
     // 每种类型的每个用户存一个独立的Service,然后通过service的初始化config等覆盖公共配置
     // 这样实现类就可以获取到不同的配置了
     let httpService: HttpAbstractService;
     let config: AxiosRequestConfig = {};
+    const options: ServiceOptions = {
+      serviceType: shopType,
+    };
     if (shopType === 'localhost') {
       httpService = this.localhostHttpService;
       config = {
         baseURL: 'http://localhost:5000',
       };
+      options.userName = 'Supervisor'
+      options.password = '043a718774c572bd8a25adbeb1bfcd5c0256ae11cecf9f9c3f925d0e52beaf89'
     } else if (shopType === 'staging') {
       httpService = this.stagingHttpService;
       config = {
         baseURL: 'http://localhost:3000',
       };
+      options.userName = 'Supervisor'
+      options.password = '73d1b1b1bc1dabfb97f216d897b7968e44b06457920f00f2dc6c1ed3be25ad4c'
     } else if (shopType === 'jwt') {
       httpService = this.jwtHttpService;
       config = {
         baseURL: 'http://localhost:5000',
       };
+      options.userName = 'Supervisor'
+      options.password = '043a718774c572bd8a25adbeb1bfcd5c0256ae11cecf9f9c3f925d0e52beaf89'
     } else {
       throw new Error(`Cannot find http service instance: ${shopType}`);
     }
@@ -50,7 +60,7 @@ export class HttpFactoryService {
     // axios的对象是同一个,如果多次使用拦截器会把其他实现类的也add进去了
     // httpService.axiosRef.interceptors.request.clear();
     // httpService.axiosRef.interceptors.response.clear();
-    httpService.initConfig(session, config);
+    httpService.initConfig(session, options, config);
     return httpService;
   }
 

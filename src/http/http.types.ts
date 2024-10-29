@@ -5,6 +5,6 @@ export type ServiceType = 'localhost' | 'staging' | 'jwt';
 
 export type ServiceOptions = {
   serviceType: ServiceType;
-  userName: string;
-  password: string;
+  userName?: string;
+  password?: string;
 }
