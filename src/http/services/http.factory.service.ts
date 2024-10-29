@@ -10,17 +10,16 @@ import { JwtHttpService } from './jwt.http.service';
 import type { HttpAbstractService } from './http.abstract.service';
 import { CmsSession } from '@/common';
 import { AxiosRequestConfig } from 'axios';
-import { Localhost_Token, Staging_Token, Jwt_Token } from '../http.constants';
 
 @Injectable()
 export class HttpFactoryService {
-  @Inject(Localhost_Token)
+  @Inject()
   private readonly localhostHttpService: LocalhostHttpService;
 
-  @Inject(Staging_Token)
+  @Inject()
   private readonly stagingHttpService: StagingHttpService;
 
-  @Inject(Jwt_Token)
+  @Inject()
   private readonly jwtHttpService: JwtHttpService;
 
   getHttpService(session: CmsSession, shopType: string): HttpAbstractService {
