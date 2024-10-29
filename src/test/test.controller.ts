@@ -301,7 +301,7 @@ export class TestController {
     console.log(service.axiosRef.interceptors);
     const jwtService = await this.httpFactoryService.getJwtService(session)
     jwtService.get('/gateway/api/system/config/search').then(result => {
-      console.log(result)
+      console.log(result.data)
     })
 
     return resp;
