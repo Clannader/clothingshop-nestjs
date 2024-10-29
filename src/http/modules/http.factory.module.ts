@@ -1,15 +1,15 @@
 /**
  * Create by oliver.wu 2024/10/25
  */
-import { Module } from '@nestjs/common';
+import { Module, Scope } from '@nestjs/common';
 
 import { TokenCacheModule } from '@/cache/modules';
 
 import {
   HttpFactoryService,
+  JwtHttpService,
   LocalhostHttpService,
   StagingHttpService,
-  JwtHttpService,
 } from '../services';
 import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
 import Axios from 'axios';
@@ -23,6 +23,7 @@ import * as keepAliveHttpAgent from 'agentkeepalive';
     StagingHttpService,
     JwtHttpService,
     {
+      scope: Scope.TRANSIENT,
       provide: AXIOS_INSTANCE_TOKEN,
       useFactory: () => {
         const httpOptions: keepAliveHttpAgent.HttpOptions = {
