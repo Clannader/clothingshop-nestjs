@@ -69,6 +69,7 @@ export class JwtHttpService extends HttpAbstractService {
     }
     const respData = result.data;
     if (CodeEnum.SUCCESS !== respData.code) {
+      // TODO 这个错误需要重新思考处理,如果密码错误时
       return Promise.reject(result);
     }
     await this.httpServiceCacheService.setServiceToken(this.options, {
