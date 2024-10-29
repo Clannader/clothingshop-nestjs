@@ -23,7 +23,7 @@ import * as keepAliveHttpAgent from 'agentkeepalive';
     StagingHttpService,
     JwtHttpService,
     {
-      scope: Scope.TRANSIENT,
+      scope: Scope.TRANSIENT, // 每次注入时都是一个新的对象
       provide: AXIOS_INSTANCE_TOKEN,
       useFactory: () => {
         const httpOptions: keepAliveHttpAgent.HttpOptions = {

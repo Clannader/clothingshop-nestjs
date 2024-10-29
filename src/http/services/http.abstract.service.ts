@@ -13,12 +13,14 @@ import { Observable, firstValueFrom } from 'rxjs';
 
 import { TokenCacheService } from '@/cache/services';
 import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
+import { ServiceOptions } from '../http.types';
 import { Utils } from '@/common/utils';
-import { CmsSession, ErrorPromise } from '@/common';
+import { CmsSession } from '@/common';
 
 @Injectable()
 export abstract class HttpAbstractService {
   public session: CmsSession;
+  public options: ServiceOptions;
 
   public constructor(
     @Inject(AXIOS_INSTANCE_TOKEN)
@@ -28,12 +30,13 @@ export abstract class HttpAbstractService {
     protected readonly tokenCacheService: TokenCacheService,
   ) {}
 
-  initConfig(session: CmsSession, config?: AxiosRequestConfig) {
+  initConfig(session: CmsSession, options: ServiceOptions, config?: AxiosRequestConfig) {
     // axios的对象是同一个,如果多次使用拦截器会把其他实现类的也add进去了
     // 使用Scope.TRANSIENT就可以每次注入都是新的对象了
     // this.service.interceptors.request.clear();
     // this.service.interceptors.response.clear();
     this.session = session;
+    this.options = options;
     this.service.defaults.baseURL = config.baseURL;
     this.initInterceptor();
   }
