@@ -8,6 +8,7 @@ import { TestService } from './test.service';
 import { AnimalFactoryModule } from './abstract';
 import { HttpFactoryModule } from '@/http';
 import { TokenCacheModule } from '@/cache/modules';
+import { TestInterfacesModule } from './interfaces';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { TokenCacheModule } from '@/cache/modules';
     AnimalFactoryModule,
     HttpFactoryModule,
     TokenCacheModule,
+    TestInterfacesModule,
   ],
   controllers: [TestController],
   providers: [TestService],

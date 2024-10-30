@@ -50,6 +50,7 @@ import { AnimalFactory, Animal } from './abstract';
 import { HttpFactoryService, ServiceType } from '@/http';
 import { RespTimeZoneAllDto } from '@/system/dto';
 import { HttpInterceptor } from '@/interceptor/http';
+import { PersonObj, StudentObj, TeacherObj } from '@/test/interfaces';
 
 @ApiCommon()
 @Controller('/cms')
@@ -87,6 +88,15 @@ export class TestController {
 
   @Inject()
   protected readonly tokenCacheService: TokenCacheService;
+
+  @Inject()
+  private readonly personObj: PersonObj;
+
+  @Inject()
+  private readonly studentObj: StudentObj;
+
+  @Inject()
+  private readonly teacherObj: TeacherObj;
 
   private readonly logger = new AopLogger(TestController.name);
 
@@ -299,6 +309,8 @@ export class TestController {
       }
     }
     console.timeEnd('耗时');
+    this.personObj.getYourAreName(this.teacherObj)
+    this.personObj.getYourAreName(this.studentObj)
     // console.log(await this.tokenCacheService.getAllCacheKeys());
     // console.log(service.axiosRef.interceptors);
     // const jwtService = await this.httpFactoryService.getJwtService(session)
