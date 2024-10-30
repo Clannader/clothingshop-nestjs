@@ -54,20 +54,26 @@ export abstract class HttpAbstractService {
         config.fetchOptions = {
           startTime: Date.now(),
         };
-        return config
-      }
-    )
+        return config;
+      },
+    );
     this.service.interceptors.response.use(
       (response) => {
-        console.log(response.config.baseURL + response.config.url + '耗时: ' + (Date.now() - response.config.fetchOptions.startTime) + 'ms');
+        console.log(
+          response.config.baseURL +
+            response.config.url +
+            '耗时: ' +
+            (Date.now() - response.config.fetchOptions.startTime) +
+            'ms',
+        );
         return Promise.resolve(response);
       },
       (error) => {
         // 如果错误也需要计算耗时
         console.log(Date.now() - error.config.fetchOptions.startTime);
         return Promise.reject(error);
-      }
-    )
+      },
+    );
   }
 
   abstract initInterceptor(): void;
