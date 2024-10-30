@@ -30,7 +30,7 @@ import * as tunnel from 'tunnel';
         const httpOptions: KeepAliveHttpAgent.HttpOptions = {
           maxSockets: 100, // TODO 后期可以通过config.ini配置
           maxFreeSockets: 10,
-          freeSocketKeepAliveTimeout: 30 * 1000, // free socket keepalive for 30 seconds
+          freeSocketTimeout: 30 * 1000, // free socket keepalive for 30 seconds
           keepAlive: true,
         };
         const httpsOptions: KeepAliveHttpAgent.HttpsOptions = {
