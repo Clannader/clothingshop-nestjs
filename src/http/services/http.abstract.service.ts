@@ -59,7 +59,7 @@ export abstract class HttpAbstractService {
     )
     this.service.interceptors.response.use(
       (response) => {
-        console.log(response.config.baseURL + response.config.url + '耗时: ' + (Date.now() - response.config.fetchOptions.startTime));
+        console.log(response.config.baseURL + response.config.url + '耗时: ' + (Date.now() - response.config.fetchOptions.startTime) + 'ms');
         return Promise.resolve(response);
       },
       (error) => {
