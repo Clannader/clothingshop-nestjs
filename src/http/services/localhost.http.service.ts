@@ -24,9 +24,6 @@ export class LocalhostHttpService extends HttpAbstractService {
               ?.credential ?? '';
         }
         config.headers['language'] = this.session?.language ?? 'ZH'; // 后期再考虑翻译吧
-        config.fetchOptions = {
-          startTime: Date.now(),
-        };
         return config;
       },
       (error) => {
@@ -36,12 +33,9 @@ export class LocalhostHttpService extends HttpAbstractService {
 
     this.service.interceptors.response.use(
       (response) => {
-        console.log(response.config.baseURL + response.config.url + '耗时: ' + (Date.now() - response.config.fetchOptions.startTime));
         return Promise.resolve(response);
       },
       (error) => {
-        // 如果错误也需要计算耗时
-        console.log(Date.now() - error.config.fetchOptions.startTime);
         return Promise.reject(error);
       },
     );
