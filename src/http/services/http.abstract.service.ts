@@ -8,6 +8,7 @@ import Axios, {
   AxiosResponse,
   AxiosRequestConfig,
   CancelTokenSource,
+  InternalAxiosRequestConfig,
 } from 'axios';
 import { Observable, firstValueFrom } from 'rxjs';
 
@@ -43,7 +44,36 @@ export abstract class HttpAbstractService {
     this.options = options;
     this.service.defaults.baseURL = config.baseURL;
     this.service.defaults.proxy = config.proxy;
+    this.initGlobalInterceptor();
     this.initInterceptor();
+  }
+
+  private initGlobalInterceptor(): void {
+    this.service.interceptors.request.use(
+      (config: InternalAxiosRequestConfig) => {
+        config.fetchOptions = {
+          startTime: Date.now(),
+        };
+        return config;
+      },
+    );
+    this.service.interceptors.response.use(
+      (response) => {
+        console.log(
+          response.config.baseURL +
+            response.config.url +
+            '耗时: ' +
+            (Date.now() - response.config.fetchOptions.startTime) +
+            'ms',
+        );
+        return Promise.resolve(response);
+      },
+      (error) => {
+        // 如果错误也需要计算耗时
+        console.log(Date.now() - error.config.fetchOptions.startTime);
+        return Promise.reject(error);
+      },
+    );
   }
 
   abstract initInterceptor(): void;
@@ -169,7 +199,7 @@ export abstract class HttpAbstractService {
     return this.requestToPromise(putObservable);
   }
 
-  private async requestToPromise<T>(
+  protected async requestToPromise<T>(
     targetRequest: Observable<AxiosResponse<T>>,
   ): Promise<AxiosResponse<T>> {
     const [err, result] = await Utils.toPromise(firstValueFrom(targetRequest));

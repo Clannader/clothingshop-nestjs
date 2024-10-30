@@ -26,7 +26,7 @@ export class HttpFactoryService {
   private readonly jwtHttpService: JwtHttpService;
 
   @Inject()
-  protected readonly httpServiceCacheService: HttpServiceCacheService;
+  private readonly httpServiceCacheService: HttpServiceCacheService;
 
   async getHttpService(
     session: CmsSession,
@@ -92,6 +92,7 @@ export class HttpFactoryService {
       } else if (shopType === 'jwt') {
         httpService = this.jwtHttpService;
       }
+      // TODO 考虑每次调用时如果用户名和密码被修改,得等缓存失效
       httpService.initConfig(session, options, config);
       const cacheValue: ServiceCache = {
         service: httpService,

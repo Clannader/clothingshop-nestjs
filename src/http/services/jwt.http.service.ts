@@ -76,13 +76,7 @@ export class JwtHttpService extends HttpAbstractService {
       accessToken: result.data['accessToken'],
       refreshToken: result.data['refreshToken'],
     });
-    const [errResp, respResult] = await Utils.toPromise(
-      firstValueFrom(targetRequest),
-    );
-    if (errResp) {
-      return Promise.reject(errResp);
-    }
-    return Promise.resolve(respResult);
+    return this.requestToPromise(targetRequest);
   }
 
   private async refreshToken(targetRequest: Observable<AxiosResponse>) {
@@ -115,12 +109,6 @@ export class JwtHttpService extends HttpAbstractService {
       accessToken: result.data['accessToken'],
       refreshToken: result.data['refreshToken'],
     });
-    const [errResp, respResult] = await Utils.toPromise(
-      firstValueFrom(targetRequest),
-    );
-    if (errResp) {
-      return Promise.reject(errResp);
-    }
-    return Promise.resolve(respResult);
+    return this.requestToPromise(targetRequest);
   }
 }

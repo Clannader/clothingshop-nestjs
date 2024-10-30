@@ -30,7 +30,7 @@ import * as tunnel from 'tunnel';
         const httpOptions: KeepAliveHttpAgent.HttpOptions = {
           maxSockets: 100, // TODO 后期可以通过config.ini配置
           maxFreeSockets: 10,
-          freeSocketKeepAliveTimeout: 30 * 1000, // free socket keepalive for 30 seconds
+          freeSocketTimeout: 30 * 1000, // free socket keepalive for 30 seconds
           keepAlive: true,
         };
         const httpsOptions: KeepAliveHttpAgent.HttpsOptions = {
@@ -43,8 +43,10 @@ import * as tunnel from 'tunnel';
         // 如果代理不通,可换成tunnel
         // const tunnelingAgent = tunnel.httpOverHttp({
         //   maxSockets: 100,
+        //   maxFreeSockets: 10,
+        //   keepAlive: true,
         //   proxy: {
-        //     host: '10.3.8.50',
+        //     host: 'localhost',
         //     port: 3000,
         //   }
         // })

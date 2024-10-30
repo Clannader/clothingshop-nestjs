@@ -269,6 +269,7 @@ export class TestController {
       <ServiceType>params.testField,
     );
     let err, respResult;
+    console.time('耗时');
     if (params.testField === 'localhost') {
       [err, respResult] = await Utils.toPromise(
         service.get<RespTimeZoneAllDto>('/cms/api/timeZone/allList'),
@@ -297,6 +298,7 @@ export class TestController {
         console.log(respResult.data.config);
       }
     }
+    console.timeEnd('耗时');
     // console.log(await this.tokenCacheService.getAllCacheKeys());
     // console.log(service.axiosRef.interceptors);
     // const jwtService = await this.httpFactoryService.getJwtService(session)
