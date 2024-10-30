@@ -26,7 +26,7 @@ export class HttpFactoryService {
   private readonly jwtHttpService: JwtHttpService;
 
   @Inject()
-  protected readonly httpServiceCacheService: HttpServiceCacheService;
+  private readonly httpServiceCacheService: HttpServiceCacheService;
 
   async getHttpService(
     session: CmsSession,
