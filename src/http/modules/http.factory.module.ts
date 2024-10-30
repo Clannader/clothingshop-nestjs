@@ -43,8 +43,10 @@ import * as tunnel from 'tunnel';
         // 如果代理不通,可换成tunnel
         // const tunnelingAgent = tunnel.httpOverHttp({
         //   maxSockets: 100,
+        //   maxFreeSockets: 10,
+        //   keepAlive: true,
         //   proxy: {
-        //     host: '10.3.8.50',
+        //     host: 'localhost',
         //     port: 3000,
         //   }
         // })
