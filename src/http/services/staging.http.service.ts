@@ -70,12 +70,6 @@ export class StagingHttpService extends HttpAbstractService {
     await this.httpServiceCacheService.setServiceToken(this.options, {
       credential: result.data['params']['session'],
     });
-    const [errResp, respResult] = await Utils.toPromise(
-      firstValueFrom(targetRequest),
-    );
-    if (errResp) {
-      return Promise.reject(errResp);
-    }
-    return Promise.resolve(respResult);
+    return this.requestToPromise(targetRequest);
   }
 }

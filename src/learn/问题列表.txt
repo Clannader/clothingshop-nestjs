@@ -23,6 +23,7 @@ npm warn deprecated vis@4.21.0: Please consider using https://github.com/visjs
 5.思考如何定义内部值和对外值,参考java的@JsonProperty(value="status"),swagger定义res_status,但是返回status,参考使用class-transformer
 确实需要考虑序列化和反序列化的问题,不管是req还是resp都可以做到字段的隐藏和修改 √
 6.测试每天凌晨0点的定时器功能
-7.nestjs/axios 连接池agentkeepalive 代理tunnel-agent
+7.nestjs/axios 连接池agentkeepalive 代理tunnel-agent √
 8.是否考虑每个表都有一个更新时间的字段
 9.多台服务器如何同步相同的某个时间
+10.请求服务类还缺少写请求日志的逻辑,缺少重连的机制

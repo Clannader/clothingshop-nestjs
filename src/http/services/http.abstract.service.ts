@@ -193,7 +193,7 @@ export abstract class HttpAbstractService {
     return this.requestToPromise(putObservable);
   }
 
-  private async requestToPromise<T>(
+  protected async requestToPromise<T>(
     targetRequest: Observable<AxiosResponse<T>>,
   ): Promise<AxiosResponse<T>> {
     const [err, result] = await Utils.toPromise(firstValueFrom(targetRequest));
