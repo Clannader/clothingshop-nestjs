@@ -19,11 +19,13 @@ export class TraceIdCacheService {
 
   async setTraceIdCache(session: CmsSession, traceId: string) {
     await this.updateTraceIdCache(session, traceId);
-    process.send({
-      notice: 'updateTraceIdCache',
-      key: session,
-      value: traceId,
-    });
+    if (this.configService.get<boolean>('clusterServer')) {
+      process.send({
+        notice: 'updateTraceIdCache',
+        key: session,
+        value: traceId,
+      });
+    }
   }
 
   async updateTraceIdCache(session: CmsSession, traceId: string) {
