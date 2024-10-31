@@ -35,6 +35,7 @@ import { MongooseConfigService } from './dao';
 import { SessionMiddleware } from './middleware';
 import * as bodyParser from 'body-parser';
 import { rateLimit, MemoryStore } from 'express-rate-limit';
+import { SyncUpdateCacheService } from '@/cache/services';
 // import * as csurf from 'csurf';
 // import * as fs from 'fs';
 
@@ -61,6 +62,9 @@ export async function bootstrap() {
   const port = config.get<number>('httpPort', 3000);
   const hostName = config.get<string>('hostName', 'http://localhost:3000');
   const mongooseService = app.get<MongooseConfigService>(MongooseConfigService);
+  const syncUpdateCacheService = app.get<SyncUpdateCacheService>(
+    SyncUpdateCacheService,
+  );
 
   app.use(helmet());
   app.disable('x-powered-by'); // 还是有效果的,一旦用了helmet,框架自动帮去掉这个头了
@@ -175,6 +179,7 @@ export async function bootstrap() {
     return server;
   });
   server.keepAliveTimeout = 10 * 1000; // 设置服务器keep alive 为10s,与客户端TCP保持10s长连接无需握手
+  syncUpdateCacheService.startListening();
 }
 
 //处理未知的报错，防止服务器塌了

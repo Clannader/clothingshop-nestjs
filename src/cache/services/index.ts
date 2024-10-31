@@ -5,3 +5,4 @@ export * from './memory.cache.service';
 export * from './token.cache.service';
 export * from './traceId.cache.service';
 export * from './httpService.cache.service';
+export * from './syncUpdate.cache.service';

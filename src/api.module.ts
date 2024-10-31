@@ -19,11 +19,13 @@ import { MongooseConfigModule } from './dao';
 import { AopAspectModule } from './interceptor/aop';
 import { SwaggerModule } from './swagger.module';
 import { TasksListModule } from '@/tasks';
+import { SyncUpdateCacheModule } from '@/cache/modules';
 
 @Module({
   imports: [
     CommonModule,
     TasksListModule,
+    SyncUpdateCacheModule,
     ConfigModule.register({
       iniFilePath: join(process.cwd(), '/config/config.ini'),
       envFilePath:

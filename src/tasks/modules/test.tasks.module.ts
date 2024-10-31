@@ -5,9 +5,10 @@ import { Module } from '@nestjs/common';
 
 import { TestTasksService } from '../services';
 import { SequenceSchemaModule, AdminLogSchemaModule } from '@/entities/modules';
+import { TokenCacheModule } from '@/cache/modules';
 
 @Module({
-  imports: [SequenceSchemaModule, AdminLogSchemaModule],
+  imports: [SequenceSchemaModule, AdminLogSchemaModule, TokenCacheModule],
   providers: [TestTasksService],
 })
 export class TestTasksModule {}

@@ -18,6 +18,17 @@ export class TraceIdCacheService {
   private readonly configService: ConfigService;
 
   async setTraceIdCache(session: CmsSession, traceId: string) {
+    await this.updateTraceIdCache(session, traceId);
+    if (this.configService.get<boolean>('clusterServer')) {
+      process.send({
+        notice: 'updateTraceIdCache',
+        key: session,
+        value: traceId,
+      });
+    }
+  }
+
+  async updateTraceIdCache(session: CmsSession, traceId: string) {
     if (Utils.isEmpty(traceId) || !/^\d{15}#\d+$/.test(traceId)) {
       return;
     }
