@@ -45,23 +45,26 @@ export async function clusterApp() {
 
     // 同步所有进程的缓存
     for (const id in cluster.workers) {
-      cluster.workers[id].on('message', function (msg: Record<string, any>) {
-        // 含有notice节点的说明是项目内置的命令
-        if (has(msg, 'notice')) {
-          // 当有其中一个进程收到消息,则往其他进程发送消息
-          for (const pid in cluster.workers) {
-            if (pid !== id) {
-              // 考虑序列化和反序列化到内存中存的问题,同步内存到其他进程后取出来无法使用
-              // 测试方法:某进程存在缓存后,kill掉该进程即可
-              // 原因是发送消息时内部代码进行了序列化,导致取出来的对象和发送的不一致了
-              cluster.workers[pid].send({
-                ...omit(msg, 'notice'),
-                action: msg.notice,
-              });
+      cluster.workers[id].on(
+        'message',
+        function (message: Record<string, any>) {
+          // 含有notice节点的说明是项目内置的命令
+          if (has(message, 'notice')) {
+            // 当有其中一个进程收到消息,则往其他进程发送消息
+            for (const pid in cluster.workers) {
+              if (pid !== id) {
+                // 考虑序列化和反序列化到内存中存的问题,同步内存到其他进程后取出来无法使用
+                // 测试方法:某进程存在缓存后,kill掉该进程即可
+                // 原因是发送消息时内部代码进行了序列化,导致取出来的对象和发送的不一致了
+                cluster.workers[pid].send({
+                  ...omit(message, 'notice'),
+                  action: message.notice,
+                });
+              }
             }
           }
-        }
-      });
+        },
+      );
     }
   } else {
     await bootstrap();
