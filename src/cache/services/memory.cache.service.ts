@@ -12,6 +12,15 @@ export class MemoryCacheService {
   private readonly cacheManager: Cache;
 
   async setMemoryCache(key: string, value: any) {
+    await this.updateMemoryCache(key, value);
+    process.send({
+      notice: 'updateMemoryCache',
+      key,
+      value,
+    });
+  }
+
+  async updateMemoryCache(key: string, value: any) {
     await this.cacheManager.set(key, value);
   }
 

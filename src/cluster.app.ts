@@ -9,6 +9,7 @@ const cluster = require('node:cluster'); // 用这个声明的话,又不是ts的
 import { availableParallelism } from 'node:os';
 import parseEnv from '@/lib/parseEnv';
 import { bootstrap } from './single.app';
+import { has, omit } from 'lodash';
 
 export async function clusterApp() {
   let numCPUs = availableParallelism();
@@ -41,6 +42,24 @@ export async function clusterApp() {
         `Sub-thread-worker ID:${worker.id} listening, processID : ${worker.process.pid}`,
       );
     });
+
+    // 同步所有进程的缓存
+    for (const id in cluster.workers) {
+      cluster.workers[id].on('message', function (msg: Record<string, any>) {
+        // 含有notice节点的说明是项目内置的命令
+        if (has(msg, 'notice')) {
+          // 当有其中一个进程收到消息,则往其他进程发送消息
+          for (const pid in cluster.workers) {
+            if (pid !== id) {
+              cluster.workers[pid].send({
+                ...omit(msg, 'notice'),
+                action: msg.notice,
+              });
+            }
+          }
+        }
+      });
+    }
   } else {
     await bootstrap();
     console.log(`Worker ID:${cluster.worker.id} started, Pid: ${process.pid}`);

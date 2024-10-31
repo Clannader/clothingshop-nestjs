@@ -19,6 +19,15 @@ export class HttpServiceCacheService {
   }
 
   async setHttpServiceCache(options: ServiceOptions, value: ServiceCache) {
+    await this.updateHttpServiceCache(options, value);
+    process.send({
+      notice: 'updateHttpServiceCache',
+      key: options,
+      value,
+    });
+  }
+
+  async updateHttpServiceCache(options: ServiceOptions, value: ServiceCache) {
     await this.cacheManager.set(this.getCacheKey(options), value);
   }
 

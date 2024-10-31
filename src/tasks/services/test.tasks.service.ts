@@ -10,6 +10,7 @@ import {
   SequenceSchemaService,
 } from '@/entities/services';
 import type { AdminLog } from '@/entities/schema';
+import { TokenCacheService } from '@/cache/services';
 
 // @ts-ignore
 const cluster = require('node:cluster');
@@ -22,31 +23,35 @@ export class TestTasksService {
   @Inject()
   private readonly adminLogSchemaService: AdminLogSchemaService;
 
+  @Inject()
+  private readonly tokenCacheService: TokenCacheService;
+
   @Interval(3000)
   async handleInterval() {
     // 自从mongodb全部使用await函数后,好像不会同时请求数据库了
+    const keys = await this.tokenCacheService.getAllCacheKeys();
     console.log(
-      `服务器ID: ${cluster.worker ? cluster.worker.id : 1}--------------------------`,
+      `服务器ID: ${cluster.worker ? cluster.worker.id : 1}--------------------------${keys}`,
     );
-    const [err, result] = await this.sequenceSchemaService
-      .getNextSequence(SequenceTypeEnum.Message)
-      .then((result) => [null, result])
-      .catch((err) => [err]);
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log(
-      `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, 序列号为:${result.sequenceId}`,
-    );
-    const logInfo: AdminLog = {
-      adminId: 'SYSTEM',
-      adminName: 'Supervisor',
-      content: `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, 序列号为:${result.sequenceId}`,
-      shopId: 'SYSTEM',
-      type: LogTypeEnum.Config,
-      traceId: Date.now().toString(),
-    };
-    await this.adminLogSchemaService.createUserLog(logInfo);
+    // const [err, result] = await this.sequenceSchemaService
+    //   .getNextSequence(SequenceTypeEnum.Message)
+    //   .then((result) => [null, result])
+    //   .catch((err) => [err]);
+    // if (err) {
+    //   console.error(err);
+    //   return;
+    // }
+    // console.log(
+    //   `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, 序列号为:${result.sequenceId}`,
+    // );
+    // const logInfo: AdminLog = {
+    //   adminId: 'SYSTEM',
+    //   adminName: 'Supervisor',
+    //   content: `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, 序列号为:${result.sequenceId}`,
+    //   shopId: 'SYSTEM',
+    //   type: LogTypeEnum.Config,
+    //   traceId: Date.now().toString(),
+    // };
+    // await this.adminLogSchemaService.createUserLog(logInfo);
   }
 }

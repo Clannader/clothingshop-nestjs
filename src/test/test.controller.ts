@@ -311,6 +311,7 @@ export class TestController {
     console.timeEnd('耗时');
     this.personObj.getYourAreName(this.teacherObj);
     this.personObj.getYourAreName(this.studentObj);
+    await this.tokenCacheService.setTokenCache('1111', '2222');
     // console.log(await this.tokenCacheService.getAllCacheKeys());
     // console.log(service.axiosRef.interceptors);
     // const jwtService = await this.httpFactoryService.getJwtService(session)

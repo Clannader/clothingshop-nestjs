@@ -30,3 +30,4 @@ npm warn deprecated vis@4.21.0: Please consider using https://github.com/visjs
 11.思考能否不通过@Inject()来实例化对象,并且能正常使用
 12.关于接口类,应该是定义了一个类,里面使用了某个接口,通过不同的业务实现这个接口,然后注入到那个类中体现不同的逻辑
 13.后期考虑axios请求时的错误区分是http错误还是请求返回值的code错误
+14.解决node:cluster的import问题

@@ -12,6 +12,15 @@ export class TokenCacheService {
   private readonly cacheManager: Cache;
 
   async setTokenCache(key: string, value: string) {
+    await this.updateTokenCache(key, value);
+    process.send({
+      notice: 'updateTokenCache',
+      key,
+      value,
+    });
+  }
+
+  async updateTokenCache(key: string, value: string) {
     await this.cacheManager.set(key, value);
   }
 
