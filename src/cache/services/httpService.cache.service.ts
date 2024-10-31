@@ -6,7 +6,6 @@ import { HTTP_SERVICE_CACHE_MANAGE } from '../cache.constants';
 
 import type { Cache } from 'cache-manager';
 import { ServiceOptions, ServiceCache } from '@/http';
-import type { HttpAbstractService } from '@/http';
 import { omit } from 'lodash';
 import { ConfigService } from '@/common/config';
 
@@ -39,11 +38,6 @@ export class HttpServiceCacheService {
 
   getHttpServiceCache(options: ServiceOptions) {
     return this.cacheManager.get<ServiceCache>(this.getCacheKey(options));
-  }
-
-  async getServiceCache(options: ServiceOptions): Promise<HttpAbstractService> {
-    const cache = await this.getHttpServiceCache(options);
-    return cache?.service;
   }
 
   async getServiceOptions(options: ServiceOptions): Promise<ServiceOptions> {
