@@ -4,11 +4,20 @@
 import { Module } from '@nestjs/common';
 
 import { TestTasksService } from '../services';
-import { SequenceSchemaModule, AdminLogSchemaModule } from '@/entities/modules';
+import {
+  SequenceSchemaModule,
+  AdminLogSchemaModule,
+  RightCodeGroupSchemaModule,
+} from '@/entities/modules';
 import { TokenCacheModule } from '@/cache/modules';
 
 @Module({
-  imports: [SequenceSchemaModule, AdminLogSchemaModule, TokenCacheModule],
+  imports: [
+    SequenceSchemaModule,
+    AdminLogSchemaModule,
+    TokenCacheModule,
+    RightCodeGroupSchemaModule,
+  ],
   providers: [TestTasksService],
 })
 export class TestTasksModule {}
