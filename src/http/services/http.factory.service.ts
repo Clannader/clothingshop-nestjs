@@ -102,7 +102,8 @@ export class HttpFactoryService {
     }
     // TODO 考虑每次调用时如果用户名和密码被修改,得等缓存失效
     // 这样写法会导致拦截器一直add进去,考虑同一个类型多个用户时的初始化问题,因为同步缓存不能发送对象,会被序列化,除非能解决这个难题
-    // 暂时这样写吧,以后测试还艰难着呢
+    // 暂时这样写吧,以后测试还艰难着呢,以后要测试同种类型的service会不会串
+    // 感觉这样写之后,上面的那个缓存好像没什么用了,毕竟每个service缓存只需要缓存凭证而已
     httpService.initConfig(session, options, config);
     return httpService;
   }
