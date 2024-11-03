@@ -4,7 +4,7 @@
 import { Module, Scope } from '@nestjs/common';
 
 import { HttpServiceCacheModule } from '@/cache/modules';
-
+import { ConfigService } from '@/common/config';
 import {
   HttpFactoryService,
   JwtHttpService,
@@ -26,9 +26,9 @@ import * as tunnel from 'tunnel';
     {
       scope: Scope.TRANSIENT, // 每次注入时都是一个新的对象
       provide: AXIOS_INSTANCE_TOKEN,
-      useFactory: () => {
+      useFactory: (config: ConfigService) => {
         const httpOptions: KeepAliveHttpAgent.HttpOptions = {
-          maxSockets: 100, // TODO 后期可以通过config.ini配置
+          maxSockets: config.get<number>('maxSockets', 100),
           maxFreeSockets: 10,
           freeSocketTimeout: 30 * 1000, // free socket keepalive for 30 seconds
           keepAlive: true,
@@ -64,6 +64,7 @@ import * as tunnel from 'tunnel';
           },
         });
       },
+      inject: [ConfigService]
     },
   ],
   exports: [HttpFactoryService],
