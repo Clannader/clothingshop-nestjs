@@ -64,7 +64,7 @@ import * as tunnel from 'tunnel';
           },
         });
       },
-      inject: [ConfigService]
+      inject: [ConfigService],
     },
   ],
   exports: [HttpFactoryService],
