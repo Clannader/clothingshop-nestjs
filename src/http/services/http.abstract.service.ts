@@ -20,8 +20,8 @@ import { CmsSession } from '@/common';
 
 @Injectable()
 export abstract class HttpAbstractService {
-  public session: CmsSession;
-  public options: ServiceOptions;
+  protected session: CmsSession;
+  protected options: ServiceOptions;
 
   public constructor(
     @Inject(AXIOS_INSTANCE_TOKEN)
@@ -44,6 +44,8 @@ export abstract class HttpAbstractService {
     this.options = options;
     this.service.defaults.baseURL = config.baseURL;
     this.service.defaults.proxy = config.proxy;
+    this.service.interceptors.request.clear();
+    this.service.interceptors.response.clear();
     this.initGlobalInterceptor();
     this.initInterceptor();
   }
@@ -76,9 +78,9 @@ export abstract class HttpAbstractService {
     );
   }
 
-  abstract initInterceptor(): void;
+  protected abstract initInterceptor(): void;
 
-  abstract responseResult<T>(
+  protected abstract responseResult<T>(
     targetRequest: Observable<AxiosResponse<T>>,
     respData: AxiosResponse<T>,
   ): Promise<AxiosResponse<T>>;

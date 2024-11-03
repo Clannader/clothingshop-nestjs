@@ -1,7 +1,7 @@
 /**
  * Create by oliver.wu 2024/10/29
  */
-import type { HttpAbstractService } from './services';
+// import type { HttpAbstractService } from './services';
 
 export type ServiceType = 'localhost' | 'staging' | 'jwt';
 
@@ -13,7 +13,7 @@ export type ServiceOptions = {
 };
 
 export type ServiceCache = {
-  service: HttpAbstractService;
+  // service: HttpAbstractService;
   options: ServiceOptions;
   credential?: string;
   accessToken?: string;
