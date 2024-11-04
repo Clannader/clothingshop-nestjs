@@ -82,10 +82,13 @@ export class MongooseConfigService implements MongooseOptionsFactory {
         this.connection = connection;
         return connection;
       },
-    }
+    };
     if (this.configService.get<boolean>('mongoDBSSL')) {
-      options.tls = true
-      options.tlsCAFile = join(this.configService.getPemPath(), this.configService.get<string>('mongoDBCaFileName'));
+      options.tls = true;
+      options.tlsCAFile = join(
+        this.configService.getPemPath(),
+        this.configService.get<string>('mongoDBCaFileName'),
+      );
     }
     return options;
   }

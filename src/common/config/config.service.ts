@@ -300,10 +300,10 @@ export class ConfigService {
 
   // 单独给这个INI设置一个方法获取
   getPemPath() {
-    const pemPathIni = this.get<string>('pemPath')
+    const pemPathIni = this.get<string>('pemPath');
     if (Utils.isEmpty(pemPathIni)) {
       return join(process.cwd(), 'pem');
     }
-    return pemPathIni
+    return pemPathIni;
   }
 }
