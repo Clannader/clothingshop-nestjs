@@ -9,6 +9,8 @@ import {
 import { ConfigService } from '@/common/config';
 import { Connection } from 'mongoose';
 import { monitorPlugin } from './plugins';
+import { join } from 'path';
+
 // import { MongodbLogger } from '@/logger';
 
 @Injectable()
@@ -25,7 +27,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
     // https://www.mongodb.com/zh-cn/docs/drivers/php/laravel-mongodb/v5.x/fundamentals/connection/connection-options/
     // https://www.mongodb.com/zh-cn/docs/drivers/csharp/current/fundamentals/connection/connection-options/
     // 代码默认10个连接池,每个连接池默认2个连接,如果开启集群,那么每个集群都会创建独立新的连接
-    return {
+    const options: MongooseModuleOptions = {
       uri: this.configService.getSecurityConfig('dbUrl'),
       retryDelay: 10 * 1000, // 重连的间隔时间10s
       retryAttempts: 30000, // 重连次数
@@ -80,7 +82,12 @@ export class MongooseConfigService implements MongooseOptionsFactory {
         this.connection = connection;
         return connection;
       },
-    };
+    }
+    if (this.configService.get<boolean>('mongoDBSSL')) {
+      options.tls = true
+      options.tlsCAFile = join(this.configService.getPemPath(), this.configService.get<string>('mongoDBCaFileName'));
+    }
+    return options;
   }
 
   getConnection() {
