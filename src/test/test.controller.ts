@@ -301,6 +301,26 @@ export class TestController {
       } else {
         console.log(respResult.data.total);
       }
+      // 并发异步
+      // await Promise.all([
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      // ]);
+      // 同步等待
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
     } else if (params.testField === 'jwt') {
       [err, respResult] = await Utils.toPromise(
         service.get('/gateway/api/system/config/search'),

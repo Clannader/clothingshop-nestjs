@@ -27,6 +27,10 @@ import * as tunnel from 'tunnel';
       scope: Scope.TRANSIENT, // 每次注入时都是一个新的对象
       provide: AXIOS_INSTANCE_TOKEN,
       useFactory: (config: ConfigService) => {
+        // 连接池测试方案需要测2种情况
+        // 1.工具并发100次,内部调用3-5个await不同请求
+        // 2.工具发送1次,内部并发调用5-10个请求,如果是await的话,都是使用一个连接
+        // 只有并发才能出现使用相同连接,并且需要使用单进程来测试,否则结果会不和预期一样
         const httpOptions: KeepAliveHttpAgent.HttpOptions = {
           maxSockets: config.get<number>('maxSockets', 100),
           maxFreeSockets: 10,
