@@ -4,14 +4,15 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 
-import { TestTasksModule } from './modules';
+import { TestTasksModule, SyncAllTasksModule } from './modules';
 
 @Module({
   imports: [
     ScheduleModule.forRoot({
-      intervals: false,
+      intervals: true,
     }),
     TestTasksModule,
+    SyncAllTasksModule,
   ],
 })
 export class TasksListModule {}

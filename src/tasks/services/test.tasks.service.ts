@@ -13,6 +13,7 @@ import {
 import type { AdminLog } from '@/entities/schema';
 import { TokenCacheService } from '@/cache/services';
 import * as moment from 'moment';
+import { TestIntervalName } from '../tasks.constants';
 
 // @ts-ignore
 const cluster = require('node:cluster');
@@ -31,7 +32,7 @@ export class TestTasksService {
   @Inject()
   private readonly tokenCacheService: TokenCacheService;
 
-  @Interval(15 * 1000)
+  @Interval(TestIntervalName, 15 * 1000)
   async handleInterval() {
     const workerId = cluster.worker ? cluster.worker.id : 1;
     const serverId = 1;
