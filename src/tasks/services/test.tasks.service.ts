@@ -4,7 +4,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 
-import { LogTypeEnum, SequenceTypeEnum } from '@/common/enum';
+// import { LogTypeEnum, SequenceTypeEnum } from '@/common/enum';
 import {
   AdminLogSchemaService,
   SequenceSchemaService,
@@ -12,6 +12,7 @@ import {
 } from '@/entities/services';
 import type { AdminLog } from '@/entities/schema';
 import { TokenCacheService } from '@/cache/services';
+import * as moment from 'moment';
 
 // @ts-ignore
 const cluster = require('node:cluster');
@@ -30,30 +31,34 @@ export class TestTasksService {
   @Inject()
   private readonly tokenCacheService: TokenCacheService;
 
-  @Interval(3000)
+  @Interval(15 * 1000)
   async handleInterval() {
     const workerId = cluster.worker ? cluster.worker.id : 1;
     const serverId = 1;
+
+    console.log(
+      `服务器ID: ${workerId}--------------------------${moment().format('YYYY-MM-DD HH:mm:ss,SSS')}`,
+    );
 
     // await this.rightCodeGroupSchemaService.getModel().create({
     //   groupCode: 'TEST',
     //   groupName: '测试组',
     //   rightCodes: []
     // })
-    const rightCodeGroupModel = this.rightCodeGroupSchemaService.getModel();
-    const where = {
-      groupCode: 'TEST',
-    };
-    const rightGroup = await rightCodeGroupModel.findOne(where);
-    const key = serverId + '-' + workerId;
-    console.log(key);
-    if (!rightGroup.rightCodes.includes(key)) {
-      await rightCodeGroupModel.updateOne(where, {
-        $push: {
-          rightCodes: key,
-        },
-      });
-    }
+    // const rightCodeGroupModel = this.rightCodeGroupSchemaService.getModel();
+    // const where = {
+    //   groupCode: 'TEST',
+    // };
+    // const rightGroup = await rightCodeGroupModel.findOne(where);
+    // const key = serverId + '-' + workerId;
+    // console.log(key);
+    // if (!rightGroup.rightCodes.includes(key)) {
+    //   await rightCodeGroupModel.updateOne(where, {
+    //     $push: {
+    //       rightCodes: key,
+    //     },
+    //   });
+    // }
 
     // 自从mongodb全部使用await函数后,好像不会同时请求数据库了
     // const value = await this.tokenCacheService.getTokenCache('1111');

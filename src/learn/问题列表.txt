@@ -34,3 +34,5 @@ npm warn deprecated vis@4.21.0: Please consider using https://github.com/visjs
 15.虽然可以同步内存了,但是如果内存是一个类,由于进程发送消息进行了序列化,导致取消息时,得到的对象不是发送时的一样,需要找模块包对类序列化
 16.研究process.nextTick,,setTimeout,setImmediate三个机制的使用
 17.研究@nestjs/schedule模块包的源代码
+18.研究nodejs的事件循环机制
+19.实现同步服务器消息代码,ini中配置所有服务器地址,顺便新增读取服务器日志功能,对服务器地址进行加密返回给前端,不考虑暴露地址

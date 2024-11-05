@@ -183,6 +183,7 @@ export async function bootstrap() {
   // 开始监听同步消息服务
   syncUpdateCacheService.startListening();
   // 启动完成写启动时间
+  // TODO 记录上一次启动时间,本次宕机时间
   config.set('serverStartDate', moment().format('YYYY-MM-DD HH:mm:ss,SSS'));
 }
 
