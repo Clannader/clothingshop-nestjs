@@ -32,7 +32,7 @@ export class TestTasksService {
   @Inject()
   private readonly tokenCacheService: TokenCacheService;
 
-  @Interval(TestIntervalName, 15 * 1000)
+  @Interval(TestIntervalName, 3 * 1000)
   async handleInterval() {
     const workerId = cluster.worker ? cluster.worker.id : 1;
     const serverId = 1;
