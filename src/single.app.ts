@@ -55,8 +55,10 @@ export async function bootstrap() {
   const serverOptions: NestApplicationOptions = {
     logger: aopLogger, // 这里应该是修改了底层代码用到的logger函数的调用
   };
+  // 原本想同时启用http和https的,但是发现按照官网上面的写法,服务是启动成功了,但是swagger不能显示
+  // 并且登录的业务也不能正常使用,暂时就这样留着吧,要么设置http,要么设置https,暂时不使用共存的机制吧
   const isHttps = parseEnv.read('startHttps') === 'true';
-  const httpProtocol = isHttps ? 'https' : 'http';
+  const protocol = isHttps ? 'https' : 'http';
   if (isHttps) {
     const pemPath = parseEnv.getPemPath();
     const privateKeyPemPath = join(pemPath, 'privateKey.pem');
@@ -74,8 +76,8 @@ export async function bootstrap() {
   );
 
   const config: ConfigService = app.get<ConfigService>(GLOBAL_CONFIG);
-  const port = config.get<number>('httpPort', 3000);
-  const hostName = config.get<string>('hostName', 'http://localhost:3000');
+  const httpPort = config.get<number>('httpPort', 3000);
+  const hostName = config.get<string>('hostName', 'localhost');
   const mongooseService = app.get<MongooseConfigService>(MongooseConfigService);
   const syncUpdateCacheService = app.get<SyncUpdateCacheService>(
     SyncUpdateCacheService,
@@ -150,7 +152,7 @@ export async function bootstrap() {
     // })
     // 要研究一下授权问题,发现有三种授权方式,但是怎么设置都不生效
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
-    .setContact('oliver.wu', `${hostName}/index`, '294473343@qq.com')
+    .setContact('oliver.wu', `/index`, '294473343@qq.com')
     .build();
   const swaggerOptions: SwaggerDocumentOptions = {
     operationIdFactory: (controllerKey: string, methodKey: string) => {
@@ -187,12 +189,12 @@ export async function bootstrap() {
     jsonDocumentUrl: 'swagger-ui/json', // 默认为swagger-ui-json,可以自定义更换
   });
 
-  const server = await app.listen(port).then((server) => {
+  const server = await app.listen(httpPort).then((server) => {
     aopLogger.log(
-      `Application is running on: ${httpProtocol}://${hostName}:${port}/swagger-ui`,
+      `Application is running on: ${protocol}://${hostName}:${httpPort}/swagger-ui`,
     );
     aopLogger.log(
-      `SwaggerJson is running on: ${httpProtocol}://${hostName}:${port}/swagger-ui/json`,
+      `SwaggerJson is running on: ${protocol}://${hostName}:${httpPort}/swagger-ui/json`,
     );
     aopLogger.log(`Node Version: ${process.version}`);
     return server;
