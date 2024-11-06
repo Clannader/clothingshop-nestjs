@@ -189,10 +189,10 @@ export async function bootstrap() {
 
   const server = await app.listen(port).then((server) => {
     aopLogger.log(
-      `Application is running on: ${httpProtocol}://${hostName}/swagger-ui`,
+      `Application is running on: ${httpProtocol}://${hostName}:${port}/swagger-ui`,
     );
     aopLogger.log(
-      `SwaggerJson is running on: ${httpProtocol}://${hostName}/swagger-ui/json`,
+      `SwaggerJson is running on: ${httpProtocol}://${hostName}:${port}/swagger-ui/json`,
     );
     aopLogger.log(`Node Version: ${process.version}`);
     return server;
