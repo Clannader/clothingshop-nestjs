@@ -13,7 +13,7 @@ import {
 import type { AdminLog } from '@/entities/schema';
 import { TokenCacheService } from '@/cache/services';
 import * as moment from 'moment';
-import { TestIntervalName } from '../tasks.constants';
+import { TestIntervalName, TestIntervalType } from '../tasks.constants';
 
 // @ts-ignore
 const cluster = require('node:cluster');
@@ -32,7 +32,7 @@ export class TestTasksService {
   @Inject()
   private readonly tokenCacheService: TokenCacheService;
 
-  @Interval(TestIntervalName, 3 * 1000)
+  @Interval(TestIntervalName, 8 * 1000)
   async handleInterval() {
     const workerId = cluster.worker ? cluster.worker.id : 1;
     const serverId = 1;
@@ -87,5 +87,13 @@ export class TestTasksService {
     //   traceId: Date.now().toString(),
     // };
     // await this.adminLogSchemaService.createUserLog(logInfo);
+  }
+
+  @Interval(TestIntervalType, 20 * 1000)
+  async handleTestInterval() {
+    const workerId = cluster.worker ? cluster.worker.id : 1;
+    console.log(
+      `第二种定时器: ${workerId}--------------------------${moment().format('YYYY-MM-DD HH:mm:ss,SSS')}`,
+    );
   }
 }
