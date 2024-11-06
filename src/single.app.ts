@@ -55,7 +55,9 @@ export async function bootstrap() {
   const serverOptions: NestApplicationOptions = {
     logger: aopLogger, // 这里应该是修改了底层代码用到的logger函数的调用
   };
-  if (parseEnv.read('startHttps') === 'true') {
+  const isHttps = parseEnv.read('startHttps') === 'true';
+  const httpProtocol = isHttps ? 'https' : 'http';
+  if (isHttps) {
     const pemPath = parseEnv.getPemPath();
     const privateKeyPemPath = join(pemPath, 'privateKey.pem');
     const certificatePemPath = join(pemPath, 'certificate.pem');
@@ -186,8 +188,12 @@ export async function bootstrap() {
   });
 
   const server = await app.listen(port).then((server) => {
-    aopLogger.log(`Application is running on: ${hostName}/swagger-ui`);
-    aopLogger.log(`SwaggerJson is running on: ${hostName}/swagger-ui/json`);
+    aopLogger.log(
+      `Application is running on: ${httpProtocol}://${hostName}/swagger-ui`,
+    );
+    aopLogger.log(
+      `SwaggerJson is running on: ${httpProtocol}://${hostName}/swagger-ui/json`,
+    );
     aopLogger.log(`Node Version: ${process.version}`);
     return server;
   });
