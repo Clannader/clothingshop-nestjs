@@ -5,6 +5,8 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { join } from 'path';
 import { ConfigModule } from './config.module';
 import { SECRET_CONFIG } from '../constants';
+import parseEnv from '@/lib/parseEnv';
+import { Utils } from '@/common/utils';
 
 @Module({})
 export class SecretConfigModule {
@@ -14,8 +16,12 @@ export class SecretConfigModule {
       // 如果注册过就不需要再加载了
       return SecretConfigModule.configModule;
     }
+    let pemPath = parseEnv.read('pemPath');
+    if (Utils.isEmpty(pemPath)) {
+      pemPath = join(process.cwd(), 'pem');
+    }
     SecretConfigModule.configModule = ConfigModule.register({
-      iniFilePath: join(process.cwd(), '/pem/secret.ini'),
+      iniFilePath: join(pemPath, 'secret.ini'),
       token: SECRET_CONFIG,
     });
     return SecretConfigModule.configModule;

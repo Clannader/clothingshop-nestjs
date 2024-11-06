@@ -36,6 +36,7 @@ import { SessionMiddleware } from './middleware';
 import * as bodyParser from 'body-parser';
 import { rateLimit, MemoryStore } from 'express-rate-limit';
 import { SyncUpdateCacheService } from '@/cache/services';
+import * as moment from 'moment';
 // import * as csurf from 'csurf';
 // import * as fs from 'fs';
 
@@ -179,7 +180,11 @@ export async function bootstrap() {
     return server;
   });
   server.keepAliveTimeout = 10 * 1000; // 设置服务器keep alive 为10s,与客户端TCP保持10s长连接无需握手
+  // 开始监听同步消息服务
   syncUpdateCacheService.startListening();
+  // 启动完成写启动时间
+  // TODO 记录上一次启动时间,本次宕机时间
+  config.set('serverStartDate', moment().format('YYYY-MM-DD HH:mm:ss,SSS'));
 }
 
 //处理未知的报错，防止服务器塌了

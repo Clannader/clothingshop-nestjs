@@ -12,6 +12,7 @@ import {
   CONFIG_SECRET,
 } from '../config/config.constants';
 import { Utils } from '../utils';
+import parseEnv from '@/lib/parseEnv';
 
 @Module({
   imports: [],
@@ -95,15 +96,19 @@ export class ConfigModule {
   }
 
   private static loadSecretFile(): Record<string, any> {
-    const secretPath = join(process.cwd(), '/pem/secret.ini');
+    let pemPath = parseEnv.read('pemPath');
+    if (Utils.isEmpty(pemPath)) {
+      pemPath = join(process.cwd(), 'pem');
+    }
+    const secretPath = join(pemPath, 'secret.ini');
     let config: Record<string, any> = {};
     if (fs.existsSync(secretPath)) {
       config = Object.assign(dotenv.parse(fs.readFileSync(secretPath)), config);
     } else {
       // 如果pem目录不存在则创建一个目录
-      const pemDir = join(process.cwd(), '/pem');
-      if (!fs.existsSync(pemDir)) {
-        fs.mkdirSync(pemDir);
+      // const pemDir = join(process.cwd(), '/pem');
+      if (!fs.existsSync(pemPath)) {
+        fs.mkdirSync(pemPath);
       }
       fs.writeFileSync(secretPath, '');
     }

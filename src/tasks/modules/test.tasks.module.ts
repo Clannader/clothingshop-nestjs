@@ -19,5 +19,6 @@ import { TokenCacheModule } from '@/cache/modules';
     RightCodeGroupSchemaModule,
   ],
   providers: [TestTasksService],
+  exports: [TestTasksService],
 })
 export class TestTasksModule {}

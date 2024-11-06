@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 // import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import { resolve } from 'path';
+import { resolve, join } from 'path';
 import { get, set, unset, isPlainObject, forEach, cloneDeep } from 'lodash';
 import { DotenvExpandOptions, expand } from 'dotenv-expand';
 import { ConfigServiceOptions } from './config.interface';
@@ -296,5 +296,14 @@ export class ConfigService {
       abortEarly: false,
       allowUnknown: true,
     };
+  }
+
+  // 单独给这个INI设置一个方法获取
+  getPemPath() {
+    const pemPathIni = this.get<string>('pemPath');
+    if (Utils.isEmpty(pemPathIni)) {
+      return join(process.cwd(), 'pem');
+    }
+    return pemPathIni;
   }
 }

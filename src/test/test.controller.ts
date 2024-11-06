@@ -249,9 +249,12 @@ export class TestController {
     // // console.error(err)
     // console.log(list.data.timeZones.length);
 
-    // const getAllList = this.httpFactoryService
-    //   .getHttpService(session, params.testField);
+    // const getAllList = await this.httpFactoryService
+    //   .getHttpService(session, <ServiceType>params.testField);
     // await Promise.all([
+    //   getAllList.get('/cms/api/timeZone/allList'),
+    //   getAllList.get('/cms/api/timeZone/allList'),
+    //   getAllList.get('/cms/api/timeZone/allList'),
     //   getAllList.get('/cms/api/timeZone/allList'),
     //   getAllList.get('/cms/api/timeZone/allList'),
     //   getAllList.get('/cms/api/timeZone/allList'),
@@ -298,6 +301,26 @@ export class TestController {
       } else {
         console.log(respResult.data.total);
       }
+      // 并发异步
+      // await Promise.all([
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      //   service.post('/ifc/web/HotelList/getHotelList'),
+      // ]);
+      // 同步等待
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
+      // await service.post('/ifc/web/HotelList/getHotelList');
     } else if (params.testField === 'jwt') {
       [err, respResult] = await Utils.toPromise(
         service.get('/gateway/api/system/config/search'),
@@ -309,9 +332,9 @@ export class TestController {
       }
     }
     console.timeEnd('耗时');
-    this.personObj.getYourAreName(this.teacherObj);
-    this.personObj.getYourAreName(this.studentObj);
-    await this.tokenCacheService.setTokenCache('1111', params.testNumber + '');
+    // this.personObj.getYourAreName(this.teacherObj);
+    // this.personObj.getYourAreName(this.studentObj);
+    // await this.tokenCacheService.setTokenCache('1111', params.testNumber + '');
     // console.log(await this.tokenCacheService.getAllCacheKeys());
     // console.log(service.axiosRef.interceptors);
     // const jwtService = await this.httpFactoryService.getJwtService(session)
