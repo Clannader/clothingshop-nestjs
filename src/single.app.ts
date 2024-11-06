@@ -197,7 +197,9 @@ export async function bootstrap() {
     aopLogger.log(
       `SwaggerJson is running on: ${protocol}://${hostName}:${httpPort}/swagger-ui/json`,
     );
-    aopLogger.log(`Node Version: ${process.version}, processID : ${process.pid}`);
+    aopLogger.log(
+      `Node Version: ${process.version}, processID : ${process.pid}`,
+    );
     return server;
   });
   server.keepAliveTimeout = 10 * 1000; // 设置服务器keep alive 为10s,与客户端TCP保持10s长连接无需握手
