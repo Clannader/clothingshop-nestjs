@@ -9,6 +9,7 @@ import {
   SwaggerDocumentOptions,
 } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import type { NestApplicationOptions } from '@nestjs/common';
 
 // 我真的是醉了,官网没有@types的包,使用import运行时又报错
 // 使用require时,使用lint解析又报错,只能忽略这个错误了,以后再说了,坑爹
@@ -37,8 +38,9 @@ import * as bodyParser from 'body-parser';
 import { rateLimit, MemoryStore } from 'express-rate-limit';
 import { SyncUpdateCacheService } from '@/cache/services';
 import * as moment from 'moment';
+import parseEnv from '@/lib/parseEnv';
+import * as fs from 'fs';
 // import * as csurf from 'csurf';
-// import * as fs from 'fs';
 
 export async function bootstrap() {
   // 这里传null是为了不覆盖源代码里面的context,后面的参数是显示执行时间,源代码是有的,如果不加相当于覆盖了源代码的配置
@@ -47,17 +49,27 @@ export async function bootstrap() {
   }); // 后期如果里面依赖了其他service,那么需要修改这个的注入方式
   // 这里导入的是https的证书的方法,不过好像试了报错,不知道是不是证书的问题还是代码的问题
   // 这里不做太多的纠结,因为https可以有很多方法做到,不一定需要代码实现
-  // const httpsOptions = {
-  //   key: fs.readFileSync('./certs/privateKey.pem'),
-  //   cert: fs.readFileSync('./certs/certificate.pem'),
-  // };
   // 这里写一下Nest的请求生命周期:一般来说，一个请求流经中间件、守卫与拦截器，然后到达管道，
   // 并最终回到拦截器中的返回路径中（从而产生响应）
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+  const serverOptions: NestApplicationOptions = {
     logger: aopLogger, // 这里应该是修改了底层代码用到的logger函数的调用
-    // httpsOptions
-  });
+  };
+  if (parseEnv.read('startHttps') === 'true') {
+    const pemPath = parseEnv.getPemPath();
+    const privateKeyPemPath = join(pemPath, 'privateKey.pem');
+    const certificatePemPath = join(pemPath, 'certificate.pem');
+    if (fs.existsSync(privateKeyPemPath) && fs.existsSync(certificatePemPath)) {
+      serverOptions.httpsOptions = {
+        key: fs.readFileSync(privateKeyPemPath),
+        cert: fs.readFileSync(certificatePemPath),
+      };
+    }
+  }
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    serverOptions,
+  );
 
   const config: ConfigService = app.get<ConfigService>(GLOBAL_CONFIG);
   const port = config.get<number>('httpPort', 3000);
