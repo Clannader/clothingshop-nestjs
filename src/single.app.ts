@@ -36,10 +36,10 @@ import { MongooseConfigService } from './dao';
 import { SessionMiddleware } from './middleware';
 import * as bodyParser from 'body-parser';
 import { rateLimit, MemoryStore } from 'express-rate-limit';
-import { SyncUpdateCacheService } from '@/cache/services';
-import * as moment from 'moment';
+// import { SyncUpdateCacheService } from '@/cache/services';
 import parseEnv from '@/lib/parseEnv';
 import * as fs from 'fs';
+// import * as moment from 'moment';
 // import * as csurf from 'csurf';
 
 export async function bootstrap() {
@@ -58,7 +58,7 @@ export async function bootstrap() {
   // 原本想同时启用http和https的,但是发现按照官网上面的写法,服务是启动成功了,但是swagger不能显示
   // 并且登录的业务也不能正常使用,暂时就这样留着吧,要么设置http,要么设置https,暂时不使用共存的机制吧
   const isHttps = parseEnv.read('startHttps') === 'true';
-  const protocol = isHttps ? 'https' : 'http';
+  let protocol = 'http';
   if (isHttps) {
     const pemPath = parseEnv.getPemPath();
     const privateKeyPemPath = join(pemPath, 'privateKey.pem');
@@ -68,6 +68,7 @@ export async function bootstrap() {
         key: fs.readFileSync(privateKeyPemPath),
         cert: fs.readFileSync(certificatePemPath),
       };
+      protocol = 'https';
     }
   }
   const app = await NestFactory.create<NestExpressApplication>(
@@ -79,9 +80,9 @@ export async function bootstrap() {
   const httpPort = config.get<number>('httpPort', 3000);
   const hostName = config.get<string>('hostName', 'localhost');
   const mongooseService = app.get<MongooseConfigService>(MongooseConfigService);
-  const syncUpdateCacheService = app.get<SyncUpdateCacheService>(
-    SyncUpdateCacheService,
-  );
+  // const syncUpdateCacheService = app.get<SyncUpdateCacheService>(
+  //   SyncUpdateCacheService,
+  // );
 
   app.use(helmet());
   app.disable('x-powered-by'); // 还是有效果的,一旦用了helmet,框架自动帮去掉这个头了
@@ -201,10 +202,9 @@ export async function bootstrap() {
   });
   server.keepAliveTimeout = 10 * 1000; // 设置服务器keep alive 为10s,与客户端TCP保持10s长连接无需握手
   // 开始监听同步消息服务
-  syncUpdateCacheService.startListening();
+  // syncUpdateCacheService.startListening();
   // 启动完成写启动时间
-  // TODO 记录上一次启动时间,本次宕机时间
-  config.set('serverStartDate', moment().format('YYYY-MM-DD HH:mm:ss,SSS'));
+  // config.set('serverStartDate', moment().format('YYYY-MM-DD HH:mm:ss,SSS'));
 }
 
 //处理未知的报错，防止服务器塌了
