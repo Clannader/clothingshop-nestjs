@@ -18,6 +18,14 @@ class ParseEnv {
   read(key: string) {
     return this.envIni[key];
   }
+
+  getPemPath() {
+    let pemPath = this.read('pemPath');
+    if (pemPath == null || pemPath === '') {
+      pemPath = join(process.cwd(), 'pem');
+    }
+    return pemPath;
+  }
 }
 
 const parseEnv: ParseEnv = new ParseEnv();
