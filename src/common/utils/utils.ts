@@ -129,7 +129,7 @@ export class Utils {
       padding: CryptoJS.pad.Pkcs7,
     });
     const decryptStr = decryptAction.toString(CryptoJS.enc.Utf8);
-    return this.isEmpty(decryptStr) ? str : decryptStr;
+    return this.isEmpty(decryptStr) ? null : decryptStr;
   }
 
   /**
@@ -593,7 +593,7 @@ export class Utils {
       return decrypted.toString();
     } catch (e) {
       this.logger.error(e);
-      return data;
+      return null;
     }
   }
 

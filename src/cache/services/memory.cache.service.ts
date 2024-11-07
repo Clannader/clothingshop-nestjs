@@ -6,9 +6,12 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 import type { Cache } from 'cache-manager';
 import { ConfigService } from '@/common/config';
-import { Utils } from '@/common/utils';
+import { GlobalService, Utils } from '@/common/utils';
 import { join } from 'node:path';
 import { readFileSync, existsSync } from 'node:fs';
+import { CodeException } from '@/common/exceptions';
+import { CodeEnum } from '@/common/enum';
+import { LanguageType } from '@/common';
 
 @Injectable()
 export class MemoryCacheService {
@@ -17,6 +20,9 @@ export class MemoryCacheService {
 
   @Inject()
   private readonly configService: ConfigService;
+
+  @Inject()
+  private readonly globalService: GlobalService;
 
   async setMemoryCache(key: string, value: any) {
     await this.updateMemoryCache(key, value);
@@ -80,5 +86,32 @@ export class MemoryCacheService {
   // 正常逻辑不会在服务器端使用私钥加密或者公钥加密,所以只有使用私钥解密了
   async rsaPrivateDecrypt(data: string) {
     return Utils.rsaPrivateDecrypt(data, await this.getRsaPrivatePem());
+  }
+
+  async tripleDesDecrypt(
+    language: LanguageType,
+    securityData: string,
+    securityToken: string,
+  ): Promise<string> {
+    const aesKey = await this.rsaPrivateDecrypt(securityToken);
+    if (Utils.isEmpty(aesKey)) {
+      throw new CodeException(
+        CodeEnum.INVALID_TOKEN,
+        this.globalService.lang(language, '无效的Token', 'user.tokenInvalid'),
+      );
+    }
+    const { accessKey, vectorValue } = JSON.parse(aesKey);
+    const decryptData = Utils.tripleDesDecrypt(
+      securityData,
+      accessKey,
+      vectorValue,
+    );
+    if (Utils.isEmpty(decryptData)) {
+      throw new CodeException(
+        CodeEnum.INVALID_TOKEN,
+        this.globalService.lang(language, '无效的密文', 'user.securityInvalid'),
+      );
+    }
+    return Promise.resolve(decryptData);
   }
 }
