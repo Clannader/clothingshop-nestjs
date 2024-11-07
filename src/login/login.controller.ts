@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UseGuards,
   Inject,
+  Headers,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import {
@@ -48,15 +49,17 @@ export class LoginController {
   @ApiCustomResponse({
     type: RespUserLoginDto,
   })
-  @ApiCommon({ showCredential: false })
+  @ApiCommon({ showCredential: false, showRsaToken: true })
   async userLogin(
     @Body() params: ReqUserLoginDto,
     @Req() req: RequestSession,
     @UserLanguage() language: LanguageType,
+    @Headers('Security-Token') securityToken: string,
   ) {
     const result: LoginResult = await this.userService.userLogin(
       language,
       params,
+      securityToken,
     );
     const resp = new RespUserLoginDto();
     if (result.code !== CodeEnum.SUCCESS) {

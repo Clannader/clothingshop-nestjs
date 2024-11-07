@@ -50,9 +50,10 @@ export class UserService {
   async userLogin(
     language: LanguageType,
     params: ReqUserLoginDto,
+    securityToken: string,
   ): Promise<LoginResult> {
     const adminId = params.adminId;
-    const password = params.adminPws;
+    const password = params.adminPws; // 新增密码需要客户端加密后传回来
     const [err, result]: LoginResult[] = await this.adminSchemaService
       .loginSystem(language, adminId)
       .then((result) => [null, result])
