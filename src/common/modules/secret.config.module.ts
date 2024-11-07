@@ -16,10 +16,7 @@ export class SecretConfigModule {
       // 如果注册过就不需要再加载了
       return SecretConfigModule.configModule;
     }
-    let pemPath = parseEnv.read('pemPath');
-    if (Utils.isEmpty(pemPath)) {
-      pemPath = join(process.cwd(), 'pem');
-    }
+    const pemPath = parseEnv.getPemPath();
     SecretConfigModule.configModule = ConfigModule.register({
       iniFilePath: join(pemPath, 'secret.ini'),
       token: SECRET_CONFIG,

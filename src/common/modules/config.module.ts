@@ -96,10 +96,7 @@ export class ConfigModule {
   }
 
   private static loadSecretFile(): Record<string, any> {
-    let pemPath = parseEnv.read('pemPath');
-    if (Utils.isEmpty(pemPath)) {
-      pemPath = join(process.cwd(), 'pem');
-    }
+    const pemPath = parseEnv.getPemPath();
     const secretPath = join(pemPath, 'secret.ini');
     let config: Record<string, any> = {};
     if (fs.existsSync(secretPath)) {

@@ -16,6 +16,23 @@ import { CmsSession, LanguageType, ErrorPromise } from '../types';
 import { v4 } from 'uuid';
 import { i18n } from '../i18n';
 import { AopLogger } from '@/logger';
+import parseEnv from '@/lib/parseEnv';
+import { readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+import * as crypto from 'node:crypto';
+
+// RSA公钥和私钥只需加载一次
+const pemPath = parseEnv.getPemPath();
+const publicKeyPath = join(pemPath, 'public-rsa.pem');
+const privatePath = join(pemPath, 'private-rsa.pem');
+let publicKey: string;
+let privateKey: string;
+if (existsSync(publicKeyPath)) {
+  publicKey = readFileSync(publicKeyPath, 'utf8');
+}
+if (existsSync(privatePath)) {
+  privateKey = readFileSync(privatePath, 'utf8');
+}
 
 /**
  * 系统工具类
@@ -542,5 +559,82 @@ export class Utils {
           )
         ? (headerLanguage as LanguageType)
         : 'ZH';
+  }
+
+  // 使用公钥来加密数据
+  static rsaPublicEncrypt(data: string) {
+    const buffer = Buffer.from(data);
+    try {
+      const encrypted = crypto.publicEncrypt(
+        {
+          key: publicKey,
+          padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+        },
+        buffer,
+      );
+      return encrypted.toString('base64');
+    } catch (e) {
+      this.logger.error(e);
+      return data;
+    }
+  }
+
+  // 使用私钥解密(公钥加密后的数据)
+  static rsaPrivateDecrypt(data: string) {
+    const buffer = Buffer.from(data, 'base64');
+    try {
+      const decrypted = crypto.privateDecrypt(
+        {
+          key: privateKey,
+          padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+        },
+        buffer,
+      );
+      return decrypted.toString();
+    } catch (e) {
+      this.logger.error(e);
+      return data;
+    }
+  }
+
+  // 使用私钥来加密数据
+  static rsaPrivateEncrypt(data: string) {
+    const buffer = Buffer.from(data);
+    try {
+      const encrypted = crypto.privateEncrypt(
+        {
+          key: privateKey,
+          padding: crypto.constants.RSA_PKCS1_PADDING,
+        },
+        buffer,
+      );
+      return encrypted.toString('base64');
+    } catch (e) {
+      this.logger.error(e);
+      return data;
+    }
+  }
+
+  // 使用公钥来解密(私钥加密的数据)
+  static rsaPublicDecrypt(data: string) {
+    const buffer = Buffer.from(data, 'base64');
+    try {
+      const decrypted = crypto.publicDecrypt(
+        {
+          key: publicKey,
+          padding: crypto.constants.RSA_PKCS1_PADDING,
+        },
+        buffer,
+      );
+      return decrypted.toString();
+    } catch (e) {
+      this.logger.error(e);
+      return data;
+    }
+  }
+
+  static getRsaPublicKey() {
+    // 把公钥转成base64传回客户端
+    return this.stringToBase64(publicKey);
   }
 }
