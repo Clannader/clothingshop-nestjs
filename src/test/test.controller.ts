@@ -332,6 +332,13 @@ export class TestController {
       }
     }
     console.timeEnd('耗时');
+    const encrypt = Utils.rsaPublicEncrypt('Hello RSA');
+    console.log(encrypt);
+    console.log(Utils.rsaPrivateDecrypt(encrypt));
+
+    const encrypt2 = Utils.rsaPrivateEncrypt('Hello RSA');
+    console.log(encrypt2);
+    console.log(Utils.rsaPublicDecrypt(encrypt2));
     // this.personObj.getYourAreName(this.teacherObj);
     // this.personObj.getYourAreName(this.studentObj);
     // await this.tokenCacheService.setTokenCache('1111', params.testNumber + '');
