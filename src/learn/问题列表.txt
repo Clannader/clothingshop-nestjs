@@ -41,3 +41,8 @@ npm warn deprecated vis@4.21.0: Please consider using https://github.com/visjs
 21.新增用户登录时,同一个用户最多在线10次,避免恶意登录服务器
 22.研究如何使用rsa加解密
 23.继承这个接口OnApplicationShutdown,研究服务器断开时需要的操作,还有启动时需要的操作 √
+24.关于RSA加密传输逻辑
+客户端使用crypto.randomBytes(32).toString('hex'),随机生成一个64位的密钥,使用3DES加密明文
+密钥使用公钥加密后传回服务器
+服务器使用私钥解密密钥,得到3DES密钥后解密密文.难道服务器使用公钥加密明文存库??,这样会密文都不一样
+但是传回客户端又得解密后使用密钥加密传回,如果直接使用私钥加密,则内容没改变,密文是不会变的

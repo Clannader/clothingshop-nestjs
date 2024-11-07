@@ -339,6 +339,7 @@ export class TestController {
     const encrypt2 = Utils.rsaPrivateEncrypt('Hello RSA');
     console.log(encrypt2);
     console.log(Utils.rsaPublicDecrypt(encrypt2));
+    console.log(Utils.base64ToString(Utils.getRsaPublicKey()));
     // this.personObj.getYourAreName(this.teacherObj);
     // this.personObj.getYourAreName(this.studentObj);
     // await this.tokenCacheService.setTokenCache('1111', params.testNumber + '');

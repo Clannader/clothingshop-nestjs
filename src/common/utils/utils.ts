@@ -632,4 +632,9 @@ export class Utils {
       return data;
     }
   }
+
+  static getRsaPublicKey() {
+    // 把公钥转成base64传回客户端
+    return this.stringToBase64(publicKey);
+  }
 }
