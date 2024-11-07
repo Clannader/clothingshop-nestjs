@@ -49,7 +49,10 @@ export class MemoryCacheService {
     const pemKey = 'rsa-public-pem';
     let pem = await this.getMemoryCache(pemKey);
     if (Utils.isEmpty(pem)) {
-      const publicPath = join(this.configService.getPemPath(), 'public-rsa.pem');
+      const publicPath = join(
+        this.configService.getPemPath(),
+        'public-rsa.pem',
+      );
       if (existsSync(publicPath)) {
         pem = readFileSync(publicPath, 'utf8');
       }
@@ -62,12 +65,20 @@ export class MemoryCacheService {
     const pemKey = 'rsa-private-pem';
     let pem = await this.getMemoryCache(pemKey);
     if (Utils.isEmpty(pem)) {
-      const privatePath = join(this.configService.getPemPath(), 'private-rsa.pem');
+      const privatePath = join(
+        this.configService.getPemPath(),
+        'private-rsa.pem',
+      );
       if (existsSync(privatePath)) {
         pem = readFileSync(privatePath, 'utf8');
       }
       await this.updateMemoryCache(pemKey, pem);
     }
     return pem;
+  }
+
+  // 正常逻辑不会在服务器端使用私钥加密或者公钥加密,所以只有使用私钥解密了
+  async rsaPrivateDecrypt(data: string) {
+    return Utils.rsaPrivateDecrypt(data, await this.getRsaPrivatePem());
   }
 }

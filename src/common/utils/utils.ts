@@ -632,5 +632,4 @@ export class Utils {
       return data;
     }
   }
-
 }
