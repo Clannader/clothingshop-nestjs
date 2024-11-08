@@ -25,9 +25,6 @@ export class LocalhostHttpService extends HttpAbstractService {
           // TODO 这里应该使用的是登录第三方的用户和店铺ID做key值,而不是当前session的用户
           // 应该使用的是initConfig获取到的数据库的用户名和店铺ID
         }
-        if (Utils.isEmpty(config.headers['security-token'])) {
-          config.headers['security-token'] = token?.securityToken ?? '';
-        }
         config.headers['language'] = this.session?.language ?? 'ZH'; // 后期再考虑翻译吧
         return config;
       },
@@ -74,12 +71,10 @@ export class LocalhostHttpService extends HttpAbstractService {
       accessKey: tripleKey,
       vectorValue: iv,
     };
-    await this.httpServiceCacheService.setServiceToken(this.options, {
-      securityToken: Utils.rsaPublicEncrypt(
-        JSON.stringify(tokenParams),
-        publicKey,
-      ),
-    });
+    const securityToken = Utils.rsaPublicEncrypt(
+      JSON.stringify(tokenParams),
+      publicKey,
+    );
     const loginParams = {
       adminId: this.options.userName,
       adminPws: triplePassword,
@@ -89,6 +84,11 @@ export class LocalhostHttpService extends HttpAbstractService {
       this.service.post,
       '/cms/api/user/login',
       loginParams,
+      {
+        headers: {
+          'security-token': securityToken,
+        },
+      },
     );
     const [err, result] = await Utils.toPromise(
       firstValueFrom(loginObservable),
@@ -122,6 +122,7 @@ export class LocalhostHttpService extends HttpAbstractService {
         firstValueFrom(publicKeyObservable),
       );
       if (err) {
+        // TODO 以后处理抛出异常
         return '';
       }
       publicKey = Utils.base64ToString(result.data['publicKey']);

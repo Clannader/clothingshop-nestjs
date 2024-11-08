@@ -9,19 +9,19 @@ import { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { Utils } from '@/common/utils';
 import { CommonResult } from '@/common';
 import { CodeEnum } from '@/common/enum';
+import * as crypto from 'node:crypto';
 
 @Injectable()
 export class JwtHttpService extends HttpAbstractService {
   initInterceptor() {
     this.service.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {
+        const token = await this.httpServiceCacheService.getServiceToken(
+          this.options,
+        );
         if (Utils.isEmpty(config.headers['Authorization'])) {
           config.headers['Authorization'] =
-            // TODO 这里应该使用的是登录第三方的用户和店铺ID做key值,而不是当前session的用户
-            // 应该使用的是initConfig获取到的数据库的用户名和店铺ID
-            'Bearer ' +
-            ((await this.httpServiceCacheService.getServiceToken(this.options))
-              ?.accessToken ?? '');
+            'Bearer ' + (token?.accessToken ?? '');
         }
         config.headers['language'] = this.session?.language ?? 'ZH'; // 后期再考虑翻译吧
         return config;
@@ -51,15 +51,36 @@ export class JwtHttpService extends HttpAbstractService {
   }
 
   private async loginAction(targetRequest: Observable<AxiosResponse>) {
+    const publicKey = await this.getPublicKey();
+    const tripleKey = crypto.randomBytes(32).toString('hex');
+    const iv = crypto.randomBytes(12).toString('hex');
+    const triplePassword = Utils.tripleDesEncrypt(
+      this.options.password,
+      tripleKey,
+      iv,
+    );
+    const tokenParams = {
+      accessKey: tripleKey,
+      vectorValue: iv,
+    };
+    const securityToken = Utils.rsaPublicEncrypt(
+      JSON.stringify(tokenParams),
+      publicKey,
+    );
     const loginParams = {
       adminId: this.options.userName,
-      adminPws: this.options.password,
+      adminPws: triplePassword,
     };
     // TODO 这里还缺少重试的次数,报错最多重试3次
     const loginObservable = this.makeObservable(
       this.service.post,
       '/gateway/api/oauth/authorize',
       loginParams,
+      {
+        headers: {
+          'security-token': securityToken,
+        },
+      },
     );
     const [err, result] = await Utils.toPromise(
       firstValueFrom(loginObservable),
@@ -110,5 +131,31 @@ export class JwtHttpService extends HttpAbstractService {
       refreshToken: result.data['refreshToken'],
     });
     return this.requestToPromise(targetRequest);
+  }
+
+  private async getPublicKey() {
+    const serviceToken = await this.httpServiceCacheService.getServiceToken(
+      this.options,
+    );
+    let publicKey = serviceToken?.publicKey ?? '';
+    if (Utils.isEmpty(publicKey)) {
+      const publicKeyObservable = this.makeObservable(
+        this.service.get,
+        '/cms/api/user/publicKey',
+        {},
+      );
+      const [err, result] = await Utils.toPromise(
+        firstValueFrom(publicKeyObservable),
+      );
+      if (err) {
+        // TODO 以后处理抛出异常
+        return '';
+      }
+      publicKey = Utils.base64ToString(result.data['publicKey']);
+      await this.httpServiceCacheService.setServiceToken(this.options, {
+        publicKey,
+      });
+    }
+    return publicKey;
   }
 }
