@@ -6,21 +6,23 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigService } from '@/common/config';
 import { SecuritySessionCacheService } from '../services';
 import { caching, MemoryConfig } from 'cache-manager';
+import { SECURITY_SESSION_MANAGE } from '../cache.constants';
 
 @Module({
-  imports: [
-    CacheModule.registerAsync({
+  providers: [
+    SecuritySessionCacheService,
+    {
+      provide: SECURITY_SESSION_MANAGE,
       useFactory: (config: ConfigService) => {
         const options: MemoryConfig = {
-          ttl: config.get<number>('sessionCacheTTL', 60) * 1000, // 现在发现cache版本更新后,ttl的单位从s改成了ms
+          ttl: config.get<number>('sessionCacheTTL', 60) * 1000,
           max: config.get<number>('sessionCacheMax', 100 * 1000),
         };
         return caching('memory', options);
       },
       inject: [ConfigService],
-    }),
+    },
   ],
-  providers: [SecuritySessionCacheService],
   exports: [SecuritySessionCacheService],
 })
 export class SecuritySessionCacheModule {}

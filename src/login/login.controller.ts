@@ -19,6 +19,7 @@ import {
   LoginResult,
   LanguageType,
   RespPublicKeyResultDto,
+  RespSecuritySessionDto,
 } from '@/common';
 import { Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
@@ -30,6 +31,7 @@ import { SessionGuard } from '@/guard';
 import { sign } from 'cookie-signature';
 import { Admin } from '@/entities/schema';
 import { MemoryCacheService } from '@/cache/services';
+import { SecuritySessionService, SecuritySessionStorage } from '@/security';
 
 @Controller('/cms/api/user')
 @ApiTags('LoginController')
@@ -39,6 +41,9 @@ export class LoginController {
 
   @Inject()
   private readonly memoryCacheService: MemoryCacheService;
+
+  @Inject()
+  private readonly securitySessionService: SecuritySessionService;
 
   @Post('/login')
   @HttpCode(HttpStatus.OK)
@@ -145,6 +150,23 @@ export class LoginController {
   async getUserPublicKey() {
     const resp = new RespPublicKeyResultDto();
     resp.publicKey = await this.memoryCacheService.getRsaPublicKey();
+    return resp;
+  }
+
+  @Post('/getSecuritySession')
+  @ApiOperation({
+    summary: '获取一个安全会话',
+    description: '获取安全会话的相关数据',
+  })
+  @ApiCustomResponse({
+    type: RespSecuritySessionDto,
+  })
+  @ApiCommon({ showCredential: false })
+  async getUserSecuritySession() {
+    const storage: SecuritySessionStorage = await this.securitySessionService.getNewSessionStorage();
+    const resp = new RespSecuritySessionDto();
+    resp.sessionId = storage.sessionId;
+    resp.vectorValue = storage.vectorValue;
     return resp;
   }
 }
