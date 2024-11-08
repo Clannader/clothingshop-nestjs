@@ -94,6 +94,8 @@ export abstract class HttpAbstractService {
     ...args: any[]
   ) {
     return new Observable<AxiosResponse<T>>((subscriber) => {
+      // 必须传3个参数,原因在这里,否则这里截取的参数后,调用cancelToken会报错
+      // 暂时懒得修改
       let config: AxiosRequestConfig = args[args.length - 1];
       if (!config) {
         config = {};
@@ -134,6 +136,8 @@ export abstract class HttpAbstractService {
     url: string,
     config?: AxiosRequestConfig<D>,
   ): Promise<AxiosResponse<T>> {
+    // 真是有点神坑啊,使用makeObservable方法时必须传3个参数以上,否则底层报错,也就是使用get方法,没有参数也传一个{}
+    // 估计其他方法也类似
     const getObservable = this.makeObservable<T>(this.service.get, url, config);
     return this.requestToPromise(getObservable);
   }

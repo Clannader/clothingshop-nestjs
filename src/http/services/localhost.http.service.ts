@@ -116,6 +116,7 @@ export class LocalhostHttpService extends HttpAbstractService {
       const publicKeyObservable = this.makeObservable(
         this.service.get,
         '/cms/api/user/publicKey',
+        {},
       );
       const [err, result] = await Utils.toPromise(
         firstValueFrom(publicKeyObservable),

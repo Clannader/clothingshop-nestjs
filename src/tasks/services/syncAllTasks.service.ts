@@ -9,6 +9,9 @@ import { TestTasksService } from './test.tasks.service';
 import * as moment from 'moment';
 
 // 启动时,取最近的一次整点做重置定时器任务的时间
+// 这里要注意一点,发现如果在xx:59:xx这种准备到下一个整点的时候启动时,刚启动就执行任务会报错
+// 所以以后启动服务器不能太靠近整点,如果按照分钟数判断是整点还是半点,又会导致多台服务器时
+// 有些服务器在整点,有些服务器在半点也不可取,所以只能控制启动的时间了
 const startDate = moment();
 if (startDate.minutes() > 0) {
   startDate.add(1, 'hours');
