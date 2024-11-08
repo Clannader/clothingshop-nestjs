@@ -332,9 +332,9 @@ export class TestController {
       }
     }
     console.timeEnd('耗时');
-    const encrypt = Utils.rsaPublicEncrypt('Hello RSA');
+    // const encrypt = Utils.rsaPublicEncrypt('Hello RSA');
     // console.log(encrypt);
-    console.log(await this.memoryCacheService.rsaPrivateDecrypt(encrypt));
+    // console.log(await this.memoryCacheService.rsaPrivateDecrypt(encrypt));
     //
     // const encrypt2 = Utils.rsaPrivateEncrypt('Hello RSA');
     // console.log(encrypt2);
@@ -344,9 +344,9 @@ export class TestController {
     // const encrypt3 = Utils.rsaPrivateEncrypt('Hello RSA');
     // console.log(encrypt3);
     // console.log(Utils.rsaPublicDecrypt(encrypt3));
-    console.log(
-      Utils.base64ToString(await this.memoryCacheService.getRsaPublicKey()),
-    );
+    // console.log(
+    //   Utils.base64ToString(await this.memoryCacheService.getRsaPublicKey()),
+    // );
     // this.personObj.getYourAreName(this.teacherObj);
     // this.personObj.getYourAreName(this.studentObj);
     // await this.tokenCacheService.setTokenCache('1111', params.testNumber + '');

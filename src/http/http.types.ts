@@ -18,4 +18,6 @@ export type ServiceCache = {
   credential?: string;
   accessToken?: string;
   refreshToken?: string;
+  publicKey?: string;
+  securityToken?: string;
 };

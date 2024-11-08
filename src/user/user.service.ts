@@ -62,7 +62,7 @@ export class UserService {
       return Promise.resolve(<LoginResult>{
         message: this.globalService.lang(
           language,
-          '安全Token不能为空',
+          '安全凭证不能为空',
           'user.securityTokenIsEmpty',
         ),
         code: CodeEnum.FAIL,

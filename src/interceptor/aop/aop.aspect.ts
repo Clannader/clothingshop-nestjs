@@ -106,7 +106,12 @@ export class AopAspect {
         cookie: req.cookies,
       });
       // 脱敏headers
-      const piiHeaders = ['authorization', 'credential', 'cmsApp'];
+      const piiHeaders = [
+        'authorization',
+        'credential',
+        'cmsApp',
+        'security-token',
+      ];
       // piiHeaders.forEach((field) => {
       //   if (
       //     headers.hasOwnProperty(field) &&
