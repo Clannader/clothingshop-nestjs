@@ -214,4 +214,30 @@ export abstract class HttpAbstractService {
     }
     return this.responseResult(targetRequest, result);
   }
+
+  protected async getPublicKey() {
+    const serviceToken = await this.httpServiceCacheService.getServiceToken(
+      this.options,
+    );
+    let publicKey = serviceToken?.publicKey ?? '';
+    if (Utils.isEmpty(publicKey)) {
+      const publicKeyObservable = this.makeObservable(
+        this.service.get,
+        '/cms/api/user/publicKey',
+        {},
+      );
+      const [err, result] = await Utils.toPromise(
+        firstValueFrom(publicKeyObservable),
+      );
+      if (err) {
+        // TODO 以后处理抛出异常
+        return '';
+      }
+      publicKey = Utils.base64ToString(result.data['publicKey']);
+      await this.httpServiceCacheService.setServiceToken(this.options, {
+        publicKey,
+      });
+    }
+    return publicKey;
+  }
 }
