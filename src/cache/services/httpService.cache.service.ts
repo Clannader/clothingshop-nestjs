@@ -52,7 +52,7 @@ export class HttpServiceCacheService {
 
   async setServiceToken(
     options: ServiceOptions,
-    value: Pick<ServiceCache, 'accessToken' | 'refreshToken' | 'credential'>,
+    value: Omit<ServiceCache, 'options'>,
   ) {
     const cache = await this.getHttpServiceCache(options);
     if (cache) {

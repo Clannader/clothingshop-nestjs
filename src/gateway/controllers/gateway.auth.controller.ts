@@ -9,8 +9,9 @@ import {
   Post,
   Inject,
   Req,
+  Headers,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiHeaders } from '@nestjs/swagger';
 import {
   LoginResult,
   CmsSession,
@@ -56,15 +57,24 @@ export class GatewayAuthController {
   @ApiCustomResponse({
     type: RespJwtTokenDto,
   })
+  @ApiHeaders([
+    {
+      name: 'Security-Token',
+      description: '客户端使用公钥加密生成的密钥',
+      required: true,
+    },
+  ])
   async authorizeLogin(
     @Body() params: ReqUserLoginDto,
     @Req() req: RequestSession,
     @UserLanguage() language: LanguageType,
+    @Headers('Security-Token') securityToken: string,
   ) {
     params.allowThirdUser = true;
     const result: LoginResult = await this.userService.userLogin(
       language,
       params,
+      securityToken,
     );
     const resp = new RespJwtTokenDto();
     if (result.code !== CodeEnum.SUCCESS) {

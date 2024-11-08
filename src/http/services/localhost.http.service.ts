@@ -10,18 +10,20 @@ import { CodeEnum } from '@/common/enum';
 
 import { HttpAbstractService } from './http.abstract.service';
 import { Observable, firstValueFrom } from 'rxjs';
+import * as crypto from 'node:crypto';
 
 @Injectable()
 export class LocalhostHttpService extends HttpAbstractService {
   initInterceptor() {
     this.service.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {
+        const token = await this.httpServiceCacheService.getServiceToken(
+          this.options,
+        );
         if (Utils.isEmpty(config.headers['credential'])) {
-          config.headers['credential'] =
-            // TODO 这里应该使用的是登录第三方的用户和店铺ID做key值,而不是当前session的用户
-            // 应该使用的是initConfig获取到的数据库的用户名和店铺ID
-            (await this.httpServiceCacheService.getServiceToken(this.options))
-              ?.credential ?? '';
+          config.headers['credential'] = token?.credential ?? '';
+          // TODO 这里应该使用的是登录第三方的用户和店铺ID做key值,而不是当前session的用户
+          // 应该使用的是initConfig获取到的数据库的用户名和店铺ID
         }
         config.headers['language'] = this.session?.language ?? 'ZH'; // 后期再考虑翻译吧
         return config;
@@ -57,15 +59,36 @@ export class LocalhostHttpService extends HttpAbstractService {
   }
 
   private async loginAction(targetRequest: Observable<AxiosResponse>) {
+    const publicKey = await this.getPublicKey();
+    const tripleKey = crypto.randomBytes(32).toString('hex');
+    const iv = crypto.randomBytes(12).toString('hex');
+    const triplePassword = Utils.tripleDesEncrypt(
+      this.options.password,
+      tripleKey,
+      iv,
+    );
+    const tokenParams = {
+      accessKey: tripleKey,
+      vectorValue: iv,
+    };
+    const securityToken = Utils.rsaPublicEncrypt(
+      JSON.stringify(tokenParams),
+      publicKey,
+    );
     const loginParams = {
       adminId: this.options.userName,
-      adminPws: this.options.password,
+      adminPws: triplePassword,
     };
     // TODO 这里还缺少重试的次数,报错最多重试3次
     const loginObservable = this.makeObservable(
       this.service.post,
       '/cms/api/user/login',
       loginParams,
+      {
+        headers: {
+          'security-token': securityToken,
+        },
+      },
     );
     const [err, result] = await Utils.toPromise(
       firstValueFrom(loginObservable),

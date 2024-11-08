@@ -1,12 +1,15 @@
 import {
   Controller,
   Post,
+  Get,
   HttpCode,
   HttpStatus,
   Body,
   Req,
   UseInterceptors,
   UseGuards,
+  Inject,
+  Headers,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import {
@@ -15,6 +18,7 @@ import {
   sessionSecret,
   LoginResult,
   LanguageType,
+  RespPublicKeyResultDto,
 } from '@/common';
 import { Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
@@ -25,11 +29,16 @@ import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { sign } from 'cookie-signature';
 import { Admin } from '@/entities/schema';
+import { MemoryCacheService } from '@/cache/services';
 
 @Controller('/cms/api/user')
 @ApiTags('LoginController')
 export class LoginController {
-  constructor(private readonly userService: UserService) {}
+  @Inject()
+  private readonly userService: UserService;
+
+  @Inject()
+  private readonly memoryCacheService: MemoryCacheService;
 
   @Post('/login')
   @HttpCode(HttpStatus.OK)
@@ -40,15 +49,17 @@ export class LoginController {
   @ApiCustomResponse({
     type: RespUserLoginDto,
   })
-  @ApiCommon({ showCredential: false })
+  @ApiCommon({ showCredential: false, showRsaToken: true })
   async userLogin(
     @Body() params: ReqUserLoginDto,
     @Req() req: RequestSession,
     @UserLanguage() language: LanguageType,
+    @Headers('Security-Token') securityToken: string,
   ) {
     const result: LoginResult = await this.userService.userLogin(
       language,
       params,
+      securityToken,
     );
     const resp = new RespUserLoginDto();
     if (result.code !== CodeEnum.SUCCESS) {
@@ -120,5 +131,20 @@ export class LoginController {
   @UseInterceptors(HttpInterceptor)
   userLogout(@Req() req: RequestSession) {
     return this.userService.userLogout(req);
+  }
+
+  @Get('/publicKey')
+  @ApiOperation({
+    summary: '获取系统公钥',
+    description: '获取系统公钥',
+  })
+  @ApiCustomResponse({
+    type: RespPublicKeyResultDto,
+  })
+  @ApiCommon({ showCredential: false })
+  async getUserPublicKey() {
+    const resp = new RespPublicKeyResultDto();
+    resp.publicKey = await this.memoryCacheService.getRsaPublicKey();
+    return resp;
   }
 }

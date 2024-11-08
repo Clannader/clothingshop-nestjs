@@ -101,7 +101,7 @@ export class AdminSchemaService {
         });
       }
     }
-    return Promise.resolve({
+    return Promise.resolve(<LoginResult>{
       adminInfo,
       shopInfo: 'SYSTEM', //TODO 暂时写死
       code: CodeEnum.SUCCESS,

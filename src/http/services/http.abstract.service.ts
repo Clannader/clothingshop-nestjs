@@ -94,6 +94,8 @@ export abstract class HttpAbstractService {
     ...args: any[]
   ) {
     return new Observable<AxiosResponse<T>>((subscriber) => {
+      // 必须传3个参数,原因在这里,否则这里截取的参数后,调用cancelToken会报错
+      // 暂时懒得修改
       let config: AxiosRequestConfig = args[args.length - 1];
       if (!config) {
         config = {};
@@ -134,6 +136,8 @@ export abstract class HttpAbstractService {
     url: string,
     config?: AxiosRequestConfig<D>,
   ): Promise<AxiosResponse<T>> {
+    // 真是有点神坑啊,使用makeObservable方法时必须传3个参数以上,否则底层报错,也就是使用get方法,没有参数也传一个{}
+    // 估计其他方法也类似
     const getObservable = this.makeObservable<T>(this.service.get, url, config);
     return this.requestToPromise(getObservable);
   }
@@ -209,5 +213,31 @@ export abstract class HttpAbstractService {
       return Promise.reject(err);
     }
     return this.responseResult(targetRequest, result);
+  }
+
+  protected async getPublicKey() {
+    const serviceToken = await this.httpServiceCacheService.getServiceToken(
+      this.options,
+    );
+    let publicKey = serviceToken?.publicKey ?? '';
+    if (Utils.isEmpty(publicKey)) {
+      const publicKeyObservable = this.makeObservable(
+        this.service.get,
+        '/cms/api/user/publicKey',
+        {},
+      );
+      const [err, result] = await Utils.toPromise(
+        firstValueFrom(publicKeyObservable),
+      );
+      if (err) {
+        // TODO 以后处理抛出异常
+        return '';
+      }
+      publicKey = Utils.base64ToString(result.data['publicKey']);
+      await this.httpServiceCacheService.setServiceToken(this.options, {
+        publicKey,
+      });
+    }
+    return publicKey;
   }
 }

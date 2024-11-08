@@ -23,6 +23,7 @@ import { AdminSchemaService } from '@/entities/services';
 import { AdminDocument } from '@/entities/schema';
 import { UserSessionService } from './user.session.service';
 import { UserMapper } from './user.mapper';
+import { MemoryCacheService } from '@/cache/services';
 
 @Injectable()
 export class UserService {
@@ -40,6 +41,9 @@ export class UserService {
   @Inject(SECRET_CONFIG)
   private readonly secretConfig: ConfigService;
 
+  @Inject()
+  private readonly memoryCacheService: MemoryCacheService;
+
   async getUsersList(params: ReqUserSearchDto): Promise<RespUserSearchDto> {
     this.logger.log(params);
     const resp = new RespUserSearchDto();
@@ -50,13 +54,28 @@ export class UserService {
   async userLogin(
     language: LanguageType,
     params: ReqUserLoginDto,
+    securityToken: string,
   ): Promise<LoginResult> {
     const adminId = params.adminId;
-    const password = params.adminPws;
-    const [err, result]: LoginResult[] = await this.adminSchemaService
-      .loginSystem(language, adminId)
-      .then((result) => [null, result])
-      .catch((err) => [err]);
+    const securityPassword = params.adminPws; // 新增密码需要客户端加密后传回来
+    if (Utils.isEmpty(securityToken)) {
+      return Promise.resolve(<LoginResult>{
+        message: this.globalService.lang(
+          language,
+          '安全凭证不能为空',
+          'user.securityTokenIsEmpty',
+        ),
+        code: CodeEnum.FAIL,
+      });
+    }
+    const password = await this.memoryCacheService.tripleDesDecrypt(
+      language,
+      securityPassword,
+      securityToken,
+    );
+    const [err, result] = await Utils.toPromise(
+      this.adminSchemaService.loginSystem(language, adminId),
+    );
     if (err) {
       return err;
     }

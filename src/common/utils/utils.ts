@@ -25,13 +25,13 @@ import * as crypto from 'node:crypto';
 const pemPath = parseEnv.getPemPath();
 const publicKeyPath = join(pemPath, 'public-rsa.pem');
 const privatePath = join(pemPath, 'private-rsa.pem');
-let publicKey: string;
-let privateKey: string;
+let publicKeyPem: string;
+let privateKeyPem: string;
 if (existsSync(publicKeyPath)) {
-  publicKey = readFileSync(publicKeyPath, 'utf8');
+  publicKeyPem = readFileSync(publicKeyPath, 'utf8');
 }
 if (existsSync(privatePath)) {
-  privateKey = readFileSync(privatePath, 'utf8');
+  privateKeyPem = readFileSync(privatePath, 'utf8');
 }
 
 /**
@@ -129,7 +129,7 @@ export class Utils {
       padding: CryptoJS.pad.Pkcs7,
     });
     const decryptStr = decryptAction.toString(CryptoJS.enc.Utf8);
-    return this.isEmpty(decryptStr) ? str : decryptStr;
+    return this.isEmpty(decryptStr) ? null : decryptStr;
   }
 
   /**
@@ -562,7 +562,7 @@ export class Utils {
   }
 
   // 使用公钥来加密数据
-  static rsaPublicEncrypt(data: string) {
+  static rsaPublicEncrypt(data: string, publicKey: string = publicKeyPem) {
     const buffer = Buffer.from(data);
     try {
       const encrypted = crypto.publicEncrypt(
@@ -580,7 +580,7 @@ export class Utils {
   }
 
   // 使用私钥解密(公钥加密后的数据)
-  static rsaPrivateDecrypt(data: string) {
+  static rsaPrivateDecrypt(data: string, privateKey: string = privateKeyPem) {
     const buffer = Buffer.from(data, 'base64');
     try {
       const decrypted = crypto.privateDecrypt(
@@ -593,12 +593,12 @@ export class Utils {
       return decrypted.toString();
     } catch (e) {
       this.logger.error(e);
-      return data;
+      return null;
     }
   }
 
   // 使用私钥来加密数据
-  static rsaPrivateEncrypt(data: string) {
+  static rsaPrivateEncrypt(data: string, privateKey: string = privateKeyPem) {
     const buffer = Buffer.from(data);
     try {
       const encrypted = crypto.privateEncrypt(
@@ -616,7 +616,7 @@ export class Utils {
   }
 
   // 使用公钥来解密(私钥加密的数据)
-  static rsaPublicDecrypt(data: string) {
+  static rsaPublicDecrypt(data: string, publicKey: string = publicKeyPem) {
     const buffer = Buffer.from(data, 'base64');
     try {
       const decrypted = crypto.publicDecrypt(
@@ -631,10 +631,5 @@ export class Utils {
       this.logger.error(e);
       return data;
     }
-  }
-
-  static getRsaPublicKey() {
-    // 把公钥转成base64传回客户端
-    return this.stringToBase64(publicKey);
   }
 }

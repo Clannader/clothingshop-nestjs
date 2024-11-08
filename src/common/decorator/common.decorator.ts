@@ -40,6 +40,7 @@ export function BindMethod(...decorators: any[]): MethodDecorator {
 }
 
 type HeadersOptions = {
+  showRsaToken?: boolean; // 是否显示需要RSA加密Token
   showCredential?: boolean; // 是否显示credential的header
   showJwtToken?: boolean; // 是否显示jwtToken的header
 };
@@ -49,6 +50,7 @@ export function ApiCommon(options?: HeadersOptions) {
     {
       showCredential: true,
       showJwtToken: false,
+      showRsaToken: false,
     },
     options ?? {},
   );
@@ -86,6 +88,13 @@ export function ApiCommon(options?: HeadersOptions) {
     headers.push({
       name: 'Authorization',
       description: 'JWT Token (`Bearer accessToken`)',
+      required: true,
+    });
+  }
+  if (options.showRsaToken) {
+    headers.push({
+      name: 'Security-Token',
+      description: '客户端使用公钥加密生成的密钥',
       required: true,
     });
   }
