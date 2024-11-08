@@ -6,3 +6,4 @@ export * from './token.cache.service';
 export * from './traceId.cache.service';
 export * from './httpService.cache.service';
 export * from './syncUpdate.cache.service';
+export * from './security.session.cache.service';

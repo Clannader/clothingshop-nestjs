@@ -6,3 +6,4 @@ export * from './token.cache.module';
 export * from './traceId.cache.module';
 export * from './httpService.cache.module';
 export * from './syncUpdate.cache.module';
+export * from './security.session.cache.module';
