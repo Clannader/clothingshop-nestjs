@@ -12,5 +12,10 @@ export class RespSecuritySessionDto extends CommonResult {
   /**
    * 会话值
    */
+  accessKey: string;
+
+  /**
+   * 偏移值
+   */
   vectorValue: string;
 }

@@ -174,6 +174,7 @@ export class LoginController {
       await this.securitySessionService.getNewSessionStorage();
     const resp = new RespSecuritySessionDto();
     resp.sessionId = storage.sessionId;
+    resp.accessKey = storage.accessKey;
     resp.vectorValue = storage.vectorValue;
     return resp;
   }

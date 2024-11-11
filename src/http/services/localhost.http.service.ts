@@ -60,12 +60,13 @@ export class LocalhostHttpService extends HttpAbstractService {
 
   private async loginAction(targetRequest: Observable<AxiosResponse>) {
     const publicKey = await this.getPublicKey();
+    const sessionStorage = await this.getSecuritySession();
     const tripleKey = crypto.randomBytes(32).toString('hex');
     const iv = crypto.randomBytes(12).toString('hex');
     const triplePassword = Utils.tripleDesEncrypt(
       this.options.password,
-      tripleKey,
-      iv,
+      tripleKey.substring(32) + sessionStorage?.accessKey?.substring(32),
+      iv.substring(12) + sessionStorage?.vectorValue?.substring(12),
     );
     const tokenParams = {
       accessKey: tripleKey,
@@ -87,6 +88,7 @@ export class LocalhostHttpService extends HttpAbstractService {
       {
         headers: {
           'security-token': securityToken,
+          'security-id': sessionStorage?.sessionId,
         },
       },
     );
