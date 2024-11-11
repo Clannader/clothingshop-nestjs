@@ -151,16 +151,17 @@ export class MemoryCacheService {
         this.globalService.lang(language, '无效的Token', 'user.tokenInvalid'),
       );
     }
-    if (accessKey.length < 32 - 1 || vectorValue.length < 24 - 1) {
+    // accessKey必须大于32位,vectorValue必须大于24位
+    if (accessKey.length <= 32 - 1 || vectorValue.length <= 24 - 1) {
       throw new CodeException(
         CodeEnum.INVALID_TOKEN,
         this.globalService.lang(language, '无效的Token', 'user.tokenInvalid'),
       );
     }
     const tripleKey =
-      accessKey.substring(32) + securityCache.accessKey.substring(32);
+      accessKey.substring(0, 32) + securityCache.accessKey.substring(32, 64);
     const iv =
-      vectorValue.substring(12) + securityCache.vectorValue.substring(12);
+      vectorValue.substring(0, 12) + securityCache.vectorValue.substring(12, 24);
     const decryptData = Utils.tripleDesDecrypt(securityData, tripleKey, iv);
     if (Utils.isEmpty(decryptData)) {
       throw new CodeException(
