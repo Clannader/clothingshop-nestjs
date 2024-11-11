@@ -88,8 +88,8 @@ export class UserService {
     // 事件循环清除会话ID
     // 等待上面的解密完成后,到下一个异步函数之前,删除会话ID
     process.nextTick(() => {
-      this.memoryCacheService.removeSecuritySession(securityOptions.securityId)
-    })
+      this.memoryCacheService.removeSecuritySession(securityOptions.securityId);
+    });
     const [err, result] = await Utils.toPromise(
       this.adminSchemaService.loginSystem(language, adminId),
     );

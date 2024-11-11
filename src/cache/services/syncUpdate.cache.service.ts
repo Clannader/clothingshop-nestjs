@@ -49,9 +49,7 @@ export class SyncUpdateCacheService {
           message.value,
         );
       } else if (message?.action === 'deleteTraceIdCache') {
-        await this.traceIdCacheService.messageDeleteTraceIdCache(
-          message.key,
-        );
+        await this.traceIdCacheService.messageDeleteTraceIdCache(message.key);
       } else if (message?.action === 'updateSecuritySessionCache') {
         await this.securitySessionCacheService.updateSecuritySessionCache(
           message.key,

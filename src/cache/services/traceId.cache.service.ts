@@ -73,5 +73,4 @@ export class TraceIdCacheService {
       await this.getTraceIdStore().del(session.requestId);
     }
   }
-
 }
