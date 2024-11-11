@@ -55,7 +55,11 @@ export class LoginController {
   @ApiCustomResponse({
     type: RespUserLoginDto,
   })
-  @ApiCommon({ showCredential: false, showRsaToken: true })
+  @ApiCommon({
+    showCredential: false,
+    showRsaToken: true,
+    rsaTokenRequired: true,
+  })
   async userLogin(
     @Body() params: ReqUserLoginDto,
     @Req() req: RequestSession,

@@ -14,7 +14,8 @@ import * as moment from 'moment';
 // 有些服务器在整点,有些服务器在半点也不可取,所以只能控制启动的时间了
 const startDate = moment();
 if (startDate.minutes() > 0) {
-  startDate.add(1, 'hours');
+  // 改成2小时后,就算靠近第一个整点也不会出现报错问题了
+  startDate.add(2, 'hours');
 }
 startDate.minutes(0);
 startDate.seconds(0);

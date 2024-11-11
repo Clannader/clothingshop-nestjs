@@ -64,6 +64,11 @@ export class GatewayAuthController {
       description: '客户端使用公钥加密生成的密钥',
       required: true,
     },
+    {
+      name: 'Security-Id',
+      description: '服务器授权的安全ID号',
+      required: true,
+    },
   ])
   async authorizeLogin(
     @Body() params: ReqUserLoginDto,
