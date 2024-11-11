@@ -7,6 +7,7 @@ import { HttpServiceCacheService } from './httpService.cache.service';
 import { MemoryCacheService } from './memory.cache.service';
 import { TokenCacheService } from './token.cache.service';
 import { TraceIdCacheService } from './traceId.cache.service';
+import { SecuritySessionCacheService } from './security.session.cache.service';
 
 @Injectable()
 export class SyncUpdateCacheService {
@@ -21,6 +22,9 @@ export class SyncUpdateCacheService {
 
   @Inject()
   private readonly traceIdCacheService: TraceIdCacheService;
+
+  @Inject()
+  private readonly securitySessionCacheService: SecuritySessionCacheService;
 
   startListening() {
     process.on('message', async (message: Record<string, any>) => {
@@ -43,6 +47,17 @@ export class SyncUpdateCacheService {
         await this.traceIdCacheService.updateTraceIdCache(
           message.key,
           message.value,
+        );
+      } else if (message?.action === 'deleteTraceIdCache') {
+        await this.traceIdCacheService.messageDeleteTraceIdCache(message.key);
+      } else if (message?.action === 'updateSecuritySessionCache') {
+        await this.securitySessionCacheService.updateSecuritySessionCache(
+          message.key,
+          message.value,
+        );
+      } else if (message?.action === 'deleteSecuritySessionCache') {
+        await this.securitySessionCacheService.messageDeleteSecuritySessionCache(
+          message.key,
         );
       }
     });

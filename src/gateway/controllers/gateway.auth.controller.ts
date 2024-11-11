@@ -17,6 +17,7 @@ import {
   CmsSession,
   RequestSession,
   LanguageType,
+  SecurityOptions,
 } from '@/common';
 import { ApiCommon, ApiCustomResponse, UserLanguage } from '@/common/decorator';
 import { CodeEnum } from '@/common/enum';
@@ -63,18 +64,28 @@ export class GatewayAuthController {
       description: '客户端使用公钥加密生成的密钥',
       required: true,
     },
+    {
+      name: 'Security-Id',
+      description: '服务器授权的安全ID号',
+      required: true,
+    },
   ])
   async authorizeLogin(
     @Body() params: ReqUserLoginDto,
     @Req() req: RequestSession,
     @UserLanguage() language: LanguageType,
     @Headers('Security-Token') securityToken: string,
+    @Headers('Security-Id') securityId: string,
   ) {
     params.allowThirdUser = true;
+    const securityOptions: SecurityOptions = {
+      securityToken,
+      securityId,
+    };
     const result: LoginResult = await this.userService.userLogin(
       language,
       params,
-      securityToken,
+      securityOptions,
     );
     const resp = new RespJwtTokenDto();
     if (result.code !== CodeEnum.SUCCESS) {

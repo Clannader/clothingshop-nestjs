@@ -8,6 +8,7 @@ import { HttpServiceCacheModule } from './httpService.cache.module';
 import { MemoryCacheModule } from './memory.cache.module';
 import { TokenCacheModule } from './token.cache.module';
 import { TraceIdCacheModule } from './traceId.cache.module';
+import { SecuritySessionCacheModule } from './security.session.cache.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { TraceIdCacheModule } from './traceId.cache.module';
     MemoryCacheModule,
     TokenCacheModule,
     TraceIdCacheModule,
+    SecuritySessionCacheModule,
   ],
   providers: [SyncUpdateCacheService],
   exports: [SyncUpdateCacheService],

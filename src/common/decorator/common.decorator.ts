@@ -40,6 +40,7 @@ export function BindMethod(...decorators: any[]): MethodDecorator {
 }
 
 type HeadersOptions = {
+  rsaTokenRequired?: boolean; // RSA凭证头是否必填
   showRsaToken?: boolean; // 是否显示需要RSA加密Token
   showCredential?: boolean; // 是否显示credential的header
   showJwtToken?: boolean; // 是否显示jwtToken的header
@@ -51,6 +52,7 @@ export function ApiCommon(options?: HeadersOptions) {
       showCredential: true,
       showJwtToken: false,
       showRsaToken: false,
+      rsaTokenRequired: false,
     },
     options ?? {},
   );
@@ -95,7 +97,12 @@ export function ApiCommon(options?: HeadersOptions) {
     headers.push({
       name: 'Security-Token',
       description: '客户端使用公钥加密生成的密钥',
-      required: true,
+      required: options.rsaTokenRequired,
+    });
+    headers.push({
+      name: 'Security-Id',
+      description: '服务器授权的安全ID号',
+      required: options.rsaTokenRequired,
     });
   }
   return applyDecorators(

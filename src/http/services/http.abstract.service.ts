@@ -17,11 +17,13 @@ import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
 import { ServiceOptions } from '../http.types';
 import { Utils } from '@/common/utils';
 import { CmsSession } from '@/common';
+import { AopLogger } from '@/logger';
 
 @Injectable()
 export abstract class HttpAbstractService {
   protected session: CmsSession;
   protected options: ServiceOptions;
+  private readonly logger = new AopLogger(HttpAbstractService.name);
 
   public constructor(
     @Inject(AXIOS_INSTANCE_TOKEN)
@@ -61,7 +63,7 @@ export abstract class HttpAbstractService {
     );
     this.service.interceptors.response.use(
       (response) => {
-        console.log(
+        this.logger.log(
           response.config.baseURL +
             response.config.url +
             '耗时: ' +
@@ -72,7 +74,7 @@ export abstract class HttpAbstractService {
       },
       (error) => {
         // 如果错误也需要计算耗时
-        console.log(Date.now() - error.config.fetchOptions.startTime);
+        this.logger.log(Date.now() - error.config.fetchOptions.startTime);
         return Promise.reject(error);
       },
     );
@@ -239,5 +241,21 @@ export abstract class HttpAbstractService {
       });
     }
     return publicKey;
+  }
+
+  protected async getSecuritySession() {
+    const sessionObservable = this.makeObservable(
+      this.service.post,
+      '/cms/api/user/getSecuritySession',
+      {},
+    );
+    const [err, result] = await Utils.toPromise(
+      firstValueFrom(sessionObservable),
+    );
+    if (err) {
+      // TODO 以后处理抛出异常
+      return {};
+    }
+    return result.data;
   }
 }

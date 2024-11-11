@@ -53,3 +53,8 @@ export type KeyOf<T> = keyof T extends never ? string : keyof T;
 export type ErrorPromise = Error & {
   code: number;
 };
+
+export type SecurityOptions = {
+  securityToken: string;
+  securityId: string;
+};

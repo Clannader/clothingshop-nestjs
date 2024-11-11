@@ -19,6 +19,8 @@ import {
   LoginResult,
   LanguageType,
   RespPublicKeyResultDto,
+  RespSecuritySessionDto,
+  SecurityOptions,
 } from '@/common';
 import { Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
@@ -30,6 +32,7 @@ import { SessionGuard } from '@/guard';
 import { sign } from 'cookie-signature';
 import { Admin } from '@/entities/schema';
 import { MemoryCacheService } from '@/cache/services';
+import { SecuritySessionService, SecuritySessionStorage } from '@/security';
 
 @Controller('/cms/api/user')
 @ApiTags('LoginController')
@@ -40,6 +43,9 @@ export class LoginController {
   @Inject()
   private readonly memoryCacheService: MemoryCacheService;
 
+  @Inject()
+  private readonly securitySessionService: SecuritySessionService;
+
   @Post('/login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -49,17 +55,26 @@ export class LoginController {
   @ApiCustomResponse({
     type: RespUserLoginDto,
   })
-  @ApiCommon({ showCredential: false, showRsaToken: true })
+  @ApiCommon({
+    showCredential: false,
+    showRsaToken: true,
+    rsaTokenRequired: true,
+  })
   async userLogin(
     @Body() params: ReqUserLoginDto,
     @Req() req: RequestSession,
     @UserLanguage() language: LanguageType,
     @Headers('Security-Token') securityToken: string,
+    @Headers('Security-Id') securityId: string,
   ) {
+    const securityOptions: SecurityOptions = {
+      securityToken,
+      securityId,
+    };
     const result: LoginResult = await this.userService.userLogin(
       language,
       params,
-      securityToken,
+      securityOptions,
     );
     const resp = new RespUserLoginDto();
     if (result.code !== CodeEnum.SUCCESS) {
@@ -145,6 +160,26 @@ export class LoginController {
   async getUserPublicKey() {
     const resp = new RespPublicKeyResultDto();
     resp.publicKey = await this.memoryCacheService.getRsaPublicKey();
+    return resp;
+  }
+
+  @Post('/getSecuritySession')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '获取一个安全会话',
+    description: '获取安全会话的相关数据',
+  })
+  @ApiCustomResponse({
+    type: RespSecuritySessionDto,
+  })
+  @ApiCommon({ showCredential: false })
+  async getUserSecuritySession() {
+    const storage: SecuritySessionStorage =
+      await this.securitySessionService.getNewSessionStorage();
+    const resp = new RespSecuritySessionDto();
+    resp.sessionId = storage.sessionId;
+    resp.accessKey = storage.accessKey;
+    resp.vectorValue = storage.vectorValue;
     return resp;
   }
 }

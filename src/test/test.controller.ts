@@ -37,7 +37,11 @@ import {
 // import { cloneClass } from './utils/test.utils';
 import { UserSessionDto } from '@/user/dto';
 import { XmlInterceptor } from '@/interceptor/xml';
-import { MemoryCacheService, TokenCacheService } from '@/cache/services';
+import {
+  MemoryCacheService,
+  TokenCacheService,
+  SecuritySessionCacheService,
+} from '@/cache/services';
 import {
   AdminSchemaService,
   SystemDataSchemaService,
@@ -61,6 +65,9 @@ export class TestController {
 
   @Inject()
   private readonly memoryCacheService: MemoryCacheService;
+
+  @Inject()
+  private readonly securitySessionCacheService: SecuritySessionCacheService;
 
   // @Inject()
   // private readonly userService: UserService;
@@ -332,6 +339,11 @@ export class TestController {
       }
     }
     console.timeEnd('耗时');
+    console.log(
+      await this.securitySessionCacheService.getSecuritySessionCache(
+        params.sessionId,
+      ),
+    );
     // const encrypt = Utils.rsaPublicEncrypt('Hello RSA');
     // console.log(encrypt);
     // console.log(await this.memoryCacheService.rsaPrivateDecrypt(encrypt));
