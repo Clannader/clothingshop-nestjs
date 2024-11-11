@@ -13,10 +13,11 @@ import * as moment from 'moment';
 // 所以以后启动服务器不能太靠近整点,如果按照分钟数判断是整点还是半点,又会导致多台服务器时
 // 有些服务器在整点,有些服务器在半点也不可取,所以只能控制启动的时间了
 const startDate = moment();
-if (startDate.minutes() > 0) {
-  // 改成2小时后,就算靠近第一个整点也不会出现报错问题了
-  startDate.add(2, 'hours');
-}
+// if (startDate.minutes() >= 0) {
+// 改成2小时后,就算靠近第一个整点也不会出现报错问题了
+// startDate.add(2, 'hours');
+// }
+startDate.add(2, 'hours');
 startDate.minutes(0);
 startDate.seconds(0);
 startDate.milliseconds(0);

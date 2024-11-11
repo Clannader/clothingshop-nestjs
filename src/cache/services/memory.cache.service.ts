@@ -11,7 +11,7 @@ import { join } from 'node:path';
 import { readFileSync, existsSync } from 'node:fs';
 import { CodeException } from '@/common/exceptions';
 import { CodeEnum } from '@/common/enum';
-import { LanguageType, SecurityOptions } from '@/common';
+import { LanguageType, LoginResult, SecurityOptions } from '@/common';
 
 import { SecuritySessionCacheService } from './security.session.cache.service';
 import type { SecuritySessionStorage } from '@/security';
@@ -100,6 +100,26 @@ export class MemoryCacheService {
     securityOptions: SecurityOptions,
   ): Promise<string> {
     const { securityToken, securityId } = securityOptions;
+    if (Utils.isEmpty(securityToken)) {
+      throw new CodeException(
+        CodeEnum.FAIL,
+        this.globalService.lang(
+          language,
+          '安全凭证不能为空',
+          'user.securityTokenIsEmpty',
+        ),
+      );
+    }
+    if (Utils.isEmpty(securityId)) {
+      throw new CodeException(
+        CodeEnum.FAIL,
+        this.globalService.lang(
+          language,
+          '会话凭证不能为空',
+          'user.securityIdIsEmpty',
+        ),
+      );
+    }
     const securityCache: SecuritySessionStorage =
       await this.securitySessionCacheService.getSecuritySessionCache(
         securityId,
