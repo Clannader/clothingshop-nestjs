@@ -20,6 +20,7 @@ import {
   LanguageType,
   RespPublicKeyResultDto,
   RespSecuritySessionDto,
+  SecurityOptions,
 } from '@/common';
 import { Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
@@ -60,11 +61,16 @@ export class LoginController {
     @Req() req: RequestSession,
     @UserLanguage() language: LanguageType,
     @Headers('Security-Token') securityToken: string,
+    @Headers('Security-Id') securityId: string,
   ) {
+    const securityOptions: SecurityOptions = {
+      securityToken,
+      securityId,
+    };
     const result: LoginResult = await this.userService.userLogin(
       language,
       params,
-      securityToken,
+      securityOptions,
     );
     const resp = new RespUserLoginDto();
     if (result.code !== CodeEnum.SUCCESS) {
@@ -154,6 +160,7 @@ export class LoginController {
   }
 
   @Post('/getSecuritySession')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '获取一个安全会话',
     description: '获取安全会话的相关数据',
@@ -163,7 +170,8 @@ export class LoginController {
   })
   @ApiCommon({ showCredential: false })
   async getUserSecuritySession() {
-    const storage: SecuritySessionStorage = await this.securitySessionService.getNewSessionStorage();
+    const storage: SecuritySessionStorage =
+      await this.securitySessionService.getNewSessionStorage();
     const resp = new RespSecuritySessionDto();
     resp.sessionId = storage.sessionId;
     resp.vectorValue = storage.vectorValue;

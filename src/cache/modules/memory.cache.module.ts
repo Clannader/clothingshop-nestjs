@@ -7,6 +7,8 @@ import { ConfigService } from '@/common/config';
 import { MemoryCacheService } from '../services';
 import { caching, MemoryConfig } from 'cache-manager';
 
+import { SecuritySessionCacheModule } from './security.session.cache.module';
+
 @Module({
   imports: [
     CacheModule.registerAsync({
@@ -19,6 +21,7 @@ import { caching, MemoryConfig } from 'cache-manager';
       },
       inject: [ConfigService],
     }),
+    SecuritySessionCacheModule,
   ],
   providers: [MemoryCacheService],
   exports: [MemoryCacheService],

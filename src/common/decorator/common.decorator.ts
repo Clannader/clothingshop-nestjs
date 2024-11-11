@@ -97,6 +97,11 @@ export function ApiCommon(options?: HeadersOptions) {
       description: '客户端使用公钥加密生成的密钥',
       required: true,
     });
+    headers.push({
+      name: 'Security-Id',
+      description: '服务器授权的安全ID号',
+      required: true,
+    });
   }
   return applyDecorators(
     ApiHeaders(headers),

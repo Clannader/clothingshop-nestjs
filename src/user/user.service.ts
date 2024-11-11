@@ -9,6 +9,7 @@ import {
   LoginResult,
   SECRET_CONFIG,
   LanguageType,
+  SecurityOptions,
 } from '@/common';
 import { CodeEnum, UserTypeEnum } from '@/common/enum';
 import { ConfigService } from '@/common/config';
@@ -54,10 +55,11 @@ export class UserService {
   async userLogin(
     language: LanguageType,
     params: ReqUserLoginDto,
-    securityToken: string,
+    securityOptions: SecurityOptions,
   ): Promise<LoginResult> {
     const adminId = params.adminId;
     const securityPassword = params.adminPws; // 新增密码需要客户端加密后传回来
+    const { securityToken, securityId } = securityOptions;
     if (Utils.isEmpty(securityToken)) {
       return Promise.resolve(<LoginResult>{
         message: this.globalService.lang(
@@ -68,10 +70,20 @@ export class UserService {
         code: CodeEnum.FAIL,
       });
     }
+    if (Utils.isEmpty(securityId)) {
+      return Promise.resolve(<LoginResult>{
+        message: this.globalService.lang(
+          language,
+          '会话凭证不能为空',
+          'user.securityIdIsEmpty',
+        ),
+        code: CodeEnum.FAIL,
+      });
+    }
     const password = await this.memoryCacheService.tripleDesDecrypt(
       language,
       securityPassword,
-      securityToken,
+      securityOptions,
     );
     const [err, result] = await Utils.toPromise(
       this.adminSchemaService.loginSystem(language, adminId),

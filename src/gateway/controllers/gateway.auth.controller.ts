@@ -17,6 +17,7 @@ import {
   CmsSession,
   RequestSession,
   LanguageType,
+  SecurityOptions,
 } from '@/common';
 import { ApiCommon, ApiCustomResponse, UserLanguage } from '@/common/decorator';
 import { CodeEnum } from '@/common/enum';
@@ -69,12 +70,17 @@ export class GatewayAuthController {
     @Req() req: RequestSession,
     @UserLanguage() language: LanguageType,
     @Headers('Security-Token') securityToken: string,
+    @Headers('Security-Id') securityId: string,
   ) {
     params.allowThirdUser = true;
+    const securityOptions: SecurityOptions = {
+      securityToken,
+      securityId,
+    };
     const result: LoginResult = await this.userService.userLogin(
       language,
       params,
-      securityToken,
+      securityOptions,
     );
     const resp = new RespJwtTokenDto();
     if (result.code !== CodeEnum.SUCCESS) {

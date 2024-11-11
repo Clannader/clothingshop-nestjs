@@ -7,7 +7,7 @@ import { AdminSchemaModule, SystemDataSchemaModule } from '@/entities/modules';
 import { TestService } from './test.service';
 import { AnimalFactoryModule } from './abstract';
 import { HttpFactoryModule } from '@/http';
-import { TokenCacheModule } from '@/cache/modules';
+import { TokenCacheModule, SecuritySessionCacheModule } from '@/cache/modules';
 import { TestInterfacesModule } from './interfaces';
 
 @Module({
@@ -25,6 +25,7 @@ import { TestInterfacesModule } from './interfaces';
     HttpFactoryModule,
     TokenCacheModule,
     TestInterfacesModule,
+    SecuritySessionCacheModule,
   ],
   controllers: [TestController],
   providers: [TestService],

@@ -11,7 +11,10 @@ import { join } from 'node:path';
 import { readFileSync, existsSync } from 'node:fs';
 import { CodeException } from '@/common/exceptions';
 import { CodeEnum } from '@/common/enum';
-import { LanguageType } from '@/common';
+import { LanguageType, SecurityOptions } from '@/common';
+
+import { SecuritySessionCacheService } from './security.session.cache.service';
+import type { SecuritySessionStorage } from '@/security';
 
 @Injectable()
 export class MemoryCacheService {
@@ -23,6 +26,9 @@ export class MemoryCacheService {
 
   @Inject()
   private readonly globalService: GlobalService;
+
+  @Inject()
+  private readonly securitySessionCacheService: SecuritySessionCacheService;
 
   async setMemoryCache(key: string, value: any) {
     await this.updateMemoryCache(key, value);
@@ -91,8 +97,26 @@ export class MemoryCacheService {
   async tripleDesDecrypt(
     language: LanguageType,
     securityData: string,
-    securityToken: string,
+    securityOptions: SecurityOptions,
   ): Promise<string> {
+    const { securityToken, securityId } = securityOptions;
+    const securityCache: SecuritySessionStorage =
+      await this.securitySessionCacheService.getSecuritySessionCache(
+        securityId,
+      );
+    // 先判断securityId是否在服务器内
+    if (Utils.isEmpty(securityCache)) {
+      throw new CodeException(
+        CodeEnum.INVALID_TOKEN,
+        this.globalService.lang(
+          language,
+          '无效的会话ID',
+          'user.securityIdInvalid',
+        ),
+      );
+    }
+    // 然后取内存值
+    // 然后以内存的iv值为准解密
     const aesKey = await this.rsaPrivateDecrypt(securityToken);
     if (Utils.isEmpty(aesKey)) {
       throw new CodeException(
@@ -101,11 +125,23 @@ export class MemoryCacheService {
       );
     }
     const { accessKey, vectorValue } = JSON.parse(aesKey);
-    const decryptData = Utils.tripleDesDecrypt(
-      securityData,
-      accessKey,
-      vectorValue,
-    );
+    if (Utils.isEmpty(accessKey) || Utils.isEmpty(vectorValue)) {
+      throw new CodeException(
+        CodeEnum.INVALID_TOKEN,
+        this.globalService.lang(language, '无效的Token', 'user.tokenInvalid'),
+      );
+    }
+    if (accessKey.length < 32 - 1 || vectorValue.length < 24 - 1) {
+      throw new CodeException(
+        CodeEnum.INVALID_TOKEN,
+        this.globalService.lang(language, '无效的Token', 'user.tokenInvalid'),
+      );
+    }
+    const tripleKey =
+      accessKey.substring(32) + securityCache.accessKey.substring(32);
+    const iv =
+      vectorValue.substring(12) + securityCache.vectorValue.substring(12);
+    const decryptData = Utils.tripleDesDecrypt(securityData, tripleKey, iv);
     if (Utils.isEmpty(decryptData)) {
       throw new CodeException(
         CodeEnum.INVALID_TOKEN,

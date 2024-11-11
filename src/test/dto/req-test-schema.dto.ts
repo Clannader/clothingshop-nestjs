@@ -9,6 +9,12 @@ export class ReqTestSchemaDto {
   testField: string;
 
   /**
+   * 测试字段2
+   */
+  @Expose()
+  sessionId: string;
+
+  /**
    * 测试数字
    */
   @Expose()
