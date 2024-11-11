@@ -161,7 +161,8 @@ export class MemoryCacheService {
     const tripleKey =
       accessKey.substring(0, 32) + securityCache.accessKey.substring(32, 64);
     const iv =
-      vectorValue.substring(0, 12) + securityCache.vectorValue.substring(12, 24);
+      vectorValue.substring(0, 12) +
+      securityCache.vectorValue.substring(12, 24);
     const decryptData = Utils.tripleDesDecrypt(securityData, tripleKey, iv);
     if (Utils.isEmpty(decryptData)) {
       throw new CodeException(
