@@ -48,10 +48,18 @@ export class SyncUpdateCacheService {
           message.key,
           message.value,
         );
+      } else if (message?.action === 'deleteTraceIdCache') {
+        await this.traceIdCacheService.messageDeleteTraceIdCache(
+          message.key,
+        );
       } else if (message?.action === 'updateSecuritySessionCache') {
         await this.securitySessionCacheService.updateSecuritySessionCache(
           message.key,
           message.value,
+        );
+      } else if (message?.action === 'deleteSecuritySessionCache') {
+        await this.securitySessionCacheService.messageDeleteSecuritySessionCache(
+          message.key,
         );
       }
     });

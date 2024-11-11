@@ -150,4 +150,8 @@ export class MemoryCacheService {
     }
     return Promise.resolve(decryptData);
   }
+
+  async removeSecuritySession(key: string): Promise<void> {
+    await this.securitySessionCacheService.deleteSecuritySessionCache(key);
+  }
 }

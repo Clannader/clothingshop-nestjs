@@ -7,6 +7,8 @@ import { SECURITY_SESSION_MANAGE } from '../cache.constants';
 import type { Cache } from 'cache-manager';
 import { ConfigService } from '@/common/config';
 import type { SecuritySessionStorage } from '@/security';
+import { CmsSession } from '@/common';
+import { Utils } from '@/common/utils';
 
 @Injectable()
 export class SecuritySessionCacheService {
@@ -34,5 +36,19 @@ export class SecuritySessionCacheService {
 
   getSecuritySessionCache(key: string) {
     return this.cacheManager.get<SecuritySessionStorage>(key);
+  }
+
+  async deleteSecuritySessionCache(key: string) {
+    await this.messageDeleteSecuritySessionCache(key);
+    if (this.configService.get<boolean>('clusterServer')) {
+      process.send({
+        notice: 'deleteSecuritySessionCache',
+        key,
+      });
+    }
+  }
+
+  async messageDeleteSecuritySessionCache(key: string) {
+    await this.cacheManager.store.del(key);
   }
 }

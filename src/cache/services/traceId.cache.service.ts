@@ -59,8 +59,19 @@ export class TraceIdCacheService {
   }
 
   async deleteTraceIdCache(session: CmsSession) {
+    await this.messageDeleteTraceIdCache(session);
+    if (this.configService.get<boolean>('clusterServer')) {
+      process.send({
+        notice: 'deleteTraceIdCache',
+        key: session,
+      });
+    }
+  }
+
+  async messageDeleteTraceIdCache(session: CmsSession) {
     if (!Utils.isEmpty(session?.requestId)) {
       await this.getTraceIdStore().del(session.requestId);
     }
   }
+
 }
