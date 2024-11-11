@@ -4,7 +4,6 @@
 // import * as session from 'express-session';
 // import MongoStore from 'connect-mongo/build/main/lib/MongoStore';
 
-/* eslint-disable @typescript-eslint/no-var-requires */
 // const MongoStore = require('connect-mongo');
 
 import { assert } from 'console';
@@ -77,7 +76,6 @@ type InternalSessionType = {
   lastModified?: Date;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 const unit: <T>(a: T) => T = (a) => a;
 

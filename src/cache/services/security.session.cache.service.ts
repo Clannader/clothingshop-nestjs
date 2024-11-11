@@ -7,8 +7,6 @@ import { SECURITY_SESSION_MANAGE } from '../cache.constants';
 import type { Cache } from 'cache-manager';
 import { ConfigService } from '@/common/config';
 import type { SecuritySessionStorage } from '@/security';
-import { CmsSession } from '@/common';
-import { Utils } from '@/common/utils';
 
 @Injectable()
 export class SecuritySessionCacheService {

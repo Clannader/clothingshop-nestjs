@@ -13,7 +13,7 @@ import type { NestApplicationOptions } from '@nestjs/common';
 
 // 我真的是醉了,官网没有@types的包,使用import运行时又报错
 // 使用require时,使用lint解析又报错,只能忽略这个错误了,以后再说了,坑爹
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 // const MongoStore = require('connect-mongo');
 import { SessionMongoStore } from './dao';
 import * as cookieParser from 'cookie-parser';
