@@ -24,6 +24,7 @@ const pemDirectory = 'rsa';
 export type SecretPem = {
   publicPem: string;
   privatePem: string;
+  secretId: string;
 };
 
 @Injectable()
@@ -231,6 +232,7 @@ export class MemoryCacheService {
     secretPem = {
       publicPem,
       privatePem,
+      secretId,
     };
     await this.updateMemoryCache(secretId, secretPem);
     return Promise.resolve(secretPem);

@@ -97,7 +97,7 @@ Log4js.configure({
       level: 'all',
     },
     fileLogs: {
-      appenders: ['fileLogs', 'console'],
+      appenders: ['fileLogs'],
       //appenders: ['fileLogs', 'console']这样配置可以在控制台输出
       //appenders: ['fileLogs']不需要在控制台输出
       level: 'all',
