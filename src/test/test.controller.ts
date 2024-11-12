@@ -339,11 +339,12 @@ export class TestController {
       }
     }
     console.timeEnd('耗时');
-    console.log(
-      await this.securitySessionCacheService.getSecuritySessionCache(
-        params.sessionId,
-      ),
-    );
+    console.log(await this.memoryCacheService.getLatestRsaPem());
+    // console.log(
+    //   await this.securitySessionCacheService.getSecuritySessionCache(
+    //     params.sessionId,
+    //   ),
+    // );
     // const encrypt = Utils.rsaPublicEncrypt('Hello RSA');
     // console.log(encrypt);
     // console.log(await this.memoryCacheService.rsaPrivateDecrypt(encrypt));
