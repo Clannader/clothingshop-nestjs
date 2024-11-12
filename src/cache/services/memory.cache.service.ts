@@ -204,6 +204,7 @@ export class MemoryCacheService {
           }
         }
       }
+      await this.setMemoryCache('latestRsaKey', latestRsaKey);
     }
     return this.getInternalRsaPem(latestRsaKey);
   }
