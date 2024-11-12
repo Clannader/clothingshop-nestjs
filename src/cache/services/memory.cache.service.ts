@@ -11,7 +11,7 @@ import { join } from 'node:path';
 import { readFileSync, existsSync } from 'node:fs';
 import { CodeException } from '@/common/exceptions';
 import { CodeEnum } from '@/common/enum';
-import { LanguageType, LoginResult, SecurityOptions } from '@/common';
+import { LanguageType, SecurityOptions } from '@/common';
 
 import { SecuritySessionCacheService } from './security.session.cache.service';
 import type { SecuritySessionStorage } from '@/security';

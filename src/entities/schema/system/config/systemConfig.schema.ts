@@ -9,6 +9,8 @@ import { SystemConfigTypeEnum } from '@/common/enum';
 import { Utils } from '@/common/utils';
 import { codeExp } from '@/common';
 
+import { SecretSchema } from '../../secret.schema';
+
 export class CommonConfig {
   @Prop({
     type: String,
@@ -28,7 +30,18 @@ export class CommonConfig {
   @Prop({
     type: String,
   })
-  value: string; // 配置的value
+  value: string; // 配置的value,普通明文数据
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  isEncrypt: boolean; // 数据值是否加密
+
+  @Prop({
+    type: SecretSchema,
+  })
+  secretValue: SecretSchema; // 如果是敏感数据,加密后存入,如果正常返回就value:*****
 
   @Prop({
     type: String,
