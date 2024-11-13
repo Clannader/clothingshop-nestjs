@@ -6,6 +6,7 @@ import { ConfigService } from '@/common/config';
 import { clean } from 'node-xss';
 import { AopLogger } from '@/logger';
 import { AopAspect } from '@/interceptor/aop';
+import * as crypto from 'node:crypto';
 
 // @ts-ignore
 const cluster = require('node:cluster');
@@ -38,6 +39,7 @@ export class AopMiddleware implements NestMiddleware {
     }
 
     req.startTime = new Date();
+    req.requestId = crypto.randomUUID();
 
     const _end = res.end;
     /* eslint-disable @typescript-eslint/no-this-alias */

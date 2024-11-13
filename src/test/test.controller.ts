@@ -10,6 +10,7 @@ import {
   Query,
   UseInterceptors,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@/common/config';
@@ -55,6 +56,7 @@ import { HttpFactoryService, ServiceType } from '@/http';
 import { RespTimeZoneAllDto } from '@/system/dto';
 import { HttpInterceptor } from '@/interceptor/http';
 import { PersonObj, StudentObj, TeacherObj } from '@/test/interfaces';
+import { SessionGuard } from '@/guard';
 
 @ApiCommon()
 @Controller('/cms')
@@ -114,8 +116,9 @@ export class TestController {
     description: '测试泛型接口',
   })
   @ApiGenericsResponse(RespTestSchemaDto, TestSchemaDto)
+  @UseGuards(SessionGuard)
   // @UseInterceptors(XmlInterceptor) // 拦截器返回XML格式的报文
-  @UseInterceptors(HttpInterceptor)
+  // @UseInterceptors(HttpInterceptor)
   async testingPost(
     @Body() params: ReqTestSchemaDto,
     @UserSession() session: CmsSession,
@@ -339,11 +342,12 @@ export class TestController {
       }
     }
     console.timeEnd('耗时');
-    console.log(
-      await this.securitySessionCacheService.getSecuritySessionCache(
-        params.sessionId,
-      ),
-    );
+    console.log(await this.memoryCacheService.getLatestRsaPem());
+    // console.log(
+    //   await this.securitySessionCacheService.getSecuritySessionCache(
+    //     params.sessionId,
+    //   ),
+    // );
     // const encrypt = Utils.rsaPublicEncrypt('Hello RSA');
     // console.log(encrypt);
     // console.log(await this.memoryCacheService.rsaPrivateDecrypt(encrypt));

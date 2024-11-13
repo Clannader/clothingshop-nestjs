@@ -8,13 +8,24 @@ import type { Cache } from 'cache-manager';
 import { ConfigService } from '@/common/config';
 import { GlobalService, Utils } from '@/common/utils';
 import { join } from 'node:path';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { CodeException } from '@/common/exceptions';
 import { CodeEnum } from '@/common/enum';
-import { LanguageType, LoginResult, SecurityOptions } from '@/common';
+import { LanguageType, SecurityOptions } from '@/common';
+import validator from 'validator';
 
 import { SecuritySessionCacheService } from './security.session.cache.service';
 import type { SecuritySessionStorage } from '@/security';
+
+const publicPemName = 'public-rsa.pem';
+const privatePemName = 'private-rsa.pem';
+const pemDirectory = 'rsa';
+
+export type SecretPem = {
+  publicPem: string;
+  privatePem: string;
+  secretId: string;
+};
 
 @Injectable()
 export class MemoryCacheService {
@@ -61,10 +72,7 @@ export class MemoryCacheService {
     const pemKey = 'rsa-public-pem';
     let pem = await this.getMemoryCache(pemKey);
     if (Utils.isEmpty(pem)) {
-      const publicPath = join(
-        this.configService.getPemPath(),
-        'public-rsa.pem',
-      );
+      const publicPath = join(this.configService.getPemPath(), publicPemName);
       if (existsSync(publicPath)) {
         pem = readFileSync(publicPath, 'utf8');
       }
@@ -77,10 +85,7 @@ export class MemoryCacheService {
     const pemKey = 'rsa-private-pem';
     let pem = await this.getMemoryCache(pemKey);
     if (Utils.isEmpty(pem)) {
-      const privatePath = join(
-        this.configService.getPemPath(),
-        'private-rsa.pem',
-      );
+      const privatePath = join(this.configService.getPemPath(), privatePemName);
       if (existsSync(privatePath)) {
         pem = readFileSync(privatePath, 'utf8');
       }
@@ -175,5 +180,61 @@ export class MemoryCacheService {
 
   async removeSecuritySession(key: string): Promise<void> {
     await this.securitySessionCacheService.deleteSecuritySessionCache(key);
+  }
+
+  // 获取服务器内部最新的RSA密钥
+  async getLatestRsaPem(): Promise<SecretPem> {
+    let latestRsaKey = await this.getMemoryCache('latestRsaKey');
+    if (Utils.isEmpty(latestRsaKey)) {
+      const pemPath = this.configService.getPemPath();
+      const rsaPath = join(pemPath, pemDirectory);
+      if (!existsSync(rsaPath)) {
+        throw new CodeException(
+          CodeEnum.EXCEPTION,
+          'The rsa directory does not exist',
+        );
+      }
+      const rsaDirs = readdirSync(rsaPath);
+      let createTimeMs = 0;
+      for (const rsaKey of rsaDirs) {
+        if (validator.isUUID(rsaKey)) {
+          const statDir = statSync(join(rsaPath, rsaKey));
+          if (statDir.ctimeMs > createTimeMs) {
+            createTimeMs = statDir.ctimeMs;
+            latestRsaKey = rsaKey;
+          }
+        }
+      }
+      await this.setMemoryCache('latestRsaKey', latestRsaKey);
+    }
+    return this.getInternalRsaPem(latestRsaKey);
+  }
+
+  // 通过secretId查找对应的RSA密钥
+  async getInternalRsaPem(secretId: string): Promise<SecretPem> {
+    if (Utils.isEmpty(secretId)) {
+      throw new CodeException(CodeEnum.EXCEPTION, 'The secretId is empty');
+    }
+    let secretPem: SecretPem = await this.getMemoryCache(secretId);
+    if (!Utils.isEmpty(secretPem)) {
+      return secretPem;
+    }
+    const pemPath = this.configService.getPemPath();
+    const secretPath = join(pemPath, pemDirectory, secretId);
+    if (!existsSync(secretPath)) {
+      throw new CodeException(
+        CodeEnum.EXCEPTION,
+        'The secretId does not exist',
+      );
+    }
+    const publicPem = readFileSync(join(secretPath, publicPemName), 'utf8');
+    const privatePem = readFileSync(join(secretPath, privatePemName), 'utf8');
+    secretPem = {
+      publicPem,
+      privatePem,
+      secretId,
+    };
+    await this.updateMemoryCache(secretId, secretPem);
+    return Promise.resolve(secretPem);
   }
 }
