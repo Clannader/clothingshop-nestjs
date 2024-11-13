@@ -1,7 +1,7 @@
 /**
  * Create by oliver.wu 2024/10/14
  */
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { CommonConfig } from './systemConfig.schema';

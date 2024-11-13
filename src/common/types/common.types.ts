@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Session, Store } from 'express-session';
+import { Session } from 'express-session';
 import { LanguageEnum } from '../enum';
 
 export interface CmsSession {

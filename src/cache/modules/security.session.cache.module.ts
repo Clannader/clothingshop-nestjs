@@ -2,7 +2,6 @@
  * Create by oliver.wu 2024/11/8
  */
 import { Module } from '@nestjs/common';
-import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigService } from '@/common/config';
 import { SecuritySessionCacheService } from '../services';
 import { caching, MemoryConfig } from 'cache-manager';

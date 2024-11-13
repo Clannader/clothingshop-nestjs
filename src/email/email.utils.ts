@@ -2,7 +2,7 @@
  * Create by CC on 2022/7/24
  */
 import { render } from 'ejs';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { LanguageType } from '@/common';
 import { Utils } from '@/common/utils';
 

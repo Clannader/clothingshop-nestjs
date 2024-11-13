@@ -15,11 +15,14 @@ export function SessionMiddleware(
   const cookie = req.headers.cookie || ''; // 这个是原始的cookie取值
   const cookieJSON = cookieModule.parse(cookie); // 原始的cookie是字符串,格式化变成JSON
   // console.log(req.cookies); // 需要使用cookie-parser包才能有这个节点,并且是JSON格式的
+  // 并且发现1.0.1的cookie无法被console.log打印cookieJSON
   if (credential != null) {
     delete req.cookies[sessionName];
     delete cookieJSON[sessionName];
     cookieJSON[sessionName] = credential as string;
     req.headers.cookie = Utils.stringifyParams(cookieJSON, ';');
+    // 0.7.2的cookie解析为cmsApp="xxx"
+    // 1.0.1的cookie解析为{"cmsApp":"xxx"}
   }
   next();
 }
