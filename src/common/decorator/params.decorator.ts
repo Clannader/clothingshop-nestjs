@@ -18,6 +18,7 @@ export const UserSession = createParamDecorator(
     // if (!Utils.isEmpty(session)) {
     session.language = Utils.getHeadersLanguage(request);
     // 这里发现一个问题,那就是如果不使用@UserSession时,如果上一个接口赋值了,下一个接口没使用@UserSession,那么下一个接口的requestId是没有变化的
+    // 如果想每个请求都生成一个新的ID,那么在aop.middleware中的req生成即可
     session.requestId = Utils.getSha1Uuid(session.sessionId, 32); // 每次请求都赋予一个唯一的请求ID
     session.workerId = workerId;
     // }
