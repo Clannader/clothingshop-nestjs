@@ -14,7 +14,7 @@ import { caching, MemoryConfig } from 'cache-manager';
       provide: TRACE_ID_CACHE_MANAGER,
       useFactory: async (config: ConfigService) => {
         const options: MemoryConfig = {
-          ttl: config.get<number>('traceIdTTL', 3600) * 1000,
+          ttl: config.get<number>('traceIdTTL', 5 * 60) * 1000,
           max: config.get<number>('traceIdMax', 100 * 1000),
         };
         return caching('memory', options);
