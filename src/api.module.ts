@@ -20,6 +20,7 @@ import { AopAspectModule } from './interceptor/aop';
 import { SwaggerModule } from './swagger.module';
 import { TasksListModule } from '@/tasks';
 import { ApplicationHookModule } from '@/hooks';
+import { MemoryCacheModule } from '@/cache/modules';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ApplicationHookModule } from '@/hooks';
     MongooseConfigModule,
     SwaggerModule,
     AopAspectModule,
+    MemoryCacheModule,
   ],
   providers: [
     {

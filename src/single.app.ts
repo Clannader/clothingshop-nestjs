@@ -54,6 +54,8 @@ export async function bootstrap() {
 
   const serverOptions: NestApplicationOptions = {
     logger: aopLogger, // 这里应该是修改了底层代码用到的logger函数的调用
+    rawBody: true,
+    bodyParser: true,
   };
   // 原本想同时启用http和https的,但是发现按照官网上面的写法,服务是启动成功了,但是swagger不能显示
   // 并且登录的业务也不能正常使用,暂时就这样留着吧,要么设置http,要么设置https,暂时不使用共存的机制吧
@@ -100,8 +102,10 @@ export async function bootstrap() {
     }),
   );
   app.use(cookieParser());
-  app.use(bodyParser.json({ limit: '15mb' }));
-  app.use(bodyParser.urlencoded({ extended: false, limit: '15mb' }));
+  app.useBodyParser('json', { limit: '15mb' });
+  app.useBodyParser('urlencoded', { extended: false, limit: '15mb' });
+  // app.use(bodyParser.json({ limit: '15mb' })); // 感觉这个限制body大小无效了
+  // app.use(bodyParser.urlencoded({ extended: false, limit: '15mb' }));
   app.use(SessionMiddleware);
   app.use(
     session({
