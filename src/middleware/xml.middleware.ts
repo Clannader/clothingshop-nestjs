@@ -18,6 +18,7 @@ export function XmlMiddleware(
       xmlLen += data.length;
     });
     req.on('end', () => {
+      // 这里还是不能使用req.rawBody来赋值,因为只有json协议的时候这个节点才有值,xml还是得使用这个写法获取buffer
       req.xmlData = Buffer.concat(xmlData, xmlLen).toString();
       next();
     });

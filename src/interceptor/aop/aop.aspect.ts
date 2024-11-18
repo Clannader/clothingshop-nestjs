@@ -58,6 +58,7 @@ export class AopAspect {
         'refreshToken',
         'accessToken',
         'credential',
+        'publicKey',
       ];
       // params = Utils.piiJsonData(params, ...piiFields)
       // piiFields.forEach((field) => {

@@ -117,13 +117,13 @@ export class TestController {
   })
   @ApiGenericsResponse(RespTestSchemaDto, TestSchemaDto)
   @UseGuards(SessionGuard)
-  // @UseInterceptors(XmlInterceptor) // 拦截器返回XML格式的报文
+  @UseInterceptors(XmlInterceptor) // 拦截器返回XML格式的报文
   // @UseInterceptors(HttpInterceptor)
   async testingPost(
     @Body() params: ReqTestSchemaDto,
     @UserSession() session: CmsSession,
-    // @XmlData() xmlData: string,
-    // @XmlJsonData() xmlJsonData: Record<string, any>,
+    @XmlData() xmlData: string,
+    @XmlJsonData() xmlJsonData: Record<string, any>,
     // @Headers('language') lang: string,
   ) {
     const resp = new RespTestSchemaDto();
@@ -132,8 +132,11 @@ export class TestController {
     result.password = '123';
     result.username = '123';
     // console.log(params);
-    // console.log(xmlData);
-    // console.log(xmlJsonData);
+    console.log(xmlData);
+    console.log(xmlJsonData);
+    if (xmlJsonData?.result?.testField) {
+      params.testField = xmlJsonData?.result?.testField;
+    }
     // console.log(lang);
     // const clone = cloneClass(RespTestSchemaDto);
     // console.log(Reflect.getMetadataKeys(clone));
@@ -342,7 +345,7 @@ export class TestController {
       }
     }
     console.timeEnd('耗时');
-    console.log(await this.memoryCacheService.getLatestRsaPem());
+    // console.log(await this.memoryCacheService.getLatestRsaPem());
     // console.log(
     //   await this.securitySessionCacheService.getSecuritySessionCache(
     //     params.sessionId,

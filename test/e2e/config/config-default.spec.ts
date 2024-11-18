@@ -32,7 +32,7 @@ describe('ConfigService 默认加载', () => {
       'mongodb://127.0.0.1:27018/clothingshop',
     );
     expect(service.getSecurityConfig('dbName')).toBe(
-      'M9kB1vUOFHzgzHa2VeIUkgeMZJ',
+      null, // 以前解密解不出来返回原文,现在改成返回null了
     );
     expect(service.getSecurityConfig('dbPws')).toBe('123456');
     expect(service.get<string>('HOMEPATH')).not.toBe(process.env['HOMEPATH']);
