@@ -6,7 +6,6 @@ import { join } from 'path';
 import { ConfigModule } from './config.module';
 import { SECRET_CONFIG } from '../constants';
 import parseEnv from '@/lib/parseEnv';
-import { Utils } from '@/common/utils';
 
 @Module({})
 export class SecretConfigModule {

@@ -14,8 +14,8 @@ import { caching, MemoryConfig } from 'cache-manager';
       provide: TOKEN_CACHE_MANAGER,
       useFactory: (config: ConfigService) => {
         const options: MemoryConfig = {
-          ttl: config.get<number>('cacheTTL', 3600) * 1000,
-          max: config.get<number>('cacheMax', 100 * 1000),
+          ttl: config.get<number>('tokenTTL', 30 * 60) * 1000,
+          max: config.get<number>('tokenMax', 100 * 1000),
         };
         return caching('memory', options);
       },
