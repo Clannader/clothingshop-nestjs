@@ -8,7 +8,6 @@ import { AopLogger } from '@/logger';
 import { AopAspect } from '@/interceptor/aop';
 import * as crypto from 'node:crypto';
 import { MemoryCacheService } from '@/cache/services';
-import { CodeException } from '@/common/exceptions';
 
 // @ts-ignore
 const cluster = require('node:cluster');
