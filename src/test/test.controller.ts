@@ -345,7 +345,7 @@ export class TestController {
       }
     }
     console.timeEnd('耗时');
-    console.log(await this.memoryCacheService.getLatestRsaPem());
+    // console.log(await this.memoryCacheService.getLatestRsaPem());
     // console.log(
     //   await this.securitySessionCacheService.getSecuritySessionCache(
     //     params.sessionId,

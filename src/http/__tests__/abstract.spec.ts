@@ -14,7 +14,7 @@ describe('AbstractTest', () => {
     expect(one).toBeInstanceOf(TestOneAdapter);
     expect(one.getAge()).toBe(28);
     expect(one.getTestName()).toBe('TestOneAdapter');
-    expect(one.getUserList()).toStrictEqual(['12', '32', '43', 'fads']);
+    expect(one.getUserList()).toStrictEqual(['oliver', 'flex', 'sam', 'jack']);
     expect(one.getAdapter()).toBe('TestOneAdapter');
 
     const two = TestFactory.create({
@@ -22,7 +22,7 @@ describe('AbstractTest', () => {
     });
     expect(two).toBeInstanceOf(TestTwoAdapter);
     expect(two.getTestName()).toBe('TestTwoAdapter');
-    expect(two.getUserList()).toStrictEqual(['fd', 'fasdf', 'cvc', 'jkjh']);
+    expect(two.getUserList()).toStrictEqual(['one ', 'two', 'three', 'four']);
     expect(two.getAdapter()).toBe('TestTwoAdapter');
     expect(two.getAge()).toBe(30);
   });
