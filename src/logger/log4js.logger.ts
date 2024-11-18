@@ -106,5 +106,6 @@ Log4js.configure({
 });
 
 const consoleLogger = Log4js.getLogger('console');
+// TODO 对某些不能stringify的数据会报TypeError: Cannot convert object to primitive value,而无法打印出结果,需要屏蔽下面的代码
 replaceConsole(consoleLogger);
 consoleLogger.addContext('appName', 'cmsServer');
