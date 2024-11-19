@@ -26,6 +26,10 @@ export type SecretPem = {
   privatePem: string;
   secretId: string;
 };
+export type TripleData = {
+  tripleKey: string;
+  iv: string;
+};
 
 @Injectable()
 export class MemoryCacheService {
@@ -99,11 +103,46 @@ export class MemoryCacheService {
     return Utils.rsaPrivateDecrypt(data, await this.getRsaPrivatePem());
   }
 
+  // 3DES解密
   async tripleDesDecrypt(
     language: LanguageType,
     securityData: string,
     securityOptions: SecurityOptions,
   ): Promise<string> {
+    const tripleData = await this.getTripleData(language, securityOptions);
+    const decryptData = Utils.tripleDesDecrypt(
+      securityData,
+      tripleData.tripleKey,
+      tripleData.iv,
+    );
+    if (Utils.isEmpty(decryptData)) {
+      throw new CodeException(
+        CodeEnum.INVALID_TOKEN,
+        this.globalService.lang(language, '无效的密文', 'user.securityInvalid'),
+      );
+    }
+    return Promise.resolve(decryptData);
+  }
+
+  // 3DES加密
+  async tripleDesEncrypt(
+    language: LanguageType,
+    plainData: string,
+    securityOptions: SecurityOptions,
+  ) {
+    const tripleData = await this.getTripleData(language, securityOptions);
+    const encryptData = Utils.tripleDesEncrypt(
+      plainData,
+      tripleData.tripleKey,
+      tripleData.iv,
+    );
+    return Promise.resolve(encryptData);
+  }
+
+  private async getTripleData(
+    language: LanguageType,
+    securityOptions: SecurityOptions,
+  ): Promise<TripleData> {
     const { securityToken, securityId } = securityOptions;
     if (Utils.isEmpty(securityToken)) {
       throw new CodeException(
@@ -140,6 +179,15 @@ export class MemoryCacheService {
         ),
       );
     }
+    if (
+      !Utils.isEmpty(securityCache.tripleKey) &&
+      !Utils.isEmpty(securityCache.iv)
+    ) {
+      return {
+        tripleKey: securityCache.tripleKey,
+        iv: securityCache.iv,
+      };
+    }
     // 然后取内存值
     // 然后以内存的iv值为准解密
     const aesKey = await this.rsaPrivateDecrypt(securityToken);
@@ -168,14 +216,16 @@ export class MemoryCacheService {
     const iv =
       vectorValue.substring(0, 12) +
       securityCache.vectorValue.substring(12, 24);
-    const decryptData = Utils.tripleDesDecrypt(securityData, tripleKey, iv);
-    if (Utils.isEmpty(decryptData)) {
-      throw new CodeException(
-        CodeEnum.INVALID_TOKEN,
-        this.globalService.lang(language, '无效的密文', 'user.securityInvalid'),
-      );
-    }
-    return Promise.resolve(decryptData);
+    securityCache.tripleKey = tripleKey;
+    securityCache.iv = iv;
+    await this.securitySessionCacheService.setSecuritySessionCache(
+      securityId,
+      securityCache,
+    );
+    return {
+      tripleKey,
+      iv,
+    };
   }
 
   async removeSecuritySession(key: string): Promise<void> {

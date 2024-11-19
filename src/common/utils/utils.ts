@@ -378,7 +378,7 @@ export class Utils {
   static piiData(str = '', start = 3, end = 3) {
     if (str.length < 3) {
       return '******';
-    } else if (str.length >= 3 && str.length < (start + end)) {
+    } else if (str.length >= 3 && str.length < start + end) {
       start = 1;
       end = 1;
     }
