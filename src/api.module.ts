@@ -17,6 +17,7 @@ import { CommonModule, ConfigModule } from './common/modules';
 import { AopMiddleware, XmlMiddleware } from './middleware';
 import { MongooseConfigModule } from './dao';
 import { AopAspectModule } from './interceptor/aop';
+import { SecurityInterceptor } from './interceptor/security';
 import { SwaggerModule } from './swagger.module';
 import { TasksListModule } from '@/tasks';
 import { ApplicationHookModule } from '@/hooks';
@@ -55,6 +56,10 @@ import { MemoryCacheModule } from '@/cache/modules';
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: SecurityInterceptor,
     },
   ],
 })

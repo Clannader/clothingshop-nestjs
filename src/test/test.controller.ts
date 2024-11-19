@@ -296,7 +296,7 @@ export class TestController {
     );
     let err, respResult;
     console.time('耗时');
-    if (params.testField === 'localhost') {
+    /*if (params.testField === 'localhost') {
       [err, respResult] = await Utils.toPromise(
         service.get<RespTimeZoneAllDto>('/cms/api/timeZone/allList'),
       );
@@ -343,7 +343,7 @@ export class TestController {
       } else {
         console.log(respResult.data.config);
       }
-    }
+    }*/
     console.timeEnd('耗时');
     // console.log(await this.memoryCacheService.getLatestRsaPem());
     // console.log(

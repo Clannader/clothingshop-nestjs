@@ -103,8 +103,10 @@ export async function bootstrap() {
   );
   app.use(cookieParser());
   app.useBodyParser('json', { limit: '15mb' });
+  app.useBodyParser('text', { limit: '15mb' });
+  app.useBodyParser('raw', { limit: '15mb' });
   app.useBodyParser('urlencoded', { extended: false, limit: '15mb' });
-  // app.use(bodyParser.json({ limit: '15mb' })); // 感觉这个限制body大小无效了
+  // app.use(bodyParser.json({ limit: '15mb' }));
   // app.use(bodyParser.urlencoded({ extended: false, limit: '15mb' }));
   app.use(SessionMiddleware);
   app.use(

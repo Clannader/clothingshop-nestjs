@@ -4,10 +4,10 @@
 import { Module } from '@nestjs/common';
 import { AopAspect } from './aop.aspect';
 import { AdminAccessModule } from '@/entities/modules';
-import { TraceIdCacheModule } from '@/cache/modules';
+import { TraceIdCacheModule, MemoryCacheModule } from '@/cache/modules';
 
 @Module({
-  imports: [AdminAccessModule, TraceIdCacheModule],
+  imports: [AdminAccessModule, TraceIdCacheModule, MemoryCacheModule],
   providers: [AopAspect],
   exports: [AopAspect],
 })

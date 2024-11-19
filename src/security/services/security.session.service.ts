@@ -10,6 +10,8 @@ export class SecuritySessionStorage {
   sessionId: string;
   accessKey: string;
   vectorValue: string;
+  tripleKey?: string;
+  iv?: string;
 }
 
 @Injectable()
