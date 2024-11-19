@@ -376,6 +376,12 @@ export class Utils {
    * 保留前几后几位数,中间*号
    */
   static piiData(str = '', start = 3, end = 3) {
+    if (str.length < 3) {
+      return '******';
+    } else if (str.length >= 3 && str.length < (start + end)) {
+      start = 1;
+      end = 1;
+    }
     const regExp = new RegExp(
       `([\\s\\S]{${start}})([\\s\\S]*)([\\s\\S]{${end}})$`,
       'g',
