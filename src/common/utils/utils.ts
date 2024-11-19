@@ -297,6 +297,10 @@ export class Utils {
     return xmlHeader && xmlHeader.indexOf('xml') !== -1;
   }
 
+  static isHasSecurityHeader(req: Request) {
+    return req.headers['security-request'] === 'true';
+  }
+
   static stringifyParams(
     obj: Record<string, string>,
     sep = '&',

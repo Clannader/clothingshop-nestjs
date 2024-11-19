@@ -9,7 +9,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { AopLogger } from '@/logger';
 import * as onFinished from 'on-finished';
 import { AdminAccessSchemaService } from '@/entities/services';
-import { TraceIdCacheService } from '@/cache/services';
+import { MemoryCacheService, TraceIdCacheService } from '@/cache/services';
 
 // @ts-ignore
 const cluster = require('node:cluster'); // 不明白这个包的引入问题,后期有解决办法修改了再说吧
@@ -26,6 +26,9 @@ export class AopAspect {
 
   @Inject()
   private readonly traceIdCacheService: TraceIdCacheService;
+
+  @Inject()
+  private readonly memoryCacheService: MemoryCacheService;
 
   logAspect(req: RequestSession, res: CmsResponse): void {
     const now = new Date();
@@ -67,8 +70,11 @@ export class AopAspect {
       //   }
       // });
       const isXmlRequest = Utils.isHasSoapHeader(req);
+      const isSecurityRequest = Utils.isHasSecurityHeader(req);
       if (isXmlRequest) {
         params = req.xmlData;
+      } else if (isSecurityRequest) {
+        params = req.rawBody.toString();
       }
       const diffTime = Date.now() - req.startTime.getTime();
       const workerId = cluster?.worker?.id ?? 1;
@@ -78,6 +84,10 @@ export class AopAspect {
       );
       // 删除traceId,traceId逻辑仅只有请求时有效,请求结束后可以删除
       this.traceIdCacheService.deleteTraceIdCache(session).then();
+      const securityId = <string>req.headers['security-id'];
+      if (!Utils.isEmpty(securityId)) {
+        this.memoryCacheService.removeSecuritySession(securityId).then();
+      }
 
       if (!session) {
         session = {
@@ -91,7 +101,7 @@ export class AopAspect {
       const isIndex = url.indexOf(baseUrl) !== -1; //如果url含有index,说明是网页进来的
       let returnData: string | Record<string, any> = res.returnData;
       try {
-        if (!isXmlRequest) {
+        if (!isXmlRequest && !isSecurityRequest) {
           returnData = JSON.parse(res.returnData);
         }
         // piiFields.forEach((field) => {
@@ -121,22 +131,37 @@ export class AopAspect {
       //     headers[field] = Utils.piiData(headers[field] as string);
       //   }
       // });
+      let paramsBuffer: string | Record<string, any>;
+      if (isXmlRequest) {
+        paramsBuffer = Utils.piiXmlData(params, ...piiFields);
+      } else if (isSecurityRequest) {
+        paramsBuffer = Utils.piiData(params, 5, 5);
+      } else {
+        paramsBuffer = Utils.piiJsonData(params, ...piiFields);
+      }
+      let sendBuffer: string | Record<string, any>;
+      if (isXmlRequest) {
+        sendBuffer = Utils.piiXmlData(<string>returnData, ...piiFields);
+      } else if (isSecurityRequest) {
+        sendBuffer = Utils.piiData(<string>returnData, 5, 5);
+      } else {
+        sendBuffer = Utils.piiJsonData(
+          returnData as Record<string, any>,
+          ...piiFields,
+        );
+      }
       const createParams = {
         date: now,
         ip,
         url,
         method: method.toUpperCase(),
-        params: isXmlRequest
-          ? Utils.piiXmlData(params, ...piiFields)
-          : Utils.piiJsonData(params, ...piiFields),
+        params: paramsBuffer,
         shopId: session.shopId,
         adminId: session.adminId,
         adminType: session.adminType,
         type: isIndex ? LogTypeEnum.Browser : LogTypeEnum.Interface,
         timestamp: diffTime,
-        send: isXmlRequest
-          ? Utils.piiXmlData(returnData as string, ...piiFields)
-          : Utils.piiJsonData(returnData as Record<string, any>, ...piiFields),
+        send: sendBuffer,
         headers: Utils.piiJsonData(headers, ...piiHeaders),
         serverName: this.configService.get<string>('serverName'),
         workerId,

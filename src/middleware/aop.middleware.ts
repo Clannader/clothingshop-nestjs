@@ -8,6 +8,7 @@ import { AopLogger } from '@/logger';
 import { AopAspect } from '@/interceptor/aop';
 import * as crypto from 'node:crypto';
 import { MemoryCacheService } from '@/cache/services';
+import { Utils } from '@/common/utils';
 
 // @ts-ignore
 const cluster = require('node:cluster');
@@ -34,7 +35,7 @@ export class AopMiddleware implements NestMiddleware {
     //   req.body = JSON.parse(clean(JSON.stringify(req.body)));
     // }
     // 这里直接放开就好了,因为post接口或者put请求时还是有可能含有query或者body值的
-    const securityRequest = req.headers['security-request'] === 'true';
+    const securityRequest = Utils.isHasSecurityHeader(req);
     if (securityRequest) {
       // 这里很神奇,就算报错了,也catch不到这里的异常
       const rawBody = await this.memoryCacheService.rsaPrivateDecrypt(
