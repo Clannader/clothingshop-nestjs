@@ -18,6 +18,8 @@ list.forEach(doc => {
 print('总数:' + i)
 
 4.查看mongodb的日志
+getLog 是一条管理命令,可返回最近记录的 1024 个 mongod 事件.
+getLog 无法从 mongod 日志文件中读取日志数据.相反,它会从记录的 mongod 事件的 RAM 缓存中读取数据.要运行 getLog,请使用 db.adminCommand() 方法.
 db.adminCommand( { getLog:'global'} ).log.forEach(x => {print(x)})
 
 5.按条件导出数据
