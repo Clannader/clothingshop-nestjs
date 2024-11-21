@@ -37,6 +37,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       maxIdleTimeMS: 2000, // 空闲连接2秒后关闭
       maxPoolSize: 10,
       maxConnecting: 2, // 默认2
+      appName: 'CS System',
       // logger: this.logger, //TODO 暂时注掉再说吧
       connectionFactory: (connection: Connection) => {
         //数据库连接错误时报错
