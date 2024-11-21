@@ -57,3 +57,22 @@ jq "select(.\"attr\".\"durationMillis\">=200 and .\"c\"==\"COMMAND\")" -c D:\Mon
 
 9.关于mongodb7.0安装后没有db工具导出导出问题,是官网把这些工具整合到了database tools里面,只需要重新下载即可
 下载地址 https://www.mongodb.com/try/download/database-tools
+
+10.安装mongodb的服务
+用管理员运行cmd运行这个语句创建服务
+sc create MongoDB4.2 binPath="D:\MongoDB\Server\4.2\bin\mongod.exe --config "D:\MongoDB\Server\4.2\bin\mongod.cfg" --service" DisplayName="MongoDB4.2" start=auto
+删除服务
+sc delete MongoDB4.2
+
+11.备份mongodb数据
+mongodump --host localhost --port 27018 --db "localStagingDB" --out "~\ImportDBData\local"
+
+12.重新配置mongodb
+D:\MongoDB\Server\4.2\bin\mongod.exe --config "D:\MongoDB\Server\4.2\bin\mongod.cfg"
+D:\MongoDB\Server\4.2\bin\mongod.exe --config "D:\MongoDB\Server\4.2\bin\mongod.cfg"  --install --serviceName "MongoDB4.2" --serviceDisplayName "MongoDB4.2"
+
+13.关于索引优化
+索引筛选器
+https://www.mongodb.com/zh-cn/docs/manual/reference/command/nav-plan-cache/
+索引分析
+https://www.mongodb.com/zh-cn/docs/manual/reference/explain-results/#explain-output-structure
