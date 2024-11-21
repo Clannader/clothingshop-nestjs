@@ -36,8 +36,22 @@ mongoimport -h localhost:27017 -u root -p admin -d admin -c logs --ssl --sslCAFi
 7.关于mongodb.log
 mongodb4.2版本和7.0版本还是不一样的,发现一个问题,就是代码中计算的执行时间和mongodb计算的是有点差别的,mongodb确实是语句实际执行的时间
 但服务器里面的执行时间其实还包含了主进程的等待时间,如果没有空闲的进程去处理,那么会进行等待,直到给mongodb发送执行命令,mongodb才能去执行
-所以服务器计算的时间永远都是 > mongodb计算的时间.
+所以服务器计算的时间永远都是 >(大于) mongodb计算的时间.
 4.2的日志很直观的看到执行语句,7.0的需要搜索"c": "COMMAND"
 参考地址
 7.0  https://www.mongodb.com/zh-cn/docs/v7.0/reference/log-messages/#std-label-log-message-pretty-printing
 4.2  版本已经不更新,只能下载 https://www.mongodb.com/zh-cn/docs/legacy/?site=docs
+
+8.jqlang的使用
+jqlang的-c就是输出的时候json是一行,不格式化
+-f是输入条件的文件路径,内容为select(.attr.durationMillis>=200 and .c=="COMMAND")
+查找耗时大于200ms,命令为COMMAND,ns包含clothingshop,条件后面加?是因为有些日志没有attr.ns字段会报错
+select(.attr.durationMillis>=200 and .c=="COMMAND" and (.attr.ns | test("clothingshop.*")?))
+> [out file path], > 后面跟着输出文件路径或者文件名
+jq -f D:\\MongoDB\\Server\\jsonQuery.txt -c D:\MongoDB\Server\7.0\log\mongod.log > queryResult.json
+
+使用cmd输入命令时，"(冒号)需要转义
+jq "select(.\"attr\".\"durationMillis\">=200 and .\"c\"==\"COMMAND\")" -c D:\MongoDB\Server\7.0\log\mongod.log > queryResult.json
+
+9.关于mongodb7.0安装后没有db工具导出导出问题,是官网把这些工具整合到了database tools里面,只需要重新下载即可
+下载地址 https://www.mongodb.com/try/download/database-tools
