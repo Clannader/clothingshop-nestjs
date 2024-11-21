@@ -76,3 +76,5 @@ D:\MongoDB\Server\4.2\bin\mongod.exe --config "D:\MongoDB\Server\4.2\bin\mongod.
 https://www.mongodb.com/zh-cn/docs/manual/reference/command/nav-plan-cache/
 索引分析
 https://www.mongodb.com/zh-cn/docs/manual/reference/explain-results/#explain-output-structure
+查询计划缓存
+https://www.mongodb.com/zh-cn/docs/manual/reference/method/js-plan-cache/
