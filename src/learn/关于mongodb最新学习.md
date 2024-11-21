@@ -45,8 +45,8 @@ mongodb4.2版本和7.0版本还是不一样的,发现一个问题,就是代码�
 4.2  版本已经不更新,只能下载 https://www.mongodb.com/zh-cn/docs/legacy/?site=docs
 
 8.jqlang的使用
-jqlang的-c就是输出的时候json是一行,不格式化
--f是输入条件的文件路径,内容为select(.attr.durationMillis>=200 and .c=="COMMAND")
+-c 就是输出的时候json是一行,不格式化
+-f 是输入条件的文件路径,内容为select(.attr.durationMillis>=200 and .c=="COMMAND")
 查找耗时大于200ms,命令为COMMAND,ns包含clothingshop,条件后面加?是因为有些日志没有attr.ns字段会报错
 select(.attr.durationMillis>=200 and .c=="COMMAND" and (.attr.ns | test("clothingshop.*")?))
 > [out file path], > 后面跟着输出文件路径或者文件名
