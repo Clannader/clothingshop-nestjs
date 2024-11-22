@@ -64,14 +64,27 @@ sc create MongoDB4.2 binPath="D:\MongoDB\Server\4.2\bin\mongod.exe --config "D:\
 删除服务
 sc delete MongoDB4.2
 
-11.备份mongodb数据
-mongodump --host localhost --port 27018 --db "localStagingDB" --out "~\ImportDBData\local"
+11.备份mongodb数据 
+https://www.mongodb.com/zh-cn/docs/database-tools/mongodump/mongodump-examples/
+// 全备份
+mongodump -h localhost:27017 -d clothingshop -o D:\MongoDB\Server\dump
+// 排除adminaccesses和adminlogs表,其他表备份,每次备份需要清空目录,否则会遗留上一次备份的数据
+mongodump -h localhost:27017 -d clothingshop --excludeCollection=adminaccesses --excludeCollection=adminlogs -o D:\MongoDB\Server\dump
+// 压缩备份
+mongodump -h localhost:27017 -d clothingshop --archive=D:\MongoDB\Server\dump\clothingshop.20241122.gz --gzip
 
-12.重新配置mongodb
+12.还原mongodb数据
+https://www.mongodb.com/zh-cn/docs/database-tools/mongorestore/mongorestore-examples/
+// 全还原
+mongorestore -h localhost:27018 -d clothingshop D:\MongoDB\Server\dump\clothingshop
+// 压缩还原
+mongorestore -h localhost:27018 -d clothingshop --gzip --archive=D:\MongoDB\Server\dump\clothingshop.20241122.gz
+
+13.重新配置mongodb
 D:\MongoDB\Server\4.2\bin\mongod.exe --config "D:\MongoDB\Server\4.2\bin\mongod.cfg"
 D:\MongoDB\Server\4.2\bin\mongod.exe --config "D:\MongoDB\Server\4.2\bin\mongod.cfg"  --install --serviceName "MongoDB4.2" --serviceDisplayName "MongoDB4.2"
 
-13.关于索引优化
+14.关于索引优化
 索引筛选器
 https://www.mongodb.com/zh-cn/docs/manual/reference/command/nav-plan-cache/
 索引分析
