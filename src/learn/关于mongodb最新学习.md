@@ -91,3 +91,4 @@ https://www.mongodb.com/zh-cn/docs/manual/reference/command/nav-plan-cache/
 https://www.mongodb.com/zh-cn/docs/manual/reference/explain-results/#explain-output-structure
 查询计划缓存
 https://www.mongodb.com/zh-cn/docs/manual/reference/method/js-plan-cache/
+mongo shell: JSON.stringify(db.orders.getPlanCache().list())
