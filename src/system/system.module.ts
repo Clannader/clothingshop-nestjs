@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common';
-import { SystemService, RepairDataService, TimeZoneService } from './services';
+import {
+  SystemService,
+  RepairDataService,
+  TimeZoneService,
+  SystemConfigService,
+} from './services';
 import {
   SystemController,
   RepairDataController,
   TimeZoneController,
+  SystemConfigController,
 } from './controllers';
 
 import { DatabaseModule } from '@/database';
@@ -24,8 +30,18 @@ import {
     DeleteLogSchemaModule,
     UserLogsModule,
   ],
-  controllers: [SystemController, RepairDataController, TimeZoneController],
-  providers: [SystemService, RepairDataService, TimeZoneService],
+  controllers: [
+    SystemController,
+    RepairDataController,
+    TimeZoneController,
+    SystemConfigController,
+  ],
+  providers: [
+    SystemService,
+    RepairDataService,
+    TimeZoneService,
+    SystemConfigService,
+  ],
   exports: [SystemService],
 })
 export class SystemModule {}

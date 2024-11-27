@@ -33,11 +33,11 @@ npm warn deprecated vis@4.21.0: Please consider using https://github.com/visjs
 14.解决node:cluster的import问题
 15.虽然可以同步内存了,但是如果内存是一个类,由于进程发送消息进行了序列化,导致取消息时,得到的对象不是发送时的一样,需要找模块包对类序列化.
    按照网上的写法,如果需要序列化,那么需要重写toJSON()方法即可
-16.研究process.nextTick,,setTimeout,setImmediate三个机制的使用
+16.研究process.nextTick,,setTimeout,setImmediate三个机制的使用 √
 17.研究@nestjs/schedule模块包的源代码
 18.研究nodejs的事件循环机制
 19.实现同步服务器消息代码,ini中配置所有服务器地址,顺便新增读取服务器日志功能,对服务器地址进行加密返回给前端,不考虑暴露地址
-20.对比索引的接口新增返回数据库中实际的索引值回去,可以看到数据库的值和默认值的差别
+20.对比索引的接口新增返回数据库中实际的索引值回去,可以看到数据库的值和默认值的差别(原代码已经新增新的差异,需要同步到这里)
 21.新增用户登录时,同一个用户最多在线10次,避免恶意登录服务器
 22.研究如何使用rsa加解密 √
 23.继承这个接口OnApplicationShutdown,研究服务器断开时需要的操作,还有启动时需要的操作 √
@@ -58,7 +58,7 @@ npm warn deprecated vis@4.21.0: Please consider using https://github.com/visjs
 27.看看数据库字段如何定义一个类的类型,看看子文档和定义一个类的类型有什么区别,思考ref的作用,关于ref,看看能否绑定那个表的所有字段
    先暂时保存代码,后续代码加上时再做测试吧
 28.新增系统参数表
-29.如何获取原始的rawBody:Buffer,获取到了需要判断解密然后传入后续的校验
+29.如何获取原始的rawBody:Buffer,获取到了需要判断解密然后传入后续的校验 √
 
 RSA数据库加解密
 1.数据库请求服务器获取敏感信息,先调用getSession(),获取新的会话
