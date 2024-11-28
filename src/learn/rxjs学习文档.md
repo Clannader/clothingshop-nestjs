@@ -92,6 +92,48 @@ bufferWhen:
 
 4.小结
 ·固定时间内只取第一个值,使用throttleTime
+例子:
+const ob = new Subject();
+ob.pipe(throttleTime(1000)).subscribe(console.log);
+ob.next(1);
+ob.next(2);
+setTimeout(() => {
+    ob.next(5);
+    ob.next(6);
+}, 1020);
 ·固定时间内只取最后一个值,使用debounceTime
 ·收集固定时间内所有值,使用bufferTime
 ·收集固定数量值,使用bufferCount
+
+5.需求
+1.如何使用rxjs做类似vue3的ref声明,使用proxy对字段修改
+2.如何实现抖动,限流,限制一分钟点击几次的功能
+3.一分钟防止多次点击
+4.父子组件的传参
+5.实现一分钟允许接收10个值,多余的丢弃,不够10个值也接收
+
+6.代码示例
+const ob = new Subject();
+
+// 我感觉会内存溢出
+// setInterval(() => {
+//   ob.pipe(take(3)).subscribe(console.log);
+// }, 1000)
+
+setTimeout(() => {
+ob.next(1);
+ob.next(2);
+ob.next(3);
+ob.next(4);
+}, 1100)
+
+setTimeout(() => {
+ob.next(5);
+ob.next(6);
+ob.next(7);
+}, 2100);
+
+setTimeout(() => {
+ob.next(8);
+ob.next(9);
+}, 3100);
