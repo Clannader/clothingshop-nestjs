@@ -110,30 +110,54 @@ setTimeout(() => {
 2.如何实现抖动,限流,限制一分钟点击几次的功能
 3.一分钟防止多次点击
 4.父子组件的传参
-5.实现一分钟允许接收10个值,多余的丢弃,不够10个值也接收
+5.实现每5秒内最多允许接收前3个值,多余的丢弃,不够3个值也取前3个
 
-6.代码示例
+6.代码示例(实现每5秒内最多允许接收前3个值,多余的丢弃,不够3个值也取前3个)
+方案1:
 const ob = new Subject();
-
 // 我感觉会内存溢出
 // setInterval(() => {
 //   ob.pipe(take(3)).subscribe(console.log);
-// }, 1000)
+// }, 5000)
+
+方案2:
+使用缓存做限制发送,定义一个固定key的有效期是5秒钟的缓存,只要产生值就加入,超过3个不next即可,感觉最理想的方案
+
+方案3:
+const sec = interval(5000); // 定义一个5秒的Observable对象
+const ob = new Subject()
+
+ob.pipe(
+    window(sec), // 使用window操作符,按每5秒分组,也是返回的是Observable对象
+    map(win => win.pipe(take(3))), // 在每组对象中取前3个值
+    mergeAll()   // 然后合并后发出,不能少这句
+).subscribe(x => console.log(x));
 
 setTimeout(() => {
-ob.next(1);
-ob.next(2);
-ob.next(3);
-ob.next(4);
-}, 1100)
+ob.next(1)
+ob.next(2)
+ob.next(3)
+ob.next(4)
+}, 500)
 
 setTimeout(() => {
-ob.next(5);
-ob.next(6);
-ob.next(7);
-}, 2100);
+ob.next(5)
+ob.next(6)
+ob.next(7)
+ob.next(8)
+}, 1500)
 
 setTimeout(() => {
-ob.next(8);
-ob.next(9);
-}, 3100);
+ob.next(9)
+ob.next(10)
+}, 2500)
+
+setTimeout(() => {
+ob.next(11)
+}, 3500)
+
+setTimeout(() => {
+ob.next(12)
+ob.next(13)
+ob.next(14)
+}, 6500)
