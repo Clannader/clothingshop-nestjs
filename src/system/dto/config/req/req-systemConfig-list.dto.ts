@@ -3,13 +3,14 @@
  */
 import { Expose } from 'class-transformer';
 import { SystemConfigTypeEnum } from '@/common/enum';
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 
 export class ReqSystemConfigListDto {
   /**
-   * 仅包含一级或者二级返回
+   * 仅包含父级或者子级返回
    */
   @Expose()
+  @IsOptional()
   @IsEnum(SystemConfigTypeEnum)
   onlyInclude?: SystemConfigTypeEnum;
 }
