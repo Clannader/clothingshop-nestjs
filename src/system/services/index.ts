@@ -4,3 +4,4 @@
 export * from './system.service';
 export * from './repairData.service';
 export * from './timeZone.service';
+export * from './system.config.service';

@@ -136,6 +136,9 @@ export async function bootstrap() {
       type: 'http',
       description: 'AuthorizationCode from CMS',
     })
+    // TODO 如果想在controller加入说明,需要在这里填加,后期估计考虑新增修饰器获取全部的控制器说明加进去
+    // .addTag('DatabaseController', '控制器描述')
+    // .addTag('GatewayAuthController', '控制器描述')
     // .addOAuth2({
     //   type: 'oauth2',
     //   description: 'AuthorizationCode from CMS',

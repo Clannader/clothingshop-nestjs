@@ -27,6 +27,7 @@ export enum RightsEnum {
   OtherSetup = '3000',
   SystemDataSetup = '3010',
   SystemBaseSetup = '3011',
+  AllConfigList = '30111',
   PackageVersionSetup = '3012',
   GetSequenceNumber = '3013',
   TimeZoneSetup = '3014',
@@ -68,6 +69,12 @@ export const RightsList: RightsConfig = {
           SystemBaseSetup: {
             code: RightsEnum.SystemBaseSetup, // 3011
             desc: '基础设置',
+            children: {
+              AllConfigList: {
+                code: RightsEnum.AllConfigList, // 30111
+                desc: '系统配置列表',
+              },
+            },
           },
           // 查库依赖包版本
           PackageVersionSetup: {
