@@ -124,7 +124,9 @@ const ob = new Subject();
 使用缓存做限制发送,定义一个固定key的有效期是5秒钟的缓存,只要产生值就加入,超过3个不next即可,感觉最理想的方案
 
 方案3:
-const sec = interval(5000); // 定义一个5秒的Observable对象
+import { window, map, take, Subject, interval, mergeAll } from 'rxjs';
+const sec = interval(5000); // 定义一个5秒的Observable对象,如果设置2400效果更好理解
+// 结果是123--910--11--121314
 const ob = new Subject()
 
 ob.pipe(
