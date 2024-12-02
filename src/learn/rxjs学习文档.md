@@ -50,6 +50,16 @@ const result = source.pipe(takeUntil(timer(startOfNextMinute)));
 result.subscribe(console.log);
 
 2.join创建运算符
+combineLatest: 把多个Observable对象同时并集发射,每个对象有一个输出结果就合并一起返回. 这个是只要ob有返回值就会输出
+concat: 把多个Observable对象按顺序发射,完成前一个Observable才到下一个Observable
+forkJoin: 把多个Observable对象同时开始,全部完成后,取每个对象的最后结果的合集
+merge: (ob1, ob2, ob3, 2),如果没有最后一个数字参数,则是合并多个ob对象同时发送,如果有参数,则是先执行前n个ob,完成其中一个后才同时执行后续n个ob
+partition: 一个ob发射的值,按条件拆分出多个ob对象.例如:发射0123456789,可以按是否是偶数拆分单数ob和偶数ob
+race: 在多个ob中,取发射值最快的ob用于订阅.应用于判断多个http请求,哪个最快返回
+zip: 把多个ob每次发射的值合并返回,需要每个ob都有返回值才会合并返回
+
+这里需要注意zip和combineLatest的区别
+
 
 3.转换运算符
 buffer:按条件缓冲值后发出
