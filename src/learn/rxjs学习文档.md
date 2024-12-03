@@ -59,7 +59,13 @@ race: 在多个ob中,取发射值最快的ob用于订阅.应用于判断多个ht
 zip: 把多个ob每次发射的值合并返回,需要每个ob都有返回值才会合并返回
 
 这里需要注意zip和combineLatest的区别
+import { of, zip, combineLatest, interval, take } from 'rxjs';
+const age$ = of(27, 25, 29);
+const name$ = interval(500).pipe(take(3));
+const isDev$ = of(true, true, false);
 
+zip(age$, name$, isDev$).subscribe(x => console.log(x));
+combineLatest([age$, name$, isDev$]).subscribe(x => console.log(x))
 
 3.转换运算符
 buffer:按条件缓冲值后发出
