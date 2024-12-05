@@ -10,7 +10,9 @@ export interface OnEventMessageMetadata {
   message: OnEventMessageType;
 }
 
-export const OnEventMessage = (message?: OnEventMessageType): MethodDecorator => {
+export const OnEventMessage = (
+  message?: OnEventMessageType,
+): MethodDecorator => {
   const decoratorFactory = (
     target: object,
     key?: any,
@@ -25,4 +27,4 @@ export const OnEventMessage = (message?: OnEventMessageType): MethodDecorator =>
   };
   decoratorFactory.KEY = EVENT_MESSAGE_METADATA;
   return decoratorFactory;
-}
+};

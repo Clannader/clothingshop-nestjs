@@ -9,7 +9,7 @@ export class EventMessageModule {
   static forRoot(): DynamicModule {
     return {
       module: EventMessageModule,
-      imports: [DiscoveryModule]
-    }
+      imports: [DiscoveryModule],
+    };
   }
 }
