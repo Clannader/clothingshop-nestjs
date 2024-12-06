@@ -168,6 +168,7 @@ export async function bootstrap() {
     operationIdFactory: (controllerKey: string, methodKey: string) => {
       return `${controllerKey}_${methodKey}`;
     },
+    // autoTagControllers: false, // 这个的意思是设置true,那么控制器Controller不使用ApiTags也能创建分类,否则需要显示调用ApiTags来创建分类
     // deepScanRoutes: true // 不懂有什么用
   };
   const document = SwaggerModule.createDocument(
@@ -197,6 +198,8 @@ export async function bootstrap() {
     customSiteTitle: 'CMS Swagger UI',
     customCssUrl: '/swagger-ui-override.css',
     jsonDocumentUrl: 'swagger-ui/json', // 默认为swagger-ui-json,可以自定义更换
+    yamlDocumentUrl: 'swagger-ui/yaml', // 默认为swagger-ui-yaml,可以自定义更换
+    // raw: true, // swagger 8.1.0版本新增是否禁用json/yaml,设置false时不会生成json/yaml文件.如果只想有json,设置['json']
   });
 
   // Starts listening for shutdown hooks, 如果加入健康检查官网建议开启
@@ -208,6 +211,9 @@ export async function bootstrap() {
     );
     aopLogger.log(
       `SwaggerJson is running on: ${protocol}://${hostName}:${httpPort}/swagger-ui/json`,
+    );
+    aopLogger.log(
+      `SwaggerYaml is running on: ${protocol}://${hostName}:${httpPort}/swagger-ui/yaml`,
     );
     aopLogger.log(
       `Node Version: ${process.version}, processID : ${process.pid}`,
