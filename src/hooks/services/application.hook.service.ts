@@ -7,7 +7,6 @@ import {
   OnApplicationBootstrap,
   OnApplicationShutdown,
 } from '@nestjs/common';
-import { SyncUpdateCacheService } from '@/cache/services';
 import { ConfigService } from '@/common/config';
 
 import * as moment from 'moment';
@@ -17,13 +16,9 @@ export class ApplicationHookService
   implements OnApplicationBootstrap, OnApplicationShutdown
 {
   @Inject()
-  private readonly syncUpdateCacheService: SyncUpdateCacheService;
-
-  @Inject()
   private readonly configService: ConfigService;
 
   onApplicationBootstrap(): any {
-    this.syncUpdateCacheService.startListening();
     this.configService.set(
       'serverStartDate',
       moment().format('YYYY-MM-DD HH:mm:ss,SSS'),

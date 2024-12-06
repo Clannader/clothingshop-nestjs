@@ -161,8 +161,10 @@ describe('Utils', () => {
   });
 
   it('测试 piiData方法', () => {
-    expect(Utils.piiData('123')).toBe('123');
-    expect(Utils.piiData('12345')).toBe('12345');
+    expect(Utils.piiData('1')).toBe('******');
+    expect(Utils.piiData('12')).toBe('******');
+    expect(Utils.piiData('123')).toBe('1******3');
+    expect(Utils.piiData('12345')).toBe('1******5');
     expect(Utils.piiData('123456')).toBe('123******456');
     expect(Utils.piiData('123456789')).toBe('123******789');
     expect(Utils.piiData('1234567890321', 5)).toBe('12345******321');
@@ -278,8 +280,14 @@ describe('Utils', () => {
       },
       token: '568994451',
       picture: '图片',
+      picture2: '图片片',
+      picture3: '图片好看',
+      picture4: '图',
     };
-    expect(Utils.piiJsonData(jsonData, 'picture').picture).toBe('图片');
+    expect(Utils.piiJsonData(jsonData, 'picture').picture).toBe('******');
+    expect(Utils.piiJsonData(jsonData, 'picture2').picture2).toBe('图******片');
+    expect(Utils.piiJsonData(jsonData, 'picture3').picture3).toBe('图******看');
+    expect(Utils.piiJsonData(jsonData, 'picture4').picture4).toBe('******');
     expect(Utils.piiJsonData(jsonData, 'token').token).toBe('568******451');
 
     const p1 = Utils.piiJsonData(jsonData, 'token', 'password');

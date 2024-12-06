@@ -3,11 +3,9 @@
  */
 import { Module } from '@nestjs/common';
 
-import { SyncUpdateCacheModule } from '@/cache/modules';
 import { ApplicationHookService } from '../services';
 
 @Module({
-  imports: [SyncUpdateCacheModule],
   providers: [ApplicationHookService],
 })
 export class ApplicationHookModule {}

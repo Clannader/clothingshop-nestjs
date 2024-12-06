@@ -46,11 +46,22 @@ mongodb4.2版本和7.0版本还是不一样的,发现一个问题,就是代码�
 
 8.jqlang的使用
 -c 就是输出的时候json是一行,不格式化
+-r 就是格式化JSON
 -f 是输入条件的文件路径,内容为select(.attr.durationMillis>=200 and .c=="COMMAND")
 查找耗时大于200ms,命令为COMMAND,ns包含clothingshop,条件后面加?是因为有些日志没有attr.ns字段会报错
 select(.attr.durationMillis>=200 and .c=="COMMAND" and (.attr.ns | test("clothingshop.*")?))
 > [out file path], > 后面跟着输出文件路径或者文件名
 jq -f D:\\MongoDB\\Server\\jsonQuery.txt -c D:\MongoDB\Server\7.0\log\mongod.log > queryResult.json
+所有输出基本都是默认格式化的,所以不需要加-r,只有不想格式化才加入-c
+
+坑:
+1.如果带上了-c,那么-r就会无效化
+2.一般使用相对路径,例如:jq -f jsonQuery.txt jsonData.json > queryResult.json(如何不格式化加入-c,格式化就不加)
+3.如果想遍历输出json中的数组: jq .rows[] jsonData.json
+遍历输出数组中某个字段值: jq .rows[] | .fields jsonData.json
+遍历输出数组增加判断条件: jq .rows[] | select(.fields=="value") jsonData.json
+如果还想在上面的基础上仅返回某个字段: jq .rows[] | select(.fields=="value") | .fields jsonData.json
+如果返回的字段包含双引号,可通过加入-r去掉: jq .rows[] | select(.fields=="value") | .fields jsonData.json -r
 
 使用cmd输入命令时，"(冒号)需要转义
 jq "select(.\"attr\".\"durationMillis\">=200 and .\"c\"==\"COMMAND\")" -c D:\MongoDB\Server\7.0\log\mongod.log > queryResult.json

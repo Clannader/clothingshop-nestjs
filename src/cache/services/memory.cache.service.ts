@@ -16,6 +16,7 @@ import validator from 'validator';
 
 import { SecuritySessionCacheService } from './security.session.cache.service';
 import type { SecuritySessionStorage } from '@/security';
+import { OnEventMessage, SendEventMessage } from '@/lib/event-message';
 
 const publicPemName = 'public-rsa.pem';
 const privatePemName = 'private-rsa.pem';
@@ -45,17 +46,19 @@ export class MemoryCacheService {
   @Inject()
   private readonly securitySessionCacheService: SecuritySessionCacheService;
 
+  @SendEventMessage('asyncMemoryCache')
   async setMemoryCache(key: string, value: any) {
     await this.updateMemoryCache(key, value);
-    if (this.configService.get<boolean>('clusterServer')) {
-      process.send({
-        notice: 'updateMemoryCache',
-        key,
-        value,
-      });
-    }
+    // if (this.configService.get<boolean>('clusterServer')) {
+    //   process.send({
+    //     notice: 'updateMemoryCache',
+    //     key,
+    //     value,
+    //   });
+    // }
   }
 
+  @OnEventMessage('asyncMemoryCache')
   async updateMemoryCache(key: string, value: any) {
     await this.cacheManager.set(key, value);
   }

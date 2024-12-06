@@ -199,6 +199,9 @@ export async function bootstrap() {
     jsonDocumentUrl: 'swagger-ui/json', // 默认为swagger-ui-json,可以自定义更换
   });
 
+  // Starts listening for shutdown hooks, 如果加入健康检查官网建议开启
+  // app.enableShutdownHooks();
+
   const server = await app.listen(httpPort).then((server) => {
     aopLogger.log(
       `Application is running on: ${protocol}://${hostName}:${httpPort}/swagger-ui`,

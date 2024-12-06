@@ -10,6 +10,10 @@ import { TokenCacheModule } from './token.cache.module';
 import { TraceIdCacheModule } from './traceId.cache.module';
 import { SecuritySessionCacheModule } from './security.session.cache.module';
 
+/**
+ * @deprecated
+ * 使用新的修饰器来实现内存同步
+ */
 @Module({
   imports: [
     HttpServiceCacheModule,

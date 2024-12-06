@@ -59,6 +59,7 @@ npm warn deprecated vis@4.21.0: Please consider using https://github.com/visjs
    先暂时保存代码,后续代码加上时再做测试吧
 28.新增系统参数表
 29.如何获取原始的rawBody:Buffer,获取到了需要判断解密然后传入后续的校验 √
+30.需要新增3个修饰器,发消息,拿定时器,获取控制器的名称
 
 RSA数据库加解密
 1.数据库请求服务器获取敏感信息,先调用getSession(),获取新的会话
