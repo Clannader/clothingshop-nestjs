@@ -11,7 +11,7 @@ import {
   RightCodeGroupSchemaService,
 } from '@/entities/services';
 import type { AdminLog } from '@/entities/schema';
-import { TokenCacheService } from '@/cache/services';
+import { TokenCacheService, MemoryCacheService } from '@/cache/services';
 import * as moment from 'moment';
 import { TestIntervalName, TestIntervalType } from '../tasks.constants';
 
@@ -32,13 +32,20 @@ export class TestTasksService {
   @Inject()
   private readonly tokenCacheService: TokenCacheService;
 
+  @Inject()
+  private readonly memoryCacheService: MemoryCacheService;
+
   @Interval(TestIntervalName, 8 * 1000)
   async handleInterval() {
     const workerId = cluster.worker ? cluster.worker.id : 1;
     const serverId = 1;
+    const cache = await this.memoryCacheService.getMemoryCache('Test')
 
     console.log(
       `服务器ID: ${workerId}--------------------------${moment().format('YYYY-MM-DD HH:mm:ss,SSS')}`,
+    );
+    console.log(
+      `服务器ID: ${workerId}--------------------------${cache}`,
     );
 
     // await this.rightCodeGroupSchemaService.getModel().create({

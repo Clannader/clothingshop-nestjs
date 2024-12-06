@@ -35,6 +35,7 @@ export class SyncAllTasksService {
     // 一般没有延迟器的逻辑,延迟器的话不需要重启
     // 获取所有定时器任务,然后取消,然后重启
     const intervalKeys = this.schedulerRegistry.getIntervals();
+    // TODO 需要加修饰器拿完全部的方法
     const intervalService = {
       TestIntervalName: this.testTasksService.handleInterval,
       TestIntervalType: this.testTasksService.handleTestInterval,

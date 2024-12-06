@@ -290,12 +290,13 @@ export class TestController {
     //   console.log(list.data);
     // }
 
-    const service = await this.httpFactoryService.getHttpService(
-      session,
-      <ServiceType>params.testField,
-    );
-    let err, respResult;
+    // const service = await this.httpFactoryService.getHttpService(
+    //   session,
+    //   <ServiceType>params.testField,
+    // );
+    // let err, respResult;
     console.time('耗时');
+    await this.memoryCacheService.setMemoryCache('Test', 'HAHA')
     /*if (params.testField === 'localhost') {
       [err, respResult] = await Utils.toPromise(
         service.get<RespTimeZoneAllDto>('/cms/api/timeZone/allList'),

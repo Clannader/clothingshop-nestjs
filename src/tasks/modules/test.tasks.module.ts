@@ -9,7 +9,7 @@ import {
   AdminLogSchemaModule,
   RightCodeGroupSchemaModule,
 } from '@/entities/modules';
-import { TokenCacheModule } from '@/cache/modules';
+import { TokenCacheModule, MemoryCacheModule } from '@/cache/modules';
 
 @Module({
   imports: [
@@ -17,6 +17,7 @@ import { TokenCacheModule } from '@/cache/modules';
     AdminLogSchemaModule,
     TokenCacheModule,
     RightCodeGroupSchemaModule,
+    MemoryCacheModule,
   ],
   providers: [TestTasksService],
   exports: [TestTasksService],
