@@ -296,7 +296,7 @@ export class TestController {
     // );
     // let err, respResult;
     console.time('耗时');
-    await this.memoryCacheService.setMemoryCache('Test', 'HAHA')
+    await this.memoryCacheService.setMemoryCache('Test', 'HAHA');
     /*if (params.testField === 'localhost') {
       [err, respResult] = await Utils.toPromise(
         service.get<RespTimeZoneAllDto>('/cms/api/timeZone/allList'),

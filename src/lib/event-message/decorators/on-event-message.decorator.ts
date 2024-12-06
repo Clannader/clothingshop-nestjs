@@ -3,7 +3,10 @@
  */
 import { applyDecorators, SetMetadata } from '@nestjs/common';
 import { extendArrayMetadata } from '@nestjs/common/utils/extend-metadata.util';
-import { EVENT_ON_MESSAGE_METADATA, EVENT_SEND_MESSAGE_METADATA } from '../constants';
+import {
+  EVENT_ON_MESSAGE_METADATA,
+  EVENT_SEND_MESSAGE_METADATA,
+} from '../constants';
 
 export type OnEventMessageType = string | symbol;
 
@@ -33,7 +36,5 @@ export const OnEventMessage = (
 export const SendEventMessage = (
   message: OnEventMessageType,
 ): MethodDecorator => {
-  return applyDecorators(
-    SetMetadata(EVENT_SEND_MESSAGE_METADATA, message)
-  )
-}
+  return applyDecorators(SetMetadata(EVENT_SEND_MESSAGE_METADATA, message));
+};

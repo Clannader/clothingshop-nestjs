@@ -16,7 +16,7 @@ import validator from 'validator';
 
 import { SecuritySessionCacheService } from './security.session.cache.service';
 import type { SecuritySessionStorage } from '@/security';
-import { OnEventMessage, SendEventMessage } from '@/lib/event-message'
+import { OnEventMessage, SendEventMessage } from '@/lib/event-message';
 
 const publicPemName = 'public-rsa.pem';
 const privatePemName = 'private-rsa.pem';
