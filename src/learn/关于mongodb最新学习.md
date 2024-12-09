@@ -103,3 +103,7 @@ https://www.mongodb.com/zh-cn/docs/manual/reference/explain-results/#explain-out
 查询计划缓存
 https://www.mongodb.com/zh-cn/docs/manual/reference/method/js-plan-cache/
 mongo shell: JSON.stringify(db.orders.getPlanCache().list())
+
+15.mongodb服务器cfg配置
+参考地址: https://www.mongodb.com/zh-cn/docs/manual/reference/configuration-options
+配置超过多少ms记录慢语句设置: operationProfiling.slowOpThresholdMs,默认100ms
