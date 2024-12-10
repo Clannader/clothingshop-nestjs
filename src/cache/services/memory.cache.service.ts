@@ -215,10 +215,10 @@ export class MemoryCacheService {
       );
     }
     const tripleKey =
-      accessKey.substring(0, 32) + securityCache.accessKey.substring(32, 64);
+      accessKey.slice(0, 32) + securityCache.accessKey.slice(32, 64);
     const iv =
-      vectorValue.substring(0, 12) +
-      securityCache.vectorValue.substring(12, 24);
+      vectorValue.slice(0, 12) +
+      securityCache.vectorValue.slice(12, 24);
     securityCache.tripleKey = tripleKey;
     securityCache.iv = iv;
     await this.securitySessionCacheService.setSecuritySessionCache(
