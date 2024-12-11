@@ -107,7 +107,7 @@ export class Utils {
     session: CmsSession,
     iv: string,
   ) {
-    return this.tripleDesEncrypt(str, session.credential.substring(0, 64), iv);
+    return this.tripleDesEncrypt(str, session.credential.slice(0, 64), iv);
   }
 
   /**
@@ -261,7 +261,7 @@ export class Utils {
   static getRequestIP(req: Request) {
     let ip = req.socket.remoteAddress;
     if (ip && typeof ip === 'string') {
-      ip = ip.substring(ip.lastIndexOf(':') + 1);
+      ip = ip.slice(ip.lastIndexOf(':') + 1);
     }
     if (!ipExp.test(ip)) {
       const interfaces = os.networkInterfaces();
@@ -464,7 +464,7 @@ export class Utils {
   static getSha1Uuid(content = '', length = 8): string {
     return CryptoJS.SHA1(this.getUuid() + content.toString())
       .toString()
-      .substring(0, length > 40 ? 40 : length);
+      .slice(0, length > 40 ? 40 : length);
   }
 
   static compareObjects(

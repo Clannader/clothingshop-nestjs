@@ -57,8 +57,8 @@ export class JwtHttpService extends HttpAbstractService {
     const iv = crypto.randomBytes(12).toString('hex');
     const triplePassword = Utils.tripleDesEncrypt(
       this.options.password,
-      tripleKey.substring(0, 32) + sessionStorage?.accessKey?.substring(32, 64),
-      iv.substring(0, 12) + sessionStorage?.vectorValue?.substring(12, 24),
+      tripleKey.slice(0, 32) + sessionStorage?.accessKey?.slice(32, 64),
+      iv.slice(0, 12) + sessionStorage?.vectorValue?.slice(12, 24),
     );
     const tokenParams = {
       accessKey: tripleKey,

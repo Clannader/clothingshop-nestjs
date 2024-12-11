@@ -1,6 +1,10 @@
-入坑链接,搞了我2天也是醉了
-https://www.jianshu.com/p/302db7615cde
+## jest配置以及问题
 
+入坑链接,搞了我2天也是醉了
+
+[参考连接](https://www.jianshu.com/p/302db7615cde)
+
+```bash
 //babel.config.js
 module.exports = {
   presets: [
@@ -16,7 +20,9 @@ module.exports = {
     ['@babel/plugin-transform-runtime'],
   ],
 };
+```
 
+```bash
 //jest.config.js
 module.exports = {
   preset: '@vue/cli-plugin-unit-jest',
@@ -38,8 +44,14 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
 };
+```
+
+```bash
 //fileMock.js
 module.exports = 'test-file-stub';
+```
 
+```bash
 //styleMock.js
 module.exports = {};
+```
