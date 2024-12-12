@@ -62,6 +62,8 @@ jq -f D:\\MongoDB\\Server\\jsonQuery.txt -c D:\MongoDB\Server\7.0\log\mongod.log
 遍历输出数组增加判断条件: jq .rows[] | select(.fields=="value") jsonData.json
 如果还想在上面的基础上仅返回某个字段: jq .rows[] | select(.fields=="value") | .fields jsonData.json
 如果返回的字段包含双引号,可通过加入-r去掉: jq .rows[] | select(.fields=="value") | .fields jsonData.json -r
+格式化当前json文件: jq . fileName.json > openResult.json
+筛选多个字段返回: select(.fields=="value") | {hotel, date, text}
 
 使用cmd输入命令时，"(冒号)需要转义
 jq "select(.\"attr\".\"durationMillis\">=200 and .\"c\"==\"COMMAND\")" -c D:\MongoDB\Server\7.0\log\mongod.log > queryResult.json
