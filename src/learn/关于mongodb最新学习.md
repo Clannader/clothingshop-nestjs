@@ -10,7 +10,7 @@ const list = db.ifc_logs.find({})
 let i = 0
 list.forEach(doc => {
     const size = Object.bsonsize(doc)
-    if (size > 100 * 1000) {
+    if (size > 100 * 1024) {
         i++
         print(doc.hotelid.toString() + '   '  + doc.trace_id.toString() +'  :  ' +size)
     }
@@ -93,7 +93,7 @@ mongorestore -h localhost:27018 -d clothingshop D:\MongoDB\Server\dump\clothings
 // 压缩还原
 mongorestore -h localhost:27018 -d clothingshop --gzip --archive=D:\MongoDB\Server\dump\clothingshop.20241122.gz
 
-13.重新配置mongodb
+13.重新配置mongodb,新增服务启动数据库
 D:\MongoDB\Server\4.2\bin\mongod.exe --config "D:\MongoDB\Server\4.2\bin\mongod.cfg"
 D:\MongoDB\Server\4.2\bin\mongod.exe --config "D:\MongoDB\Server\4.2\bin\mongod.cfg"  --install --serviceName "MongoDB4.2" --serviceDisplayName "MongoDB4.2"
 
@@ -109,3 +109,57 @@ mongo shell: JSON.stringify(db.orders.getPlanCache().list())
 15.mongodb服务器cfg配置
 参考地址: https://www.mongodb.com/zh-cn/docs/manual/reference/configuration-options
 配置超过多少ms记录慢语句设置: operationProfiling.slowOpThresholdMs,默认100ms
+例如:
+operationProfiling:
+  slowOpThresholdMs: 100
+
+16.关于副本集搭建以及代码配置
+下载多个mongodb实例安装:https://www.mongodb.com/try/download/community 下载zip绿色版
+1.正常安装3个实例,端口分别为27017(设置为主节点),27018,27019为从节点
+2.解压mongodb到指定文件夹,新增data和log文件夹,复制mongod.cfg,修改data和log路径,修改端口号
+3.查看第10点,把mongodb加入服务测试
+4.修改所有服务器的配置cfg(主节点+2台从节点)
+replication:
+  replSetName: "rs0" // 副本集名每一台都必须一样
+修改配置后必须重启
+5.通过mongosh进入主节点
+https://www.mongodb.com/zh-cn/docs/mongodb-shell/#mongodb-binary-bin.mongosh
+进入mongosh cmd运行 mongosh "mongodb://127.0.0.1:27017"
+运行rs.initiate()
+运行rs.add('127.0.0.1:27018') // 加入从节点
+运行rs.add('127.0.0.1:27019') // 加入从节点
+查看副本集配置rs.conf()
+
+修改副本集的优先级,因为默认都是1,都是一样的,每一台都有可能成为主节点
+修改第一台为主节点
+```bash
+cfg = rs.conf()
+cfg.members[0].priority = 5
+rs.reconfig(cfg)
+```
+注意使用工具连接需要勾上直连Direct Connection,否则会使用副本集连接
+直连会出现: rs0 [direct: secondary] admin
+直连副本集是只能只读,只有主节点的才能写
+
+给副本集加入共享密码
+https://www.mongodb.com/zh-cn/docs/manual/tutorial/enforce-keyfile-access-control-in-existing-replica-set/
+security:
+  keyFile: <path-to-keyfile>
+
+<path-to-keyfile> 文件获取通过openssl
+openssl rand -base64 756 > <path-to-keyfile>
+
+关于强制更换主节点方法文档: https://www.mongodb.com/zh-cn/docs/manual/tutorial/force-member-to-be-primary/
+连接主节点:运行:rs.stepDown()
+const cfg = rs.conf()
+cfg.members[0].priority = 0.5
+cfg.members[1].priority = 0.5
+cfg.members[2].priority = 1
+rs.reconfig(cfg)
+
+关于仲裁节点是因为资源问题,只有一个主和从,但是副本集要求一个主,2个从,这时候需要加入仲裁节点
+https://www.mongodb.com/zh-cn/docs/manual/tutorial/add-replica-set-arbiter/
+
+代码中配置的连接:mongodb://127.0.0.1:27017,127.0.0.1:27019,127.0.0.1:27020/dbName
+测试总结,需要配置主和从的所有地址,如果主连接中断,则根据优先级从2个从节点中选择一个作为主节点连接
+如果主节点恢复连接后,mongodb又会根据优先级把原本的主节点变回之前的那台服务器
