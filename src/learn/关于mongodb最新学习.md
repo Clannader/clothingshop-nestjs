@@ -144,22 +144,36 @@ rs.reconfig(cfg)
 给副本集加入共享密码
 https://www.mongodb.com/zh-cn/docs/manual/tutorial/enforce-keyfile-access-control-in-existing-replica-set/
 security:
-  keyFile: <path-to-keyfile>
+  keyFile: path-to-keyfile.pem
 
-<path-to-keyfile> 文件获取通过openssl
-openssl rand -base64 756 > <path-to-keyfile>
+path-to-keyfile.pem 文件获取通过openssl
+openssl rand -base64 756 > path-to-keyfile.pem
 
 关于强制更换主节点方法文档: https://www.mongodb.com/zh-cn/docs/manual/tutorial/force-member-to-be-primary/
 连接主节点:运行:rs.stepDown()
+再运行下面代码,切换第三台为主节点
+```bash
 const cfg = rs.conf()
-cfg.members[0].priority = 0.5
-cfg.members[1].priority = 0.5
-cfg.members[2].priority = 1
+cfg.members[0].priority = 1
+cfg.members[1].priority = 1
+cfg.members[2].priority = 5
 rs.reconfig(cfg)
+```
 
 关于仲裁节点是因为资源问题,只有一个主和从,但是副本集要求一个主,2个从,这时候需要加入仲裁节点
 https://www.mongodb.com/zh-cn/docs/manual/tutorial/add-replica-set-arbiter/
+仲裁节点其实也是一个mongodb实例,但是不存储任何数据
 
-代码中配置的连接:mongodb://127.0.0.1:27017,127.0.0.1:27019,127.0.0.1:27020/dbName
+代码中配置的连接:mongodb://127.0.0.1:27017,127.0.0.1:27018,127.0.0.1:27019/dbName
 测试总结,需要配置主和从的所有地址,如果主连接中断,则根据优先级从2个从节点中选择一个作为主节点连接
-如果主节点恢复连接后,mongodb又会根据优先级把原本的主节点变回之前的那台服务器
+如果主节点恢复连接后,mongodb又会根据优先级把主节点变回之前的那台服务器
+
+根据以上的测试,服务器主要读写主节点,写数据时主节点会往其中一个从节点发送数据,通过security.keyFile验证节点之间的安全校验
+在从节点上写数据,然后其中一个从节点会往其他从节点发送数据写入,大概是这样.又或者是主节点分别往多个从节点写入数据.
+从节点之间通过心跳互相判断是否变成主节点
+
+17.关于数据库的切换方案
+比如从数据库6.0切换到数据库7.0
+可以使用副本集的方式同步数据后切换.
+流程如下:新增7.0数据库连接,从数据库6.0中加入数据库7.0的连接作为从节点,那么数据库7.0就会同步数据库6.0的数据
+然后降低数据6.0的主节点,把数据库7.0的某一台作为主节点,然后删除数据库6.0的所有从节点,这样数据库就会切换完成,并且不会数据丢失
