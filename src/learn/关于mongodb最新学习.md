@@ -200,6 +200,7 @@ https://www.mongodb.com/zh-cn/docs/drivers/php/laravel-mongodb/v5.x/fundamentals
 读偏好参数?readPreference=secondary
 
 21.mongodb连接地址的readPreference如何理解
+测试这个只读结果可以开启monitorCommands=true,可以查看每条语句执行时使用的address来判断节点
 以下是 readPreference 的几种常见模式及其解释:
 1.primary:
 ‌说明‌:所有读取操作都会发送到主节点(primary).

@@ -33,7 +33,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       retryAttempts: 30000, // 重连次数
       user: this.configService.getSecurityConfig('dbUser'),
       pass: this.configService.getSecurityConfig('dbPws'),
-      monitorCommands: false,
+      monitorCommands: true,
       maxIdleTimeMS: 2000, // 空闲连接2秒后关闭
       maxPoolSize: 10,
       maxConnecting: 2, // 默认2
@@ -72,13 +72,14 @@ export class MongooseConfigService implements MongooseOptionsFactory {
         // 参考https://www.mongodb.com/zh-cn/docs/drivers/node/current/fundamentals/logging/
         const client = connection.getClient();
         client.on('commandStarted', (event) => {
-          console.log(event);
+          // 这里需要换logger打印,否则打印不出event对象
+          console.log(`address: ${event.address}, commandName: ${event.commandName}`);
         });
         client.on('commandSucceeded', (event) => {
-          console.info(event);
+          // console.info(event);
         });
         client.on('commandFailed', (event) => {
-          console.error(event);
+          // console.error(event);
         });
 
         this.connection = connection;
