@@ -92,7 +92,8 @@ export class ConfigService {
     const obj = {},
       _sep = sep || '\r\n',
       _eq = eq || '=',
-      regex = new RegExp('^(.+)(?<!=)' + _eq + '(?!=)(.+)$'); // 由于部分配置进行了加密,正则需要匹配
+      // regex = new RegExp('^(.+)(?<!=)' + _eq + '(?!=)(.+)$'); // 由于部分配置进行了加密,正则需要匹配
+      regex = new RegExp(`^([^${_eq}.]+)${_eq}(.+)$`); // 由于部分配置进行了加密,正则需要匹配
     // 第一个等号的分隔
     const qs = src.toString();
     if (qs.length === 0) {

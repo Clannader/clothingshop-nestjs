@@ -33,11 +33,12 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       retryAttempts: 30000, // 重连次数
       user: this.configService.getSecurityConfig('dbUser'),
       pass: this.configService.getSecurityConfig('dbPws'),
-      monitorCommands: false,
+      monitorCommands: true,
       maxIdleTimeMS: 2000, // 空闲连接2秒后关闭
       maxPoolSize: 10,
       maxConnecting: 2, // 默认2
       appName: 'CS System',
+      serverSelectionTimeoutMS: 2000, // 指定在抛出异常之前阻止服务器选择的时间(以毫秒为单位),参考的是mongosh的默认设置
       // logger: this.logger, //TODO 暂时注掉再说吧
       connectionFactory: (connection: Connection) => {
         //数据库连接错误时报错
@@ -71,13 +72,14 @@ export class MongooseConfigService implements MongooseOptionsFactory {
         // 参考https://www.mongodb.com/zh-cn/docs/drivers/node/current/fundamentals/logging/
         const client = connection.getClient();
         client.on('commandStarted', (event) => {
-          console.log(event);
+          // 这里需要换logger打印,否则打印不出event对象
+          console.log(`address: ${event.address}, commandName: ${event.commandName}`);
         });
         client.on('commandSucceeded', (event) => {
-          console.info(event);
+          // console.info(event);
         });
         client.on('commandFailed', (event) => {
-          console.error(event);
+          // console.error(event);
         });
 
         this.connection = connection;

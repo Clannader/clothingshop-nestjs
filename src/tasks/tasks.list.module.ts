@@ -9,7 +9,7 @@ import { TestTasksModule, SyncAllTasksModule } from './modules';
 @Module({
   imports: [
     ScheduleModule.forRoot({
-      intervals: true,
+      intervals: false,
     }),
     TestTasksModule,
     SyncAllTasksModule,
