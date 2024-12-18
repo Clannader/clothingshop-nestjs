@@ -175,8 +175,12 @@ https://www.mongodb.com/zh-cn/docs/manual/tutorial/add-replica-set-arbiter/
 17.关于数据库的切换方案
 比如从数据库6.0切换到数据库7.0
 可以使用副本集的方式同步数据后切换.
-流程如下:新增7.0数据库连接,从数据库6.0中加入数据库7.0的连接作为从节点,那么数据库7.0就会同步数据库6.0的数据
-然后降低数据6.0的主节点,把数据库7.0的某一台作为主节点,然后删除数据库6.0的所有从节点,这样数据库就会切换完成,并且不会数据丢失
+流程如下:
+1)新增7.0数据库连接,从数据库6.0中加入数据库7.0的连接作为从节点,那么数据库7.0就会同步数据库6.0的数据
+2)修改服务器数据库地址,新增数据库7.0地址到服务器连接
+3)降低数据库6.0的主节点,把数据库7.0的某一台作为主节点
+4)服务器删除数据库6.0的连接
+5)删除数据库6.0的所有从节点,这样数据库就会切换完成,并且不会数据丢失
 
 18.关于数据库的读写关注
 读关注: https://www.mongodb.com/zh-cn/docs/manual/reference/read-concern/
@@ -202,27 +206,27 @@ https://www.mongodb.com/zh-cn/docs/drivers/php/laravel-mongodb/v5.x/fundamentals
 21.mongodb连接地址的readPreference如何理解
 测试这个只读结果可以开启monitorCommands=true,可以查看每条语句执行时使用的address来判断节点
 以下是 readPreference 的几种常见模式及其解释:
-1.primary:
+1).primary:
 ‌说明‌:所有读取操作都会发送到主节点(primary).
 ‌适用场景‌:需要强一致性的读取操作，因为主节点上的数据是最新的.
 ‌示例‌:mongodb://host1:27017,host2:27017,host3:27017/?readPreference=primary
 
-2.primaryPreferred:
+2).primaryPreferred:
 ‌说明‌:客户端会优先从主节点读取数据，如果主节点不可用，则从次节点(secondary)读取.
 ‌适用场景‌:大多数情况下需要一致性，但在主节点不可用时允许从次节点读取.
 ‌示例‌:mongodb://host1:27017,host2:27017,host3:27017/?readPreference=primaryPreferred
 
-3.secondary:
+3).secondary:
 ‌说明‌:所有读取操作都会发送到次节点.如果次节点不可用，则读取操作会失败.
 ‌适用场景‌:对读取一致性要求不高，但需要分散读取负载的场景.
 ‌示例‌:mongodb://host1:27017,host2:27017,host3:27017/?readPreference=secondary
 
-4.secondaryPreferred:
+4).secondaryPreferred:
 ‌说明‌:客户端会优先从次节点读取数据，如果次节点不可用，则从主节点读取.
 ‌适用场景‌:希望优先从次节点读取以分散负载，但在次节点不可用时允许从主节点读取.
 ‌示例‌:mongodb://host1:27017,host2:27017,host3:27017/?readPreference=secondaryPreferred
 
-5.nearest:
+5).nearest:
 ‌说明‌:客户端会从最接近(网络延迟最小)的节点读取数据，不论这个节点是主节点还是次节点.
 ‌适用场景‌:对读取延迟敏感的应用，希望尽可能快地获取数据.
 ‌示例‌:mongodb://host1:27017,host2:27017,host3:27017/?readPreference=nearest
