@@ -27,6 +27,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
     // https://www.mongodb.com/zh-cn/docs/drivers/php/laravel-mongodb/v5.x/fundamentals/connection/connection-options/
     // https://www.mongodb.com/zh-cn/docs/drivers/csharp/current/fundamentals/connection/connection-options/
     // 代码默认10个连接池,每个连接池默认2个连接,如果开启集群,那么每个集群都会创建独立新的连接
+    console.log(this.configService.getSecurityConfig('dbUrl'))
     const options: MongooseModuleOptions = {
       uri: this.configService.getSecurityConfig('dbUrl'),
       retryDelay: 10 * 1000, // 重连的间隔时间10s
@@ -38,6 +39,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       maxPoolSize: 10,
       maxConnecting: 2, // 默认2
       appName: 'CS System',
+      serverSelectionTimeoutMS: 2000, // 指定在抛出异常之前阻止服务器选择的时间(以毫秒为单位),参考的是mongosh的默认设置
       // logger: this.logger, //TODO 暂时注掉再说吧
       connectionFactory: (connection: Connection) => {
         //数据库连接错误时报错
