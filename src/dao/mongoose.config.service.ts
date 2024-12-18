@@ -27,7 +27,6 @@ export class MongooseConfigService implements MongooseOptionsFactory {
     // https://www.mongodb.com/zh-cn/docs/drivers/php/laravel-mongodb/v5.x/fundamentals/connection/connection-options/
     // https://www.mongodb.com/zh-cn/docs/drivers/csharp/current/fundamentals/connection/connection-options/
     // 代码默认10个连接池,每个连接池默认2个连接,如果开启集群,那么每个集群都会创建独立新的连接
-    console.log(this.configService.getSecurityConfig('dbUrl'))
     const options: MongooseModuleOptions = {
       uri: this.configService.getSecurityConfig('dbUrl'),
       retryDelay: 10 * 1000, // 重连的间隔时间10s
