@@ -31,6 +31,9 @@ describe('ConfigService 默认加载', () => {
     expect(service.getSecurityConfig('dbUrl')).toBe(
       'mongodb://127.0.0.1:27018/clothingshop',
     );
+    expect(service.get<string>('dbUrl2')).toBe(
+      'mongodb://ip1:port1,ip1:port1,ip1:port1/name?params=rs0',
+    );
     expect(service.getSecurityConfig('dbName')).toBe(
       null, // 以前解密解不出来返回原文,现在改成返回null了
     );
