@@ -73,7 +73,9 @@ export class MongooseConfigService implements MongooseOptionsFactory {
         const client = connection.getClient();
         client.on('commandStarted', (event) => {
           // 这里需要换logger打印,否则打印不出event对象
-          console.log(`address: ${event.address}, commandName: ${event.commandName}`);
+          console.log(
+            `address: ${event.address}, commandName: ${event.commandName}`,
+          );
         });
         client.on('commandSucceeded', (event) => {
           // console.info(event);
