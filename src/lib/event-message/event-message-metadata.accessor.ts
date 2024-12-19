@@ -7,7 +7,9 @@ import { OnEventMessageMetadata } from './decorators';
 import {
   EVENT_ON_MESSAGE_METADATA,
   EVENT_SEND_MESSAGE_METADATA,
+  EVENT_MESSAGE_TYPE,
 } from './constants';
+import { type EventMessageTypeEnum } from './enums';
 
 @Injectable()
 export class EventMessageMetadataAccessor {
@@ -25,10 +27,14 @@ export class EventMessageMetadataAccessor {
     return this.getMessageHandlerMetadata(EVENT_SEND_MESSAGE_METADATA, target);
   }
 
-  private getMessageHandlerMetadata(
+  getEventMessageTypeMetadata(target: Function): EventMessageTypeEnum {
+    return this.getMessageHandlerMetadata(EVENT_MESSAGE_TYPE, target);
+  }
+
+  private getMessageHandlerMetadata<T>(
     key: string,
     target: Function,
-  ): OnEventMessageMetadata | undefined {
+  ): T | undefined {
     if (
       !target ||
       (typeof target !== 'function' && typeof target !== 'object')
