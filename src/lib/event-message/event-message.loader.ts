@@ -58,7 +58,7 @@ export class EventMessageLoader
         const processMethod = (name: string) => {
           return wrapper.isDependencyTreeStatic()
             ? this.lookupEventMessages(instance, name)
-            : this.warnForNonStaticProviders(wrapper, instance, name); // 禁止使用static静态函数
+            : this.warnForNonStaticProviders(wrapper, instance, name); // 不懂什么情况会进来
         };
 
         this.metadataScanner
@@ -71,6 +71,10 @@ export class EventMessageLoader
     const methodRef = instance[key];
     const metadata =
       this.metadataAccessor.getEventMessageTypeMetadata(methodRef);
+    if (!metadata) {
+      // 避免不是event-message的修饰器也进来判断
+      return
+    }
     switch (metadata) {
       case EventMessageTypeEnum.Listener:
         const listenerMetadata =
@@ -79,12 +83,13 @@ export class EventMessageLoader
           methodRef,
           instance,
         );
-        console.log(listenerFn);
+        // console.log(listenerFn);
         break;
       case EventMessageTypeEnum.Send:
         const sendMetadata =
           this.metadataAccessor.getSendEventMessageHandlerMetadata(methodRef);
         const sendFn = this.wrapFunctionInTryCatchBlocks(methodRef, instance);
+        console.log('sendFn: ' + sendFn);
         break;
     }
   }
@@ -107,7 +112,10 @@ export class EventMessageLoader
     const methodRef = instance[key];
     const metadata =
       this.metadataAccessor.getEventMessageTypeMetadata(methodRef);
-
+    if (!metadata) {
+      return
+    }
+    this.logger.debug('event-message:warnForNonStaticProviders进来了...')
     switch (metadata) {
       case EventMessageTypeEnum.Listener:
         this.logger.warn(

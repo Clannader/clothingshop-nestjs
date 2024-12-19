@@ -7,31 +7,34 @@ import { HTTP_SERVICE_CACHE_MANAGE } from '../cache.constants';
 import type { Cache } from 'cache-manager';
 import { ServiceOptions, ServiceCache } from '@/http';
 import { omit } from 'lodash';
-import { ConfigService } from '@/common/config';
+// import { ConfigService } from '@/common/config';
+import { OnEventMessage, SendEventMessage } from '@/lib/event-message';
 
 @Injectable()
 export class HttpServiceCacheService {
   @Inject(HTTP_SERVICE_CACHE_MANAGE)
   private readonly cacheManager: Cache;
 
-  @Inject()
-  private readonly configService: ConfigService;
+  // @Inject()
+  // private readonly configService: ConfigService;
 
   private getCacheKey(options: ServiceOptions) {
     return `${options.serviceType}-${options.userName}-${options.shopId}`;
   }
 
+  @SendEventMessage('asyncHttpServiceCache')
   async setHttpServiceCache(options: ServiceOptions, value: ServiceCache) {
     await this.updateHttpServiceCache(options, value);
-    if (this.configService.get<boolean>('clusterServer')) {
-      process.send({
-        notice: 'updateHttpServiceCache',
-        key: options,
-        value,
-      });
-    }
+    // if (this.configService.get<boolean>('clusterServer')) {
+    //   process.send({
+    //     notice: 'updateHttpServiceCache',
+    //     key: options,
+    //     value,
+    //   });
+    // }
   }
 
+  @OnEventMessage('asyncHttpServiceCache')
   async updateHttpServiceCache(options: ServiceOptions, value: ServiceCache) {
     await this.cacheManager.set(this.getCacheKey(options), value);
   }
