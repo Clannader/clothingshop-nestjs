@@ -7,7 +7,6 @@ import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
 import { ApiTagsDescriptionMetadataAccessor } from './api-tags-metadata.accessor';
 import { ApiTagsDescriptionOrchestrator } from './api-tags-description.orchestrator';
-import { API_TAGS_DESC } from './constants';
 
 @Injectable()
 export class ApiTagsDescriptionExplorer implements OnModuleInit {
@@ -25,8 +24,11 @@ export class ApiTagsDescriptionExplorer implements OnModuleInit {
   private explore(): void {
     const instanceWrappers: InstanceWrapper[] = [
       ...this.discoveryService.getControllers(),
+      ...this.discoveryService.getProviders(),
     ];
-    instanceWrappers.forEach((wrapper: InstanceWrapper) => {
+    instanceWrappers
+      .filter(wrapper => wrapper.instance && !wrapper.isAlias)
+      .forEach((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
       const prototype = Object.getPrototypeOf(instance);
 
@@ -54,10 +56,11 @@ export class ApiTagsDescriptionExplorer implements OnModuleInit {
       // 避免不是api-tags-description的修饰器也进来判断
       return;
     }
-    const controllName =
+    const controllerName =
       this.apiTagsDescriptionMetadataAccessor.getSwaggerApiTagsName(methodRef);
+    console.log(controllerName, metadata)
     this.apiTagsDescriptionOrchestrator.addApiTagsDescription(
-      controllName,
+      controllerName,
       metadata,
     );
   }
