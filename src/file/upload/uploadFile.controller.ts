@@ -17,7 +17,11 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { SessionGuard } from '@/guard';
 import { HttpInterceptor } from '@/interceptor/http';
 import { CommonResult, RequestSession } from '@/common';
-import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
+import {
+  ApiCommon,
+  ApiCustomResponse,
+  ApiTagsController,
+} from '@/common/decorator';
 import { Utils } from '@/common/utils';
 import {
   ReqFileUploadTestDto,
@@ -31,7 +35,7 @@ import * as fs from 'fs';
 import { join } from 'path';
 
 @ApiCommon()
-@ApiTags('UploadFileController')
+@ApiTagsController('UploadFileController', '上传文件相关')
 @Controller('/cms/api/file/upload')
 @UseGuards(SessionGuard)
 @UseInterceptors(HttpInterceptor)

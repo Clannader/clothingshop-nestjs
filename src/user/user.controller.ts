@@ -11,7 +11,12 @@ import {
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CmsSession } from '@/common';
-import { ApiCommon, ApiCustomResponse, UserSession } from '@/common/decorator';
+import {
+  ApiCommon,
+  ApiCustomResponse,
+  UserSession,
+  ApiTagsController,
+} from '@/common/decorator';
 import { ReqUserSearchDto, RespUserSearchDto, RespUserRolesDto } from './dto';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
@@ -19,7 +24,7 @@ import { ApiRights, RightsEnum } from '@/rights';
 
 @ApiCommon()
 @Controller('/cms/api/user')
-@ApiTags('UserController')
+@ApiTagsController('UserController', '用户模块')
 @UseGuards(SessionGuard)
 @UseInterceptors(HttpInterceptor)
 export class UserController {

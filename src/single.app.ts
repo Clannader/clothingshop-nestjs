@@ -39,6 +39,7 @@ import { rateLimit, MemoryStore } from 'express-rate-limit';
 // import { SyncUpdateCacheService } from '@/cache/services';
 import parseEnv from '@/lib/parseEnv';
 import * as fs from 'fs';
+import { ApiTagsDescriptionRegistry } from '@/lib/api-tags-description';
 // import * as moment from 'moment';
 // import * as csurf from 'csurf';
 
@@ -164,6 +165,12 @@ export async function bootstrap() {
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
     .setContact('oliver.wu', `/index`, '294473343@qq.com')
     .build();
+
+  const apiTagsDescriptionRegistry = app.get<ApiTagsDescriptionRegistry>(
+    ApiTagsDescriptionRegistry,
+  );
+  console.log(apiTagsDescriptionRegistry.getApiTagsMap());
+
   const swaggerOptions: SwaggerDocumentOptions = {
     operationIdFactory: (controllerKey: string, methodKey: string) => {
       return `${controllerKey}_${methodKey}`;

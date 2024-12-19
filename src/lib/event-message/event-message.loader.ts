@@ -73,7 +73,7 @@ export class EventMessageLoader
       this.metadataAccessor.getEventMessageTypeMetadata(methodRef);
     if (!metadata) {
       // 避免不是event-message的修饰器也进来判断
-      return
+      return;
     }
     switch (metadata) {
       case EventMessageTypeEnum.Listener:
@@ -83,13 +83,12 @@ export class EventMessageLoader
           methodRef,
           instance,
         );
-        // console.log(listenerFn);
+        console.log(listenerMetadata);
         break;
       case EventMessageTypeEnum.Send:
         const sendMetadata =
           this.metadataAccessor.getSendEventMessageHandlerMetadata(methodRef);
         const sendFn = this.wrapFunctionInTryCatchBlocks(methodRef, instance);
-        console.log('sendFn: ' + sendFn);
         break;
     }
   }
@@ -113,9 +112,9 @@ export class EventMessageLoader
     const metadata =
       this.metadataAccessor.getEventMessageTypeMetadata(methodRef);
     if (!metadata) {
-      return
+      return;
     }
-    this.logger.debug('event-message:warnForNonStaticProviders进来了...')
+    this.logger.debug('event-message:warnForNonStaticProviders进来了...');
     switch (metadata) {
       case EventMessageTypeEnum.Listener:
         this.logger.warn(

@@ -24,7 +24,12 @@ import {
 } from '@/common';
 import { Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
-import { ApiCommon, ApiCustomResponse, UserLanguage } from '@/common/decorator';
+import {
+  ApiCommon,
+  ApiCustomResponse,
+  UserLanguage,
+  ApiTagsController,
+} from '@/common/decorator';
 import { UserService, UserMapper } from '@/user';
 import { ReqUserLoginDto, RespUserLoginDto } from '@/user/dto';
 import { HttpInterceptor } from '@/interceptor/http';
@@ -35,7 +40,7 @@ import { MemoryCacheService } from '@/cache/services';
 import { SecuritySessionService, SecuritySessionStorage } from '@/security';
 
 @Controller('/cms/api/user')
-@ApiTags('LoginController')
+@ApiTagsController('LoginController', '登录模块')
 export class LoginController {
   @Inject()
   private readonly userService: UserService;

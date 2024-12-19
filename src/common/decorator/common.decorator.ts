@@ -7,8 +7,10 @@ import {
   ApiHeaderOptions,
   getSchemaPath,
   ApiExtraModels,
+  ApiTags,
 } from '@nestjs/swagger';
 import { API_MODEL_PROPERTIES } from '../constants';
+import { ApiTagsDescription } from '@/lib/api-tags-description';
 
 /**
  * 定义它是一个class的修饰器
@@ -281,3 +283,13 @@ export const ApiGenericsResponse = <TModel extends Type, SModel extends Type>(
     }),
   );
 };
+
+export function ApiTagsController(
+  controllerName: string,
+  controllerDescription: string = '',
+) {
+  return applyDecorators(
+    ApiTags(controllerName),
+    ApiTagsDescription(controllerDescription),
+  );
+}

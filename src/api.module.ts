@@ -23,6 +23,7 @@ import { TasksListModule } from '@/tasks';
 import { ApplicationHookModule } from '@/hooks';
 import { MemoryCacheModule } from '@/cache/modules';
 import { EventMessageModule } from '@/lib/event-message';
+import { ApiTagsDescriptionModule } from '@/lib/api-tags-description';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { EventMessageModule } from '@/lib/event-message';
     AopAspectModule,
     MemoryCacheModule,
     EventMessageModule.forRoot(),
+    ApiTagsDescriptionModule.forRoot(),
   ],
   providers: [
     {
