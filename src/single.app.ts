@@ -137,9 +137,6 @@ export async function bootstrap() {
       type: 'http',
       description: 'AuthorizationCode from CMS',
     })
-    // TODO 如果想在controller加入说明,需要在这里填加,后期估计考虑新增修饰器获取全部的控制器说明加进去
-    // .addTag('DatabaseController', '控制器描述')
-    // .addTag('GatewayAuthController', '控制器描述')
     // .addOAuth2({
     //   type: 'oauth2',
     //   description: 'AuthorizationCode from CMS',
@@ -163,13 +160,15 @@ export async function bootstrap() {
     // })
     // 要研究一下授权问题,发现有三种授权方式,但是怎么设置都不生效
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
-    .setContact('oliver.wu', `/index`, '294473343@qq.com')
-    .build();
+    .setContact('oliver.wu', `/index`, '294473343@qq.com');
 
-  const apiTagsDescriptionRegistry = app.get<ApiTagsDescriptionRegistry>(
-    ApiTagsDescriptionRegistry,
-  );
-  console.log(apiTagsDescriptionRegistry.getApiTagsMap());
+  const arr = new Map()
+  arr.set('GatewayAuthController', '第三方授权接口')
+  arr.set('LoginController', '登录模块')
+  for (const [key, value] of arr) {
+    swaggerConfig.addTag(key, value);
+  }
+
 
   const swaggerOptions: SwaggerDocumentOptions = {
     operationIdFactory: (controllerKey: string, methodKey: string) => {
@@ -180,7 +179,7 @@ export async function bootstrap() {
   };
   const document = SwaggerModule.createDocument(
     app,
-    swaggerConfig,
+    swaggerConfig.build(),
     swaggerOptions,
   );
   SwaggerModule.setup('swagger-ui', app, document, {

@@ -2,7 +2,7 @@
  * Create by CC on 2022/8/18
  */
 import { Controller, Get, UseGuards, Inject } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import {
   ApiCommon,
   ApiCustomResponse,

@@ -290,6 +290,6 @@ export function ApiTagsController(
 ): ClassDecorator {
   return applyDecorators(
     ApiTags(controllerName),
-    ApiTagsDescription(controllerDescription),
+    ApiTagsDescription(controllerName, controllerDescription),
   );
 }
