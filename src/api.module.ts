@@ -45,8 +45,8 @@ import { ApiTagsDescriptionModule } from '@/lib/api-tags-description';
     SwaggerModule,
     AopAspectModule,
     MemoryCacheModule,
-    EventMessageModule.forRoot(),
-    ApiTagsDescriptionModule.forRoot(),
+    EventMessageModule,
+    ApiTagsDescriptionModule,
   ],
   providers: [
     {

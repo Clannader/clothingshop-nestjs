@@ -287,7 +287,7 @@ export const ApiGenericsResponse = <TModel extends Type, SModel extends Type>(
 export function ApiTagsController(
   controllerName: string,
   controllerDescription: string = '',
-) {
+): ClassDecorator {
   return applyDecorators(
     ApiTags(controllerName),
     ApiTagsDescription(controllerDescription),

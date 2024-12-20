@@ -83,7 +83,7 @@ export class EventMessageLoader
           methodRef,
           instance,
         );
-        console.log(listenerMetadata);
+        // console.log(listenerMetadata);
         break;
       case EventMessageTypeEnum.Send:
         const sendMetadata =
