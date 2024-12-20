@@ -71,10 +71,7 @@ export class ApiTagsDescriptionLoader
     // const controllerName =
     //   this.apiTagsDescriptionMetadataAccessor.getSwaggerApiTagsName(methodRef);
     console.log(metadata);
-    this.apiTagsDescriptionRegistry.addApiTagsDescription(
-      '222',
-      metadata,
-    );
+    this.apiTagsDescriptionRegistry.addApiTagsDescription('222', metadata);
   }
 
   private warnForNonStaticProviders(
