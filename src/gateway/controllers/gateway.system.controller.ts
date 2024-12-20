@@ -2,8 +2,12 @@
  * Create by CC on 2022/8/18
  */
 import { Controller, Get, UseGuards, Inject } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
+import { ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiCommon,
+  ApiCustomResponse,
+  ApiTagsController,
+} from '@/common/decorator';
 import { SystemService } from '@/system';
 import { RespWebConfigDto } from '@/system/dto';
 import { JwtGuard } from '@/guard';
@@ -12,7 +16,7 @@ import { JwtGuard } from '@/guard';
 @UseGuards(JwtGuard)
 @Controller('/gateway/api/system')
 @ApiBearerAuth()
-@ApiTags('GatewaySystemController')
+@ApiTagsController('GatewaySystemController', '第三方调用接口')
 export class GatewaySystemController {
   @Inject()
   private readonly systemService: SystemService;

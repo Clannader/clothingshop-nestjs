@@ -24,6 +24,7 @@ import {
   UserSession,
   XmlData,
   XmlJsonData,
+  ApiTagsController,
 } from '@/common/decorator';
 import {
   ReqSerializerRoleEntityDto,
@@ -60,7 +61,7 @@ import { SessionGuard } from '@/guard';
 
 @ApiCommon()
 @Controller('/cms')
-@ApiTags('TestController')
+@ApiTagsController('TestController', '测试模块')
 export class TestController {
   @Inject()
   private readonly globalService: GlobalService;

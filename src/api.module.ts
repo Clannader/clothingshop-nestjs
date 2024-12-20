@@ -22,6 +22,7 @@ import { SwaggerModule } from './swagger.module';
 import { TasksListModule } from '@/tasks';
 import { ApplicationHookModule } from '@/hooks';
 import { MemoryCacheModule } from '@/cache/modules';
+import { EventMessageModule } from '@/lib/event-message';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { MemoryCacheModule } from '@/cache/modules';
     SwaggerModule,
     AopAspectModule,
     MemoryCacheModule,
+    EventMessageModule,
   ],
   providers: [
     {

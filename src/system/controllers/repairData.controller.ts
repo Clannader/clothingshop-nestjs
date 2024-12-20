@@ -9,8 +9,12 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { ApiCommon, ApiCustomResponse } from '@/common/decorator';
+import { ApiOperation } from '@nestjs/swagger';
+import {
+  ApiCommon,
+  ApiCustomResponse,
+  ApiTagsController,
+} from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { ApiRights, RightsEnum } from '@/rights';
@@ -20,7 +24,7 @@ import { CommonResult } from '@/common/dto';
 
 @ApiCommon()
 @Controller('/cms/api/repair')
-@ApiTags('RepairController')
+@ApiTagsController('RepairController', '修复数据相关')
 @UseGuards(SessionGuard)
 @UseInterceptors(HttpInterceptor)
 @ApiRights(RightsEnum.OtherSetup, RightsEnum.RepairData)

@@ -230,3 +230,7 @@ https://www.mongodb.com/zh-cn/docs/drivers/php/laravel-mongodb/v5.x/fundamentals
 ‌说明‌:客户端会从最接近(网络延迟最小)的节点读取数据，不论这个节点是主节点还是次节点.
 ‌适用场景‌:对读取延迟敏感的应用，希望尽可能快地获取数据.
 ‌示例‌:mongodb://host1:27017,host2:27017,host3:27017/?readPreference=nearest
+
+22.mongodb的roles说明文档
+https://www.mongodb.com/zh-cn/docs/manual/reference/built-in-roles/#database-user-roles
+创建用户文档 https://www.mongodb.com/zh-cn/docs/manual/reference/method/db.auth/

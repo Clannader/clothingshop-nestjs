@@ -11,8 +11,13 @@ import {
   HttpStatus,
   Body,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { ApiCommon, ApiCustomResponse, UserSession } from '@/common/decorator';
+import { ApiOperation } from '@nestjs/swagger';
+import {
+  ApiCommon,
+  ApiCustomResponse,
+  UserSession,
+  ApiTagsController,
+} from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { ApiRights, RightsEnum } from '@/rights';
@@ -29,7 +34,7 @@ import { CmsSession } from '@/common';
 
 @ApiCommon()
 @Controller('/cms/api/database')
-@ApiTags('DatabaseController')
+@ApiTagsController('DatabaseController', '数据库相关')
 @UseGuards(SessionGuard)
 @UseInterceptors(HttpInterceptor)
 @ApiRights(RightsEnum.OtherSetup, RightsEnum.DatabaseManage)
