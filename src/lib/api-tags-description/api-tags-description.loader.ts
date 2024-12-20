@@ -1,24 +1,34 @@
 /**
  * Create by oliver.wu 2024/12/19
  */
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  OnApplicationBootstrap,
+  OnApplicationShutdown,
+} from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
 import { ApiTagsDescriptionMetadataAccessor } from './api-tags-metadata.accessor';
-import { ApiTagsDescriptionOrchestrator } from './api-tags-description.orchestrator';
+import { ApiTagsDescriptionRegistry } from './api-tags-description.registry';
 
 @Injectable()
-export class ApiTagsDescriptionExplorer implements OnModuleInit {
+export class ApiTagsDescriptionLoader
+  implements OnApplicationBootstrap, OnApplicationShutdown
+{
   constructor(
     private readonly discoveryService: DiscoveryService,
-    private readonly apiTagsDescriptionOrchestrator: ApiTagsDescriptionOrchestrator,
+    private readonly apiTagsDescriptionRegistry: ApiTagsDescriptionRegistry,
     private readonly metadataScanner: MetadataScanner,
     private readonly apiTagsDescriptionMetadataAccessor: ApiTagsDescriptionMetadataAccessor,
   ) {}
 
-  onModuleInit() {
+  onApplicationBootstrap() {
     this.explore();
+  }
+
+  onApplicationShutdown() {
+    this.apiTagsDescriptionRegistry.clearApiTagsMap();
   }
 
   private explore(): void {
@@ -27,23 +37,25 @@ export class ApiTagsDescriptionExplorer implements OnModuleInit {
       ...this.discoveryService.getProviders(),
     ];
     instanceWrappers
-      .filter(wrapper => wrapper.instance && !wrapper.isAlias)
+      .filter((wrapper) => wrapper.instance && !wrapper.isAlias)
       .forEach((wrapper: InstanceWrapper) => {
-      const { instance } = wrapper;
-      const prototype = Object.getPrototypeOf(instance);
+        const { instance } = wrapper;
+        const prototype = Object.getPrototypeOf(instance);
 
-      if (!instance || !prototype) {
-        return;
-      }
+        if (!instance || !prototype) {
+          return;
+        }
 
-      const processMethod = (name: string) => {
-        return wrapper.isDependencyTreeStatic()
-          ? this.lookupApiTags(instance, name)
-          : this.warnForNonStaticProviders(wrapper, instance, name); // 不懂什么情况会进来
-      };
+        const processMethod = (name: string) => {
+          return wrapper.isDependencyTreeStatic()
+            ? this.lookupApiTags(instance, name)
+            : this.warnForNonStaticProviders(wrapper, instance, name); // 不懂什么情况会进来
+        };
 
-      this.metadataScanner.getAllMethodNames(prototype).forEach(processMethod);
-    });
+        this.metadataScanner
+          .getAllMethodNames(prototype)
+          .forEach(processMethod);
+      });
   }
 
   private lookupApiTags(instance: Record<string, Function>, key: string) {
@@ -56,11 +68,11 @@ export class ApiTagsDescriptionExplorer implements OnModuleInit {
       // 避免不是api-tags-description的修饰器也进来判断
       return;
     }
-    const controllerName =
-      this.apiTagsDescriptionMetadataAccessor.getSwaggerApiTagsName(methodRef);
-    console.log(controllerName, metadata)
-    this.apiTagsDescriptionOrchestrator.addApiTagsDescription(
-      controllerName,
+    // const controllerName =
+    //   this.apiTagsDescriptionMetadataAccessor.getSwaggerApiTagsName(methodRef);
+    console.log(metadata);
+    this.apiTagsDescriptionRegistry.addApiTagsDescription(
+      '222',
       metadata,
     );
   }

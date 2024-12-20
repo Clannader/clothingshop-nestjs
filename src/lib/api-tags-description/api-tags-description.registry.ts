@@ -9,13 +9,18 @@ export class ApiTagsDescriptionRegistry {
 
   addApiTagsDescription(key: string, description: string): void {
     const ref = this.apiTagsMap.get(key);
-    if (ref) {
-      return;
+    if (!ref) {
+      this.apiTagsMap.set(key, description);
     }
-    this.apiTagsMap.set(key, description);
   }
 
   getApiTagsMap() {
     return this.apiTagsMap;
+  }
+
+  clearApiTagsMap() {
+    [...this.apiTagsMap.keys()].forEach((key) => {
+      this.apiTagsMap.delete(key);
+    });
   }
 }

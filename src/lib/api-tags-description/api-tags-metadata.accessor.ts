@@ -3,32 +3,22 @@
  */
 import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { API_TAGS_DESC, API_TAGS } from './constants';
+import { API_TAGS_DESC } from './constants';
 
 @Injectable()
 export class ApiTagsDescriptionMetadataAccessor {
   constructor(private readonly reflector: Reflector) {}
-
-  getSwaggerApiTagsName(target: Function): string {
-    return this.getMetadata(API_TAGS, target);
-  }
 
   getApiTagsDescriptionMetadata(target: Function): string {
     return this.getMetadata(API_TAGS_DESC, target);
   }
 
   private getMetadata<T>(key: string, target: Function): T | undefined {
-    if (
-      !target ||
-      (typeof target !== 'function' && typeof target !== 'object')
-    ) {
-      return undefined;
-    }
+    const isObject =
+      typeof target === 'object'
+        ? target !== null
+        : typeof target === 'function';
 
-    const metadata = this.reflector.get(key, target);
-    if (!metadata) {
-      return undefined;
-    }
-    return metadata;
+    return isObject ? this.reflector.get(key, target) : undefined;
   }
 }
