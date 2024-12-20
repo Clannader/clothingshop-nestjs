@@ -162,10 +162,8 @@ export async function bootstrap() {
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
     .setContact('oliver.wu', `/index`, '294473343@qq.com');
 
-  const arr = new Map();
-  arr.set('GatewayAuthController', '第三方授权接口');
-  arr.set('LoginController', '登录模块');
-  for (const [key, value] of arr) {
+  const apiTagsMap = ApiTagsDescriptionRegistry.scanControllerTags(app);
+  for (const [key, value] of apiTagsMap) {
     swaggerConfig.addTag(key, value);
   }
 
