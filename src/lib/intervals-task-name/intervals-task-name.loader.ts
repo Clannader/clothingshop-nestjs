@@ -66,7 +66,7 @@ export class IntervalTaskNameLoader implements OnModuleInit {
   }
 
   warnForNonStaticProviders(
-    wrapper: InstanceWrapper<any>,
+    wrapper: InstanceWrapper,
     instance: Record<string, Function>,
     key: string,
   ) {
