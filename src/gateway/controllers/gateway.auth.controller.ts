@@ -11,7 +11,7 @@ import {
   Req,
   Headers,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiHeaders } from '@nestjs/swagger';
+import { ApiOperation, ApiHeaders } from '@nestjs/swagger';
 import {
   LoginResult,
   CmsSession,
@@ -19,7 +19,12 @@ import {
   LanguageType,
   SecurityOptions,
 } from '@/common';
-import { ApiCommon, ApiCustomResponse, UserLanguage } from '@/common/decorator';
+import {
+  ApiCommon,
+  ApiCustomResponse,
+  UserLanguage,
+  ApiTagsController,
+} from '@/common/decorator';
 import { CodeEnum } from '@/common/enum';
 import { ConfigService } from '@/common/config';
 import { Utils, GlobalService } from '@/common/utils';
@@ -32,7 +37,7 @@ import { TokenCacheService } from '@/cache/services';
 
 @ApiCommon({ showCredential: false })
 @Controller('/gateway/api/oauth')
-@ApiTags('GatewayAuthController')
+@ApiTagsController('GatewayAuthController', '第三方授权接口')
 export class GatewayAuthController {
   @Inject()
   private readonly userService: UserService;

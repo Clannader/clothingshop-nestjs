@@ -8,6 +8,7 @@ import type { Cache } from 'cache-manager';
 import { CmsSession } from '@/common';
 import { Utils } from '@/common/utils';
 import { ConfigService } from '@/common/config';
+import { OnEventMessage, SendEventMessage } from '@/lib/event-message';
 
 @Injectable()
 export class TraceIdCacheService {
@@ -17,17 +18,19 @@ export class TraceIdCacheService {
   @Inject()
   private readonly configService: ConfigService;
 
+  @SendEventMessage('asyncTraceIdCache')
   async setTraceIdCache(session: CmsSession, traceId: string) {
     await this.updateTraceIdCache(session, traceId);
-    if (this.configService.get<boolean>('clusterServer')) {
-      process.send({
-        notice: 'updateTraceIdCache',
-        key: session,
-        value: traceId,
-      });
-    }
+    // if (this.configService.get<boolean>('clusterServer')) {
+    //   process.send({
+    //     notice: 'updateTraceIdCache',
+    //     key: session,
+    //     value: traceId,
+    //   });
+    // }
   }
 
+  @OnEventMessage('asyncTraceIdCache')
   async updateTraceIdCache(session: CmsSession, traceId: string) {
     if (Utils.isEmpty(traceId) || !/^\d{15}#\d+$/.test(traceId)) {
       return;
@@ -58,16 +61,18 @@ export class TraceIdCacheService {
     return this.cacheManager.store;
   }
 
+  @SendEventMessage('deleteTraceIdCache')
   async deleteTraceIdCache(session: CmsSession) {
     await this.messageDeleteTraceIdCache(session);
-    if (this.configService.get<boolean>('clusterServer')) {
-      process.send({
-        notice: 'deleteTraceIdCache',
-        key: session,
-      });
-    }
+    // if (this.configService.get<boolean>('clusterServer')) {
+    //   process.send({
+    //     notice: 'deleteTraceIdCache',
+    //     key: session,
+    //   });
+    // }
   }
 
+  @OnEventMessage('deleteTraceIdCache')
   async messageDeleteTraceIdCache(session: CmsSession) {
     if (!Utils.isEmpty(session?.requestId)) {
       await this.getTraceIdStore().del(session.requestId);

@@ -2,34 +2,30 @@
  * Create by oliver.wu 2024/11/27
  */
 import {
-  Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
-  Post,
   Query,
-  Put,
-  Delete,
   UseGuards,
   UseInterceptors,
   Inject,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation } from '@nestjs/swagger';
 
-import { ApiCommon, ApiCustomResponse, UserSession } from '@/common/decorator';
+import {
+  ApiCommon,
+  ApiCustomResponse,
+  ApiTagsController,
+} from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { ApiRights, RightsEnum } from '@/rights';
-import { Utils } from '@/common/utils';
-import { plainToInstance } from 'class-transformer';
 
 import { SystemConfigService } from '../services';
 import { ReqSystemConfigListDto, RespSystemConfigListDto } from '../dto/config';
 
 @ApiCommon()
 @Controller('/cms/api/system/config')
-@ApiTags('SystemConfigController')
+@ApiTagsController('SystemConfigController', '系统配置模块')
 @UseGuards(SessionGuard)
 @UseInterceptors(HttpInterceptor)
 @ApiRights(

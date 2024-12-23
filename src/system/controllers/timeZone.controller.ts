@@ -14,9 +14,14 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation } from '@nestjs/swagger';
 
-import { ApiCommon, ApiCustomResponse, UserSession } from '@/common/decorator';
+import {
+  ApiCommon,
+  ApiCustomResponse,
+  UserSession,
+  ApiTagsController,
+} from '@/common/decorator';
 import {
   CmsSession,
   CommonResult,
@@ -42,7 +47,7 @@ import { plainToInstance } from 'class-transformer';
 
 @ApiCommon()
 @Controller('/cms/api/timeZone')
-@ApiTags('TimeZoneController')
+@ApiTagsController('TimeZoneController', '时区模块')
 @UseGuards(SessionGuard)
 @UseInterceptors(HttpInterceptor)
 @ApiRights(
