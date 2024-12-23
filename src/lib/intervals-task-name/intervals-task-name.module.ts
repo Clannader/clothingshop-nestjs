@@ -9,6 +9,6 @@ import { IntervalsTaskNameRegistry } from './intervals-task-name.registry';
 @Module({
   imports: [DiscoveryModule],
   providers: [IntervalsTaskNameAccessor, IntervalsTaskNameRegistry],
-  exports: [IntervalsTaskNameRegistry]
+  exports: [IntervalsTaskNameRegistry],
 })
 export class IntervalsTaskNameModule {}

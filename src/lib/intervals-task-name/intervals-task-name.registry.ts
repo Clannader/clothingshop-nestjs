@@ -11,11 +11,10 @@ export class IntervalsTaskNameRegistry {
     return this.intervalsFunction;
   }
 
-  addIntervalFunctionName(name: string, intervalIFun:  Function) {
+  addIntervalFunctionName(name: string, intervalIFun: Function) {
     const ref = this.intervalsFunction.get(name);
     if (!ref) {
       this.intervalsFunction.set(name, intervalIFun);
     }
   }
-
 }

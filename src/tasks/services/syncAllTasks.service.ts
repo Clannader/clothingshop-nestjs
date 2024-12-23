@@ -16,17 +16,16 @@ const startDate = moment();
 // 改成2小时后,就算靠近第一个整点也不会出现报错问题了
 // startDate.add(2, 'hours');
 // }
-startDate.add(2, 'hours');
-startDate.minutes(0);
+startDate.add(2, 'minutes');
+// startDate.minutes(0);
 startDate.seconds(0);
 startDate.milliseconds(0);
 
 @Injectable()
 export class SyncAllTasksService {
-
   constructor(
     private readonly schedulerRegistry: SchedulerRegistry,
-    private readonly intervalsTaskNameRegistry: IntervalsTaskNameRegistry
+    private readonly intervalsTaskNameRegistry: IntervalsTaskNameRegistry,
   ) {}
 
   @Cron(startDate.toDate())
@@ -35,8 +34,9 @@ export class SyncAllTasksService {
     // 一般没有延迟器的逻辑,延迟器的话不需要重启
     // 获取所有定时器任务,然后取消,然后重启
     const intervalKeys = this.schedulerRegistry.getIntervals();
-    const intervalService = this.intervalsTaskNameRegistry.getIntervalFunctionName();
-    console.log(intervalService)
+    const intervalService =
+      this.intervalsTaskNameRegistry.getIntervalFunctionName();
+    console.log(intervalService);
     const resetIntervalMap = new Map<string, any>();
     intervalKeys.forEach((intervalKey) => {
       const oldInterval = this.schedulerRegistry.getInterval(intervalKey);

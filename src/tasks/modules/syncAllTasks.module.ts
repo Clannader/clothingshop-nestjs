@@ -3,7 +3,7 @@
  */
 import { Module } from '@nestjs/common';
 
-import { IntervalsTaskNameModule } from '@/lib/intervals-task-name'
+import { IntervalsTaskNameModule } from '@/lib/intervals-task-name';
 import { SyncAllTasksService } from '../services';
 
 @Module({
