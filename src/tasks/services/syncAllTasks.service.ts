@@ -1,11 +1,10 @@
 /**
  * Create by oliver.wu 2024/11/5
  */
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { SchedulerRegistry, Cron } from '@nestjs/schedule';
 
-// import { TestIntervalName, TestIntervalType } from '../tasks.constants';
-import { TestTasksService } from './test.tasks.service';
+import { IntervalsTaskNameRegistry } from '@/lib/intervals-task-name';
 import * as moment from 'moment';
 
 // 启动时,取最近的一次整点做重置定时器任务的时间
@@ -24,10 +23,11 @@ startDate.milliseconds(0);
 
 @Injectable()
 export class SyncAllTasksService {
-  @Inject()
-  private readonly testTasksService: TestTasksService;
 
-  constructor(private schedulerRegistry: SchedulerRegistry) {}
+  constructor(
+    private readonly schedulerRegistry: SchedulerRegistry,
+    private readonly intervalsTaskNameRegistry: IntervalsTaskNameRegistry
+  ) {}
 
   @Cron(startDate.toDate())
   reSetAllTasks() {
@@ -35,17 +35,14 @@ export class SyncAllTasksService {
     // 一般没有延迟器的逻辑,延迟器的话不需要重启
     // 获取所有定时器任务,然后取消,然后重启
     const intervalKeys = this.schedulerRegistry.getIntervals();
-    // TODO 需要加修饰器拿完全部的方法
-    const intervalService = {
-      TestIntervalName: this.testTasksService.handleInterval,
-      TestIntervalType: this.testTasksService.handleTestInterval,
-    };
+    const intervalService = this.intervalsTaskNameRegistry.getIntervalFunctionName();
+    console.log(intervalService)
     const resetIntervalMap = new Map<string, any>();
     intervalKeys.forEach((intervalKey) => {
       const oldInterval = this.schedulerRegistry.getInterval(intervalKey);
       this.schedulerRegistry.deleteInterval(intervalKey);
       const newInterval = setInterval(
-        intervalService[intervalKey],
+        intervalService.get(intervalKey),
         oldInterval._repeat,
       );
       resetIntervalMap.set(intervalKey, newInterval);

@@ -3,11 +3,11 @@
  */
 import { Module } from '@nestjs/common';
 
-import { TestTasksModule } from './test.tasks.module';
+import { IntervalsTaskNameModule } from '@/lib/intervals-task-name'
 import { SyncAllTasksService } from '../services';
 
 @Module({
-  imports: [TestTasksModule],
+  imports: [IntervalsTaskNameModule],
   providers: [SyncAllTasksService],
 })
 export class SyncAllTasksModule {}
