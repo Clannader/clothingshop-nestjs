@@ -16,8 +16,8 @@ const startDate = moment();
 // 改成2小时后,就算靠近第一个整点也不会出现报错问题了
 // startDate.add(2, 'hours');
 // }
-startDate.add(1, 'minutes');
-// startDate.minutes(0);
+startDate.add(2, 'hours');
+startDate.minutes(0);
 startDate.seconds(0);
 startDate.milliseconds(0);
 
@@ -36,7 +36,6 @@ export class SyncAllTasksService {
     const intervalKeys = this.schedulerRegistry.getIntervals();
     const intervalService =
       this.intervalsTaskNameRegistry.getIntervalFunctionName();
-    console.log(intervalService);
     const resetIntervalMap = new Map<string, any>();
     intervalKeys.forEach((intervalKey) => {
       const oldInterval = this.schedulerRegistry.getInterval(intervalKey);
