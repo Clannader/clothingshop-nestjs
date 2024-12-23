@@ -34,7 +34,7 @@ import {
 import { ConfigService } from './common/config';
 import { MongooseConfigService } from './dao';
 import { SessionMiddleware } from './middleware';
-import * as bodyParser from 'body-parser';
+// import * as bodyParser from 'body-parser';
 import { rateLimit, MemoryStore } from 'express-rate-limit';
 // import { SyncUpdateCacheService } from '@/cache/services';
 import parseEnv from '@/lib/parseEnv';
