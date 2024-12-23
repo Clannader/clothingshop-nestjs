@@ -53,14 +53,13 @@ export class IntervalTaskNameLoader implements OnModuleInit {
 
     switch (metadata) {
       case SchedulerType.INTERVAL: {
-        const intervalMetadata =
-          this.metadataAccessor.getIntervalMetadata(methodRef);
+        // const intervalMetadata =
+        //   this.metadataAccessor.getIntervalMetadata(methodRef);
         const name = this.metadataAccessor.getSchedulerName(methodRef);
         const intervalFn = this.wrapFunctionInTryCatchBlocks(
           methodRef,
           instance,
         );
-
         return this.registry.addIntervalFunctionName(name, intervalFn);
       }
     }

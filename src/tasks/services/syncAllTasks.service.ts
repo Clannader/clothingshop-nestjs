@@ -16,7 +16,7 @@ const startDate = moment();
 // 改成2小时后,就算靠近第一个整点也不会出现报错问题了
 // startDate.add(2, 'hours');
 // }
-startDate.add(2, 'minutes');
+startDate.add(1, 'minutes');
 // startDate.minutes(0);
 startDate.seconds(0);
 startDate.milliseconds(0);
