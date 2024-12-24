@@ -4,7 +4,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { SchedulerType } from '@nestjs/schedule/dist/enums/scheduler-type.enum';
+import { SchedulerType } from '@andybeat/schedule';
 
 import { IntervalsTaskNameAccessor } from './intervals-task-name.accessor';
 import { IntervalsTaskNameRegistry } from './intervals-task-name.registry';

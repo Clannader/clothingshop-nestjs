@@ -2,7 +2,7 @@
  * Create by oliver.wu 2024/10/11
  */
 import { Injectable, Inject } from '@nestjs/common';
-import { Interval } from '@nestjs/schedule';
+import { Interval } from '@andybeat/schedule';
 
 // import { LogTypeEnum, SequenceTypeEnum } from '@/common/enum';
 import {

@@ -3,13 +3,11 @@
  */
 import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { SchedulerType } from '@nestjs/schedule/dist/enums/scheduler-type.enum';
-import { IntervalMetadata } from '@nestjs/schedule/dist/interfaces/interval-metadata.interface';
 import {
+  SchedulerType,
   SCHEDULER_NAME,
   SCHEDULER_TYPE,
-  SCHEDULE_INTERVAL_OPTIONS,
-} from '@nestjs/schedule/dist/schedule.constants';
+} from '@andybeat/schedule';
 
 @Injectable()
 export class IntervalsTaskNameAccessor {
@@ -21,10 +19,6 @@ export class IntervalsTaskNameAccessor {
 
   getSchedulerName(target: Function): string | undefined {
     return this.getMetadata(SCHEDULER_NAME, target);
-  }
-
-  getIntervalMetadata(target: Function): IntervalMetadata | undefined {
-    return this.getMetadata(SCHEDULE_INTERVAL_OPTIONS, target);
   }
 
   private getMetadata<T>(key: string, target: Function): T | undefined {
