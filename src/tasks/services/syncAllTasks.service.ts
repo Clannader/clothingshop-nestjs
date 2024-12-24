@@ -4,7 +4,6 @@
 import { Injectable } from '@nestjs/common';
 import { SchedulerRegistry, Cron } from '@andybeat/schedule';
 
-import { IntervalsTaskNameRegistry } from '@/lib/intervals-task-name';
 import * as moment from 'moment';
 
 // 启动时,取最近的一次整点做重置定时器任务的时间
@@ -25,7 +24,6 @@ startDate.milliseconds(0);
 export class SyncAllTasksService {
   constructor(
     private readonly schedulerRegistry: SchedulerRegistry,
-    private readonly intervalsTaskNameRegistry: IntervalsTaskNameRegistry,
   ) {}
 
   @Cron(startDate.toDate())
@@ -35,7 +33,7 @@ export class SyncAllTasksService {
     // 获取所有定时器任务,然后取消,然后重启
     const intervalKeys = this.schedulerRegistry.getIntervals();
     const intervalService =
-      this.intervalsTaskNameRegistry.getIntervalFunctionName();
+      this.schedulerRegistry.getIntervalFunction();
     const resetIntervalMap = new Map<string, any>();
     intervalKeys.forEach((intervalKey) => {
       const oldInterval = this.schedulerRegistry.getInterval(intervalKey);
