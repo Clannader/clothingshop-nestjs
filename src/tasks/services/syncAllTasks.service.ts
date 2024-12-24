@@ -2,7 +2,7 @@
  * Create by oliver.wu 2024/11/5
  */
 import { Injectable } from '@nestjs/common';
-import { SchedulerRegistry, Cron } from '@nestjs/schedule';
+import { SchedulerRegistry, Cron } from '@andybeat/schedule';
 
 import { IntervalsTaskNameRegistry } from '@/lib/intervals-task-name';
 import * as moment from 'moment';

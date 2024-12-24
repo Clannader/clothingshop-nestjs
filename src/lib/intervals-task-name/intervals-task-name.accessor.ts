@@ -3,13 +3,13 @@
  */
 import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { SchedulerType } from '@nestjs/schedule/dist/enums/scheduler-type.enum';
-import { IntervalMetadata } from '@nestjs/schedule/dist/interfaces/interval-metadata.interface';
 import {
+  SchedulerType,
   SCHEDULER_NAME,
   SCHEDULER_TYPE,
   SCHEDULE_INTERVAL_OPTIONS,
-} from '@nestjs/schedule/dist/schedule.constants';
+} from '@andybeat/schedule';
+import { IntervalMetadata } from '@andybeat/schedule/dist/interfaces/interval-metadata.interface';
 
 @Injectable()
 export class IntervalsTaskNameAccessor {
