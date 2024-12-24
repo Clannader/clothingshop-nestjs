@@ -22,9 +22,7 @@ startDate.milliseconds(0);
 
 @Injectable()
 export class SyncAllTasksService {
-  constructor(
-    private readonly schedulerRegistry: SchedulerRegistry,
-  ) {}
+  constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
 
   @Cron(startDate.toDate())
   reSetAllTasks() {
@@ -32,8 +30,7 @@ export class SyncAllTasksService {
     // 一般没有延迟器的逻辑,延迟器的话不需要重启
     // 获取所有定时器任务,然后取消,然后重启
     const intervalKeys = this.schedulerRegistry.getIntervals();
-    const intervalService =
-      this.schedulerRegistry.getIntervalFunction();
+    const intervalService = this.schedulerRegistry.getIntervalFunction();
     const resetIntervalMap = new Map<string, any>();
     intervalKeys.forEach((intervalKey) => {
       const oldInterval = this.schedulerRegistry.getInterval(intervalKey);

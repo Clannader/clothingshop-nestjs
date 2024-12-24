@@ -7,9 +7,7 @@ import {
   SchedulerType,
   SCHEDULER_NAME,
   SCHEDULER_TYPE,
-  SCHEDULE_INTERVAL_OPTIONS,
 } from '@andybeat/schedule';
-import { IntervalMetadata } from '@andybeat/schedule/dist/interfaces/interval-metadata.interface';
 
 @Injectable()
 export class IntervalsTaskNameAccessor {
@@ -21,10 +19,6 @@ export class IntervalsTaskNameAccessor {
 
   getSchedulerName(target: Function): string | undefined {
     return this.getMetadata(SCHEDULER_NAME, target);
-  }
-
-  getIntervalMetadata(target: Function): IntervalMetadata | undefined {
-    return this.getMetadata(SCHEDULE_INTERVAL_OPTIONS, target);
   }
 
   private getMetadata<T>(key: string, target: Function): T | undefined {
