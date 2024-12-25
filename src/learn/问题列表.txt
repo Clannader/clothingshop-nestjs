@@ -63,6 +63,7 @@ npm warn deprecated vis@4.21.0: Please consider using https://github.com/visjs
 31.关于生产环境打包,整理package.json的生成环境依赖包,发现需要修改运行脚本命令,需要指向main.js,新增cross-env,修改打包出来的文件package.json
 打包整理package.json文件的内容以及其他资源文件,能够一键自动化下载安装包运行,自动更新config.ini脚本,考虑前端文件的复制,压缩,版本号
 32.fork @nestjs/schedule,修改源代码后自己发布,下载安装测试吧... √
+33.新增用户的登录双重认证
 
 RSA数据库加解密
 1.数据库请求服务器获取敏感信息,先调用getSession(),获取新的会话

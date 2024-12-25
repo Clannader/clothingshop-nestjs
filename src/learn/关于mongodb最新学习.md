@@ -234,3 +234,9 @@ https://www.mongodb.com/zh-cn/docs/drivers/php/laravel-mongodb/v5.x/fundamentals
 22.mongodb的roles说明文档
 https://www.mongodb.com/zh-cn/docs/manual/reference/built-in-roles/#database-user-roles
 创建用户文档 https://www.mongodb.com/zh-cn/docs/manual/reference/method/db.auth/
+
+23.下载地址
+openssl: https://slproweb.com/products/Win32OpenSSL.html
+jqlang: https://jqlang.github.io/jq/download/
+Wireshark: https://www.wireshark.org/#downloadLink
+OWASP ZAP: https://www.zaproxy.org/download/
