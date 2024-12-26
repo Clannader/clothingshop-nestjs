@@ -8,6 +8,8 @@ import parseEnv from '@/lib/parseEnv';
 
 export interface OnEventMessageMetadata {
   message: string;
+  instance?: Record<string, Function>;
+  methodKey?: string;
 }
 
 export const OnEventMessage = (message: string): MethodDecorator => {

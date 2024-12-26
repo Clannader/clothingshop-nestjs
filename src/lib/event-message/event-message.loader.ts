@@ -11,20 +11,19 @@ import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
 import { EventMessageMetadataAccessor } from './event-message-metadata.accessor';
-import { ConfigService } from '@/common/config';
-import * as process from 'node:process';
+import { OnEventMessageMetadata } from './decorators';
 
 @Injectable()
 export class EventMessageLoader
   implements OnApplicationBootstrap, OnApplicationShutdown
 {
   private readonly logger = new Logger('EventMessage');
+  private readonly eventMapHandler = new Map<string, OnEventMessageMetadata>();
 
   constructor(
     private readonly discoveryService: DiscoveryService,
     private readonly metadataAccessor: EventMessageMetadataAccessor,
     private readonly metadataScanner: MetadataScanner,
-    private readonly configService: ConfigService,
   ) {}
 
   onApplicationBootstrap() {
@@ -58,6 +57,22 @@ export class EventMessageLoader
           .getAllMethodNames(prototype)
           .forEach(processMethod);
       });
+    if (this.eventMapHandler.size > 0) {
+      process.on('message', async (message: Record<string, any>) => {
+        const eventHandler = this.eventMapHandler.get(message?.action);
+        if (eventHandler) {
+          try {
+            await eventHandler.instance[eventHandler.methodKey].call(
+              eventHandler.instance,
+              message.key,
+              message.value,
+            );
+          } catch (error) {
+            this.logger.error(error);
+          }
+        }
+      });
+    }
   }
 
   private lookupEventMessages(
@@ -71,14 +86,18 @@ export class EventMessageLoader
       // 避免不是event-message的修饰器也进来判断
       return;
     }
-
     for (const eventListenerMetadata of eventListenerMetadatas) {
       const { message } = eventListenerMetadata;
-      const listenerMethod = process.on.bind(process);
-      listenerMethod(
+      this.eventMapHandler.set(message, {
         message,
-        this.wrapFunctionInTryCatchBlocks(methodRef, instance),
-      );
+        instance,
+        methodKey,
+      });
+      // const listenerMethod = process.on.bind(process);
+      // listenerMethod(
+      //   message,
+      //   this.wrapFunctionInTryCatchBlocks(methodRef, instance),
+      // );
     }
   }
 
