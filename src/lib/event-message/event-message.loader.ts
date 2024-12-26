@@ -7,22 +7,17 @@ import {
   OnApplicationBootstrap,
   OnApplicationShutdown,
 } from '@nestjs/common';
-import {
-  DiscoveryService,
-  MetadataScanner,
-} from '@nestjs/core';
-import { Injector } from '@nestjs/core/injector/injector';
+import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
 import { EventMessageMetadataAccessor } from './event-message-metadata.accessor';
-import { EventMessageTypeEnum } from './enums';
 import { ConfigService } from '@/common/config';
+import * as process from 'node:process';
 
 @Injectable()
 export class EventMessageLoader
   implements OnApplicationBootstrap, OnApplicationShutdown
 {
-  private readonly injector = new Injector();
   private readonly logger = new Logger('EventMessage');
 
   constructor(
@@ -65,29 +60,25 @@ export class EventMessageLoader
       });
   }
 
-  private lookupEventMessages(instance: Record<string, Function>, methodKey: string) {
+  private lookupEventMessages(
+    instance: Record<string, Function>,
+    methodKey: string,
+  ) {
     const methodRef = instance[methodKey];
-    const metadata =
-      this.metadataAccessor.getEventMessageTypeMetadata(methodRef);
-    if (!metadata) {
+    const eventListenerMetadatas =
+      this.metadataAccessor.getOnEventMessageHandlerMetadata(methodRef);
+    if (!eventListenerMetadatas) {
       // 避免不是event-message的修饰器也进来判断
       return;
     }
-    switch (metadata) {
-      case EventMessageTypeEnum.Listener:
-        const listenerMetadata =
-          this.metadataAccessor.getOnEventMessageHandlerMetadata(methodRef);
-        const listenerFn = this.wrapFunctionInTryCatchBlocks(
-          methodRef,
-          instance,
-        );
-        // console.log(listenerMetadata);
-        break;
-      case EventMessageTypeEnum.Send:
-        const sendMetadata =
-          this.metadataAccessor.getSendEventMessageHandlerMetadata(methodRef);
-        const sendFn = this.wrapFunctionInTryCatchBlocks(methodRef, instance);
-        break;
+
+    for (const eventListenerMetadata of eventListenerMetadatas) {
+      const { message } = eventListenerMetadata;
+      const listenerMethod = process.on.bind(process);
+      listenerMethod(
+        message,
+        this.wrapFunctionInTryCatchBlocks(methodRef, instance),
+      );
     }
   }
 
@@ -108,22 +99,13 @@ export class EventMessageLoader
   ) {
     const methodRef = instance[key];
     const metadata =
-      this.metadataAccessor.getEventMessageTypeMetadata(methodRef);
+      this.metadataAccessor.getOnEventMessageHandlerMetadata(methodRef);
     if (!metadata) {
       return;
     }
-    this.logger.debug('event-message:warnForNonStaticProviders进来了...');
-    switch (metadata) {
-      case EventMessageTypeEnum.Listener:
-        this.logger.warn(
-          `Cannot register message listener "${wrapper.name}@${key}" because it is defined in a non static provider.`,
-        );
-        break;
-      case EventMessageTypeEnum.Send:
-        this.logger.warn(
-          `Cannot register message send "${wrapper.name}@${key}" because it is defined in a non static provider.`,
-        );
-        break;
-    }
+    this.logger.debug('event-message:warnForNonStaticProviders come in...');
+    this.logger.warn(
+      `Cannot register message listener "${wrapper.name}@${key}" because it is defined in a non static provider.`,
+    );
   }
 }

@@ -4,12 +4,7 @@
 import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { OnEventMessageMetadata } from './decorators';
-import {
-  EVENT_ON_MESSAGE_METADATA,
-  EVENT_SEND_MESSAGE_METADATA,
-  EVENT_MESSAGE_TYPE,
-} from './constants';
-import { type EventMessageTypeEnum } from './enums';
+import { EVENT_ON_MESSAGE_METADATA } from './constants';
 
 @Injectable()
 export class EventMessageMetadataAccessor {
@@ -17,24 +12,7 @@ export class EventMessageMetadataAccessor {
 
   getOnEventMessageHandlerMetadata(
     target: Function,
-  ): OnEventMessageMetadata | undefined {
-    return this.getMessageHandlerMetadata(EVENT_ON_MESSAGE_METADATA, target);
-  }
-
-  getSendEventMessageHandlerMetadata(
-    target: Function,
-  ): OnEventMessageMetadata | undefined {
-    return this.getMessageHandlerMetadata(EVENT_SEND_MESSAGE_METADATA, target);
-  }
-
-  getEventMessageTypeMetadata(target: Function): EventMessageTypeEnum {
-    return this.getMessageHandlerMetadata(EVENT_MESSAGE_TYPE, target);
-  }
-
-  private getMessageHandlerMetadata<T>(
-    key: string,
-    target: Function,
-  ): T | undefined {
+  ): OnEventMessageMetadata[] | undefined {
     if (
       !target ||
       (typeof target !== 'function' && typeof target !== 'object')
@@ -42,10 +20,10 @@ export class EventMessageMetadataAccessor {
       return undefined;
     }
 
-    const metadata = this.reflector.get(key, target);
+    const metadata = this.reflector.get(EVENT_ON_MESSAGE_METADATA, target);
     if (!metadata) {
       return undefined;
     }
-    return metadata;
+    return Array.isArray(metadata) ? metadata : [metadata];
   }
 }
