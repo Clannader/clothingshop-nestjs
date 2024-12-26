@@ -21,13 +21,6 @@ export class TraceIdCacheService {
   @SendEventMessage('asyncTraceIdCache')
   async setTraceIdCache(session: CmsSession, traceId: string) {
     await this.updateTraceIdCache(session, traceId);
-    // if (this.configService.get<boolean>('clusterServer')) {
-    //   process.send({
-    //     notice: 'updateTraceIdCache',
-    //     key: session,
-    //     value: traceId,
-    //   });
-    // }
   }
 
   @OnEventMessage('asyncTraceIdCache')
@@ -64,12 +57,6 @@ export class TraceIdCacheService {
   @SendEventMessage('deleteTraceIdCache')
   async deleteTraceIdCache(session: CmsSession) {
     await this.messageDeleteTraceIdCache(session);
-    // if (this.configService.get<boolean>('clusterServer')) {
-    //   process.send({
-    //     notice: 'deleteTraceIdCache',
-    //     key: session,
-    //   });
-    // }
   }
 
   @OnEventMessage('deleteTraceIdCache')

@@ -8,17 +8,15 @@ import {
   OnApplicationShutdown,
 } from '@nestjs/common';
 import {
-  ContextIdFactory,
   DiscoveryService,
   MetadataScanner,
-  ModuleRef,
 } from '@nestjs/core';
 import { Injector } from '@nestjs/core/injector/injector';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { Module } from '@nestjs/core/injector/module';
 
 import { EventMessageMetadataAccessor } from './event-message-metadata.accessor';
 import { EventMessageTypeEnum } from './enums';
+import { ConfigService } from '@/common/config';
 
 @Injectable()
 export class EventMessageLoader
@@ -31,7 +29,7 @@ export class EventMessageLoader
     private readonly discoveryService: DiscoveryService,
     private readonly metadataAccessor: EventMessageMetadataAccessor,
     private readonly metadataScanner: MetadataScanner,
-    private readonly moduleRef: ModuleRef,
+    private readonly configService: ConfigService,
   ) {}
 
   onApplicationBootstrap() {
@@ -55,10 +53,10 @@ export class EventMessageLoader
           return;
         }
 
-        const processMethod = (name: string) => {
+        const processMethod = (methodKey: string) => {
           return wrapper.isDependencyTreeStatic()
-            ? this.lookupEventMessages(instance, name)
-            : this.warnForNonStaticProviders(wrapper, instance, name); // 不懂什么情况会进来
+            ? this.lookupEventMessages(instance, methodKey)
+            : this.warnForNonStaticProviders(wrapper, instance, methodKey); // 不懂什么情况会进来,猜测Scope=Request会进来
         };
 
         this.metadataScanner
@@ -67,8 +65,8 @@ export class EventMessageLoader
       });
   }
 
-  private lookupEventMessages(instance: Record<string, Function>, key: string) {
-    const methodRef = instance[key];
+  private lookupEventMessages(instance: Record<string, Function>, methodKey: string) {
+    const methodRef = instance[methodKey];
     const metadata =
       this.metadataAccessor.getEventMessageTypeMetadata(methodRef);
     if (!metadata) {
