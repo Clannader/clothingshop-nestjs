@@ -9,6 +9,10 @@ import { TokenCacheService } from './token.cache.service';
 import { TraceIdCacheService } from './traceId.cache.service';
 import { SecuritySessionCacheService } from './security.session.cache.service';
 
+/**
+ * @deprecated
+ * 使用新的修饰器来实现内存同步
+ */
 @Injectable()
 export class SyncUpdateCacheService {
   @Inject()
