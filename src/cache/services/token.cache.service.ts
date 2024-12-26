@@ -5,7 +5,6 @@ import { Injectable, Inject } from '@nestjs/common';
 import { TOKEN_CACHE_MANAGER } from '../cache.constants';
 
 import type { Cache } from 'cache-manager';
-// import { ConfigService } from '@/common/config';
 import { OnEventMessage, SendEventMessage } from '@/lib/event-message';
 
 @Injectable()
@@ -13,20 +12,9 @@ export class TokenCacheService {
   @Inject(TOKEN_CACHE_MANAGER)
   private readonly cacheManager: Cache;
 
-  // @Inject()
-  // private readonly configService: ConfigService;
-
   @SendEventMessage('asyncTokenCache')
   async setTokenCache(key: string, value: string) {
     await this.updateTokenCache(key, value);
-    // 只有多进程时才有send方法
-    // if (this.configService.get<boolean>('clusterServer')) {
-    //   process.send({
-    //     notice: 'updateTokenCache',
-    //     key,
-    //     value,
-    //   });
-    // }
   }
 
   @OnEventMessage('asyncTokenCache')

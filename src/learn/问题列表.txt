@@ -1,5 +1,5 @@
 1.review导入类型和类的区分 √
-2.重新分类引入,拆分多个类别,不耦合在一起,例如commom什么都有,应该common/config,common/enum √
+2.重新分类引入,拆分多个类别,不耦合在一起,例如common什么都有,应该common/config,common/enum √
 3.研究一下如何判断是测试模式还是开发模式,屏蔽测试模式下的报错 √
 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 npm warn deprecated csurf@1.11.0: Please use another csrf package
@@ -59,7 +59,11 @@ npm warn deprecated vis@4.21.0: Please consider using https://github.com/visjs
    先暂时保存代码,后续代码加上时再做测试吧
 28.新增系统参数表
 29.如何获取原始的rawBody:Buffer,获取到了需要判断解密然后传入后续的校验 √
-30.需要新增3个修饰器,发消息,拿定时器,获取控制器的名称
+30.需要新增3个修饰器,发消息,拿定时器,获取控制器的名称,还剩一个发消息修饰器没有测试了,另外2个已经完成
+31.关于生产环境打包,整理package.json的生成环境依赖包,发现需要修改运行脚本命令,需要指向main.js,新增cross-env,修改打包出来的文件package.json
+打包整理package.json文件的内容以及其他资源文件,能够一键自动化下载安装包运行,自动更新config.ini脚本,考虑前端文件的复制,压缩,版本号
+32.fork @nestjs/schedule,修改源代码后自己发布,下载安装测试吧... √
+33.新增用户的登录双重认证
 
 RSA数据库加解密
 1.数据库请求服务器获取敏感信息,先调用getSession(),获取新的会话

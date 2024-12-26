@@ -7,31 +7,23 @@ import {
   OnApplicationBootstrap,
   OnApplicationShutdown,
 } from '@nestjs/common';
-import {
-  ContextIdFactory,
-  DiscoveryService,
-  MetadataScanner,
-  ModuleRef,
-} from '@nestjs/core';
-import { Injector } from '@nestjs/core/injector/injector';
+import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { Module } from '@nestjs/core/injector/module';
 
 import { EventMessageMetadataAccessor } from './event-message-metadata.accessor';
-import { EventMessageTypeEnum } from './enums';
+import { OnEventMessageMap } from './decorators';
 
 @Injectable()
 export class EventMessageLoader
   implements OnApplicationBootstrap, OnApplicationShutdown
 {
-  private readonly injector = new Injector();
   private readonly logger = new Logger('EventMessage');
+  private readonly eventMapHandler = new Map<string, OnEventMessageMap>();
 
   constructor(
     private readonly discoveryService: DiscoveryService,
     private readonly metadataAccessor: EventMessageMetadataAccessor,
     private readonly metadataScanner: MetadataScanner,
-    private readonly moduleRef: ModuleRef,
   ) {}
 
   onApplicationBootstrap() {
@@ -55,41 +47,57 @@ export class EventMessageLoader
           return;
         }
 
-        const processMethod = (name: string) => {
+        const processMethod = (methodKey: string) => {
           return wrapper.isDependencyTreeStatic()
-            ? this.lookupEventMessages(instance, name)
-            : this.warnForNonStaticProviders(wrapper, instance, name); // 不懂什么情况会进来
+            ? this.lookupEventMessages(instance, methodKey)
+            : this.warnForNonStaticProviders(wrapper, instance, methodKey); // 不懂什么情况会进来,猜测Scope=Request会进来
         };
 
         this.metadataScanner
           .getAllMethodNames(prototype)
           .forEach(processMethod);
       });
+    if (this.eventMapHandler.size > 0) {
+      process.on('message', async (message: Record<string, any>) => {
+        const eventHandler = this.eventMapHandler.get(message?.action);
+        if (eventHandler) {
+          try {
+            await eventHandler.instance[eventHandler.methodKey].call(
+              eventHandler.instance,
+              message.key,
+              message.value,
+            );
+          } catch (error) {
+            this.logger.error(error);
+          }
+        }
+      });
+    }
   }
 
-  private lookupEventMessages(instance: Record<string, Function>, key: string) {
-    const methodRef = instance[key];
-    const metadata =
-      this.metadataAccessor.getEventMessageTypeMetadata(methodRef);
-    if (!metadata) {
+  private lookupEventMessages(
+    instance: Record<string, Function>,
+    methodKey: string,
+  ) {
+    const methodRef = instance[methodKey];
+    const eventListenerMetadatas =
+      this.metadataAccessor.getOnEventMessageHandlerMetadata(methodRef);
+    if (!eventListenerMetadatas) {
       // 避免不是event-message的修饰器也进来判断
       return;
     }
-    switch (metadata) {
-      case EventMessageTypeEnum.Listener:
-        const listenerMetadata =
-          this.metadataAccessor.getOnEventMessageHandlerMetadata(methodRef);
-        const listenerFn = this.wrapFunctionInTryCatchBlocks(
-          methodRef,
-          instance,
-        );
-        // console.log(listenerMetadata);
-        break;
-      case EventMessageTypeEnum.Send:
-        const sendMetadata =
-          this.metadataAccessor.getSendEventMessageHandlerMetadata(methodRef);
-        const sendFn = this.wrapFunctionInTryCatchBlocks(methodRef, instance);
-        break;
+    for (const eventListenerMetadata of eventListenerMetadatas) {
+      const { message } = eventListenerMetadata;
+      this.eventMapHandler.set(message, {
+        message,
+        instance,
+        methodKey,
+      });
+      // const listenerMethod = process.on.bind(process);
+      // listenerMethod(
+      //   message,
+      //   this.wrapFunctionInTryCatchBlocks(methodRef, instance),
+      // );
     }
   }
 
@@ -110,22 +118,13 @@ export class EventMessageLoader
   ) {
     const methodRef = instance[key];
     const metadata =
-      this.metadataAccessor.getEventMessageTypeMetadata(methodRef);
+      this.metadataAccessor.getOnEventMessageHandlerMetadata(methodRef);
     if (!metadata) {
       return;
     }
-    this.logger.debug('event-message:warnForNonStaticProviders进来了...');
-    switch (metadata) {
-      case EventMessageTypeEnum.Listener:
-        this.logger.warn(
-          `Cannot register message listener "${wrapper.name}@${key}" because it is defined in a non static provider.`,
-        );
-        break;
-      case EventMessageTypeEnum.Send:
-        this.logger.warn(
-          `Cannot register message send "${wrapper.name}@${key}" because it is defined in a non static provider.`,
-        );
-        break;
-    }
+    this.logger.debug('event-message:warnForNonStaticProviders come in...');
+    this.logger.warn(
+      `Cannot register message listener "${wrapper.name}@${key}" because it is defined in a non static provider.`,
+    );
   }
 }

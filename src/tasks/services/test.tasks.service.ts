@@ -2,7 +2,7 @@
  * Create by oliver.wu 2024/10/11
  */
 import { Injectable, Inject } from '@nestjs/common';
-import { Interval } from '@nestjs/schedule';
+import { Interval } from '@andybeat/schedule';
 
 // import { LogTypeEnum, SequenceTypeEnum } from '@/common/enum';
 import {
@@ -41,9 +41,9 @@ export class TestTasksService {
     const serverId = 1;
     const cache = await this.memoryCacheService.getMemoryCache('Test');
 
-    console.log(
-      `服务器ID: ${workerId}--------------------------${moment().format('YYYY-MM-DD HH:mm:ss,SSS')}`,
-    );
+    // console.log(
+    //   `服务器ID: ${workerId}--------------------------${moment().format('YYYY-MM-DD HH:mm:ss,SSS')}`,
+    // );
     console.log(`服务器ID: ${workerId}--------------------------${cache}`);
 
     // await this.rightCodeGroupSchemaService.getModel().create({

@@ -49,13 +49,6 @@ export class MemoryCacheService {
   @SendEventMessage('asyncMemoryCache')
   async setMemoryCache(key: string, value: any) {
     await this.updateMemoryCache(key, value);
-    // if (this.configService.get<boolean>('clusterServer')) {
-    //   process.send({
-    //     notice: 'updateMemoryCache',
-    //     key,
-    //     value,
-    //   });
-    // }
   }
 
   @OnEventMessage('asyncMemoryCache')
