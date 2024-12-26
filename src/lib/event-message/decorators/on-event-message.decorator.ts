@@ -8,6 +8,9 @@ import parseEnv from '@/lib/parseEnv';
 
 export interface OnEventMessageMetadata {
   message: string;
+}
+
+export interface OnEventMessageMap extends OnEventMessageMetadata {
   instance?: Record<string, Function>;
   methodKey?: string;
 }

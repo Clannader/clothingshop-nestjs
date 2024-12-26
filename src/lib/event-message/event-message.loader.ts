@@ -11,14 +11,14 @@ import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
 import { EventMessageMetadataAccessor } from './event-message-metadata.accessor';
-import { OnEventMessageMetadata } from './decorators';
+import { OnEventMessageMap } from './decorators';
 
 @Injectable()
 export class EventMessageLoader
   implements OnApplicationBootstrap, OnApplicationShutdown
 {
   private readonly logger = new Logger('EventMessage');
-  private readonly eventMapHandler = new Map<string, OnEventMessageMetadata>();
+  private readonly eventMapHandler = new Map<string, OnEventMessageMap>();
 
   constructor(
     private readonly discoveryService: DiscoveryService,
