@@ -9,6 +9,7 @@ import { AnimalFactoryModule } from './abstract';
 import { HttpFactoryModule } from '@/http';
 import { TokenCacheModule, SecuritySessionCacheModule } from '@/cache/modules';
 import { TestInterfacesModule } from './interfaces';
+import { BoxController } from './box.controller';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { TestInterfacesModule } from './interfaces';
     TestInterfacesModule,
     SecuritySessionCacheModule,
   ],
-  controllers: [TestController],
+  controllers: [TestController, BoxController],
   providers: [TestService],
 })
 export class TestModule {}
