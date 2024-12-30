@@ -42,10 +42,10 @@ export const SendEventMessage = (message: string): MethodDecorator => {
       const originalMethod = descriptor.value;
 
       descriptor.value = function (...args: any[]) {
-        console.log(
-          `Send messageType: ${message}, method: ${propertyKey} called with arguments:`,
-          args,
-        );
+        // console.log(
+        //   `Send messageType: ${message}, method: ${propertyKey} called with arguments:`,
+        //   args,
+        // );
         if (parseEnv.read('clusterServer') === 'true') {
           process.send({
             notice: message,

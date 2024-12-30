@@ -33,7 +33,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       retryAttempts: 30000, // 重连次数
       user: this.configService.getSecurityConfig('dbUser'),
       pass: this.configService.getSecurityConfig('dbPws'),
-      monitorCommands: true,
+      monitorCommands: false,
       maxIdleTimeMS: 2000, // 空闲连接2秒后关闭
       maxPoolSize: 10,
       maxConnecting: 2, // 默认2
