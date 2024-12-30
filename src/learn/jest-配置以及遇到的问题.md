@@ -4,7 +4,7 @@
 
 [参考连接](https://www.jianshu.com/p/302db7615cde)
 
-```bash
+```
 //babel.config.js
 module.exports = {
   presets: [
@@ -22,7 +22,7 @@ module.exports = {
 };
 ```
 
-```bash
+```
 //jest.config.js
 module.exports = {
   preset: '@vue/cli-plugin-unit-jest',
@@ -46,12 +46,12 @@ module.exports = {
 };
 ```
 
-```bash
+```
 //fileMock.js
 module.exports = 'test-file-stub';
 ```
 
-```bash
+```
 //styleMock.js
 module.exports = {};
 ```
