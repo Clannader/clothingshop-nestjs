@@ -113,5 +113,6 @@ Log4js.configure({
 
 const consoleLogger = Log4js.getLogger('console');
 // TODO 对某些不能stringify的数据会报TypeError: Cannot convert object to primitive value,而无法打印出结果,需要屏蔽下面的代码
+// 产生上面报错的原因可能是因为log4js是通过process间通信传入打印信息,并且我发现打印信息如果是复杂对象就传输有问题,所以可能就会报错
 replaceConsole(consoleLogger);
 consoleLogger.addContext('appName', 'cmsServer');
