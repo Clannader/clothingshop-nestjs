@@ -9,9 +9,9 @@ import { join } from 'path';
 const baseLogPath = join(process.cwd(), '/logs/server.log');
 const baseFileLogPath = join(process.cwd(), '/fileLogs/fileLog.log');
 
-function replaceConsole(logger) {
-  function replaceWith(fn) {
-    return function (...args) {
+function replaceConsole(logger: Log4js.Logger) {
+  function replaceWith(fn: Function) {
+    return function (...args: any[]) {
       fn.apply(logger, args);
     };
   }
@@ -74,6 +74,9 @@ Log4js.configure({
             return logEvent.context['originalContext'] || 'Console';
           },
         },
+        serializers: {
+          bigint: (value: BigInt) => String(value), // 修改logs4js打印报错TypeError: Do not know how to serialize a BigInt
+        },
       },
     },
     console: {
@@ -87,6 +90,9 @@ Log4js.configure({
           originalContext: function (logEvent: Log4js.LoggingEvent) {
             return logEvent.context['originalContext'] || 'Console';
           },
+        },
+        serializers: {
+          bigint: (value: BigInt) => String(value), // 修改logs4js打印报错TypeError: Do not know how to serialize a BigInt
         },
       },
     },
