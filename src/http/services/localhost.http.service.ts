@@ -38,6 +38,7 @@ export class LocalhostHttpService extends HttpAbstractService {
         return Promise.resolve(response);
       },
       (error) => {
+        // console.log(error.toJSON()) // 这里的错误需要toJSON才能正常打印
         return Promise.reject(error);
       },
     );

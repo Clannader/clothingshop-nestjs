@@ -231,6 +231,6 @@ export async function bootstrap() {
 }
 
 //处理未知的报错，防止服务器塌了
-process.on('uncaughtException', function (err) {
+process.prependListener('uncaughtException', function (err) {
   console.trace(err);
 });
