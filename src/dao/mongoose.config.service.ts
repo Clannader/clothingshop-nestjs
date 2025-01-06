@@ -1,7 +1,7 @@
 /**
  * Create by CC on 2022/6/1
  */
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
   MongooseOptionsFactory,
   MongooseModuleOptions,
@@ -20,7 +20,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
 
   private connection: Connection;
 
-  // private readonly logger = new MongodbLogger(MongooseConfigService.name);
+  private readonly logger = new Logger(MongooseConfigService.name);
 
   createMongooseOptions(): MongooseModuleOptions {
     // 参考连接
@@ -73,12 +73,19 @@ export class MongooseConfigService implements MongooseOptionsFactory {
         const client = connection.getClient();
         client.on('commandStarted', (event) => {
           // 这里需要换logger打印,否则打印不出event对象
-          console.log(
-            `address: ${event.address}, commandName: ${event.commandName}`,
-          );
+          // console.log(event)
+          // this.logger.log(`commandStarted: address: ${event.address}, commandName: ${event.commandName}`);
+          // this.logger.log(event);
+          // console.log(
+          //   `commandStarted: address: ${event.address}, commandName: ${event.commandName}`,
+          // );
         });
         client.on('commandSucceeded', (event) => {
           // console.info(event);
+          this.logger.log(`commandSucceeded: address: ${event.address}, commandName: ${event.commandName}`);
+          // console.log(
+          //   `commandSucceeded: address: ${event.address}, commandName: ${event.commandName}`,
+          // );
         });
         client.on('commandFailed', (event) => {
           // console.error(event);

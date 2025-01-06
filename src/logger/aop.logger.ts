@@ -53,13 +53,14 @@ export class AopLogger extends ConsoleLogger {
     }
   }
 
-  private static getStackTrace(deep = 2): string {
+  private static getStackTrace(deep = 4): string {
     const stackList: StackTrace.StackFrame[] = StackTrace.getSync();
-    const stackInfo: StackTrace.StackFrame = stackList[deep];
+    const stackInfo: StackTrace.StackFrame = stackList[stackList.length > deep ? deep : 2]; // 这里看怎么取真实输出的文件名
     const lineNumber: number = stackInfo.lineNumber;
     const columNumber: number = stackInfo.columnNumber;
     const fileName: string = stackInfo.fileName;
     const baseName: string = basename(fileName);
+    // console.log(stackList)
     return `${baseName}(line: ${lineNumber}, column: ${columNumber}):`;
   }
 

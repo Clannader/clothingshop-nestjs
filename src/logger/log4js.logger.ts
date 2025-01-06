@@ -9,9 +9,9 @@ import { join } from 'path';
 const baseLogPath = join(process.cwd(), '/logs/server.log');
 const baseFileLogPath = join(process.cwd(), '/fileLogs/fileLog.log');
 
-function replaceConsole(logger) {
-  function replaceWith(fn) {
-    return function (...args) {
+function replaceConsole(logger: Log4js.Logger) {
+  function replaceWith(fn: Function) {
+    return function (...args: any[]) {
       fn.apply(logger, args);
     };
   }
@@ -74,6 +74,9 @@ Log4js.configure({
             return logEvent.context['originalContext'] || 'Console';
           },
         },
+        serializers: {
+          bigint: (value: BigInt) => String(value), // 修改logs4js打印报错TypeError: Do not know how to serialize a BigInt
+        },
       },
     },
     console: {
@@ -87,6 +90,9 @@ Log4js.configure({
           originalContext: function (logEvent: Log4js.LoggingEvent) {
             return logEvent.context['originalContext'] || 'Console';
           },
+        },
+        serializers: {
+          bigint: (value: BigInt) => String(value), // 修改logs4js打印报错TypeError: Do not know how to serialize a BigInt
         },
       },
     },
@@ -107,5 +113,6 @@ Log4js.configure({
 
 const consoleLogger = Log4js.getLogger('console');
 // TODO 对某些不能stringify的数据会报TypeError: Cannot convert object to primitive value,而无法打印出结果,需要屏蔽下面的代码
+// 产生上面报错的原因可能是因为log4js是通过process间通信传入打印信息,并且我发现打印信息如果是复杂对象就传输有问题,所以可能就会报错
 replaceConsole(consoleLogger);
 consoleLogger.addContext('appName', 'cmsServer');
