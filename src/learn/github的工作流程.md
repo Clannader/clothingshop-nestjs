@@ -42,3 +42,11 @@ electron_mirror=https://registry.npmmirror.com/electron
 如果需要fork分支过来,可以建一条和他人项目的相同名字的分支,然后通过自己的pr合并过来,如果有冲突可以执行
 git pull xxx/xxx.git branch号 发现可以通过github的命令合并他人项目的分支到自己的项目里面
 ```
+
+```
+8.项目中新增.npmrc可以覆盖全局的.npmrc配置
+9.项目中新增.github目录下的workflows可以指定PR和push分支时自动执行检测脚本
+10.项目中的.github还可以设置默认的PR检查列表
+11.项目中新增renovate.json可以让github的机器人自动更新最新依赖包版本
+12.electron项目的build,第一次的时候需要使用管理员权限执行npm run build才能成功,后面的build可以使用IDEA执行
+```

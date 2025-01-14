@@ -4,7 +4,7 @@
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model, HydratedDocument } from 'mongoose';
-import { UpdateLoginWhere } from '@/common';
+import { UpdateLoginWhere, saveUserNameExp } from '@/common';
 import { UserTypeEnum } from '@/common/enum';
 
 @Schema()
@@ -13,6 +13,7 @@ export class Admin {
     type: String,
     required: true,
     trim: true, // 去除数据前后的空格
+    match: saveUserNameExp, // 允许A-Za-z0-9,特殊字符-_$,不能有@
     // uppercase:  true, // 总是将值转化为大写
   })
   adminId: string; // 登录时的管理员ID,唯一,后期考虑建唯一索引
@@ -34,6 +35,7 @@ export class Admin {
   @Prop({
     type: String,
     required: true,
+    lowercase: true, // 设置密码默认都是小写
   })
   password: string; // 管理员的密码
 

@@ -60,3 +60,8 @@ export type SecurityOptions = {
   securityToken: string;
   securityId: string;
 };
+
+export type IgnoreCaseType = {
+  $regex: string;
+  $options: string;
+};
