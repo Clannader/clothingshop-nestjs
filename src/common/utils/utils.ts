@@ -1,5 +1,5 @@
 import * as CryptoJS from 'crypto-js';
-import { tripleDES, ipExp, Supervisor_Rights } from '@/common';
+import { tripleDES, ipExp, Supervisor_Rights, IgnoreCaseType } from '@/common';
 import {
   get,
   isPlainObject,
@@ -341,7 +341,7 @@ export class Utils {
     });
   }
 
-  static getIgnoreCase(fieldName: string, mode = false) {
+  static getIgnoreCase(fieldName: string, mode = false): IgnoreCaseType {
     if (mode) {
       // mode=true就是模糊查询
       return { $regex: fieldName, $options: 'i' };

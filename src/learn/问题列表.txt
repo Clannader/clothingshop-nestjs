@@ -65,6 +65,7 @@ npm warn deprecated vis@4.21.0: Please consider using https://github.com/visjs
 32.fork @nestjs/schedule,修改源代码后自己发布,下载安装测试吧... √
 33.新增用户的登录双重认证
 34.最新日志框架winston, pino
+35.前端项目未初始化界面时如何加入loading界面,如何加入vue-devtool工具,参考https://github.com/kirklin/celeris-web
 
 RSA数据库加解密
 1.数据库请求服务器获取敏感信息,先调用getSession(),获取新的会话
