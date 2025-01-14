@@ -82,7 +82,9 @@ export class MongooseConfigService implements MongooseOptionsFactory {
         });
         client.on('commandSucceeded', (event) => {
           // console.info(event);
-          this.logger.log(`commandSucceeded: address: ${event.address}, commandName: ${event.commandName}`);
+          this.logger.log(
+            `commandSucceeded: address: ${event.address}, commandName: ${event.commandName}`,
+          );
           // console.log(
           //   `commandSucceeded: address: ${event.address}, commandName: ${event.commandName}`,
           // );

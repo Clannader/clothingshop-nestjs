@@ -1,9 +1,17 @@
 {
   "name": "clothingshop-nestjs",
   "version": "2.4.0",
-  "description": "",
-  "author": "oliver.wu",
   "private": true,
+  "packageManager": "npm@10.8.2",
+  "description": "Typescript Backend Server",
+  "author": {
+    "name": "AndyBeat",
+    "email": "137811032@qq.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AndyBeat/clothingshop-nestjs.git"
+  },
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
