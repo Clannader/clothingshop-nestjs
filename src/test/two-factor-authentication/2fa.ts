@@ -13,17 +13,23 @@ const secret = speakeasy.generateSecret({
 })
 console.log(secret);
 
+const token = speakeasy.totp({
+  secret: secret.base32,
+  encoding: 'base32',
+})
+console.log(token);
+
 qrcode.toDataURL(secret.otpauth_url).then(dataUrl => {
   const base64Data = dataUrl.replace(/^data:image\/\w+;base64,/, '');
   const buffer = Buffer.from(base64Data, 'base64');
   const filePath = path.join(process.cwd(), '2fa.png');
-  fs.writeFileSync(filePath, buffer);
+  // fs.writeFileSync(filePath, buffer);
 })
 
 const verified = speakeasy.totp.verify({
   secret: secret.base32,
   encoding: 'base32',
-  token: '333123'
+  token: token
 })
 console.log(verified);
 
