@@ -5,7 +5,7 @@ export const timeZone = {
   isNotExist: 'The time zone does not exist',
   deleteLog: 'Delete time zone:({0})',
   timeZoneLabel: 'Time zone name',
-  summerLabel: 'Daylight Saving Time',
+  summerLabel: 'Daylight saving time',
   winterLabel: 'Winter time',
   modifiedLog: 'Modify time zone:({0})',
 };
