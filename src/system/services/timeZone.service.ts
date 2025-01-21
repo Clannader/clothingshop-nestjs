@@ -77,6 +77,7 @@ export class TimeZoneService {
         timeZoneName: row.timeZone,
         summerTime: row.summer,
         winterTime: row.winter,
+        description: row.description,
       });
     }
     resp.timeZones = timeZones;
@@ -312,6 +313,12 @@ export class TimeZoneService {
       } else {
         params.winterTime = oldTimeZone.winter;
       }
+
+      if (!Utils.isEmpty(params.description)) {
+        newTimeZone.description = params.description;
+      } else {
+        params.description = oldTimeZone.description;
+      }
     }
 
     // 新旧都需要字段进行字段校验
@@ -405,6 +412,7 @@ export class TimeZoneService {
         timeZone: params.timeZoneName,
         summer: params.summerTime,
         winter: params.winterTime,
+        description: params.description,
       };
       const [errCreate, createObj] = await Utils.toPromise(
         this.systemDataSchemaService

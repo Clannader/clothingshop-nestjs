@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 
 import { SystemDataTypeEnum } from '@/common/enum';
 import { Utils } from '@/common/utils';
+import { WriteLog } from '@/common/decorator';
 
 // 定义其他公共字段类
 export class CommonData {
@@ -14,6 +15,10 @@ export class CommonData {
     type: String,
     trim: true,
     default: '',
+  })
+  @WriteLog({
+    origin: '描述',
+    key: 'system.description',
   })
   description: string;
 }
