@@ -183,7 +183,7 @@ export class DatabaseService {
         indexNameArray.push(key);
         indexNameArray.push(dbIndexInfo.fields[key]);
       }
-      dbIndexInfo.indexName = indexNameArray.join('_');
+      dbIndexInfo.indexName = dbIndexInfo?.options?.name ?? indexNameArray.join('_');
       dbIndexInfo.indexStatus = DbIndexType.Exception;
       if (defaultIndexMap.has(dbName)) {
         defaultIndexMap.get(dbName).push(dbIndexInfo);
@@ -205,7 +205,7 @@ export class DatabaseService {
 
     for (const [dbName, defaultIndexInfo] of defaultIndexMap) {
       // 减少查询数据库
-      if (!aliasNames.includes(dbName)) {
+      if (!aliasNames.includes(dbName) || Utils.isEmpty(modelMap.get(dbName))) {
         continue;
       }
       // 因为循环的是默认索引,所以dbName肯定是正确的
@@ -247,6 +247,8 @@ export class DatabaseService {
           }
         }
         if (respIndexSchema.indexStatus === DbIndexType.Difference) {
+          // 目前判断有差异返回实际值就改成有效期而已
+          // 有差异的索引可以删除,有异常的索引可以修复
           defaultIndexInfo.push(respIndexSchema);
         }
       }
