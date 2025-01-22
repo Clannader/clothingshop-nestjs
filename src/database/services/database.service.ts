@@ -192,6 +192,13 @@ export class DatabaseService {
       }
     }
 
+    // 这里有种情况: 默认索引没有,表中有索引,就无法显示差异
+    for (const dbName of aliasNames) {
+      if (!defaultIndexMap.has(dbName)) {
+        defaultIndexMap.set(dbName, []);
+      }
+    }
+
     // 构造一个Map,<aliasName, {modelName, collectionName}>
     const modelMap = this.getModelMap();
     // 遍历有效的数据库名
@@ -222,7 +229,7 @@ export class DatabaseService {
           fields: indexInfo.key,
           indexStatus: DbIndexType.Difference,
         };
-        // TODO 后期看看索引的有效期不一致时,是否返回索引差异
+        // 索引的有效期不一致也属于差异类型
         for (const defaultIndex of defaultIndexInfo) {
           // 这里需要注意的是建立索引的字段排序有可能不同,但代码可能判断是一样的
           // 这里的判断字段是否相同是无序的,也就是说{a:1, b:1}和{b:1, a:1}代码判断是一样的
@@ -244,6 +251,7 @@ export class DatabaseService {
         }
       }
       for (const indexInfo of defaultIndexInfo) {
+        // 这里关联的是resp的indexesList节点push值进去了
         indexesList.push({
           aliasName: dbName,
           indexName: indexInfo.indexName,
