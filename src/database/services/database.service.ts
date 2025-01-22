@@ -183,7 +183,8 @@ export class DatabaseService {
         indexNameArray.push(key);
         indexNameArray.push(dbIndexInfo.fields[key]);
       }
-      dbIndexInfo.indexName = dbIndexInfo?.options?.name ?? indexNameArray.join('_');
+      dbIndexInfo.indexName =
+        dbIndexInfo?.options?.name ?? indexNameArray.join('_');
       dbIndexInfo.indexStatus = DbIndexType.Exception;
       if (defaultIndexMap.has(dbName)) {
         defaultIndexMap.get(dbName).push(dbIndexInfo);

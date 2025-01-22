@@ -48,16 +48,16 @@ export class SystemDataSchemaService {
   async syncSaveTimeZoneObject(timeZoneDocs: TimeZoneDataDocument) {
     // 写一个方法检测如果发现save有版本号保存失败时就重新查一遍最新的版本号再次保存
     // 如果不使用该方法,则返回报错给客户端
-    const [err, result]= await Utils.toPromise(timeZoneDocs.save());
+    const [err, result] = await Utils.toPromise(timeZoneDocs.save());
     if (err) {
       // 版本更新报错,查一遍最新数据
       const [err2, newResult] = await Utils.toPromise(
-        this.getTimeZoneDataModel().findById(timeZoneDocs.id, {__v: 1})
-      )
+        this.getTimeZoneDataModel().findById(timeZoneDocs.id, { __v: 1 }),
+      );
       if (err2) {
         throw err2;
       }
-      timeZoneDocs.__v = newResult.__v
+      timeZoneDocs.__v = newResult.__v;
       return timeZoneDocs.save();
     }
     return result;
