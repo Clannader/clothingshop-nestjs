@@ -6,6 +6,7 @@ import * as globalVariable from '../constants';
 import { LanguageType, CmsSession, WRITE_LOG } from '@/common';
 import type { MetadataLog } from '@/common/decorator';
 import { Utils } from '@/common/utils';
+import * as moment from 'moment';
 
 @Injectable()
 export class GlobalService {
@@ -90,6 +91,15 @@ export class GlobalService {
         if (oldValue !== newValue) {
           logArray.push(
             `${title}: ${oldValue ?? 'null'} -> ${newValue ?? 'null'}`,
+          );
+        }
+      } else if (Date === propertyType) {
+        const oldDate = moment(oldValue || null); // moment如果是null就可以是无效的日期,但是如果是undefined,会默认当前时间
+        const newDate = moment(newValue || null);
+        if (!oldDate.isSame(newDate)) {
+          logArray.push(
+            `${title}: ${oldDate.isValid() ? oldDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSSZ') : 'null'} 
+            -> ${newDate.isValid() ? newDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSSZ') : 'null'}`,
           );
         }
       }

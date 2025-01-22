@@ -80,9 +80,9 @@ export enum RequestMethod {
  * 索引差异类型
  */
 export enum DbIndexType {
-  Exception = 0,
-  Normal = 1,
-  Difference = 2,
+  Exception = 999,
+  Normal = 100,
+  Difference = 990,
 }
 
 /**
