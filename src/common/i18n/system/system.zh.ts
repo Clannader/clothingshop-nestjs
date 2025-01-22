@@ -7,4 +7,8 @@ export const system = {
   description: '描述',
   updateDate: '更新时间',
   updateUser: '更新用户',
+  parameterValue: '参数值',
+  parameterKey: '参数key',
+  isEncrypted: '是否加密',
+  parameterSecretText: '参数值密文',
 };

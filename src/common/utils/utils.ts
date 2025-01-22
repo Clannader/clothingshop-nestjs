@@ -642,4 +642,8 @@ export class Utils {
       return data;
     }
   }
+
+  static sleep(timeout: number = 0) {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
 }

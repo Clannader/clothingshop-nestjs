@@ -7,4 +7,8 @@ export const system = {
   description: 'Description',
   updateDate: 'Update date',
   updateUser: 'Update user',
+  parameterValue: 'Parameter value',
+  parameterKey: 'Parameter key',
+  isEncrypted: 'Is encrypted',
+  parameterSecretText: 'Parameter secret text',
 };

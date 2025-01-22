@@ -68,6 +68,7 @@ npm warn deprecated vis@4.21.0: Please consider using https://github.com/visjs
 35.前端项目未初始化界面时如何加入loading界面,如何加入vue-devtool工具,参考https://github.com/kirklin/celeris-web √
 36.考虑2FA验证第一次校验需要用户名密码,通过后跳转页面,输入验证码,带回一个jwtToken用于回传服务器找到指定用户的密钥生成的code来匹配
 考虑最大输入多少次,限制次数和锁时间,正确才生成session
+37.写一个监控获取所有内存值的接口,每次调用获取服务器所有内存值
 
 RSA数据库加解密
 1.数据库请求服务器获取敏感信息,先调用getSession(),获取新的会话
