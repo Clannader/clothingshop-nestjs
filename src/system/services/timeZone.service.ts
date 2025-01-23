@@ -449,7 +449,13 @@ export class TimeZoneService {
     } else {
       newTimeZone.updateUser = session.adminId;
       newTimeZone.updateDate = new Date();
-      await newTimeZone.save();
+      // if (newTimeZone.summer === '+01:00') {
+      //   await Utils.sleep(3 * 1000);
+      // }
+      await this.systemDataSchemaService
+        .getSystemDataModel()
+        .syncSaveDBObject(newTimeZone);
+      // await this.systemDataSchemaService.syncSaveTimeZoneObject(newTimeZone);
       resp.id = newTimeZone.id;
       // 写日志...
       const contentArray = [

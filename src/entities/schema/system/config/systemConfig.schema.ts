@@ -27,6 +27,10 @@ export class CommonConfig {
     trim: true,
     match: codeExp,
   })
+  @WriteLog({
+    origin: '参数Key',
+    key: 'system.parameterKey',
+  })
   key: string; // 配置的Key
 
   @Prop({
@@ -34,16 +38,28 @@ export class CommonConfig {
     required: true,
     default: '',
   })
+  @WriteLog({
+    origin: '参数值',
+    key: 'system.parameterValue',
+  })
   value: string; // 配置的value,普通明文数据
 
   @Prop({
     type: Boolean,
     default: false,
   })
+  @WriteLog({
+    origin: '是否加密',
+    key: 'system.isEncrypted',
+  })
   isEncrypt: boolean; // 数据值是否加密
 
   @Prop({
     type: SecretSchema,
+  })
+  @WriteLog({
+    origin: '参数密文',
+    key: 'system.parameterSecretText',
   })
   secretValue: SecretSchema; // 如果是敏感数据,加密后存入,如果正常返回就value:*****
 
@@ -57,6 +73,10 @@ export class CommonConfig {
       'Description length is more than 150.',
     ],
     default: '',
+  })
+  @WriteLog({
+    origin: '描述',
+    key: 'system.description',
   })
   description: string; // 配置的描述
 
