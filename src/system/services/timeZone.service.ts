@@ -449,9 +449,9 @@ export class TimeZoneService {
     } else {
       newTimeZone.updateUser = session.adminId;
       newTimeZone.updateDate = new Date();
-      if (newTimeZone.summer === '+01:00') {
-        await Utils.sleep(3 * 1000);
-      }
+      // if (newTimeZone.summer === '+01:00') {
+      //   await Utils.sleep(3 * 1000);
+      // }
       await this.systemDataSchemaService
         .getSystemDataModel()
         .syncSaveDBObject(newTimeZone);
