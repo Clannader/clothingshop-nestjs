@@ -2,7 +2,7 @@
  * Create by oliver.wu 2024/10/15
  */
 import { Expose } from 'class-transformer';
-import { IsDefined, IsString } from 'class-validator';
+import { IsDefined, IsString, IsOptional } from 'class-validator';
 
 export class CreateTimeZoneDto {
   /**
@@ -28,4 +28,12 @@ export class CreateTimeZoneDto {
   @IsString()
   @Expose()
   winterTime: string;
+
+  /**
+   * 描述
+   */
+  @IsOptional()
+  @IsString()
+  @Expose()
+  description?: string;
 }

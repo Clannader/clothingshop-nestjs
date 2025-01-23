@@ -77,6 +77,7 @@ export class TimeZoneService {
         timeZoneName: row.timeZone,
         summerTime: row.summer,
         winterTime: row.winter,
+        description: row.description,
       });
     }
     resp.timeZones = timeZones;
@@ -312,6 +313,12 @@ export class TimeZoneService {
       } else {
         params.winterTime = oldTimeZone.winter;
       }
+
+      if (!Utils.isEmpty(params.description)) {
+        newTimeZone.description = params.description;
+      } else {
+        params.description = oldTimeZone.description;
+      }
     }
 
     // 新旧都需要字段进行字段校验
@@ -405,6 +412,9 @@ export class TimeZoneService {
         timeZone: params.timeZoneName,
         summer: params.summerTime,
         winter: params.winterTime,
+        description: params.description,
+        createUser: session.adminId,
+        createDate: new Date(),
       };
       const [errCreate, createObj] = await Utils.toPromise(
         this.systemDataSchemaService
@@ -437,7 +447,15 @@ export class TimeZoneService {
         createObj.id,
       );
     } else {
-      await newTimeZone.save();
+      newTimeZone.updateUser = session.adminId;
+      newTimeZone.updateDate = new Date();
+      // if (newTimeZone.summer === '+01:00') {
+      //   await Utils.sleep(3 * 1000);
+      // }
+      await this.systemDataSchemaService
+        .getSystemDataModel()
+        .syncSaveDBObject(newTimeZone);
+      // await this.systemDataSchemaService.syncSaveTimeZoneObject(newTimeZone);
       resp.id = newTimeZone.id;
       // 写日志...
       const contentArray = [
@@ -472,10 +490,11 @@ export class TimeZoneService {
     // 同步默认时区数据到数据库中
     const successTimeZone: string[] = [];
     for (const timeZoneInfo of defaultTimeZone) {
+      const saveTimeZone: TimeZoneData = <TimeZoneData>timeZoneInfo;
+      saveTimeZone.createUser = 'SYSTEM';
+      saveTimeZone.createDate = new Date();
       const [, result] = await Utils.toPromise(
-        this.systemDataSchemaService.syncTimeZoneObject(
-          <TimeZoneData>timeZoneInfo,
-        ),
+        this.systemDataSchemaService.syncTimeZoneObject(saveTimeZone),
       );
       // 这里可以设置每次都返回更新后的文档,但是之前的需求是只想第一次新建时返回
       // 后期已存在数据时不想返回,为了体现每次修复实际更新几个数据
