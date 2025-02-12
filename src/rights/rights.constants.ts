@@ -28,6 +28,7 @@ export enum RightsEnum {
   SystemDataSetup = '3010',
   SystemBaseSetup = '3011',
   AllConfigList = '30111',
+  ConfigCreate = '30112',
   PackageVersionSetup = '3012',
   GetSequenceNumber = '3013',
   TimeZoneSetup = '3014',
@@ -74,6 +75,10 @@ export const RightsList: RightsConfig = {
                 code: RightsEnum.AllConfigList, // 30111
                 desc: '系统配置列表',
               },
+              ConfigCreate: {
+                code: RightsEnum.ConfigCreate, // 30112
+                desc: '创建一级系统配置',
+              },
             },
           },
           // 查库依赖包版本
@@ -106,7 +111,7 @@ export const RightsList: RightsConfig = {
                 desc: '编辑时区数据',
               },
               TimeZoneDelete: {
-                code: RightsEnum.TimeZoneDelete, // 30144
+                code: RightsEnum.TimeZoneDelete, // 30145
                 desc: '删除时区数据',
               },
             },

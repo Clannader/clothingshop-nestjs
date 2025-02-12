@@ -8,6 +8,10 @@ import {
   UseGuards,
   UseInterceptors,
   Inject,
+  Post,
+  HttpCode,
+  HttpStatus,
+  Body,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
@@ -15,13 +19,20 @@ import {
   ApiCommon,
   ApiCustomResponse,
   ApiTagsController,
+  UserSession,
 } from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { ApiRights, RightsEnum } from '@/rights';
 
 import { SystemConfigService } from '../services';
-import { ReqSystemConfigListDto, RespSystemConfigListDto } from '../dto/config';
+import {
+  ReqSystemConfigListDto,
+  RespSystemConfigListDto,
+  ReqParentConfigCreateDto,
+  RespSystemConfigCreateDto,
+} from '../dto/config';
+import { CmsSession } from '@/common';
 
 @ApiCommon()
 @Controller('/cms/api/system/config')
@@ -48,5 +59,22 @@ export class SystemConfigController {
   @ApiRights(RightsEnum.AllConfigList)
   getSystemConfigList(@Query() params: ReqSystemConfigListDto) {
     return this.systemConfigService.getSystemConfigList(params);
+  }
+
+  @Post('/parent/create')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '新增一级配置',
+    description: '新增一级配置',
+  })
+  @ApiCustomResponse({
+    type: RespSystemConfigCreateDto,
+  })
+  @ApiRights(RightsEnum.ConfigCreate)
+  createParentConfig(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqParentConfigCreateDto,
+  ): RespSystemConfigCreateDto {
+    return this.systemConfigService.saveSystemConfig();
   }
 }

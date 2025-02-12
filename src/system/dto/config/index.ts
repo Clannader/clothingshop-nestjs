@@ -3,3 +3,5 @@
  */
 export * from './req';
 export * from './resp';
+export * from './create-parentConfig.dto';
+export * from './create-childrenConfig.dto';

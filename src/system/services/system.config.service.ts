@@ -4,7 +4,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { GlobalService } from '@/common/utils';
 
-import { ReqSystemConfigListDto, RespSystemConfigListDto } from '../dto/config';
+import {
+  ReqSystemConfigListDto,
+  RespSystemConfigListDto,
+  RespSystemConfigCreateDto,
+} from '../dto/config';
 
 @Injectable()
 export class SystemConfigService {
@@ -12,8 +16,12 @@ export class SystemConfigService {
   private readonly globalService: GlobalService;
 
   getSystemConfigList(params: ReqSystemConfigListDto) {
-    console.log(params.onlyInclude);
     const resp = new RespSystemConfigListDto();
+    return resp;
+  }
+
+  saveSystemConfig(): RespSystemConfigCreateDto {
+    const resp = new RespSystemConfigCreateDto();
     return resp;
   }
 }
