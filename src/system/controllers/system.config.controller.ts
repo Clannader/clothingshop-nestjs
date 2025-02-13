@@ -3,7 +3,7 @@
  */
 import {
   Body,
-  Controller,
+  Controller, Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -31,8 +31,9 @@ import {
   ReqSystemConfigListDto,
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
+  ReqParentConfigDeleteDto,
 } from '../dto/config';
-import { CmsSession } from '@/common';
+import { CmsSession, RespErrorResult } from '@/common';
 import { plainToInstance } from 'class-transformer';
 
 @ApiCommon()
@@ -103,5 +104,22 @@ export class SystemConfigController {
       params,
       false,
     );
+  }
+
+  @Delete('/delete')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '删除一级配置',
+    description: '删除一级配置',
+  })
+  @ApiCustomResponse({
+    type: RespErrorResult,
+  })
+  @ApiRights(RightsEnum.ConfigDelete)
+  deleteParentConfig(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqParentConfigDeleteDto,
+  ) {
+    return this.systemConfigService.deleteSystemConfig(session, params)
   }
 }

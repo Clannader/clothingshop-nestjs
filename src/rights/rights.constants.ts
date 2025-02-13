@@ -30,6 +30,7 @@ export enum RightsEnum {
   AllConfigList = '30111',
   ConfigCreate = '30112',
   ConfigModify = '30113',
+  ConfigDelete = '30114',
   PackageVersionSetup = '3012',
   GetSequenceNumber = '3013',
   TimeZoneSetup = '3014',
@@ -83,6 +84,10 @@ export const RightsList: RightsConfig = {
               ConfigModify: {
                 code: RightsEnum.ConfigModify, // 30113
                 desc: '编辑一级系统配置',
+              },
+              ConfigDelete: {
+                code: RightsEnum.ConfigDelete, // 30114
+                desc: '删除一级系统配置',
               },
             },
           },

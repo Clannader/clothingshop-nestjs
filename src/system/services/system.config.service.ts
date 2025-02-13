@@ -9,9 +9,10 @@ import {
   RespSystemConfigListDto,
   RespSystemConfigCreateDto,
   ReqParentConfigModifyDto,
+  ReqParentConfigDeleteDto,
 } from '../dto/config';
 
-import { CmsSession } from '@/common';
+import { CmsSession, RespErrorResult } from '@/common';
 
 @Injectable()
 export class SystemConfigService {
@@ -29,6 +30,11 @@ export class SystemConfigService {
     isNew: boolean,
   ): RespSystemConfigCreateDto {
     const resp = new RespSystemConfigCreateDto();
+    return resp;
+  }
+
+  deleteSystemConfig(session: CmsSession, params: ReqParentConfigDeleteDto) {
+    const resp = new RespErrorResult()
     return resp;
   }
 }
