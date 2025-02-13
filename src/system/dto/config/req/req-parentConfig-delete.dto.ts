@@ -11,7 +11,7 @@ export class ReqParentConfigDeleteDto {
   @IsOptional()
   @IsArray()
   @Expose()
-  ids: string[];
+  ids?: string[];
 
   /**
    * 父级的组名,删除时如果传入该值说明删除二级配置
@@ -19,7 +19,7 @@ export class ReqParentConfigDeleteDto {
   @IsOptional()
   @IsString()
   @Expose()
-  groupName: string;
+  groupName?: string;
 
   /**
    * 配置的KEY值列表
@@ -29,5 +29,5 @@ export class ReqParentConfigDeleteDto {
   @IsOptional()
   @IsArray()
   @Expose()
-  keys: string[];
+  keys?: string[];
 }
