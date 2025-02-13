@@ -3,7 +3,8 @@
  */
 import {
   Body,
-  Controller, Delete,
+  Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -120,6 +121,6 @@ export class SystemConfigController {
     @UserSession() session: CmsSession,
     @Body() params: ReqParentConfigDeleteDto,
   ) {
-    return this.systemConfigService.deleteSystemConfig(session, params)
+    return this.systemConfigService.deleteSystemConfig(session, params);
   }
 }

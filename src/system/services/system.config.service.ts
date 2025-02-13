@@ -34,7 +34,7 @@ export class SystemConfigService {
   }
 
   deleteSystemConfig(session: CmsSession, params: ReqParentConfigDeleteDto) {
-    const resp = new RespErrorResult()
+    const resp = new RespErrorResult();
     return resp;
   }
 }
