@@ -2,19 +2,19 @@
  * Create by oliver.wu 2024/11/27
  */
 import {
+  Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
+  Inject,
+  Post,
+  Put,
   Query,
   UseGuards,
   UseInterceptors,
-  Inject,
-  Post,
-  HttpCode,
-  HttpStatus,
-  Body,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
-
 import {
   ApiCommon,
   ApiCustomResponse,
@@ -24,15 +24,16 @@ import {
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
 import { ApiRights, RightsEnum } from '@/rights';
-
 import { SystemConfigService } from '../services';
 import {
-  ReqSystemConfigListDto,
-  RespSystemConfigListDto,
   ReqParentConfigCreateDto,
+  ReqParentConfigModifyDto,
+  ReqSystemConfigListDto,
   RespSystemConfigCreateDto,
+  RespSystemConfigListDto,
 } from '../dto/config';
 import { CmsSession } from '@/common';
+import { plainToInstance } from 'class-transformer';
 
 @ApiCommon()
 @Controller('/cms/api/system/config')
@@ -75,6 +76,32 @@ export class SystemConfigController {
     @UserSession() session: CmsSession,
     @Body() params: ReqParentConfigCreateDto,
   ): RespSystemConfigCreateDto {
-    return this.systemConfigService.saveSystemConfig();
+    const modifyParams = plainToInstance(ReqParentConfigModifyDto, params);
+    return this.systemConfigService.saveSystemParentConfig(
+      session,
+      modifyParams,
+      true,
+    );
+  }
+
+  @Put('/parent/modify')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '编辑一级配置',
+    description: '编辑已存在的一级配置',
+  })
+  @ApiCustomResponse({
+    type: RespSystemConfigCreateDto,
+  })
+  @ApiRights(RightsEnum.ConfigModify)
+  modifyParentConfig(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqParentConfigModifyDto,
+  ): RespSystemConfigCreateDto {
+    return this.systemConfigService.saveSystemParentConfig(
+      session,
+      params,
+      false,
+    );
   }
 }

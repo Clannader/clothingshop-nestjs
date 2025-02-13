@@ -8,7 +8,10 @@ import {
   ReqSystemConfigListDto,
   RespSystemConfigListDto,
   RespSystemConfigCreateDto,
+  ReqParentConfigModifyDto,
 } from '../dto/config';
+
+import { CmsSession } from '@/common';
 
 @Injectable()
 export class SystemConfigService {
@@ -20,7 +23,11 @@ export class SystemConfigService {
     return resp;
   }
 
-  saveSystemConfig(): RespSystemConfigCreateDto {
+  saveSystemParentConfig(
+    session: CmsSession,
+    params: ReqParentConfigModifyDto,
+    isNew: boolean,
+  ): RespSystemConfigCreateDto {
     const resp = new RespSystemConfigCreateDto();
     return resp;
   }

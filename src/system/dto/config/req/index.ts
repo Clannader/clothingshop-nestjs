@@ -3,3 +3,4 @@
  */
 export * from './req-systemConfig-list.dto';
 export * from './req-parentConfig-create.dto';
+export * from './req-parentConfig-modify.dto';

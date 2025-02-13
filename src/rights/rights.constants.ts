@@ -29,6 +29,7 @@ export enum RightsEnum {
   SystemBaseSetup = '3011',
   AllConfigList = '30111',
   ConfigCreate = '30112',
+  ConfigModify = '30113',
   PackageVersionSetup = '3012',
   GetSequenceNumber = '3013',
   TimeZoneSetup = '3014',
@@ -78,6 +79,10 @@ export const RightsList: RightsConfig = {
               ConfigCreate: {
                 code: RightsEnum.ConfigCreate, // 30112
                 desc: '创建一级系统配置',
+              },
+              ConfigModify: {
+                code: RightsEnum.ConfigModify, // 30113
+                desc: '编辑一级系统配置',
               },
             },
           },
