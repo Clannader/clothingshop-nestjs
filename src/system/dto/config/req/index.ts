@@ -5,3 +5,4 @@ export * from './req-systemConfig-list.dto';
 export * from './req-parentConfig-create.dto';
 export * from './req-parentConfig-modify.dto';
 export * from './req-parentConfig-delete.dto';
+export * from './req-parentConfig-checkInfo.dto';

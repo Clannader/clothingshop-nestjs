@@ -33,9 +33,11 @@ import {
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
   ReqParentConfigDeleteDto,
+  ReqParentConfigCheckInfoDto,
 } from '../dto/config';
-import { CmsSession, RespErrorResult } from '@/common';
+import { CmsSession, CommonResult, RespErrorResult } from '@/common';
 import { plainToInstance } from 'class-transformer';
+import { Utils } from '@/common/utils';
 
 @ApiCommon()
 @Controller('/cms/api/system/config')
@@ -110,8 +112,8 @@ export class SystemConfigController {
   @Delete('/delete')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: '删除一级配置',
-    description: '删除一级配置',
+    summary: '删除一级/二级配置',
+    description: '删除一级/二级配置',
   })
   @ApiCustomResponse({
     type: RespErrorResult,
@@ -122,5 +124,28 @@ export class SystemConfigController {
     @Body() params: ReqParentConfigDeleteDto,
   ) {
     return this.systemConfigService.deleteSystemConfig(session, params);
+  }
+
+  @Post('/parent/checkInfo')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '校验一级配置数据',
+    description: '校验一级配置数据',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  checkInfoParentConfig(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqParentConfigCheckInfoDto,
+  ) {
+    const isNew = Utils.isEmpty(params.id);
+    const modifyParams = plainToInstance(ReqParentConfigModifyDto, params);
+    return this.systemConfigService.checkInfoParentConfig(
+      session,
+      modifyParams,
+      isNew,
+      true,
+    );
   }
 }

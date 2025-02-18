@@ -33,6 +33,16 @@ export class SystemConfigService {
     return resp;
   }
 
+  checkInfoParentConfig(
+    session: CmsSession,
+    params: ReqParentConfigModifyDto,
+    isNew: boolean,
+    isCheck: boolean,
+  ) {
+    const resp = new RespSystemConfigCreateDto();
+    return resp;
+  }
+
   deleteSystemConfig(session: CmsSession, params: ReqParentConfigDeleteDto) {
     const resp = new RespErrorResult();
     return resp;
