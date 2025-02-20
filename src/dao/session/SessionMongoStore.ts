@@ -16,6 +16,7 @@ import {
   WriteConcernSettings,
 } from 'mongodb';
 import Kruptein from 'kruptein';
+import { omit } from 'lodash';
 
 export type CryptoOptions = {
   secret: false | string;
@@ -350,7 +351,7 @@ export class SessionMongoStore extends session.Store {
         const s: InternalSessionType = {
           _id: this.computeStorageId(sid),
           session: this.transformFunctions.serialize(session),
-          ...session['adminSession'],
+          ...omit(session['adminSession'], 'rights', 'orgRights'),
         };
         // Expire handling
         if (session?.cookie?.expires) {

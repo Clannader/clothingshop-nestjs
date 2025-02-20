@@ -652,7 +652,7 @@ export class Utils {
   // 判断用户是否有该权限
   static hasRights(session: CmsSession, ...roles: RightsEnum[]) {
     for (const role of roles) {
-      if (!session.orgRights.includes(role)) {
+      if (!session.rights.includes(role)) {
         return false;
       }
     }
@@ -661,7 +661,7 @@ export class Utils {
 
   static hasOrRights(session: CmsSession, ...roles: RightsEnum[]) {
     for (const role of roles) {
-      if (session.orgRights.includes(role)) {
+      if (session.rights.includes(role)) {
         return true;
       }
     }

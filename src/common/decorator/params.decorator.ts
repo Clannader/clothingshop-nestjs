@@ -21,6 +21,12 @@ export const UserSession = createParamDecorator(
     // 如果想每个请求都生成一个新的ID,那么在aop.middleware中的req生成即可
     session.requestId = Utils.getSha1Uuid(session.sessionId, 32); // 每次请求都赋予一个唯一的请求ID
     session.workerId = workerId;
+    session.rights = JSON.parse(
+      Utils.tripleDesDecrypt(session.encryptRights, session.credential),
+    );
+    session.orgRights = JSON.parse(
+      Utils.tripleDesDecrypt(session.encryptOrgRights, session.credential),
+    );
     // }
     return session;
   },
