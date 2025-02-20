@@ -1,28 +1,22 @@
 /**
  * Create by oliver.wu 2024/11/27
  */
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { GlobalService, Utils } from '@/common/utils';
 
 import {
-  ReqSystemConfigListDto,
-  RespSystemConfigListDto,
-  RespSystemConfigCreateDto,
-  ReqParentConfigModifyDto,
   ReqParentConfigDeleteDto,
+  ReqParentConfigModifyDto,
+  ReqSystemConfigListDto,
+  RespSystemConfigCreateDto,
+  RespSystemConfigListDto,
 } from '../dto/config';
 
 import { CmsSession, RespErrorResult } from '@/common';
 import { CodeEnum } from '@/common/enum';
-import * as lodash from 'lodash';
 
-import {
-  ParentConfig,
-  ParentConfigDocument,
-  ChildrenConfig,
-  ChildrenConfigDocument,
-} from '@/entities/schema';
-import { from } from 'rxjs';
+import { ParentConfigDocument } from '@/entities/schema';
+import { RightsEnum } from '@/rights';
 
 @Injectable()
 export class SystemConfigService {
@@ -117,6 +111,24 @@ export class SystemConfigService {
             'Ids不能为空',
             'common.idsIsEmpty',
           );
+      return resp;
+    }
+
+    if (
+      !Utils.hasOrRights(
+        session,
+        RightsEnum.ConfigCreate,
+        RightsEnum.ConfigModify,
+      )
+    ) {
+      resp.code = CodeEnum.NO_RIGHTS;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '用户{0}缺少所需权限{1}。',
+        'common.hasNoPermissions',
+        session.adminId,
+        `${RightsEnum.ConfigCreate},${RightsEnum.ConfigModify}`,
+      );
       return resp;
     }
 

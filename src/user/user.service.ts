@@ -25,6 +25,7 @@ import { AdminDocument } from '@/entities/schema';
 import { UserSessionService } from './user.session.service';
 import { UserMapper } from './user.mapper';
 import { MemoryCacheService } from '@/cache/services';
+import { RightsGroupList } from '@/rights';
 
 @Injectable()
 export class UserService {
@@ -78,7 +79,7 @@ export class UserService {
 
     const admin: AdminDocument = result.adminInfo;
     const shop = result.shopInfo; // 以后如果@店铺进来的话,这个shopInfo就是@的店铺信息
-    // const otherInfo = result.otherInfo; // 这个其他信息就是展开权限和展开店铺组的其他额外计算信息
+    const otherInfo = result.otherInfo; // 这个其他信息就是展开权限和展开店铺组的其他额外计算信息
     let isUpdate = false; // 判断是否更新用户信息
     const updateWhere: UpdateLoginWhere = {}; // 用户更新条件
     let retryNumber = admin.retryNumber || 0;
@@ -208,6 +209,10 @@ export class UserService {
       return result;
     }
 
+    // 计算权限代码
+    const orgRights = otherInfo.orgRights;
+    otherInfo.rights = this.getUserAllRightCodes(orgRights);
+
     result.code = CodeEnum.SUCCESS;
     result.expireMsg = expireMsg;
     result.currentDate = currentDate;
@@ -224,13 +229,22 @@ export class UserService {
   getUserRoles(session: CmsSession): RespUserRolesDto {
     const resp = new RespUserRolesDto();
     resp.code = CodeEnum.SUCCESS;
-    resp.roles = Utils.tripleDesEncryptBySession(
-      Utils.stringToBase64('3000,3400,3410,3420'),
-      session,
-      this.secretConfig.get<string>('tripleIv'),
-    );
+    resp.roles = session.encryptRights;
+    resp.orgRoles = session.encryptOrgRights;
     resp.session = UserMapper.getTemplateSession(session);
-    resp.tripleIV = this.secretConfig.get<string>('tripleIv');
+    // resp.tripleIV = this.secretConfig.get<string>('tripleIv');
     return resp;
+  }
+
+  getUserAllRightCodes(userRightCodeGroup: string[]): string[] {
+    // 把权限组转换成权限代码
+    const rightSet: Set<string> = new Set();
+    for (const defaultGroup of RightsGroupList) {
+      if (userRightCodeGroup.includes(defaultGroup.groupCode)) {
+        defaultGroup.rightCodes.forEach((value) => rightSet.add(value + ''));
+      }
+    }
+    // TODO ...
+    return Array.from(rightSet);
   }
 }

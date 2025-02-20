@@ -659,6 +659,15 @@ export class Utils {
     return true;
   }
 
+  static hasOrRights(session: CmsSession, ...roles: RightsEnum[]) {
+    for (const role of roles) {
+      if (session.orgRights.includes(role)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   static arrayIsNull(obj: any): boolean {
     return !Array.isArray(obj) || obj.length === 0;
   }

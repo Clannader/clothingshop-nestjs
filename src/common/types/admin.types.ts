@@ -13,7 +13,10 @@ export type LoginResult = ErrorPromise & {
   adminInfo?: AdminDocument;
   shopInfo?: object | string; //TODO 暂时这样定义,后期改
   otherInfo?: {
+    // 计算好的权限值
     rights: string[];
+    // 数据库原本的权限值
+    orgRights: string[];
     shopList: string[];
     currentShop: string;
   };
