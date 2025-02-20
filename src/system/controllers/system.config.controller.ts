@@ -79,7 +79,7 @@ export class SystemConfigController {
   createParentConfig(
     @UserSession() session: CmsSession,
     @Body() params: ReqParentConfigCreateDto,
-  ): RespSystemConfigCreateDto {
+  ): Promise<RespSystemConfigCreateDto> {
     const modifyParams = plainToInstance(ReqParentConfigModifyDto, params);
     return this.systemConfigService.saveSystemParentConfig(
       session,
@@ -101,7 +101,7 @@ export class SystemConfigController {
   modifyParentConfig(
     @UserSession() session: CmsSession,
     @Body() params: ReqParentConfigModifyDto,
-  ): RespSystemConfigCreateDto {
+  ): Promise<RespSystemConfigCreateDto> {
     return this.systemConfigService.saveSystemParentConfig(
       session,
       params,
@@ -142,10 +142,11 @@ export class SystemConfigController {
   ) {
     const isNew = Utils.isEmpty(params.id);
     const modifyParams = plainToInstance(ReqParentConfigModifyDto, params);
-    return this.systemConfigService.checkInfoParentConfig(
+    return this.systemConfigService.checkInfoSystemConfig(
       session,
       modifyParams,
       isNew,
+      true,
       true,
     );
   }

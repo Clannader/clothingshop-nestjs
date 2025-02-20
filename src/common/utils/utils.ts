@@ -20,6 +20,7 @@ import parseEnv from '@/lib/parseEnv';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import * as crypto from 'node:crypto';
+import { RightsEnum } from '@/rights';
 
 // RSA公钥和私钥只需加载一次
 const pemPath = parseEnv.getPemPath();
@@ -643,7 +644,22 @@ export class Utils {
     }
   }
 
+  // 快速延迟生成函数
   static sleep(timeout: number = 0) {
     return new Promise((resolve) => setTimeout(resolve, timeout));
+  }
+
+  // 判断用户是否有该权限
+  static hasRights(session: CmsSession, ...roles: RightsEnum[]) {
+    for (const role of roles) {
+      if (!session.orgRights.includes(role)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  static arrayIsNull(obj: any): boolean {
+    return !Array.isArray(obj) || obj.length === 0;
   }
 }

@@ -3,4 +3,5 @@
  */
 export const common = {
   idsIsEmpty: 'Ids不能为空',
+  keysIsEmpty: 'Keys不能为空',
 };

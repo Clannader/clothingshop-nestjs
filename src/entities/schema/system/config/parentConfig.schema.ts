@@ -2,7 +2,7 @@
  * Create by oliver.wu 2024/10/14
  */
 import { Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, HydratedDocument } from 'mongoose';
 
 import { CommonConfig } from './systemConfig.schema';
 
@@ -10,6 +10,8 @@ import { CommonConfig } from './systemConfig.schema';
 export class ParentConfig extends CommonConfig {}
 
 export const ParentConfigSchema = SchemaFactory.createForClass(ParentConfig);
+
+export type ParentConfigDocument = HydratedDocument<ParentConfig>;
 
 ParentConfigSchema.statics.getAliasName = function () {
   return 'ParentConfig';
