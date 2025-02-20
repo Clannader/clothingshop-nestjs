@@ -13,7 +13,7 @@ import { GlobalService, Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
 import { CodeException } from '@/common/exceptions';
 import { UserSessionService } from '@/user/user.session.service';
-import { RIGHTS_KEY } from '@/rights';
+import { RIGHTS_KEY, RIGHTS_KEY_OR } from '@/rights';
 
 import { AopLogger } from '@/logger';
 
@@ -102,7 +102,13 @@ export class SessionGuard implements CanActivate {
       context.getClass(),
       context.getHandler(),
     ]);
-    this.logger.log(mergeRights);
+    // 或者(只要有其一就可以通过)
+    const orRights = this.reflector.getAllAndMerge<number[]>(RIGHTS_KEY_OR, [
+      context.getClass(),
+      context.getHandler(),
+    ]);
+    this.logger.log(`mergeRights: ${mergeRights}`);
+    this.logger.log(`orRights: ${orRights}`);
     // 如果接口没有设置权限就放行
     if (!mergeRights) {
       return true;

@@ -24,16 +24,16 @@ import {
 } from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
-import { ApiRights, RightsEnum } from '@/rights';
+import { ApiOrRights, ApiRights, RightsEnum } from '@/rights';
 import { SystemConfigService } from '../services';
 import {
+  ReqParentConfigCheckInfoDto,
   ReqParentConfigCreateDto,
+  ReqParentConfigDeleteDto,
   ReqParentConfigModifyDto,
   ReqSystemConfigListDto,
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
-  ReqParentConfigDeleteDto,
-  ReqParentConfigCheckInfoDto,
 } from '../dto/config';
 import { CmsSession, CommonResult, RespErrorResult } from '@/common';
 import { plainToInstance } from 'class-transformer';
@@ -135,6 +135,7 @@ export class SystemConfigController {
   @ApiCustomResponse({
     type: CommonResult,
   })
+  @ApiOrRights(RightsEnum.ConfigCreate, RightsEnum.ConfigModify)
   checkInfoParentConfig(
     @UserSession() session: CmsSession,
     @Body() params: ReqParentConfigCheckInfoDto,
