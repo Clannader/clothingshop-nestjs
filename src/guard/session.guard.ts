@@ -122,9 +122,9 @@ export class SessionGuard implements CanActivate {
     ) {
       throw new CodeException(
         CodeEnum.NO_RIGHTS,
-        this.globalService.serverLang(
-          adminSession,
-          '用户{0}缺少所需权限{1}。',
+        this.globalService.lang(
+          language,
+          '用户{0}缺少所需权限{1}.',
           'common.hasNoPermissions',
           adminSession.adminId,
           `${mergeRights.join(',')}`,
@@ -137,9 +137,9 @@ export class SessionGuard implements CanActivate {
     ) {
       throw new CodeException(
         CodeEnum.NO_RIGHTS,
-        this.globalService.serverLang(
-          adminSession,
-          '用户{0}缺少所需权限{1}。',
+        this.globalService.lang(
+          language,
+          '用户{0}缺少所需权限{1}.',
           'common.hasNoPermissions',
           adminSession.adminId,
           `${orRights.join(',')}`,
