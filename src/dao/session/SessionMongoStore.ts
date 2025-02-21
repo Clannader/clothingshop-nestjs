@@ -16,6 +16,7 @@ import {
   WriteConcernSettings,
 } from 'mongodb';
 import Kruptein from 'kruptein';
+import { omit } from 'lodash';
 
 export type CryptoOptions = {
   secret: false | string;
@@ -347,6 +348,8 @@ export class SessionMongoStore extends session.Store {
           // @ts-ignore
           delete session.lastModified;
         }
+        // 不保存计算后的权限代码rights, orgRights
+        session['adminSession'] = omit(session['adminSession'], 'rights', 'orgRights')
         const s: InternalSessionType = {
           _id: this.computeStorageId(sid),
           session: this.transformFunctions.serialize(session),

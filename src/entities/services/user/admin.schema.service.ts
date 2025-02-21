@@ -121,7 +121,7 @@ export class AdminSchemaService {
       code: CodeEnum.SUCCESS,
       otherInfo: {
         currentShop: 'SYSTEM',
-        rights: [],
+        orgRights: adminInfo.rights,
         shopList: [],
       },
     });

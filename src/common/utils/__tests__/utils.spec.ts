@@ -1,4 +1,5 @@
 import { Utils } from '@/common/utils';
+import { RightsEnum } from '@/rights';
 
 describe('Utils', () => {
   it('32位系统路径转义', () => {
@@ -329,5 +330,29 @@ describe('Utils', () => {
     expect(p5.token).toBe('568******451');
     expect(p5.rooms[1].address).toBe('通天塔******路3号');
     expect(p5.rooms[0].address).toBe('通天塔120路1号');
+  });
+
+  it('测试判断权限是否正确判断返回', () => {
+    const session1 = {
+      orgRights: [],
+    };
+    const session2 = {
+      orgRights: [RightsEnum.OtherSetup],
+    };
+    const session3 = {
+      orgRights: [
+        RightsEnum.OtherSetup,
+        RightsEnum.ConfigModify,
+        RightsEnum.ConfigDelete,
+      ],
+    };
+    expect(Utils.hasRights(session1, RightsEnum.OtherSetup)).toBe(false);
+    expect(Utils.hasRights(session2, RightsEnum.OtherSetup)).toBe(true);
+    expect(Utils.hasRights(session2, RightsEnum.RightsCodeModify)).toBe(false);
+    expect(Utils.hasRights(session3, RightsEnum.OtherSetup)).toBe(true);
+    expect(
+      Utils.hasRights(session3, RightsEnum.OtherSetup, RightsEnum.ConfigModify),
+    ).toBe(true);
+    expect(Utils.hasRights(session3, RightsEnum.RightsCodeModify)).toBe(false);
   });
 });

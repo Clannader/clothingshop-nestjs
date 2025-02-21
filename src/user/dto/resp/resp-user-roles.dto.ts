@@ -11,6 +11,11 @@ export class RespUserRolesDto extends CommonResult {
   roles: string;
 
   /**
+   * 用户原始权限值
+   */
+  orgRoles: string;
+
+  /**
    * Session对象
    */
   session: UserSessionDto;

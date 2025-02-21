@@ -30,7 +30,7 @@ import {
 } from '@/common';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
-import { ApiRights, RightsEnum } from '@/rights';
+import { ApiOrRights, ApiRights, RightsEnum } from '@/rights';
 
 import { TimeZoneService } from '../services';
 import {
@@ -92,6 +92,7 @@ export class TimeZoneController {
   @ApiCustomResponse({
     type: CommonResult,
   })
+  @ApiOrRights(RightsEnum.TimeZoneCreate, RightsEnum.TimeZoneModify)
   checkInfoTimeZone(
     @UserSession() session: CmsSession,
     @Body() params: ReqTimeZoneCheckDto,
