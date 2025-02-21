@@ -107,14 +107,15 @@ export class SessionGuard implements CanActivate {
       context.getClass(),
       context.getHandler(),
     ]);
-    this.logger.log(`mergeRights: ${mergeRights}`);
-    this.logger.log(`orRights: ${orRights}`);
     const sessionRights = JSON.parse(
       Utils.tripleDesDecrypt(
         adminSession.encryptRights,
         adminSession.credential,
       ),
     );
+    this.logger.log(`mergeRights: ${mergeRights}`);
+    this.logger.log(`orRights: ${orRights}`);
+    this.logger.log(`sessionRights: ${sessionRights}`);
     // 如果接口没有设置权限就放行
     if (
       mergeRights.length !== 0 &&
