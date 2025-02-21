@@ -24,18 +24,20 @@ import {
 } from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
-import { ApiRights, RightsEnum } from '@/rights';
+import { ApiOrRights, ApiRights, RightsEnum } from '@/rights';
 import { SystemConfigService } from '../services';
 import {
+  ReqParentConfigCheckInfoDto,
   ReqParentConfigCreateDto,
+  ReqParentConfigDeleteDto,
   ReqParentConfigModifyDto,
   ReqSystemConfigListDto,
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
-  ReqParentConfigDeleteDto,
 } from '../dto/config';
-import { CmsSession, RespErrorResult } from '@/common';
+import { CmsSession, CommonResult, RespErrorResult } from '@/common';
 import { plainToInstance } from 'class-transformer';
+import { Utils } from '@/common/utils';
 
 @ApiCommon()
 @Controller('/cms/api/system/config')
@@ -77,7 +79,7 @@ export class SystemConfigController {
   createParentConfig(
     @UserSession() session: CmsSession,
     @Body() params: ReqParentConfigCreateDto,
-  ): RespSystemConfigCreateDto {
+  ): Promise<RespSystemConfigCreateDto> {
     const modifyParams = plainToInstance(ReqParentConfigModifyDto, params);
     return this.systemConfigService.saveSystemParentConfig(
       session,
@@ -99,7 +101,7 @@ export class SystemConfigController {
   modifyParentConfig(
     @UserSession() session: CmsSession,
     @Body() params: ReqParentConfigModifyDto,
-  ): RespSystemConfigCreateDto {
+  ): Promise<RespSystemConfigCreateDto> {
     return this.systemConfigService.saveSystemParentConfig(
       session,
       params,
@@ -110,8 +112,8 @@ export class SystemConfigController {
   @Delete('/delete')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: '删除一级配置',
-    description: '删除一级配置',
+    summary: '删除一级/二级配置',
+    description: '删除一级/二级配置',
   })
   @ApiCustomResponse({
     type: RespErrorResult,
@@ -122,5 +124,30 @@ export class SystemConfigController {
     @Body() params: ReqParentConfigDeleteDto,
   ) {
     return this.systemConfigService.deleteSystemConfig(session, params);
+  }
+
+  @Post('/parent/checkInfo')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '校验一级配置数据',
+    description: '校验一级配置数据',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  @ApiOrRights(RightsEnum.ConfigCreate, RightsEnum.ConfigModify)
+  checkInfoParentConfig(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqParentConfigCheckInfoDto,
+  ) {
+    const isNew = Utils.isEmpty(params.id);
+    const modifyParams = plainToInstance(ReqParentConfigModifyDto, params);
+    return this.systemConfigService.checkInfoSystemConfig(
+      session,
+      modifyParams,
+      isNew,
+      true,
+      true,
+    );
   }
 }

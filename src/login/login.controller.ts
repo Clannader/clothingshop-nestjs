@@ -112,7 +112,14 @@ export class LoginController {
       //权限这个也可以每次进来的时候查一遍,避免自己权限被别人更改,没有刷新最新的权限
       //以后会考虑压缩数据,加密后存库,使用参数控制
       //还可以避免数据库内存溢出
-      // rights: admin.rights,
+      encryptRights: Utils.tripleDesEncrypt(
+        JSON.stringify(otherInfo.rights),
+        credential,
+      ), // 使用SessionID加密权限
+      encryptOrgRights: Utils.tripleDesEncrypt(
+        JSON.stringify(otherInfo.orgRights),
+        credential,
+      ),
       loginTime: currentDate, //这个日期如果在网页显示没有错就可以,如果有错就转格式
       expires: currentDate.getTime(), //有效期
       // activeDate: currentDate.getTime(),//活跃时间

@@ -8,7 +8,6 @@ export interface CmsSession {
   readonly shopId?: string;
   readonly adminType?: string;
   readonly isFirstLogin?: boolean;
-  readonly orgRights?: string[];
   readonly orgShopId?: string[];
   readonly mobile?: boolean;
   readonly loginTime?: Date;
@@ -17,6 +16,10 @@ export interface CmsSession {
   readonly requestHost?: string;
   readonly sessionId?: string;
   readonly credential?: string;
+  readonly encryptRights?: string;
+  readonly encryptOrgRights?: string;
+  rights?: string[]; // 该值计划不存在数据库中
+  orgRights?: string[]; // 该值计划不存在数据库中
   language?: LanguageType;
   requestId?: string; // 请求ID
   workerId?: string; // 进程ID
