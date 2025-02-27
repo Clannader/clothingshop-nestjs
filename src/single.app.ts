@@ -40,6 +40,7 @@ import { rateLimit, MemoryStore } from 'express-rate-limit';
 import parseEnv from '@/lib/parseEnv';
 import * as fs from 'fs';
 import { ApiTagsDescriptionRegistry } from '@/lib/api-tags-description';
+import * as passport from 'passport';
 // import * as moment from 'moment';
 // import * as csurf from 'csurf';
 
@@ -122,6 +123,18 @@ export async function bootstrap() {
       }),
     }),
   );
+  // >>> 新增SAML协议授权
+  app.use(passport.initialize());
+  app.use(passport.session());
+  passport.serializeUser((user, done) => {
+    // 序列化用户
+    done(null, user);
+  });
+  passport.deserializeUser((user, done) => {
+    // 反序列化用户
+    done(null, user);
+  });
+  // <<< 新增SAML协议授权
   // app.use(csurf({ cookie: true })) // 不是很懂'跨站点请求伪造',暂时注释掉吧,后期有空再研究研究
 
   app.useStaticAssets(join(process.cwd(), 'public'));
