@@ -63,11 +63,15 @@ export class UserService {
   ): Promise<LoginResult> {
     const adminId = params.adminId;
     const securityPassword = params.adminPws; // 新增密码需要客户端加密后传回来
-    const password = await this.memoryCacheService.tripleDesDecrypt(
-      language,
-      securityPassword,
-      securityOptions,
-    );
+    let password = '';
+    if (!params.ssoLogin) {
+      password = await this.memoryCacheService.tripleDesDecrypt(
+        language,
+        securityPassword,
+        securityOptions,
+      );
+    }
+
     // 事件循环清除会话ID
     // 等待上面的解密完成后,到下一个异步函数之前,删除会话ID
     // process.nextTick(() => {
@@ -107,7 +111,7 @@ export class UserService {
       }
     }
 
-    if (admin.password !== password) {
+    if (!params.ssoLogin && admin.password !== password) {
       retryNumber++;
       if (retryNumber >= 10) {
         // 输入错误第十次锁定用户

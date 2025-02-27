@@ -5,11 +5,18 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Profile } from '@node-saml/passport-saml';
 import * as fs from 'fs';
-import { SECRET_CONFIG } from '@/common';
+import { LoginResult, SECRET_CONFIG, SecurityOptions } from '@/common';
 import { ConfigService } from '@/common/config';
+import { UserService } from '@/user';
+import { CodeEnum, LanguageEnum } from '@/common/enum';
+import { ReqUserLoginDto } from '@/user/dto';
+import { CodeException } from '@/common/exceptions';
 
 @Injectable()
 export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
+  @Inject()
+  private readonly userService: UserService;
+
   constructor(
     @Inject(SECRET_CONFIG)
     private readonly secretConfig: ConfigService,
@@ -36,7 +43,21 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
   async validate(profile: Profile): Promise<any> {
     // 在这里处理用户信息,微软认证通过后,返回用户信息到这里来
     const userEmail = profile.nameID; // 使用用户邮箱来判断用户
-
-    return null;
+    const params = new ReqUserLoginDto();
+    params.adminId = userEmail;
+    params.ssoLogin = true;
+    const securityOptions: SecurityOptions = {
+      securityToken: '',
+      securityId: '',
+    };
+    const result: LoginResult = await this.userService.userLogin(
+      LanguageEnum.EN,
+      params,
+      securityOptions,
+    );
+    if (result.code !== CodeEnum.SUCCESS) {
+      throw new CodeException(result.code, result.message);
+    }
+    return result;
   }
 }
