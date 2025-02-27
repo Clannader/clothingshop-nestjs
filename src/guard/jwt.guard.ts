@@ -13,9 +13,16 @@ import { CodeEnum } from '@/common/enum';
 import { CodeException } from '@/common/exceptions';
 import { forEach, get } from 'lodash';
 import { UserSessionService } from '@/user/user.session.service';
+import { Reflector } from '@nestjs/core';
+import { AopLogger } from '@/logger';
+import { RIGHTS_KEY, RIGHTS_KEY_OR, RightsEnum } from '@/rights';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
+  private readonly logger = new AopLogger(JwtGuard.name);
+
   @Inject()
   private userSessionService: UserSessionService;
 
@@ -85,6 +92,53 @@ export class JwtGuard implements CanActivate {
         );
       }
     });
+    // 如果想class和method合并再一起,这样写
+    const mergeRights = this.reflector.getAllAndMerge<string[]>(RIGHTS_KEY, [
+      context.getClass(),
+      context.getHandler(),
+    ]);
+    // 或者(只要有其一就可以通过)
+    const orRights = this.reflector.getAllAndMerge<string[]>(RIGHTS_KEY_OR, [
+      context.getClass(),
+      context.getHandler(),
+    ]);
+    const sessionRights = JSON.parse(
+      Utils.tripleDesDecrypt(jwtSession.encryptRights, jwtSession.sessionId),
+    );
+    this.logger.log(`mergeRights: ${mergeRights}`);
+    this.logger.log(`orRights: ${orRights}`);
+    this.logger.log(`sessionRights: ${sessionRights}`);
+    // 如果接口没有设置权限就放行
+    if (
+      mergeRights.length !== 0 &&
+      !Utils.hasRights(sessionRights, ...(<RightsEnum[]>mergeRights))
+    ) {
+      throw new CodeException(
+        CodeEnum.NO_RIGHTS,
+        this.globalService.lang(
+          language,
+          '用户{0}缺少所需权限{1}.',
+          'common.hasNoPermissions',
+          jwtSession.adminId,
+          `${mergeRights.join(',')}`,
+        ),
+      );
+    }
+    if (
+      orRights.length !== 0 &&
+      !Utils.hasOrRights(sessionRights, ...(<RightsEnum[]>orRights))
+    ) {
+      throw new CodeException(
+        CodeEnum.NO_RIGHTS,
+        this.globalService.lang(
+          language,
+          '用户{0}缺少所需权限{1}.',
+          'common.hasNoPermissions',
+          jwtSession.adminId,
+          `${orRights.join(',')}`,
+        ),
+      );
+    }
     return true;
   }
 }
