@@ -14,6 +14,7 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
     @Inject(SECRET_CONFIG)
     private readonly secretConfig: ConfigService,
   ) {
+    // 这里的ts校验不通过,看以后如何处理
     // @ts-ignore
     super({
       callbackUrl: secretConfig.get<string>('callbackUrl'),
