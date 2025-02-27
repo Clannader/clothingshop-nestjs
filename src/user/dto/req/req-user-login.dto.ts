@@ -33,4 +33,8 @@ export class ReqUserLoginDto {
   // })
   @ApiHideProperty()
   allowThirdUser?: boolean = false;
+
+  // 是否是sso方式调用
+  @ApiHideProperty()
+  ssoLogin?: boolean = false;
 }

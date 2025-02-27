@@ -10,6 +10,7 @@ import {
   SECRET_CONFIG,
   LanguageType,
   SecurityOptions,
+  sessionSecret,
 } from '@/common';
 import { CodeEnum, UserTypeEnum } from '@/common/enum';
 import { ConfigService } from '@/common/config';
@@ -19,13 +20,15 @@ import {
   ReqUserSearchDto,
   RespUserSearchDto,
   RespUserRolesDto,
+  RespUserLoginDto,
 } from './dto';
 import { AdminSchemaService } from '@/entities/services';
-import { AdminDocument } from '@/entities/schema';
+import { AdminDocument, Admin } from '@/entities/schema';
 import { UserSessionService } from './user.session.service';
 import { UserMapper } from './user.mapper';
 import { MemoryCacheService } from '@/cache/services';
 import { RightsGroupList } from '@/rights';
+import { sign } from 'cookie-signature';
 
 @Injectable()
 export class UserService {
@@ -60,11 +63,15 @@ export class UserService {
   ): Promise<LoginResult> {
     const adminId = params.adminId;
     const securityPassword = params.adminPws; // 新增密码需要客户端加密后传回来
-    const password = await this.memoryCacheService.tripleDesDecrypt(
-      language,
-      securityPassword,
-      securityOptions,
-    );
+    let password = '';
+    if (!params.ssoLogin) {
+      password = await this.memoryCacheService.tripleDesDecrypt(
+        language,
+        securityPassword,
+        securityOptions,
+      );
+    }
+
     // 事件循环清除会话ID
     // 等待上面的解密完成后,到下一个异步函数之前,删除会话ID
     // process.nextTick(() => {
@@ -104,7 +111,7 @@ export class UserService {
       }
     }
 
-    if (admin.password !== password) {
+    if (!params.ssoLogin && admin.password !== password) {
       retryNumber++;
       if (retryNumber >= 10) {
         // 输入错误第十次锁定用户
@@ -219,6 +226,65 @@ export class UserService {
     return result;
   }
 
+  async regenerateUserSession(req: RequestSession, authUser: LoginResult) {
+    //登录成功写log
+    //登录时用cookie做默认语言
+    const userAgent = (req.headers['user-agent'] as string) || '';
+    const store = req.sessionStore;
+    const admin: Admin = authUser.adminInfo;
+    const currentDate: Date = authUser.currentDate;
+    const otherInfo = authUser.otherInfo;
+    //重新获取一个新的sessionID
+    const getRegenerate = function (): Promise<void> {
+      return new Promise((resolve) => {
+        store.regenerate(req, function () {
+          resolve();
+        });
+      });
+    };
+    await getRegenerate();
+    const credential = 's:' + sign(req.sessionID, sessionSecret);
+    req.session.adminSession = {
+      adminId: admin.adminId,
+      adminName: admin.adminName,
+      adminType: admin.adminType,
+      mobile: userAgent.indexOf('Mobile') !== -1,
+      //权限这个也可以每次进来的时候查一遍,避免自己权限被别人更改,没有刷新最新的权限
+      //以后会考虑压缩数据,加密后存库,使用参数控制
+      //还可以避免数据库内存溢出
+      encryptRights: Utils.tripleDesEncrypt(
+        JSON.stringify(otherInfo.rights),
+        credential,
+      ), // 使用SessionID加密权限
+      encryptOrgRights: Utils.tripleDesEncrypt(
+        JSON.stringify(otherInfo.orgRights),
+        credential,
+      ),
+      loginTime: currentDate, //这个日期如果在网页显示没有错就可以,如果有错就转格式
+      expires: currentDate.getTime(), //有效期
+      // activeDate: currentDate.getTime(),//活跃时间
+      lastTime: admin.loginTime || currentDate, //上次登录时间
+      // language: CGlobal.GlobalLangType,//语言
+      shopId: otherInfo.currentShop, //当前登录的店铺ID,如果没有@店铺,那么永远都是SYSTEM,如果@了那就是@的那个值
+      // shopList: otherInfo.shopList,//该用户能够操作的店铺ID
+      // selfShop: otherInfo.selfShop,//用户自己的店铺ID
+      // userImg: '/img/default.jpg',
+      requestIP: Utils.getRequestIP(req),
+      requestHost: req.headers['host'],
+      sessionId: req.sessionID,
+      credential: credential,
+      isFirstLogin: admin.isFirstLogin, // 如果是接口用户估计需要这个字段是false的
+      // supplierCode: admin.supplierCode || '',//集团代码
+      // shopName: otherInfo.shopName //店铺名,没有@shopId那么就是没有值
+    };
+    const resp = new RespUserLoginDto();
+    resp.code = CodeEnum.SUCCESS;
+    resp.credential = credential;
+    resp.session = UserMapper.getTemplateSession(req.session.adminSession);
+    resp.expireMsg = authUser.expireMsg;
+    return resp;
+  }
+
   async userLogout(req: RequestSession): Promise<CommonResult> {
     await this.userSessionService.deleteSession(req);
     const resp = new CommonResult();
@@ -245,6 +311,11 @@ export class UserService {
       }
     }
     // TODO ...
+    // rightSet.add('3000')
+    // rightSet.add('3010')
+    // rightSet.add('3011')
+    // rightSet.add('30111')
+    // rightSet.add('30112')
     return Array.from(rightSet);
   }
 }

@@ -650,18 +650,33 @@ export class Utils {
   }
 
   // 判断用户是否有该权限
-  static hasRights(session: CmsSession, ...roles: RightsEnum[]) {
+  static hasRights(userRights: string[] | CmsSession, ...roles: RightsEnum[]) {
+    let rightsArray: string[];
+    if (!Array.isArray(userRights)) {
+      rightsArray = userRights.rights;
+    } else {
+      rightsArray = userRights;
+    }
     for (const role of roles) {
-      if (!session.rights.includes(role)) {
+      if (!rightsArray.includes(role)) {
         return false;
       }
     }
     return true;
   }
 
-  static hasOrRights(session: CmsSession, ...roles: RightsEnum[]) {
+  static hasOrRights(
+    userRights: string[] | CmsSession,
+    ...roles: RightsEnum[]
+  ) {
+    let rightsArray: string[];
+    if (!Array.isArray(userRights)) {
+      rightsArray = userRights.rights;
+    } else {
+      rightsArray = userRights;
+    }
     for (const role of roles) {
-      if (session.rights.includes(role)) {
+      if (rightsArray.includes(role)) {
         return true;
       }
     }

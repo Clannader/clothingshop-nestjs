@@ -13,7 +13,7 @@ import { GlobalService, Utils } from '@/common/utils';
 import { CodeEnum } from '@/common/enum';
 import { CodeException } from '@/common/exceptions';
 import { UserSessionService } from '@/user/user.session.service';
-import { RIGHTS_KEY, RIGHTS_KEY_OR } from '@/rights';
+import { RIGHTS_KEY, RIGHTS_KEY_OR, RightsEnum } from '@/rights';
 
 import { AopLogger } from '@/logger';
 
@@ -98,20 +98,54 @@ export class SessionGuard implements CanActivate {
     // );
     // this.logger.log(methodRights);
     // 如果想class和method合并再一起,这样写
-    const mergeRights = this.reflector.getAllAndMerge<number[]>(RIGHTS_KEY, [
+    const mergeRights = this.reflector.getAllAndMerge<string[]>(RIGHTS_KEY, [
       context.getClass(),
       context.getHandler(),
     ]);
     // 或者(只要有其一就可以通过)
-    const orRights = this.reflector.getAllAndMerge<number[]>(RIGHTS_KEY_OR, [
+    const orRights = this.reflector.getAllAndMerge<string[]>(RIGHTS_KEY_OR, [
       context.getClass(),
       context.getHandler(),
     ]);
+    const sessionRights = JSON.parse(
+      Utils.tripleDesDecrypt(
+        adminSession.encryptRights,
+        adminSession.credential,
+      ),
+    );
     this.logger.log(`mergeRights: ${mergeRights}`);
     this.logger.log(`orRights: ${orRights}`);
+    this.logger.log(`sessionRights: ${sessionRights}`);
     // 如果接口没有设置权限就放行
-    if (!mergeRights) {
-      return true;
+    if (
+      mergeRights.length !== 0 &&
+      !Utils.hasRights(sessionRights, ...(<RightsEnum[]>mergeRights))
+    ) {
+      throw new CodeException(
+        CodeEnum.NO_RIGHTS,
+        this.globalService.lang(
+          language,
+          '用户{0}缺少所需权限{1}.',
+          'common.hasNoPermissions',
+          adminSession.adminId,
+          `${mergeRights.join(',')}`,
+        ),
+      );
+    }
+    if (
+      orRights.length !== 0 &&
+      !Utils.hasOrRights(sessionRights, ...(<RightsEnum[]>orRights))
+    ) {
+      throw new CodeException(
+        CodeEnum.NO_RIGHTS,
+        this.globalService.lang(
+          language,
+          '用户{0}缺少所需权限{1}.',
+          'common.hasNoPermissions',
+          adminSession.adminId,
+          `${orRights.join(',')}`,
+        ),
+      );
     }
     return true;
   }
