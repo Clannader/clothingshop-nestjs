@@ -36,7 +36,7 @@ export class GlobalService {
     key: string,
     ...args: Array<string | number>
   ) {
-    return Utils.lang(session.language, origin, key, ...args);
+    return Utils.lang(session.language || 'EN', origin, key, ...args);
   }
 
   /**

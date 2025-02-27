@@ -101,6 +101,7 @@ export class GatewayAuthController {
     const admin: Admin = result.adminInfo;
     const currentDate: Date = result.currentDate;
     const otherInfo = result.otherInfo;
+    const sessionId = Utils.getUuid();
     const session: CmsSession = {
       adminId: admin.adminId,
       adminName: admin.adminName,
@@ -113,7 +114,15 @@ export class GatewayAuthController {
       requestIP: Utils.getRequestIP(req),
       requestHost: req.headers['host'],
       isFirstLogin: false,
-      sessionId: Utils.getUuid(),
+      sessionId: sessionId,
+      encryptRights: Utils.tripleDesEncrypt(
+        JSON.stringify(otherInfo.rights),
+        sessionId,
+      ), // 使用SessionID加密权限
+      encryptOrgRights: Utils.tripleDesEncrypt(
+        JSON.stringify(otherInfo.orgRights),
+        sessionId,
+      ),
     };
     const accessExpires = this.configService.get<number>('tokenExpires', 3600);
     const refreshExpires = this.configService.get<number>('tokenRefresh', 7200);

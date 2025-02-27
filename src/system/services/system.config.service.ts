@@ -124,7 +124,7 @@ export class SystemConfigService {
       resp.code = CodeEnum.NO_RIGHTS;
       resp.msg = this.globalService.serverLang(
         session,
-        '用户{0}缺少所需权限{1}。',
+        '用户{0}缺少所需权限{1}.',
         'common.hasNoPermissions',
         session.adminId,
         `${RightsEnum.ConfigCreate},${RightsEnum.ConfigModify}`,
