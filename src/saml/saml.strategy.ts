@@ -27,14 +27,16 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
         )
         .toString(),
       identifierFormat: null,
-      validateInResponseTo: 'always',
+      validateInResponseTo: 'never', // 可使用值never, ifPresent, always
       disableRequestedAuthnContext: true,
       // forceAuthn: true, // 每次跳转都要重新验证
     });
   }
 
   async validate(profile: Profile): Promise<any> {
-    // 在这里处理用户信息
-    return profile;
+    // 在这里处理用户信息,微软认证通过后,返回用户信息到这里来
+    const userEmail = profile.nameID; // 使用用户邮箱来判断用户
+
+    return null;
   }
 }

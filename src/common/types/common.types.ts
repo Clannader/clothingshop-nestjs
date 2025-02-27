@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Session } from 'express-session';
 import { LanguageEnum } from '../enum';
+import { LoginResult } from '@/common'; // 依赖互相引用了,似乎没什么问题
 
 export interface CmsSession {
   readonly adminId?: string;
@@ -38,6 +39,7 @@ export interface RequestSession extends Request {
   xmlData?: string;
   rawBody?: Buffer;
   requestId?: string;
+  user?: LoginResult;
 }
 
 export interface CmsResponse extends Response {
