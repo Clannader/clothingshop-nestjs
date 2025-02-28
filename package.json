@@ -43,7 +43,7 @@
     "@nestjs/mapped-types": "^2.0.6",
     "@nestjs/mongoose": "^11.0.1",
     "@nestjs/passport": "^11.0.5",
-    "@nestjs/platform-express": "^10.4.13",
+    "@nestjs/platform-express": "^11.0.10",
     "@nestjs/swagger": "^8.1.0",
     "@node-saml/passport-saml": "^5.0.0",
     "agentkeepalive": "^4.5.0",
