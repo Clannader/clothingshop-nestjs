@@ -6,7 +6,7 @@ import { ConfigService } from '@/common/config';
 import { HttpServiceCacheService } from '../services';
 import { HTTP_SERVICE_CACHE_MANAGE } from '../cache.constants';
 import { Keyv } from 'keyv';
-import { CacheableMemory,  CacheableMemoryOptions } from 'cacheable';
+import { CacheableMemory, CacheableMemoryOptions } from 'cacheable';
 import { createCache } from 'cache-manager';
 
 @Module({
@@ -22,10 +22,10 @@ import { createCache } from 'cache-manager';
         return createCache({
           stores: [
             new Keyv({
-              store: new CacheableMemory(options)
-            })
+              store: new CacheableMemory(options),
+            }),
           ],
-        })
+        });
       },
       inject: [ConfigService],
     },

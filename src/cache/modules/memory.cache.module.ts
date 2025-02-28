@@ -6,7 +6,7 @@ import { CacheModule, CacheOptions } from '@nestjs/cache-manager';
 import { ConfigService } from '@/common/config';
 import { MemoryCacheService } from '../services';
 import { Keyv } from 'keyv';
-import { CacheableMemory,  CacheableMemoryOptions } from 'cacheable';
+import { CacheableMemory, CacheableMemoryOptions } from 'cacheable';
 import { SecuritySessionCacheModule } from './security.session.cache.module';
 
 @Module({
@@ -20,10 +20,10 @@ import { SecuritySessionCacheModule } from './security.session.cache.module';
         return {
           stores: [
             new Keyv({
-              store: new CacheableMemory(options)
-            })
+              store: new CacheableMemory(options),
+            }),
           ],
-        }
+        };
       },
       inject: [ConfigService],
     }),
