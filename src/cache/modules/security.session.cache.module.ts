@@ -16,7 +16,6 @@ import { createCache } from 'cache-manager';
       provide: SECURITY_SESSION_MANAGE,
       useFactory: (config: ConfigService) => {
         const options: CacheableMemoryOptions = {
-          ttl: config.get<number>('sessionCacheTTL', 60) * 1000,
           lruSize: config.get<number>('sessionCacheMax', 100 * 1000),
         };
         return createCache({
@@ -25,6 +24,7 @@ import { createCache } from 'cache-manager';
               store: new CacheableMemory(options),
             }),
           ],
+          ttl: config.get<number>('sessionCacheTTL', 60) * 1000,
         });
       },
       inject: [ConfigService],

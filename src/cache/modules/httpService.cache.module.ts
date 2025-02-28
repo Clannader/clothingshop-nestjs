@@ -16,7 +16,6 @@ import { createCache } from 'cache-manager';
       provide: HTTP_SERVICE_CACHE_MANAGE,
       useFactory: (config: ConfigService) => {
         const options: CacheableMemoryOptions = {
-          ttl: config.get<number>('cacheTTL', 3600) * 1000,
           lruSize: config.get<number>('cacheMax', 100 * 1000),
         };
         return createCache({
@@ -25,6 +24,7 @@ import { createCache } from 'cache-manager';
               store: new CacheableMemory(options),
             }),
           ],
+          ttl: config.get<number>('cacheTTL', 3600) * 1000,
         });
       },
       inject: [ConfigService],

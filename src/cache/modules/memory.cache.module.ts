@@ -14,7 +14,6 @@ import { SecuritySessionCacheModule } from './security.session.cache.module';
     CacheModule.registerAsync({
       useFactory: (config: ConfigService): CacheOptions => {
         const options: CacheableMemoryOptions = {
-          ttl: config.get<number>('cacheTTL', 3600) * 1000, // 现在发现cache版本更新后,ttl的单位从s改成了ms
           lruSize: config.get<number>('cacheMax', 100 * 1000),
         };
         return {
@@ -23,6 +22,7 @@ import { SecuritySessionCacheModule } from './security.session.cache.module';
               store: new CacheableMemory(options),
             }),
           ],
+          ttl: config.get<number>('cacheTTL', 3600) * 1000, // 现在发现cache版本更新后,ttl的单位从s改成了ms
         };
       },
       inject: [ConfigService],

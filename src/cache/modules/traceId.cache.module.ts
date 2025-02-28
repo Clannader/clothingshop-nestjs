@@ -16,7 +16,6 @@ import { createCache } from 'cache-manager';
       provide: TRACE_ID_CACHE_MANAGER,
       useFactory: async (config: ConfigService) => {
         const options: CacheableMemoryOptions = {
-          ttl: config.get<number>('traceIdTTL', 5 * 60) * 1000,
           lruSize: config.get<number>('traceIdMax', 100 * 1000),
         };
         return createCache({
@@ -25,6 +24,7 @@ import { createCache } from 'cache-manager';
               store: new CacheableMemory(options),
             }),
           ],
+          ttl: config.get<number>('traceIdTTL', 5 * 60) * 1000,
         });
       },
       inject: [ConfigService],
