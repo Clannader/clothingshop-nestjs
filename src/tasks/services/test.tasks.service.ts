@@ -39,12 +39,12 @@ export class TestTasksService {
   async handleInterval() {
     const workerId = cluster.worker ? cluster.worker.id : 1;
     const serverId = 1;
-    const cache = await this.tokenCacheService.getAllCacheKeys();
+    // const cache = await this.tokenCacheService.getAllCacheKeys();
 
     // console.log(
     //   `服务器ID: ${workerId}--------------------------${moment().format('YYYY-MM-DD HH:mm:ss,SSS')}`,
     // );
-    console.log(`服务器ID: ${workerId}--------------------------${cache}`);
+    // console.log(`服务器ID: ${workerId}--------------------------${cache}`);
 
     // await this.rightCodeGroupSchemaService.getModel().create({
     //   groupCode: 'TEST',

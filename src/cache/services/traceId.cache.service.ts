@@ -51,7 +51,7 @@ export class TraceIdCacheService {
   }
 
   getTraceIdStore() {
-    return this.cacheManager.store;
+    return this.cacheManager;
   }
 
   @SendEventMessage('deleteTraceIdCache')

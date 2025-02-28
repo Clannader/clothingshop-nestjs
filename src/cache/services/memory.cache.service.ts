@@ -60,9 +60,10 @@ export class MemoryCacheService {
     return this.cacheManager.get(key);
   }
 
-  getAllCacheKeys() {
-    return this.cacheManager.store.keys();
-  }
+  // 更新最新的cache模块后,已经不提供缓存数量的方法了
+  // getAllCacheKeys() {
+  //   return this.cacheManager.store.keys();
+  // }
 
   async getRsaPublicKey(): Promise<string> {
     return Utils.stringToBase64(await this.getRsaPublicPem());
