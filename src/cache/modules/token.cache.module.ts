@@ -5,7 +5,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@/common/config';
 import { TokenCacheService } from '../services';
 import { TOKEN_CACHE_MANAGER } from '../cache.constants';
-import { Keyv } from 'keyv';
+import Keyv from 'keyv';
 import { CacheableMemory, CacheableMemoryOptions } from 'cacheable';
 import { createCache } from 'cache-manager';
 
@@ -20,6 +20,7 @@ import { createCache } from 'cache-manager';
         };
         return createCache({
           stores: [
+            // @ts-ignore
             new Keyv({
               store: new CacheableMemory(options),
             }),
