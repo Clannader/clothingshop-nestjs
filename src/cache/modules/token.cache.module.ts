@@ -7,6 +7,7 @@ import { TokenCacheService } from '../services';
 import { TOKEN_CACHE_MANAGER } from '../cache.constants';
 import { Keyv } from 'keyv';
 import { CacheableMemory,  CacheableMemoryOptions } from 'cacheable';
+import { createCache } from 'cache-manager';
 
 @Module({
   providers: [
@@ -18,13 +19,13 @@ import { CacheableMemory,  CacheableMemoryOptions } from 'cacheable';
           ttl: config.get<number>('tokenTTL', 30 * 60) * 1000,
           lruSize: config.get<number>('tokenMax', 100 * 1000),
         };
-        return {
+        return createCache({
           stores: [
             new Keyv({
               store: new CacheableMemory(options)
             })
           ],
-        }
+        })
       },
       inject: [ConfigService],
     },

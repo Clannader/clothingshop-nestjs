@@ -7,7 +7,6 @@ import { ConfigService } from '@/common/config';
 import { MemoryCacheService } from '../services';
 import { Keyv } from 'keyv';
 import { CacheableMemory,  CacheableMemoryOptions } from 'cacheable';
-
 import { SecuritySessionCacheModule } from './security.session.cache.module';
 
 @Module({
