@@ -34,6 +34,6 @@ export class SecuritySessionCacheService {
 
   @OnEventMessage('deleteSecuritySessionCache')
   async messageDeleteSecuritySessionCache(key: string) {
-    await this.cacheManager.store.del(key);
+    await this.cacheManager.del(key);
   }
 }

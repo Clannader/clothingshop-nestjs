@@ -26,7 +26,7 @@ export class TokenCacheService {
     return this.cacheManager.get<string>(key);
   }
 
-  getAllCacheKeys() {
-    return this.cacheManager.store.keys();
-  }
+  // getAllCacheKeys() {
+  //   return this.cacheManager.store.keys();
+  // }
 }

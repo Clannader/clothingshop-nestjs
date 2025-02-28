@@ -410,7 +410,7 @@ export class TestController {
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
     await this.memoryCacheService.setMemoryCache('23444', { diff: '' });
-    console.log(this.memoryCacheService.getAllCacheKeys());
+    // console.log(this.memoryCacheService.getAllCacheKeys());
     return resp;
   }
 

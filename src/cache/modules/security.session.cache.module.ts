@@ -4,8 +4,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@/common/config';
 import { SecuritySessionCacheService } from '../services';
-import { caching, MemoryConfig } from 'cache-manager';
 import { SECURITY_SESSION_MANAGE } from '../cache.constants';
+import { Keyv } from 'keyv';
+import { CacheableMemory,  CacheableMemoryOptions } from 'cacheable';
 
 @Module({
   providers: [
@@ -13,11 +14,17 @@ import { SECURITY_SESSION_MANAGE } from '../cache.constants';
     {
       provide: SECURITY_SESSION_MANAGE,
       useFactory: (config: ConfigService) => {
-        const options: MemoryConfig = {
+        const options: CacheableMemoryOptions = {
           ttl: config.get<number>('sessionCacheTTL', 60) * 1000,
-          max: config.get<number>('sessionCacheMax', 100 * 1000),
+          lruSize: config.get<number>('sessionCacheMax', 100 * 1000),
         };
-        return caching('memory', options);
+        return {
+          stores: [
+            new Keyv({
+              store: new CacheableMemory(options)
+            })
+          ],
+        }
       },
       inject: [ConfigService],
     },

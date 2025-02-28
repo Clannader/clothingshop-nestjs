@@ -5,7 +5,8 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@/common/config';
 import { TraceIdCacheService } from '../services';
 import { TRACE_ID_CACHE_MANAGER } from '../cache.constants';
-import { caching, MemoryConfig } from 'cache-manager';
+import { Keyv } from 'keyv';
+import { CacheableMemory,  CacheableMemoryOptions } from 'cacheable';
 
 @Module({
   providers: [
@@ -13,11 +14,17 @@ import { caching, MemoryConfig } from 'cache-manager';
     {
       provide: TRACE_ID_CACHE_MANAGER,
       useFactory: async (config: ConfigService) => {
-        const options: MemoryConfig = {
+        const options: CacheableMemoryOptions = {
           ttl: config.get<number>('traceIdTTL', 5 * 60) * 1000,
-          max: config.get<number>('traceIdMax', 100 * 1000),
+          lruSize: config.get<number>('traceIdMax', 100 * 1000),
         };
-        return caching('memory', options);
+        return {
+          stores: [
+            new Keyv({
+              store: new CacheableMemory(options)
+            })
+          ],
+        }
       },
       inject: [ConfigService],
     },
