@@ -334,13 +334,13 @@ describe('Utils', () => {
 
   it('测试判断权限是否正确判断返回', () => {
     const session1 = {
-      orgRights: [],
+      rights: [],
     };
     const session2 = {
-      orgRights: [RightsEnum.OtherSetup],
+      rights: [RightsEnum.OtherSetup],
     };
     const session3 = {
-      orgRights: [
+      rights: [
         RightsEnum.OtherSetup,
         RightsEnum.ConfigModify,
         RightsEnum.ConfigDelete,

@@ -5,7 +5,9 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@/common/config';
 import { TokenCacheService } from '../services';
 import { TOKEN_CACHE_MANAGER } from '../cache.constants';
-import { caching, MemoryConfig } from 'cache-manager';
+import { Keyv } from 'keyv';
+import { CacheableMemory, CacheableMemoryOptions } from 'cacheable';
+import { createCache } from 'cache-manager';
 
 @Module({
   providers: [
@@ -13,11 +15,17 @@ import { caching, MemoryConfig } from 'cache-manager';
     {
       provide: TOKEN_CACHE_MANAGER,
       useFactory: (config: ConfigService) => {
-        const options: MemoryConfig = {
-          ttl: config.get<number>('tokenTTL', 30 * 60) * 1000,
-          max: config.get<number>('tokenMax', 100 * 1000),
+        const options: CacheableMemoryOptions = {
+          lruSize: config.get<number>('tokenMax', 100 * 1000),
         };
-        return caching('memory', options);
+        return createCache({
+          stores: [
+            new Keyv({
+              store: new CacheableMemory(options),
+            }),
+          ],
+          ttl: config.get<number>('tokenTTL', 30 * 60) * 1000,
+        });
       },
       inject: [ConfigService],
     },

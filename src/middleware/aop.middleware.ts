@@ -43,8 +43,9 @@ export class AopMiddleware implements NestMiddleware {
       );
       req.body = JSON.parse(rawBody);
     }
-    req.query = JSON.parse(clean(JSON.stringify(req.query)));
-    req.body = JSON.parse(clean(JSON.stringify(req.body)));
+    // 升级后,req.query只能是只读属性了,所以不能修改,看后期怎么弄了
+    // req.query = JSON.parse(clean(JSON.stringify(req.query)));
+    req.body = JSON.parse(clean(JSON.stringify(req.body ?? {})));
     if (this.configService.get<boolean>('printUrl', true)) {
       this.logger.log(
         `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, ${method} 请求: ${url}`,
