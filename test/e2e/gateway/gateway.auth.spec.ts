@@ -9,7 +9,6 @@ import { TokenService } from '@/gateway';
 import { ConfigService } from '@/common/config';
 import { Utils } from '@/common/utils';
 import * as CryptoJS from 'crypto-js';
-import * as crypto from 'crypto';
 
 describe('GatewayAuthController (e2e)', () => {
   let app: INestApplication;
