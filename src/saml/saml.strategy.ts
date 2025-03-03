@@ -40,7 +40,7 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
     });
   }
 
-  async validate(profile: Profile): Promise<any> {
+  async validate(profile: Profile): Promise<LoginResult> {
     // 在这里处理用户信息,微软认证通过后,返回用户信息到这里来
     const userEmail = profile.nameID; // 使用用户邮箱来判断用户
     const params = new ReqUserLoginDto();
