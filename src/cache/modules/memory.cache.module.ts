@@ -5,7 +5,7 @@ import { Module } from '@nestjs/common';
 import { CacheModule, CacheOptions } from '@nestjs/cache-manager';
 import { ConfigService } from '@/common/config';
 import { MemoryCacheService } from '../services';
-import { Keyv } from 'keyv';
+import Keyv from 'keyv';
 import { CacheableMemory, CacheableMemoryOptions } from 'cacheable';
 import { SecuritySessionCacheModule } from './security.session.cache.module';
 
