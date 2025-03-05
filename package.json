@@ -98,7 +98,7 @@
     "@types/express": "^5.0.0",
     "@types/express-session": "^1.18.1",
     "@types/jest": "^29.5.14",
-    "@types/lodash": "^4.17.13",
+    "@types/lodash": "^4.17.16",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.10.1",
     "@types/on-finished": "^2.3.4",
@@ -124,8 +124,8 @@
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.2",
-    "typescript-eslint": "^8.17.0"
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.0"
   },
   "jest": {
     "moduleFileExtensions": [
