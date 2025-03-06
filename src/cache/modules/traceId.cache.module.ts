@@ -20,7 +20,6 @@ import { createCache } from 'cache-manager';
         };
         return createCache({
           stores: [
-            // @ts-ignore
             new Keyv({
               store: new CacheableMemory(options),
             }),
