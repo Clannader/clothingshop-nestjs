@@ -8,7 +8,7 @@ const packagePath = path.join(process.cwd(), 'build');
 
 // 生成新的package.json和run.bat
 const runBatContentArray = [
-  'node main.js',
+  'npm uninstall all && node main.js',
   'pause'
 ]
 fs.writeFileSync(path.join(packagePath, 'run.bat'), runBatContentArray.join('\r\n'), 'utf8');
