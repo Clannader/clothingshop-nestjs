@@ -8,14 +8,19 @@ const version = pkg.version;
 const packagePath = path.join(process.cwd(), 'build');
 
 // 生成新的package.json和run.bat
-const runBatContentArray = [
-  'npm uninstall all && node main.js',
-  'pause'
-]
-fs.writeFileSync(path.join(packagePath, 'run.bat'), runBatContentArray.join('\r\n'), 'utf8');
-delete pkg.jest
-delete pkg.devDependencies
-fs.writeFileSync(path.join(packagePath, 'package.json'), JSON.stringify(pkg, null, 2), 'utf8');
+const runBatContentArray = ['npm uninstall all && node main.js', 'pause'];
+fs.writeFileSync(
+  path.join(packagePath, 'run.bat'),
+  runBatContentArray.join('\r\n'),
+  'utf8',
+);
+delete pkg.jest;
+delete pkg.devDependencies;
+fs.writeFileSync(
+  path.join(packagePath, 'package.json'),
+  JSON.stringify(pkg, null, 2),
+  'utf8',
+);
 
 const versionPath = path.join(process.cwd(), 'version');
 if (!fs.existsSync(versionPath)) {
