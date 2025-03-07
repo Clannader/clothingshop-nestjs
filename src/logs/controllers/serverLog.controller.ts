@@ -54,7 +54,7 @@ export class ServerLogController {
     return this.serverLogService.getServerLogList(session, params);
   }
 
-  // @ApiExcludeEndpoint(true)
+  @ApiExcludeEndpoint(true)
   @Get('/logs')
   @ApiOperation({
     summary: '内部获取服务器日志列表',
