@@ -14,6 +14,7 @@ import {
   ApiCommon,
   ApiCustomResponse,
   ApiTagsController,
+  UserSession,
 } from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
@@ -21,6 +22,7 @@ import { ApiRights, RightsEnum } from '@/rights';
 
 import { ServerLogService } from '../services';
 import { RespServerLogListDto, ReqServerLogListDto } from '../dto';
+import { CmsSession } from '@/common';
 
 @ApiCommon()
 @Controller('/cms/api/logs/serverLog')
@@ -41,7 +43,10 @@ export class ServerLogController {
     type: RespServerLogListDto,
   })
   @ApiRights(RightsEnum.ServerLogView)
-  getServerLogList(@Query() params: ReqServerLogListDto) {
-    return this.serverLogService.getServerLogList(params);
+  getServerLogList(
+    @Query() params: ReqServerLogListDto,
+    @UserSession() session: CmsSession,
+  ) {
+    return this.serverLogService.getServerLogList(session, params);
   }
 }
