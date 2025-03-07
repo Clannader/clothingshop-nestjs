@@ -5,7 +5,6 @@ import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@/common/config';
 import { GlobalService, Utils } from '@/common/utils';
 import validator from 'validator';
-
 import {
   RespServerLogListDto,
   ListServerLogDto,
@@ -13,6 +12,7 @@ import {
 } from '@/logs/dto';
 import { CodeEnum } from '@/common/enum';
 import { CmsSession } from '@/common';
+import Axios from 'axios';
 
 @Injectable()
 export class ServerLogService {
@@ -22,7 +22,7 @@ export class ServerLogService {
   @Inject()
   private readonly globalService: GlobalService;
 
-  getServerLogList(session: CmsSession, params: ReqServerLogListDto) {
+  async getServerLogList(session: CmsSession, params: ReqServerLogListDto) {
     const serverUrl = this.configService.get<string>('serverLog');
     const resp = new RespServerLogListDto();
     const serverLogList: ListServerLogDto[] = [];
@@ -50,6 +50,34 @@ export class ServerLogService {
       return resp;
     }
 
+    const headers = {
+      'Content-Type': 'application/json;charset=UTF-8',
+      'X-Requested-With': 'XMLHttpRequest',
+      credential: session.credential,
+    };
+    let i = 0;
+    for (const serverAddress of serverArray) {
+      const url = `http://${serverAddress}/cms/api/logs/serverLog/logs`;
+      const [err, requestResult] = await Utils.toPromise(
+        Axios.create({
+          timeout: 30 * 1000,
+          headers,
+        }).get(url, { params: params }),
+      );
+      if (err) {
+        serverLogList.push({
+          serverName: 'NULL',
+          logs: [],
+        });
+        continue;
+      }
+      const data = requestResult.data;
+      console.log(data);
+      serverLogList.push({
+        serverName: `Server${++i}`,
+        logs: [],
+      });
+    }
     return resp;
   }
 
