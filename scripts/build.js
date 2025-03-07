@@ -2,6 +2,7 @@ const pkg = require('../package.json');
 const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
+const moment = require('moment');
 const version = pkg.version;
 
 const packagePath = path.join(process.cwd(), 'build');
@@ -50,5 +51,10 @@ zlib.on('error', function (err) {
 });
 
 zlib.pipe(outStream);
-zlib.directory(packagePath, false);
+zlib.directory(packagePath, '', (entryData) => {
+  // 如果添加date节点,则会以date为准
+  // entryData.date = moment().add(8, 'hour').toDate(); // 由于压缩打包显示的时间是零时区的时间,所以+8就是显示对的时间
+  // entryData.stats.mtime = moment(entryData.stats.mtime).add(8, 'hour').toDate();
+  return entryData;
+});
 zlib.finalize().then();
