@@ -9,7 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import {
   ApiCommon,
   ApiCustomResponse,
@@ -21,7 +21,11 @@ import { SessionGuard } from '@/guard';
 import { ApiRights, RightsEnum } from '@/rights';
 
 import { ServerLogService } from '../services';
-import { RespServerLogListDto, ReqServerLogListDto } from '../dto';
+import {
+  RespServerLogListDto,
+  ReqServerLogListDto,
+  RespInternalServerLogDto,
+} from '../dto';
 import { CmsSession } from '@/common';
 
 @ApiCommon()
@@ -48,5 +52,19 @@ export class ServerLogController {
     @UserSession() session: CmsSession,
   ) {
     return this.serverLogService.getServerLogList(session, params);
+  }
+
+  // @ApiExcludeEndpoint(true)
+  @Get('/logs')
+  @ApiOperation({
+    summary: '内部获取服务器日志列表',
+    description: '内部获取服务器日志列表',
+  })
+  @ApiCustomResponse({
+    type: RespInternalServerLogDto,
+  })
+  @ApiRights(RightsEnum.ServerLogView)
+  getInternalServerLogList(@Query() params: ReqServerLogListDto) {
+    return this.serverLogService.getInternalServerLogList(params);
   }
 }

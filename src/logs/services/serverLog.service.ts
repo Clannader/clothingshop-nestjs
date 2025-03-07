@@ -9,6 +9,7 @@ import {
   RespServerLogListDto,
   ListServerLogDto,
   ReqServerLogListDto,
+  RespInternalServerLogDto,
 } from '@/logs/dto';
 import { CodeEnum } from '@/common/enum';
 import { CmsSession } from '@/common';
@@ -64,7 +65,7 @@ export class ServerLogService {
           headers,
         }).get(url, { params: params }),
       );
-      if (err) {
+      if (err || requestResult.data.code !== CodeEnum.SUCCESS) {
         serverLogList.push({
           serverName: 'NULL',
           logs: [],
@@ -72,10 +73,9 @@ export class ServerLogService {
         continue;
       }
       const data = requestResult.data;
-      console.log(data);
       serverLogList.push({
         serverName: `Server${++i}`,
-        logs: [],
+        logs: data.logs || [],
       });
     }
     return resp;
@@ -89,5 +89,10 @@ export class ServerLogService {
     }
     const [ip, port] = address;
     return validator.isIP(ip) && validator.isPort(port);
+  }
+
+  getInternalServerLogList(params: ReqServerLogListDto) {
+    const resp = new RespInternalServerLogDto();
+    return resp;
   }
 }
