@@ -22,7 +22,7 @@ import { ServerLogModule } from './logs';
     GatewayModule,
     DatabaseModule,
     SamlAuthModule,
-    ServerLogModule
+    ServerLogModule,
   ],
 })
 export class SwaggerModule {}

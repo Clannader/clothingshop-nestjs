@@ -4,7 +4,7 @@
 import { ListServerLogDto } from '../list-serverLog.dto';
 import { CommonResult } from '@/common';
 
-export class RespServerLogList extends CommonResult {
+export class RespServerLogListDto extends CommonResult {
   /**
    * 服务器列表
    */

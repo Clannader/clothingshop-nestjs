@@ -6,16 +6,20 @@ import { ConfigService } from '@/common/config';
 import { Utils } from '@/common/utils';
 import validator from 'validator';
 
-import { RespServerLogList, ListServerLogDto } from '@/logs/dto';
+import {
+  RespServerLogListDto,
+  ListServerLogDto,
+  ReqServerLogListDto,
+} from '@/logs/dto';
 
 @Injectable()
 export class ServerLogService {
   @Inject()
   private readonly configService: ConfigService;
 
-  getServerLogList() {
+  getServerLogList(params: ReqServerLogListDto) {
     const serverUrl = this.configService.get<string>('serverLog');
-    const resp = new RespServerLogList();
+    const resp = new RespServerLogListDto();
     const serverLogList: ListServerLogDto[] = [];
     resp.serverLogs = serverLogList;
     if (Utils.isEmpty(serverUrl)) {

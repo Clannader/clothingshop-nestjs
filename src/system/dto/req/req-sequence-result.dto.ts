@@ -1,7 +1,6 @@
 /**
  * Create by oliver.wu 2024/10/11
  */
-
 import { SequenceTypeEnum } from '@/common/enum';
 import { Expose } from 'class-transformer';
 import { IsDefined, IsEnum } from 'class-validator';
