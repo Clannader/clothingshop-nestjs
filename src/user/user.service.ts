@@ -305,11 +305,14 @@ export class UserService {
   getUserAllRightCodes(userRightCodeGroup: string[]): string[] {
     // 把权限组转换成权限代码
     const rightSet: Set<string> = new Set();
+    // 用户含有默认的权限组时,把默认的权限加入rightSet
     for (const defaultGroup of RightsGroupList) {
       if (userRightCodeGroup.includes(defaultGroup.groupCode)) {
         defaultGroup.rightCodes.forEach((value) => rightSet.add(value + ''));
       }
     }
+    // TODO 需要查询其他权限组的权限代码
+    // 还得加上和减少用户的权限代码
     // TODO ...
     // rightSet.add('3000')
     // rightSet.add('3010')

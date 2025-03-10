@@ -10,7 +10,11 @@
         "introspectComments": true
       }
     }],
-    "webpack": true,
-    "webpackConfigPath": "webpack.config.js"
+    "builder": {
+      "type": "webpack",
+      "options": {
+        "configPath": "webpack.config.js"
+      }
+    }
   }
 }

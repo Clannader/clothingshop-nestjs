@@ -8,6 +8,7 @@
 /build
 /tempUpload
 /pem
+/version
 
 # Logs
 *.log

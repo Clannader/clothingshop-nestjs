@@ -57,6 +57,10 @@ export enum RightsEnum {
   DbIndexManage = '3052',
   DbDetails = '3053',
   DbLogs = '3054',
+  LogsManage = '4000',
+  ServerLogSetup = '4010',
+  ServerLogView = '4011',
+  ServerLogDownload = '4012',
 }
 
 export const RightsList: RightsConfig = {
@@ -208,6 +212,26 @@ export const RightsList: RightsConfig = {
           DbLogs: {
             code: RightsEnum.DbLogs, // 3054
             desc: '数据库日志',
+          },
+        },
+      },
+    },
+  },
+  LogsManage: {
+    code: RightsEnum.LogsManage, // 4000
+    desc: '日志管理',
+    children: {
+      ServerLogSetup: {
+        code: RightsEnum.ServerLogSetup, // 4010
+        desc: '服务器日志',
+        children: {
+          ServerLogView: {
+            code: RightsEnum.ServerLogView, // 4011
+            desc: '查看服务器日志',
+          },
+          ServerLogDownload: {
+            code: RightsEnum.ServerLogDownload, // 4012
+            desc: '下载服务器日志',
           },
         },
       },

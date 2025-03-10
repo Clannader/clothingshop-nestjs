@@ -5,12 +5,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Profile } from '@node-saml/passport-saml';
 import * as fs from 'fs';
+import { join } from 'path';
 import { LoginResult, SECRET_CONFIG, SecurityOptions } from '@/common';
 import { ConfigService } from '@/common/config';
 import { UserService } from '@/user';
 import { CodeEnum, LanguageEnum } from '@/common/enum';
 import { ReqUserLoginDto } from '@/user/dto';
 import { CodeException } from '@/common/exceptions';
+import parseEnv from '@/lib/parseEnv';
 
 @Injectable()
 export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
@@ -29,7 +31,7 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
       issuer: secretConfig.get<string>('issuer'),
       idpCert: fs
         .readFileSync(
-          secretConfig.getPemPath() + '/azure-ad-certificate.pem',
+          join(parseEnv.getPemPath(), 'azure-ad-certificate.pem'),
           'utf-8',
         )
         .toString(),
