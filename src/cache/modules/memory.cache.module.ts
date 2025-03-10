@@ -18,6 +18,7 @@ import { SecuritySessionCacheModule } from './security.session.cache.module';
         };
         return {
           stores: [
+            // @ts-ignore
             new Keyv({
               store: new CacheableMemory(options),
             }),

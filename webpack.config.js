@@ -22,8 +22,8 @@ module.exports = function (options) {
         patterns: [
           { from: 'public', to: 'public' },
           { from: 'views', to: 'views' },
-        ]
-      })
-    ]
+        ],
+      }),
+    ],
   };
 };
