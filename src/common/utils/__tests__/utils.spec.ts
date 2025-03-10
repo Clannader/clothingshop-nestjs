@@ -62,11 +62,11 @@ describe('Utils', () => {
   });
 
   it('文件大小测试', () => {
-    expect(Utils.getFileSize(256)).toBe('256B');
-    expect(Utils.getFileSize(256 * 1024)).toBe('256KB');
-    expect(Utils.getFileSize(256 * 1024 * 1024)).toBe('256MB');
-    expect(Utils.getFileSize(256 * 1024 * 1024 * 1024)).toBe('256GB');
-    expect(Utils.getFileSize(256 * 1024 * 1024 * 1024 * 1024)).toBe('256TB');
+    expect(Utils.getFileSize(256)).toBe('256.00B');
+    expect(Utils.getFileSize(256 * 1024)).toBe('256.00KB');
+    expect(Utils.getFileSize(256 * 1024 * 1024)).toBe('256.00MB');
+    expect(Utils.getFileSize(256 * 1024 * 1024 * 1024)).toBe('256.00GB');
+    expect(Utils.getFileSize(256 * 1024 * 1024 * 1024 * 1024)).toBe('256.00TB');
 
     expect(Utils.getFileSize(1.256 * 1024, 3)).toBe('1.256KB');
     expect(Utils.getFileSize(1.256 * 1024, 2)).toBe('1.26KB');
