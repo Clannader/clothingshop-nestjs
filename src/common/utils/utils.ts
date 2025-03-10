@@ -154,7 +154,7 @@ export class Utils {
    * @param size 文件的字节大小
    * @param fixed 保留几位小数
    */
-  static getFileSize(size: number, fixed?: number): string {
+  static getFileSize(size: number, fixed: number = 2): string {
     if (size === 0) return '0B';
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
