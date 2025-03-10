@@ -55,7 +55,7 @@ export class ServerLogController {
   }
 
   @ApiExcludeEndpoint(true)
-  @Get('/logs')
+  @Get('/internal/list')
   @ApiOperation({
     summary: '内部获取服务器日志列表',
     description: '内部获取服务器日志列表',

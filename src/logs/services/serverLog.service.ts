@@ -10,10 +10,14 @@ import {
   ListServerLogDto,
   ReqServerLogListDto,
   RespInternalServerLogDto,
+  LogDetails,
 } from '@/logs/dto';
 import { CodeEnum } from '@/common/enum';
 import { CmsSession } from '@/common';
 import Axios from 'axios';
+import { join } from 'path';
+import * as fs from 'fs';
+import * as moment from 'moment';
 
 @Injectable()
 export class ServerLogService {
@@ -58,7 +62,7 @@ export class ServerLogService {
     };
     let i = 0;
     for (const serverAddress of serverArray) {
-      const url = `http://${serverAddress}/cms/api/logs/serverLog/logs`;
+      const url = `http://${serverAddress}/cms/api/logs/serverLog/internal/list`;
       const [err, requestResult] = await Utils.toPromise(
         Axios.create({
           timeout: 30 * 1000,
@@ -93,6 +97,46 @@ export class ServerLogService {
 
   getInternalServerLogList(params: ReqServerLogListDto) {
     const resp = new RespInternalServerLogDto();
+    const readServerLog = new ReadServerLog();
+    let startDate = null;
+    if (!Utils.isEmpty(params.date)) {
+      startDate = new Date(params.date);
+    }
+    resp.logs = readServerLog.getRangeFiles('logs', startDate);
     return resp;
+  }
+}
+
+class ReadServerLog {
+  private readonly rootPath = join(process.cwd());
+
+  getRangeFiles(path: string, date: Date): LogDetails[] {
+    const result: LogDetails[] = [];
+    if (date) {
+      date.setHours(0);
+      date.setMinutes(0);
+      date.setSeconds(0);
+    }
+    const logPath = join(this.rootPath, path);
+    fs.readdirSync(logPath)
+      .filter((fileName) => /^(server)\.log\.\d{4}-\d{2}-\d{2}$/.test(fileName))
+      .forEach((fileName) => {
+        const stat = fs.statSync(join(logPath, fileName));
+        const mtime = stat.mtime;
+        if (!date || mtime.getTime() >= date.getTime()) {
+          result.push({
+            fileName,
+            fileSize: stat.size,
+            fileSizeLabel: Utils.getFileSize(stat.size),
+            createTimeMs: stat.birthtimeMs,
+            createDate: moment(stat.birthtimeMs).format('YYYY-MM-DD'),
+          });
+        }
+      });
+    result.sort((t1, t2) => {
+      // 按创建日期倒叙
+      return t2.createTimeMs - t1.createTimeMs;
+    });
+    return result;
   }
 }

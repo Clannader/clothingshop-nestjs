@@ -15,6 +15,23 @@ export class LogDetails {
    */
   @Expose()
   fileSize: number;
+
+  /**
+   * 日志文件大小Label
+   */
+  @Expose()
+  fileSizeLabel: string;
+
+  /**
+   * 创建日期的时间戳
+   */
+  @Expose()
+  createTimeMs: number;
+
+  /**
+   * 创建日期标准格式YYYY-MM-DD
+   */
+  createDate: string;
 }
 
 export class ListServerLogDto {
