@@ -39,6 +39,7 @@ export class ValidationPipe<T> implements PipeTransform<T> {
       'isArray',
       'isNotEmpty',
       'isEnum',
+      'isDateString',
       'matches',
       'customValidation',
     ];
