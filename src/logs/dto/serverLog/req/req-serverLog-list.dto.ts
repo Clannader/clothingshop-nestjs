@@ -22,6 +22,5 @@ export class ReqServerLogListDto {
     message: '$property must be a valid YYYY-MM-DD date string',
   })
   @Expose()
-  // TODO 新增日期格式校验
   date?: string;
 }
