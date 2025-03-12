@@ -11,6 +11,8 @@ import {
   ReqServerLogListDto,
   RespInternalServerLogDto,
   LogDetails,
+  ReqServerLogViewDto,
+  RespServerLogViewDto,
 } from '@/logs/dto';
 import { CodeEnum } from '@/common/enum';
 import { CmsSession } from '@/common';
@@ -105,6 +107,12 @@ export class ServerLogService {
     resp.logs = readServerLog.getRangeFiles('logs', startDate);
     return resp;
   }
+
+  viewServerLogFile(session: CmsSession, params: ReqServerLogViewDto) {
+    const resp = new RespServerLogViewDto();
+    return resp;
+  }
+
 }
 
 class ReadServerLog {

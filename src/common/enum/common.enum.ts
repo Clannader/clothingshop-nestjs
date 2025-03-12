@@ -109,3 +109,11 @@ export enum SystemConfigTypeEnum {
   ParentConfig = 'ParentConfig',
   ChildrenConfig = 'ChildrenConfig',
 }
+
+/**
+ * 服务器日志查看类型
+ */
+export enum ServerLogViewEnum {
+  View = 'View',
+  Download = 'Download',
+}
