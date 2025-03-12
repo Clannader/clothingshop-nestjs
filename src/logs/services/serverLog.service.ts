@@ -184,7 +184,6 @@ class ReadServerLog {
 
   getFileStream(dirPath: string, fileName: string, options: ReadFileOptions) {
     const logPath = join(this.rootPath, dirPath, fileName);
-    console.log(logPath);
     if (!fs.existsSync(logPath)) {
       return Promise.reject({
         message: `The fileName (${fileName}) is not exist`,
