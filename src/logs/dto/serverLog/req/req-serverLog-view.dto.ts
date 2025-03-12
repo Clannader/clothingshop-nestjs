@@ -3,20 +3,22 @@
  */
 import { Expose } from 'class-transformer';
 import { ReqServerLogDownloadDto } from './req-serverLog-download.dto';
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsOptional } from 'class-validator';
 
 export class ReqServerLogViewDto extends ReqServerLogDownloadDto {
   /**
-   * 开始字节数
+   * 开始字节数,默认0
    */
-  @Expose()
+  @IsOptional()
   @IsNumber()
-  startByte: number;
+  @Expose()
+  startByte?: number = 0;
 
   /**
-   * 结束字节数
+   * 结束字节数,默认10kb
    */
-  @Expose()
+  @IsOptional()
   @IsNumber()
-  endByte: number;
+  @Expose()
+  endByte?: number = 10 * 1024;
 }

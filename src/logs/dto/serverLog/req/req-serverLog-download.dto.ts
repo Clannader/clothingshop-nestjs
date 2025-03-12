@@ -27,7 +27,7 @@ export class ReqServerLogDownloadDto {
   @Expose()
   @IsString()
   @Matches(/^server.log.\d{4}-\d{2}-\d{2}$/, {
-    message: 'The fileName $value is invalid',
+    message: 'The fileName ($value) is invalid',
   })
   logName: string;
 }
