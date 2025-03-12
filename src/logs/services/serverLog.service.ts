@@ -112,7 +112,6 @@ export class ServerLogService {
     const resp = new RespServerLogViewDto();
     return resp;
   }
-
 }
 
 class ReadServerLog {

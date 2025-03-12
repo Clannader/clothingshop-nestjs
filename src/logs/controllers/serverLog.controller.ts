@@ -4,10 +4,14 @@
 import {
   Controller,
   Get,
+  Post,
   Inject,
   Query,
   UseGuards,
   UseInterceptors,
+  HttpCode,
+  HttpStatus,
+  Body,
 } from '@nestjs/common';
 import { ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import {
@@ -25,8 +29,14 @@ import {
   RespServerLogListDto,
   ReqServerLogListDto,
   RespInternalServerLogDto,
+  RespServerLogViewDto,
+  RespServerLogDownloadDto,
+  ReqServerLogViewDto,
+  ReqServerLogDownloadDto,
 } from '../dto';
 import { CmsSession } from '@/common';
+import { plainToInstance } from 'class-transformer';
+import { ServerLogViewEnum } from '@/common/enum';
 
 @ApiCommon()
 @Controller('/cms/api/logs/serverLog')
@@ -66,5 +76,41 @@ export class ServerLogController {
   @ApiRights(RightsEnum.ServerLogView)
   getInternalServerLogList(@Query() params: ReqServerLogListDto) {
     return this.serverLogService.getInternalServerLogList(params);
+  }
+
+  @Post('/view')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '查看指定日期的日志内容',
+    description: '查看指定日期的日志内容',
+  })
+  @ApiCustomResponse({
+    type: RespServerLogViewDto,
+  })
+  @ApiRights(RightsEnum.ServerLogView)
+  viewServerLogFile(
+    @Body() params: ReqServerLogViewDto,
+    @UserSession() session: CmsSession,
+  ) {
+    return this.serverLogService.viewServerLogFile(session, params);
+  }
+
+  @Post('/download')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '下载指定日期的日志内容',
+    description: '下载指定日期的日志内容',
+  })
+  @ApiCustomResponse({
+    type: RespServerLogDownloadDto,
+  })
+  @ApiRights(RightsEnum.ServerLogDownload)
+  downloadServerLogFile(
+    @Body() params: ReqServerLogDownloadDto,
+    @UserSession() session: CmsSession,
+  ) {
+    const viewParams = plainToInstance(ReqServerLogViewDto, params);
+    viewParams.viewType = ServerLogViewEnum.Download;
+    return this.serverLogService.viewServerLogFile(session, viewParams);
   }
 }

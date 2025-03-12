@@ -2,7 +2,7 @@
  * Create by oliver.wu 2025/3/12
  */
 import { Expose } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, Matches } from 'class-validator';
+import { IsString, Matches } from 'class-validator';
 import { ServerLogViewEnum } from '@/common/enum';
 import { ApiHideProperty } from '@nestjs/swagger';
 
@@ -27,7 +27,7 @@ export class ReqServerLogDownloadDto {
   @Expose()
   @IsString()
   @Matches(/^server.log.\d{4}-\d{2}-\d{2}$/, {
-    message: 'The fileName $property is invalid',
+    message: 'The fileName $value is invalid',
   })
   logName: string;
 }
