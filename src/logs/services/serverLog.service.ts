@@ -128,7 +128,7 @@ export class ServerLogService {
     const readServerLog = new ReadServerLog();
     // TODO 暂时没写访问其他服务器日志逻辑
     const [err, result] = await Utils.toPromise<DownloadLogDetails>(
-      readServerLog.getFileStream('logs', params.serverName, {
+      readServerLog.getFileStream('logs', params.logName, {
         start: params.startByte,
         end: params.endByte,
       }),
@@ -184,6 +184,7 @@ class ReadServerLog {
 
   getFileStream(dirPath: string, fileName: string, options: ReadFileOptions) {
     const logPath = join(this.rootPath, dirPath, fileName);
+    console.log(logPath);
     if (!fs.existsSync(logPath)) {
       return Promise.reject({
         message: `The fileName (${fileName}) is not exist`,
@@ -201,59 +202,62 @@ class ReadServerLog {
     }
     let startByte = options.start;
     let endByte = options.end;
-    const stream = fs.createReadStream(logPath, readOptions);
-    let bufferStr = '';
-    stream.on('data', (chunk) => {
-      bufferStr += chunk.toString();
-    });
 
-    stream.on('error', (err) => {
-      return Promise.reject(err);
-    });
+    return new Promise<DownloadLogDetails>((resolve, reject) => {
+      const stream = fs.createReadStream(logPath, readOptions);
+      let bufferStr = '';
+      stream.on('data', (chunk) => {
+        bufferStr += chunk.toString();
+      });
 
-    stream.on('end', () => {
-      // 读取文件结束时,查一下文件的总大小
-      const fsStat = fs.statSync(logPath);
-      const hasMore = fsStat.size > endByte;
-      if (isView) {
-        startByte = endByte + 1; // 这里返回给前端下一次加载的开始位
-        endByte += 10 * 1024;
-        // 判断bufferArr的最后一位是否是乱码,否则不返回
-        const lastChar = bufferStr.substring(
-          bufferStr.length - 1,
-          bufferStr.length,
-        );
-        if (lastChar === '�') {
-          // 这里占了1个位数
-          bufferStr = bufferStr.substring(0, bufferStr.length - 1);
-          // 这里确实有需要研究一下,因为中文在utf-8里面占用3个字节
-          // 然后满3位的时候可以变成真的中文,但是满1位或者2位的时候,会变成�
-          // 然后这时候bufferArr里面的�,并不知道是占了2位还是1位,所以才导致了
-          // 有时候要减2位或者1位的情况
-          /**
-           * 中文汉字：
-           字节数 : 2;编码：GB2312
-           字节数 : 2;编码：GBK
-           字节数 : 2;编码：GB18030
-           字节数 : 1;编码：ISO-8859-1
-           字节数 : 3;编码：UTF-8
-           字节数 : 4;编码：UTF-16
-           字节数 : 2;编码：UTF-16BE
-           字节数 : 2;编码：UTF-16LE
-           */
-          startByte -= 2;
+      stream.on('error', (err) => {
+        return reject(err);
+      });
+
+      stream.on('end', () => {
+        // 读取文件结束时,查一下文件的总大小
+        const fsStat = fs.statSync(logPath);
+        const hasMore = fsStat.size > endByte;
+        if (isView) {
+          startByte = endByte + 1; // 这里返回给前端下一次加载的开始位
+          endByte += 10 * 1024;
+          // 判断bufferArr的最后一位是否是乱码,否则不返回
+          const lastChar = bufferStr.substring(
+            bufferStr.length - 1,
+            bufferStr.length,
+          );
+          if (lastChar === '�') {
+            // 这里占了1个位数
+            bufferStr = bufferStr.substring(0, bufferStr.length - 1);
+            // 这里确实有需要研究一下,因为中文在utf-8里面占用3个字节
+            // 然后满3位的时候可以变成真的中文,但是满1位或者2位的时候,会变成�
+            // 然后这时候bufferArr里面的�,并不知道是占了2位还是1位,所以才导致了
+            // 有时候要减2位或者1位的情况
+            /**
+             * 中文汉字：
+             字节数 : 2;编码：GB2312
+             字节数 : 2;编码：GBK
+             字节数 : 2;编码：GB18030
+             字节数 : 1;编码：ISO-8859-1
+             字节数 : 3;编码：UTF-8
+             字节数 : 4;编码：UTF-16
+             字节数 : 2;编码：UTF-16BE
+             字节数 : 2;编码：UTF-16LE
+             */
+            startByte -= 2;
+          }
+          const firstChar = bufferStr.substring(0, 1);
+          if (firstChar === '�') {
+            // 如果startByte减多了1,就会导致第一个是乱码,去掉即可
+            bufferStr = bufferStr.substring(1);
+          }
         }
-        const firstChar = bufferStr.substring(0, 1);
-        if (firstChar === '�') {
-          // 如果startByte减多了1,就会导致第一个是乱码,去掉即可
-          bufferStr = bufferStr.substring(1);
-        }
-      }
-      return Promise.resolve({
-        content: Utils.stringToBase64(bufferStr),
-        hasMore,
-        startByte,
-        endByte,
+        return resolve({
+          content: Utils.stringToBase64(bufferStr),
+          hasMore,
+          startByte,
+          endByte,
+        });
       });
     });
   }
