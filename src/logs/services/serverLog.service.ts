@@ -1,25 +1,37 @@
 /**
  * Create by oliver.wu 2025/3/7
  */
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@/common/config';
 import { GlobalService, Utils } from '@/common/utils';
 import validator from 'validator';
 import {
-  RespServerLogListDto,
   ListServerLogDto,
-  ReqServerLogListDto,
-  RespInternalServerLogDto,
   LogDetails,
+  ReqServerLogListDto,
   ReqServerLogViewDto,
+  RespInternalServerLogDto,
+  RespServerLogListDto,
   RespServerLogViewDto,
 } from '@/logs/dto';
-import { CodeEnum } from '@/common/enum';
+import { CodeEnum, ServerLogViewEnum } from '@/common/enum';
 import { CmsSession } from '@/common';
 import Axios from 'axios';
 import { join } from 'path';
 import * as fs from 'fs';
 import * as moment from 'moment';
+
+type DownloadLogDetails = {
+  content: string;
+  hasMore: boolean;
+  startByte: number;
+  endByte: number;
+};
+
+type ReadFileOptions = {
+  start: number;
+  end: number;
+};
 
 @Injectable()
 export class ServerLogService {
@@ -108,8 +120,31 @@ export class ServerLogService {
     return resp;
   }
 
-  viewServerLogFile(session: CmsSession, params: ReqServerLogViewDto) {
+  async viewServerLogFile(session: CmsSession, params: ReqServerLogViewDto) {
     const resp = new RespServerLogViewDto();
+    // 使用流来读文件
+    // 1.下载文件判断大小,超过大小的,按最末尾的下载最大文件回去
+    // 2.判断文件是否存在
+    const readServerLog = new ReadServerLog();
+    // TODO 暂时没写访问其他服务器日志逻辑
+    const [err, result] = await Utils.toPromise<DownloadLogDetails>(
+      readServerLog.getFileStream('logs', params.serverName, {
+        start: params.startByte,
+        end: params.endByte,
+      }),
+    );
+    if (err) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = err.message;
+      return resp;
+    }
+    if (params.viewType === ServerLogViewEnum.View) {
+      resp.hasMore = result.hasMore;
+      resp.startByte = result.startByte;
+      resp.endByte = result.endByte;
+    }
+    resp.logContent = result.content;
+    resp.code = CodeEnum.SUCCESS;
     return resp;
   }
 }
@@ -117,14 +152,14 @@ export class ServerLogService {
 class ReadServerLog {
   private readonly rootPath = join(process.cwd());
 
-  getRangeFiles(path: string, date: Date): LogDetails[] {
+  getRangeFiles(dirPath: string, date: Date): LogDetails[] {
     const result: LogDetails[] = [];
     if (date) {
       date.setHours(0);
       date.setMinutes(0);
       date.setSeconds(0);
     }
-    const logPath = join(this.rootPath, path);
+    const logPath = join(this.rootPath, dirPath);
     fs.readdirSync(logPath)
       .filter((fileName) => /^(server)\.log\.\d{4}-\d{2}-\d{2}$/.test(fileName))
       .forEach((fileName) => {
@@ -145,5 +180,81 @@ class ReadServerLog {
       return t2.createTimeMs - t1.createTimeMs;
     });
     return result;
+  }
+
+  getFileStream(dirPath: string, fileName: string, options: ReadFileOptions) {
+    const logPath = join(this.rootPath, dirPath, fileName);
+    if (!fs.existsSync(logPath)) {
+      return Promise.reject({
+        message: `The fileName (${fileName}) is not exist`,
+      });
+    }
+    const readOptions = {
+      // encoding: 'utf8',
+      start: undefined,
+      end: undefined,
+    };
+    const isView = !Utils.isEmpty(options.start) && !Utils.isEmpty(options.end);
+    if (isView) {
+      readOptions.start = options.start;
+      readOptions.end = options.end;
+    }
+    let startByte = options.start;
+    let endByte = options.end;
+    const stream = fs.createReadStream(logPath, readOptions);
+    let bufferStr = '';
+    stream.on('data', (chunk) => {
+      bufferStr += chunk.toString();
+    });
+
+    stream.on('error', (err) => {
+      return Promise.reject(err);
+    });
+
+    stream.on('end', () => {
+      // 读取文件结束时,查一下文件的总大小
+      const fsStat = fs.statSync(logPath);
+      const hasMore = fsStat.size > endByte;
+      if (isView) {
+        startByte = endByte + 1; // 这里返回给前端下一次加载的开始位
+        endByte += 10 * 1024;
+        // 判断bufferArr的最后一位是否是乱码,否则不返回
+        const lastChar = bufferStr.substring(
+          bufferStr.length - 1,
+          bufferStr.length,
+        );
+        if (lastChar === '�') {
+          // 这里占了1个位数
+          bufferStr = bufferStr.substring(0, bufferStr.length - 1);
+          // 这里确实有需要研究一下,因为中文在utf-8里面占用3个字节
+          // 然后满3位的时候可以变成真的中文,但是满1位或者2位的时候,会变成�
+          // 然后这时候bufferArr里面的�,并不知道是占了2位还是1位,所以才导致了
+          // 有时候要减2位或者1位的情况
+          /**
+           * 中文汉字：
+           字节数 : 2;编码：GB2312
+           字节数 : 2;编码：GBK
+           字节数 : 2;编码：GB18030
+           字节数 : 1;编码：ISO-8859-1
+           字节数 : 3;编码：UTF-8
+           字节数 : 4;编码：UTF-16
+           字节数 : 2;编码：UTF-16BE
+           字节数 : 2;编码：UTF-16LE
+           */
+          startByte -= 2;
+        }
+        const firstChar = bufferStr.substring(0, 1);
+        if (firstChar === '�') {
+          // 如果startByte减多了1,就会导致第一个是乱码,去掉即可
+          bufferStr = bufferStr.substring(1);
+        }
+      }
+      return Promise.resolve({
+        content: Utils.stringToBase64(bufferStr),
+        hasMore,
+        startByte,
+        endByte,
+      });
+    });
   }
 }

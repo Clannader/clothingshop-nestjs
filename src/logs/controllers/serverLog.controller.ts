@@ -37,6 +37,7 @@ import {
 import { CmsSession } from '@/common';
 import { plainToInstance } from 'class-transformer';
 import { ServerLogViewEnum } from '@/common/enum';
+import { Utils } from '@/common/utils';
 
 @ApiCommon()
 @Controller('/cms/api/logs/serverLog')
@@ -92,6 +93,12 @@ export class ServerLogController {
     @Body() params: ReqServerLogViewDto,
     @UserSession() session: CmsSession,
   ) {
+    if (Utils.isEmpty(params.startByte)) {
+      params.startByte = 0;
+    }
+    if (Utils.isEmpty(params.endByte)) {
+      params.endByte = 10 * 1024;
+    }
     return this.serverLogService.viewServerLogFile(session, params);
   }
 
