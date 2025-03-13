@@ -28,7 +28,7 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
     super({
       callbackUrl: secretConfig.get<string>('callbackUrl'),
       entryPoint: secretConfig.get<string>('entryPoint'),
-      issuer: secretConfig.get<string>('issuer'),
+      issuer: secretConfig.get<string>('issuer'), // 有些时候需要加上spn:{{issuerID}}
       idpCert: fs
         .readFileSync(
           join(parseEnv.getPemPath(), 'azure-ad-certificate.pem'),
@@ -38,6 +38,7 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
       identifierFormat: null,
       validateInResponseTo: 'never', // 可使用值never, ifPresent, always
       disableRequestedAuthnContext: true,
+      wantAuthnResponseSigned: false, // 跳过签名验证,不到万不得已不可以设置false
       // forceAuthn: true, // 每次跳转都要重新验证
     });
   }
@@ -58,6 +59,8 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
       securityOptions,
     );
     if (result.code !== CodeEnum.SUCCESS) {
+      // 如果想给前端一个友好的提示错误信息的话,确实需要返回一个结果,而不是抛出异常
+      // 需要返回结果然后重定向到前端某个路由
       throw new CodeException(result.code, result.message);
     }
     return result;
