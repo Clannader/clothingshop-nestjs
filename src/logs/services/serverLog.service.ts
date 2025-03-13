@@ -83,6 +83,8 @@ export class ServerLogService {
         logs: data.logs || [],
       });
     }
+    resp.code = CodeEnum.SUCCESS;
+    resp.serverLogs = serverLogList;
     return resp;
   }
 
@@ -151,9 +153,7 @@ export class ServerLogService {
       return resp;
     }
     const serverIndex = serverMatch[1];
-    console.log(serverIndex);
     const serverAddress = serverUrl[+serverIndex - 1];
-    console.log(serverAddress);
 
     const type =
       params.viewType === ServerLogViewEnum.View ? 'view' : 'download';
@@ -180,7 +180,7 @@ export class ServerLogService {
       resp.startByte = data.startByte;
       resp.endByte = data.endByte;
     }
-    resp.logContent = data.content;
+    resp.logContent = data.logContent;
     resp.code = CodeEnum.SUCCESS;
     return resp;
   }
@@ -194,7 +194,6 @@ export class ServerLogService {
     // 1.下载文件判断大小,超过大小的,按最末尾的下载最大文件回去
     // 2.判断文件是否存在
     const readServerLog = new ReadServerLog();
-    // TODO 暂时没写访问其他服务器日志逻辑
     const [err, result] = await Utils.toPromise<DownloadLogDetails>(
       readServerLog.getFileStream('logs', params.logName, {
         start: params.startByte,
