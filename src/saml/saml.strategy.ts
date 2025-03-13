@@ -35,7 +35,7 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
           'utf-8',
         )
         .toString(),
-      identifierFormat: null,
+      identifierFormat: null, // 不清楚有什么用
       validateInResponseTo: 'never', // 可使用值never, ifPresent, always
       disableRequestedAuthnContext: true,
       wantAuthnResponseSigned: false, // 跳过签名验证,不到万不得已不可以设置false
