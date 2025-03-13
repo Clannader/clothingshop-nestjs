@@ -93,13 +93,31 @@ export class ServerLogController {
     @Body() params: ReqServerLogViewDto,
     @UserSession() session: CmsSession,
   ) {
+    return this.serverLogService.viewServerLogFile(session, params);
+  }
+
+  @ApiExcludeEndpoint(true)
+  @Post('/internal/view')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '内部查看指定日期的日志内容',
+    description: '内部查看指定日期的日志内容',
+  })
+  @ApiCustomResponse({
+    type: RespServerLogViewDto,
+  })
+  @ApiRights(RightsEnum.ServerLogView)
+  internalViewServerLogFile(
+    @Body() params: ReqServerLogViewDto,
+    @UserSession() session: CmsSession,
+  ) {
     if (Utils.isEmpty(params.startByte)) {
       params.startByte = 0;
     }
     if (Utils.isEmpty(params.endByte)) {
       params.endByte = 10 * 1024;
     }
-    return this.serverLogService.viewServerLogFile(session, params);
+    return this.serverLogService.internalViewServerLogFile(session, params);
   }
 
   @Post('/download')
@@ -119,5 +137,25 @@ export class ServerLogController {
     const viewParams = plainToInstance(ReqServerLogViewDto, params);
     viewParams.viewType = ServerLogViewEnum.Download;
     return this.serverLogService.viewServerLogFile(session, viewParams);
+  }
+
+  @ApiExcludeEndpoint(true)
+  @Post('/internal/download')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '内部下载指定日期的日志内容',
+    description: '内部下载指定日期的日志内容',
+  })
+  @ApiCustomResponse({
+    type: RespServerLogDownloadDto,
+  })
+  @ApiRights(RightsEnum.ServerLogDownload)
+  internalDownloadServerLogFile(
+    @Body() params: ReqServerLogDownloadDto,
+    @UserSession() session: CmsSession,
+  ) {
+    const viewParams = plainToInstance(ReqServerLogViewDto, params);
+    viewParams.viewType = ServerLogViewEnum.Download;
+    return this.serverLogService.internalViewServerLogFile(session, viewParams);
   }
 }

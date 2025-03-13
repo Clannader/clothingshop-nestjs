@@ -42,25 +42,12 @@ export class ServerLogService {
   private readonly globalService: GlobalService;
 
   async getServerLogList(session: CmsSession, params: ReqServerLogListDto) {
-    const serverUrl = this.configService.get<string>('serverLog');
     const resp = new RespServerLogListDto();
     const serverLogList: ListServerLogDto[] = [];
-
-    resp.serverLogs = serverLogList;
+    const serverUrl = this.getServerUrl();
     if (Utils.isEmpty(serverUrl)) {
-      return resp;
-    }
-    // 校验serverLog的配置是不是ip:port,ip2:port2这种格式
-    const serverArray = serverUrl.split(',');
-    let isValidatorAddress = true;
-    for (const serverAddress of serverArray) {
-      isValidatorAddress = this.validatorAddress(serverAddress);
-      if (!isValidatorAddress) {
-        break;
-      }
-    }
-    if (!isValidatorAddress) {
-      resp.code = CodeEnum.FAIL;
+      resp.code = CodeEnum.SUCCESS;
+      resp.serverLogs = serverLogList;
       resp.msg = this.globalService.serverLang(
         session,
         '服务器日志地址格式错误',
@@ -75,7 +62,7 @@ export class ServerLogService {
       credential: session.credential,
     };
     let i = 0;
-    for (const serverAddress of serverArray) {
+    for (const serverAddress of serverUrl) {
       const url = `http://${serverAddress}/cms/api/logs/serverLog/internal/list`;
       const [err, requestResult] = await Utils.toPromise(
         Axios.create({
@@ -120,7 +107,88 @@ export class ServerLogService {
     return resp;
   }
 
+  private getServerUrl(): string[] {
+    const serverUrl = this.configService.get<string>('serverLog');
+    if (Utils.isEmpty(serverUrl)) {
+      return [];
+    }
+    // 校验serverLog的配置是不是ip:port,ip2:port2这种格式
+    const serverArray = serverUrl.split(',');
+    let isValidatorAddress = true;
+    for (const serverAddress of serverArray) {
+      isValidatorAddress = this.validatorAddress(serverAddress);
+      if (!isValidatorAddress) {
+        break;
+      }
+    }
+    if (!isValidatorAddress) {
+      return [];
+    }
+    return serverArray;
+  }
+
   async viewServerLogFile(session: CmsSession, params: ReqServerLogViewDto) {
+    const resp = new RespServerLogViewDto();
+    const serverUrl = this.getServerUrl();
+    if (Utils.isEmpty(serverUrl)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '服务器日志地址配置错误',
+        'serverLog.logAddressError',
+      );
+      return resp;
+    }
+    const serverName = params.serverName;
+    const serverMatch = serverName.match(/^Server(\d)$/);
+    if (!serverMatch || +serverMatch[1] - 1 >= serverUrl.length) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '该服务器不存在',
+        'serverLog.serverNameIsNotExists',
+      );
+      return resp;
+    }
+    const serverIndex = serverMatch[1];
+    console.log(serverIndex);
+    const serverAddress = serverUrl[+serverIndex - 1];
+    console.log(serverAddress);
+
+    const type =
+      params.viewType === ServerLogViewEnum.View ? 'view' : 'download';
+    const headers = {
+      'Content-Type': 'application/json;charset=UTF-8',
+      'X-Requested-With': 'XMLHttpRequest',
+      credential: session.credential,
+    };
+    const url = `http://${serverAddress}/cms/api/logs/serverLog/internal/${type}`;
+    const [err, requestResult] = await Utils.toPromise(
+      Axios.create({
+        timeout: 30 * 1000,
+        headers,
+      }).post(url, params),
+    );
+    if (err || requestResult.data.code !== CodeEnum.SUCCESS) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = err?.message || requestResult?.data?.msg;
+      return resp;
+    }
+    const data = requestResult.data;
+    if (params.viewType === ServerLogViewEnum.View) {
+      resp.hasMore = data.hasMore;
+      resp.startByte = data.startByte;
+      resp.endByte = data.endByte;
+    }
+    resp.logContent = data.content;
+    resp.code = CodeEnum.SUCCESS;
+    return resp;
+  }
+
+  async internalViewServerLogFile(
+    session: CmsSession,
+    params: ReqServerLogViewDto,
+  ) {
     const resp = new RespServerLogViewDto();
     // 使用流来读文件
     // 1.下载文件判断大小,超过大小的,按最末尾的下载最大文件回去
