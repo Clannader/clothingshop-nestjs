@@ -35,7 +35,7 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
           'utf-8',
         )
         .toString(),
-      identifierFormat: null,
+      identifierFormat: null, // 不清楚有什么用
       validateInResponseTo: 'never', // 可使用值never, ifPresent, always
       disableRequestedAuthnContext: true,
       wantAuthnResponseSigned: false, // 跳过签名验证,不到万不得已不可以设置false
@@ -61,7 +61,11 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
     if (result.code !== CodeEnum.SUCCESS) {
       // 如果想给前端一个友好的提示错误信息的话,确实需要返回一个结果,而不是抛出异常
       // 需要返回结果然后重定向到前端某个路由
-      throw new CodeException(result.code, result.message);
+      // throw new CodeException(result.code, result.message);
+      result.errorMsg = {
+        code: result.code,
+        message: result.message,
+      };
     }
     return result;
   }

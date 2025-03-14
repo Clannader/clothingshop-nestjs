@@ -1,7 +1,6 @@
 {
-  "name": "clothingshop-nestjs",
+  "name": "@andybeat/clothingshop-nestjs",
   "version": "2.6.0",
-  "private": true,
   "packageManager": "npm@10.8.2",
   "description": "Typescript Backend Server",
   "author": {
@@ -25,6 +24,7 @@
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
     "start:debug": "cross-env NODE_ENV=development nest start --debug --watch",
     "start:prod": "cross-env NODE_ENV=production node build/main",
+    "publish:npm": "npm publish --access public",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test": "jest",
@@ -35,7 +35,7 @@
     "compodoc": "npx compodoc -p tsconfig.json -s"
   },
   "dependencies": {
-    "@andybeat/schedule": "^2.0.0",
+    "@andybeat/schedule": "^2.0.1",
     "@nestjs/cache-manager": "^3.0.0",
     "@nestjs/common": "^11.0.11",
     "@nestjs/core": "^11.0.10",

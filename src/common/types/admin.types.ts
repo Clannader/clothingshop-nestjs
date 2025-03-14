@@ -20,4 +20,8 @@ export type LoginResult = ErrorPromise & {
     shopList: string[];
     currentShop: string;
   };
+  errorMsg?: {
+    code: number;
+    message: string;
+  };
 };

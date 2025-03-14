@@ -241,3 +241,10 @@ openssl: https://slproweb.com/products/Win32OpenSSL.html
 jqlang: https://jqlang.github.io/jq/download/
 Wireshark: https://www.wireshark.org/#downloadLink
 OWASP ZAP: https://www.zaproxy.org/download/
+
+24.npm 发布包
+首先申请一个npm的账号
+.npmignore: 该文件是用来忽略不需要发布的文件的
+发布命令: npm publish --access public
+删除包命令: npm unpublish 包名@版本号 --force
+下载npm包zip文件: npm pack 包名
