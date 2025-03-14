@@ -18,6 +18,7 @@ import { ApiTagsController } from '@/common/decorator';
 import { ApiOperation } from '@nestjs/swagger';
 import { RequestSession } from '@/common';
 import { UserService } from '@/user';
+import { RespUserLoginDto } from '@/user/dto';
 
 @Controller('/sso')
 @ApiTagsController('SamlAuthController', 'SSO登录模块')
@@ -46,6 +47,12 @@ export class SamlAuthController {
     // 如果微软校验通过,app认证用户存在则req.user有值
     // 如果有任何错误,直接抛出异常得了
     const authUser = req.user;
+    if (authUser.errorMsg) {
+      const resp = new RespUserLoginDto();
+      resp.code = authUser.errorMsg.code;
+      resp.msg = authUser.errorMsg.message;
+      return resp;
+    }
     // 这里拿到了返回的session信息后,需要重定向到前端页面
     // 例如: res.redirect('/ssoLogin?token=xxx'),加密后的token给前端解析即可
     // 参考老版本前端代码的路由免登录逻辑

@@ -92,9 +92,12 @@ export class TestTasksService {
     //   traceId: Date.now().toString(),
     // };
     // await this.adminLogSchemaService.createUserLog(logInfo);
+    console.log(
+      `第一种定时器: ${workerId}--------------------------${moment().format('YYYY-MM-DD HH:mm:ss,SSS')}`,
+    );
   }
 
-  @Interval(TestIntervalType, 20 * 1000)
+  @Interval(TestIntervalType, 13 * 1000)
   async handleTestInterval() {
     const workerId = cluster.worker ? cluster.worker.id : 1;
     console.log(
