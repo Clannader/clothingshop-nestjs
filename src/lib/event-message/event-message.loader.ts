@@ -112,7 +112,7 @@ export class EventMessageLoader
   }
 
   private warnForNonStaticProviders(
-    wrapper: InstanceWrapper<any>,
+    wrapper: InstanceWrapper,
     instance: Record<string, Function>,
     key: string,
   ) {

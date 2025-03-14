@@ -11,7 +11,6 @@ import { ConfigService } from '@/common/config';
 import { UserService } from '@/user';
 import { CodeEnum, LanguageEnum } from '@/common/enum';
 import { ReqUserLoginDto } from '@/user/dto';
-import { CodeException } from '@/common/exceptions';
 import parseEnv from '@/lib/parseEnv';
 
 @Injectable()
@@ -26,16 +25,16 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
     // 这里的ts校验不通过,看以后如何处理
     // @ts-ignore
     super({
-      callbackUrl: secretConfig.get<string>('callbackUrl'),
-      entryPoint: secretConfig.get<string>('entryPoint'),
-      issuer: secretConfig.get<string>('issuer'), // 有些时候需要加上spn:{{issuerID}}
+      callbackUrl: secretConfig.get<string>('callbackUrl'), // 设置为微软的Reply URL地址
+      entryPoint: secretConfig.get<string>('entryPoint'), // 设置为微软的登录地址
+      issuer: secretConfig.get<string>('issuer'), // 有些时候需要加上spn:{{issuerID}}, Application ID
       idpCert: fs
         .readFileSync(
           join(parseEnv.getPemPath(), 'azure-ad-certificate.pem'),
           'utf-8',
         )
         .toString(),
-      identifierFormat: null, // 不清楚有什么用
+      // identifierFormat: null, // 好像是解析SAML响应报文的用户邮箱格式,使用默认的即可
       validateInResponseTo: 'never', // 可使用值never, ifPresent, always
       disableRequestedAuthnContext: true,
       wantAuthnResponseSigned: false, // 跳过签名验证,不到万不得已不可以设置false
