@@ -12,6 +12,8 @@ tempUpload
 test
 version
 views
+!/build/public
+!/build/views
 
 # github
 .github
@@ -30,4 +32,6 @@ prettier.config.js
 tsconfig.json
 tsconfig.build.json
 webpack.config.js
+eslint.config.mjs
+package.json
 .idea
