@@ -35,7 +35,7 @@
     "compodoc": "npx compodoc -p tsconfig.json -s"
   },
   "dependencies": {
-    "@andybeat/schedule": "^2.0.0",
+    "@andybeat/schedule": "^2.0.1",
     "@nestjs/cache-manager": "^3.0.0",
     "@nestjs/common": "^11.0.11",
     "@nestjs/core": "^11.0.10",
