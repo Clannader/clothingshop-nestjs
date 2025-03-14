@@ -1,0 +1,33 @@
+# source
+config
+dist
+fileLogs
+logs
+node_modules
+pem
+public
+scripts
+src
+tempUpload
+test
+version
+views
+
+# github
+.github
+
+# vscode
+.vscode
+
+# ci
+.circleci
+
+# misc
+nest-cli.json
+nest-cli-build.json
+package-lock.json
+prettier.config.js
+tsconfig.json
+tsconfig.build.json
+webpack.config.js
+.idea
