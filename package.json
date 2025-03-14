@@ -1,7 +1,6 @@
 {
   "name": "@andybeat/clothingshop-nestjs",
   "version": "2.6.0",
-  "private": true,
   "packageManager": "npm@10.8.2",
   "description": "Typescript Backend Server",
   "author": {
