@@ -32,10 +32,10 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
     if (fs.existsSync(idpPath)) {
       idpCert = fs.readFileSync(idpPath, 'utf-8').toString();
     }
-    if (fs.existsSync(idpPath)) {
+    if (fs.existsSync(privatePath)) {
       privateKey = fs.readFileSync(privatePath, 'utf-8').toString();
     }
-    if (fs.existsSync(idpPath)) {
+    if (fs.existsSync(publicPath)) {
       publicCert = fs.readFileSync(publicPath, 'utf-8').toString();
     }
     // 这里的ts校验不通过,看以后如何处理
