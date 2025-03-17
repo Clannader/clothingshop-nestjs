@@ -53,12 +53,13 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
       digestAlgorithm: 'sha256', // 摘要算法,默认是sha256
       privateKey,
       publicCert,
+      signMetadata: true,
       authnRequestBinding: 'HTTP-Redirect', // 默认为HTTP-Redirect, 如果设置HTTP-POST才可以带签名过去
       // identifierFormat: null, // 好像是解析SAML响应报文的用户邮箱格式,使用默认的即可
       // validateInResponseTo: 'never', // 可使用值never, ifPresent, always,这个好像是判断请求ID,使用缓存逻辑,用默认内置的代码即可
       // disableRequestedAuthnContext: true, // 如果是真的话,就不需要特定的身份验证上下文
-      // wantAuthnResponseSigned: false, // 跳过签名验证,不到万不得已不可以设置false.这里的签名校验分响应的xml签名和内容断言的签名
-      // 如果设置跳过签名的话,会造成2个签名都跳过,目前测试微软响应的xml没有签名导致第一个xml签名校验失败,如果忽略xml签名,第二个签名就会成功
+      wantAuthnResponseSigned: true, // 跳过响应xml签名验证,如果响应的xml没有签名可以跳过
+      // wantAssertionsSigned: true, // 跳过断言xml签名验证
       // forceAuthn: true, // 每次跳转都要重新验证
     } as SamlOptions);
   }
