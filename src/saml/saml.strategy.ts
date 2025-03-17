@@ -3,7 +3,8 @@
  */
 import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, Profile, SamlOptions } from '@node-saml/passport-saml';
+import { Strategy } from '@node-saml/passport-saml';
+import { Profile, SamlOptions } from '@node-saml/node-saml/lib';
 import * as fs from 'fs';
 import { join } from 'path';
 import { LoginResult, SECRET_CONFIG, SecurityOptions } from '@/common';
@@ -22,22 +23,36 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
     @Inject(SECRET_CONFIG)
     private readonly secretConfig: ConfigService,
   ) {
+    let idpCert = ' ';
+    let privateKey = '';
+    let publicCert = '';
+    const idpPath = join(parseEnv.getPemPath(), 'azure-ad-certificate.pem');
+    const privatePath = join(parseEnv.getPemPath(), 'privateKey.pem');
+    const publicPath = join(parseEnv.getPemPath(), 'certificate.pem');
+    if (fs.existsSync(idpPath)) {
+      idpCert = fs.readFileSync(idpPath, 'utf-8').toString();
+    }
+    if (fs.existsSync(idpPath)) {
+      privateKey = fs.readFileSync(privatePath, 'utf-8').toString();
+    }
+    if (fs.existsSync(idpPath)) {
+      publicCert = fs.readFileSync(publicPath, 'utf-8').toString();
+    }
     // 这里的ts校验不通过,看以后如何处理
     // @ts-ignore
     super({
       callbackUrl: secretConfig.get<string>('callbackUrl'), // 设置为微软的Basic SAML Configuration -> Reply URL地址
       entryPoint: secretConfig.get<string>('entryPoint'), // 设置为微软的Set up XXX -> Login URL 登录地址
       issuer: secretConfig.get<string>('issuer'), // 有些时候需要加上spn:{{issuerID}}, Application ID
-      idpCert: fs
-        .readFileSync(
-          join(parseEnv.getPemPath(), 'azure-ad-certificate.pem'),
-          'utf-8',
-        )
-        .toString(), // 微软的SAML Certificates -> 下载证书
+      idpCert, // 微软的SAML Certificates -> 下载证书
       authnContext: [
         // 默认是 urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
         'urn:oasis:names:tc:SAML:2.0:ac:classes:Password',
       ],
+      signatureAlgorithm: 'sha256', // 签名算法,默认是sha256
+      digestAlgorithm: 'sha256', // 摘要算法,默认是sha256
+      privateKey,
+      publicCert,
       // identifierFormat: null, // 好像是解析SAML响应报文的用户邮箱格式,使用默认的即可
       // validateInResponseTo: 'never', // 可使用值never, ifPresent, always,这个好像是判断请求ID,使用缓存逻辑,用默认内置的代码即可
       // disableRequestedAuthnContext: true, // 如果是真的话,就不需要特定的身份验证上下文
