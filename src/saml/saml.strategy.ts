@@ -3,7 +3,7 @@
  */
 import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, Profile } from '@node-saml/passport-saml';
+import { Strategy, Profile, SamlOptions } from '@node-saml/passport-saml';
 import * as fs from 'fs';
 import { join } from 'path';
 import { LoginResult, SECRET_CONFIG, SecurityOptions } from '@/common';
@@ -34,12 +34,16 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
           'utf-8',
         )
         .toString(), // 微软的SAML Certificates -> 下载证书
+      authnContext: [
+        // 默认是 urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
+        'urn:oasis:names:tc:SAML:2.0:ac:classes:Password'
+      ],
       // identifierFormat: null, // 好像是解析SAML响应报文的用户邮箱格式,使用默认的即可
-      validateInResponseTo: 'never', // 可使用值never, ifPresent, always,这个好像是判断请求ID,使用缓存逻辑,用默认内置的代码即可
-      disableRequestedAuthnContext: true, // 如果是真的话,就不需要特定的身份验证上下文
+      // validateInResponseTo: 'never', // 可使用值never, ifPresent, always,这个好像是判断请求ID,使用缓存逻辑,用默认内置的代码即可
+      // disableRequestedAuthnContext: true, // 如果是真的话,就不需要特定的身份验证上下文
       wantAuthnResponseSigned: false, // 跳过签名验证,不到万不得已不可以设置false
       // forceAuthn: true, // 每次跳转都要重新验证
-    });
+    } as SamlOptions);
   }
 
   async validate(profile: Profile): Promise<LoginResult> {
