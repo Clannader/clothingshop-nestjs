@@ -25,18 +25,18 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
     // 这里的ts校验不通过,看以后如何处理
     // @ts-ignore
     super({
-      callbackUrl: secretConfig.get<string>('callbackUrl'), // 设置为微软的Reply URL地址
-      entryPoint: secretConfig.get<string>('entryPoint'), // 设置为微软的登录地址
+      callbackUrl: secretConfig.get<string>('callbackUrl'), // 设置为微软的Basic SAML Configuration -> Reply URL地址
+      entryPoint: secretConfig.get<string>('entryPoint'), // 设置为微软的Set up XXX -> Login URL 登录地址
       issuer: secretConfig.get<string>('issuer'), // 有些时候需要加上spn:{{issuerID}}, Application ID
       idpCert: fs
         .readFileSync(
           join(parseEnv.getPemPath(), 'azure-ad-certificate.pem'),
           'utf-8',
         )
-        .toString(),
+        .toString(),// 微软的SAML Certificates -> 下载证书
       // identifierFormat: null, // 好像是解析SAML响应报文的用户邮箱格式,使用默认的即可
-      validateInResponseTo: 'never', // 可使用值never, ifPresent, always
-      disableRequestedAuthnContext: true,
+      validateInResponseTo: 'never', // 可使用值never, ifPresent, always,这个好像是判断请求ID,使用缓存逻辑,用默认内置的代码即可
+      disableRequestedAuthnContext: true, // 如果是真的话,就不需要特定的身份验证上下文
       wantAuthnResponseSigned: false, // 跳过签名验证,不到万不得已不可以设置false
       // forceAuthn: true, // 每次跳转都要重新验证
     });
