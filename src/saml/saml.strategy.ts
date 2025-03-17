@@ -36,7 +36,8 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
         .toString(), // 微软的SAML Certificates -> 下载证书
       authnContext: [
         // 默认是 urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
-        'urn:oasis:names:tc:SAML:2.0:ac:classes:Password'
+        'urn:oasis:names:tc:SAML:2.0:ac:classes:Password',
+        'urn:oasis:names:tc:SAML:2.0:ac:classes:X509'
       ],
       // identifierFormat: null, // 好像是解析SAML响应报文的用户邮箱格式,使用默认的即可
       // validateInResponseTo: 'never', // 可使用值never, ifPresent, always,这个好像是判断请求ID,使用缓存逻辑,用默认内置的代码即可
