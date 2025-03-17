@@ -33,7 +33,7 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
           join(parseEnv.getPemPath(), 'azure-ad-certificate.pem'),
           'utf-8',
         )
-        .toString(),// 微软的SAML Certificates -> 下载证书
+        .toString(), // 微软的SAML Certificates -> 下载证书
       // identifierFormat: null, // 好像是解析SAML响应报文的用户邮箱格式,使用默认的即可
       validateInResponseTo: 'never', // 可使用值never, ifPresent, always,这个好像是判断请求ID,使用缓存逻辑,用默认内置的代码即可
       disableRequestedAuthnContext: true, // 如果是真的话,就不需要特定的身份验证上下文
