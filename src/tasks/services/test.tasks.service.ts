@@ -10,7 +10,7 @@ import {
   SequenceSchemaService,
   RightCodeGroupSchemaService,
 } from '@/entities/services';
-import type { AdminLog } from '@/entities/schema';
+// import type { AdminLog } from '@/entities/schema';
 import { TokenCacheService, MemoryCacheService } from '@/cache/services';
 import * as moment from 'moment';
 import { TestIntervalName, TestIntervalType } from '../tasks.constants';
