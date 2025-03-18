@@ -39,7 +39,7 @@
     "@andybeat/schedule": "^2.0.1",
     "@nestjs/cache-manager": "^3.0.0",
     "@nestjs/common": "^11.0.11",
-    "@nestjs/core": "^11.0.10",
+    "@nestjs/core": "^11.0.11",
     "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mapped-types": "^2.1.0",
@@ -52,7 +52,7 @@
     "axios": "^1.8.2",
     "body-parser": "^1.20.3",
     "cache-manager": "^6.4.1",
-    "cacheable": "^1.8.8",
+    "cacheable": "^1.8.9",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "connect-mongo": "^5.1.0",
@@ -90,7 +90,7 @@
     "@compodoc/compodoc": "^1.1.25",
     "@nestjs/cli": "^11.0.5",
     "@nestjs/schematics": "^11.0.2",
-    "@nestjs/testing": "^11.0.10",
+    "@nestjs/testing": "^11.0.11",
     "@types/body-parser": "^1.19.5",
     "@types/cookie": "^0.6.0",
     "@types/cookie-parser": "^1.4.8",
@@ -112,7 +112,7 @@
     "@types/uuid": "^10.0.0",
     "@types/validator": "^13.12.2",
     "@types/xml2js": "^0.4.14",
-    "@typescript-eslint/eslint-plugin": "^8.7.0",
+    "@typescript-eslint/eslint-plugin": "^8.26.1",
     "@typescript-eslint/parser": "^8.26.1",
     "ajv": "^8.17.1",
     "archiver": "^7.0.1",
@@ -129,7 +129,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.26.0"
+    "typescript-eslint": "^8.26.1"
   },
   "jest": {
     "moduleFileExtensions": [
