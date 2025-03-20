@@ -3,7 +3,7 @@
  */
 import { Expose } from 'class-transformer';
 import { ReqServerLogDownloadDto } from './req-serverLog-download.dto';
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, Min, Max } from 'class-validator';
 
 export class ReqServerLogViewDto extends ReqServerLogDownloadDto {
   /**
@@ -11,6 +11,8 @@ export class ReqServerLogViewDto extends ReqServerLogDownloadDto {
    */
   @IsOptional()
   @IsNumber()
+  @Min(0)
+  @Max(10 * 1024 * 1024)
   @Expose()
   startByte?: number = 0;
 
@@ -19,6 +21,8 @@ export class ReqServerLogViewDto extends ReqServerLogDownloadDto {
    */
   @IsOptional()
   @IsNumber()
+  @Min(0)
+  @Max(10 * 1024 * 1024)
   @Expose()
   endByte?: number = 10 * 1024;
 }

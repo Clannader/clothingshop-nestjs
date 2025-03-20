@@ -41,6 +41,8 @@ export class ValidationPipe<T> implements PipeTransform<T> {
       'isEnum',
       'isDateString',
       'matches',
+      'min',
+      'max',
       'customValidation',
     ];
     let content = 'Validation failed';
