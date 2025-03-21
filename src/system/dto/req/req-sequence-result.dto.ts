@@ -3,7 +3,7 @@
  */
 import { SequenceTypeEnum } from '@/common/enum';
 import { Expose } from 'class-transformer';
-import { IsDefined, IsEnum, IsString } from 'class-validator';
+import { IsDefined, IsEnum, IsString, IsOptional } from 'class-validator';
 
 export class ReqSequenceResult {
   /**
@@ -20,6 +20,7 @@ export class ReqSequenceResult {
    * 店铺ID,默认SYSTEM
    */
   @Expose()
+  @IsOptional()
   @IsString()
   shopId?: string = 'SYSTEM';
 }
