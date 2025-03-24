@@ -12,7 +12,7 @@ import {
   RespSystemConfigListDto,
 } from '../dto/config';
 
-import { CmsSession, RespErrorResult } from '@/common';
+import { CmsSession, RespErrorResult, configKeyExp } from '@/common';
 import { CodeEnum } from '@/common/enum';
 
 import { ParentConfigDocument } from '@/entities/schema';
@@ -40,7 +40,6 @@ export class SystemConfigService {
       params,
       isNew,
       false,
-      true,
     );
 
     if (!checkResp.isSuccess()) {
@@ -58,18 +57,17 @@ export class SystemConfigService {
    * @param params 编辑对象
    * @param isNew 是否是新建
    * @param isCheck 是否是仅检查
-   * @param isParent 是否是一级配置
    */
   async checkInfoSystemConfig(
     session: CmsSession,
     params: ReqParentConfigModifyDto,
     isNew: boolean,
     isCheck: boolean,
-    isParent: boolean,
   ) {
     const resp = new RespSystemConfigCreateDto();
+    // 判断是否是新建还是编辑,如果是编辑,id必填
     const id = params.id;
-    if (!isNew && Utils.isEmpty(params.id)) {
+    if (!isNew && Utils.isEmpty(id)) {
       resp.code = CodeEnum.EMPTY;
       resp.msg = this.globalService.serverLang(
         session,
@@ -84,6 +82,35 @@ export class SystemConfigService {
       err: Error;
     if (!isNew) {
     }
+
+    if (Utils.isEmpty(params.configKey)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '配置Key不能为空',
+        'systemConfig.keyIsNotEmpty',
+      );
+      return resp;
+    }
+    if (Utils.isEmpty(params.configValue)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '配置值不能为空',
+        'systemConfig.valueIsNotEmpty',
+      );
+      return resp;
+    }
+    if (!configKeyExp.test(params.configKey)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '配置Key格式错误:以大写字母开头,数字、字母、下划线组合,最长10个字符',
+        'systemConfig.keyFormatError',
+      );
+      return resp;
+    }
+
 
     return resp;
   }
