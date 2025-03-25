@@ -111,7 +111,6 @@ export class SystemConfigService {
       return resp;
     }
 
-
     return resp;
   }
 
