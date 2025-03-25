@@ -19,7 +19,7 @@ export class CommonConfig {
     trim: true,
     default: 'SYSTEM',
   })
-  shopId: string;
+  shopId: string = 'SYSTEM';
 
   @Prop({
     type: String,
