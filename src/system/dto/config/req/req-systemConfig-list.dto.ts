@@ -2,7 +2,7 @@
  * Create by oliver.wu 2024/11/27
  */
 import { Expose } from 'class-transformer';
-import { IsOptional, IsBoolean, IsString } from 'class-validator';
+import { IsOptional, IsString, Matches } from 'class-validator';
 
 export class ReqSystemConfigListDto {
   /**
@@ -10,9 +10,12 @@ export class ReqSystemConfigListDto {
    */
   @Expose()
   @IsOptional()
-  @IsBoolean()
+  @IsString()
+  @Matches(/^true|false$/, {
+    message: '$property must be a boolean value',
+  })
   // @IsEnum(SystemConfigTypeEnum)
-  includeChildren?: boolean = false;
+  includeChildren?: string = 'false';
 
   /**
    * 父级的组名

@@ -40,7 +40,7 @@ type CheckSystemConfig = {
 };
 
 type SearchSystemConfig = {
-  configKey?: IgnoreCaseType;
+  key?: IgnoreCaseType;
   groupName?: IgnoreCaseType;
 };
 
@@ -57,16 +57,17 @@ export class SystemConfigService {
 
   async getSystemConfigList(params: ReqSystemConfigListDto) {
     const resp = new RespSystemConfigListDto();
+    // 有点无语,使用get请求没办法传入boolean类型
     let includeChildren = params.includeChildren; // 这个只有查询一级配置时,如果需要二级配置才需要传true
     const configKey = params.configKey; // 一级或者二级的Key
     const groupName = params.groupName; // 查询二级配置时传入
     const where: SearchSystemConfig = {};
     if (!Utils.isEmpty(configKey)) {
-      where.configKey = Utils.getIgnoreCase(configKey, true);
+      where.key = Utils.getIgnoreCase(configKey, true);
     }
     if (!Utils.isEmpty(groupName)) {
       where.groupName = Utils.getIgnoreCase(groupName, true);
-      includeChildren = false;
+      includeChildren = 'false';
     }
     // 默认任何参数都没有,返回所有一级Key的配置
     // 分几种情况:1.无参数 查一级, 2.没有groupName 查一级, 3.有groupName 必查二级 4.只有查一级 includeChildren才能是true
@@ -92,7 +93,7 @@ export class SystemConfigService {
       return resp;
     }
     const childrenConfigMap = new Map<string, ModifyParentConfigDto[]>();
-    if (includeChildren && result.length > 0) {
+    if (includeChildren === 'true' && result.length > 0) {
       const parentKeys: string[] = result.map((v) => v.id);
       const childrenWhere = {
         groupName: {
@@ -134,9 +135,9 @@ export class SystemConfigService {
         configValue: row.value,
         description: row.description,
         isEncrypt: row.isEncrypt,
-      }
-      if (includeChildren) {
-        listSystemConfig.childrenConfig = childrenConfigMap.get(row.key)
+      };
+      if (includeChildren === 'true') {
+        listSystemConfig.childrenConfig = childrenConfigMap.get(row.key) || [];
       }
       systemConfigList.push(listSystemConfig);
     }
