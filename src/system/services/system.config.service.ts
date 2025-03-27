@@ -10,9 +10,10 @@ import {
   ReqSystemConfigListDto,
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
+  ListSystemConfigDto,
 } from '../dto/config';
 
-import { CmsSession, RespErrorResult, configKeyExp } from '@/common';
+import { CmsSession, RespErrorResult, configKeyExp, IgnoreCaseType } from '@/common';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 
 import { ParentConfigDocument } from '@/entities/schema';
@@ -27,6 +28,10 @@ type CheckSystemConfig = {
   };
 };
 
+type SearchSystemConfig = {
+  configKey?: IgnoreCaseType;
+};
+
 @Injectable()
 export class SystemConfigService {
   @Inject()
@@ -38,8 +43,38 @@ export class SystemConfigService {
   @Inject()
   private readonly userLogsService: UserLogsService;
 
-  getSystemConfigList(params: ReqSystemConfigListDto) {
+  async getSystemConfigList(params: ReqSystemConfigListDto) {
     const resp = new RespSystemConfigListDto();
+    const includeChildren = params.includeChildren;
+    const configKey = params.configKey;
+    const groupName = params.groupName;
+    const where: SearchSystemConfig = {}
+    if (!Utils.isEmpty(configKey)) {
+      where.configKey = Utils.getIgnoreCase(configKey, true);
+    }
+    // 默认任何参数都没有,返回所有一级Key的配置
+    const [err, result] = await Utils.toPromise(
+      this.systemConfigSchemaService.getParentConfigModel()
+        .find(where, { __v: 0}).sort({ _id: -1 }),
+    )
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    const systemConfigList: ListSystemConfigDto[] = [];
+    for (const row of result) {
+      systemConfigList.push({
+        id: row.id,
+        configKey: row.key,
+        configValue: row.value,
+        description: row.description,
+        isEncrypt: row.isEncrypt,
+        childrenConfig: []
+      })
+    }
+    resp.configList = systemConfigList;
+    resp.total = result.length
     return resp;
   }
 
