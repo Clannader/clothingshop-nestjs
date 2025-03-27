@@ -11,6 +11,7 @@ import {
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
   ListSystemConfigDto,
+  ModifyParentConfigDto,
 } from '../dto/config';
 
 import {
@@ -20,8 +21,13 @@ import {
   IgnoreCaseType,
 } from '@/common';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
+import { ErrorPromise } from '@/common/types';
 
-import { ParentConfigDocument } from '@/entities/schema';
+import {
+  ParentConfigDocument,
+  ParentConfigQuery,
+  ChildrenConfigQuery,
+} from '@/entities/schema';
 import { SystemConfigSchemaService } from '@/entities/services';
 import { RightsEnum } from '@/rights';
 import { UserLogsService } from '@/logs';
@@ -35,6 +41,7 @@ type CheckSystemConfig = {
 
 type SearchSystemConfig = {
   configKey?: IgnoreCaseType;
+  groupName?: IgnoreCaseType;
 };
 
 @Injectable()
@@ -50,24 +57,74 @@ export class SystemConfigService {
 
   async getSystemConfigList(params: ReqSystemConfigListDto) {
     const resp = new RespSystemConfigListDto();
-    const includeChildren = params.includeChildren;
-    const configKey = params.configKey;
-    const groupName = params.groupName;
+    let includeChildren = params.includeChildren; // 这个只有查询一级配置时,如果需要二级配置才需要传true
+    const configKey = params.configKey; // 一级或者二级的Key
+    const groupName = params.groupName; // 查询二级配置时传入
     const where: SearchSystemConfig = {};
     if (!Utils.isEmpty(configKey)) {
       where.configKey = Utils.getIgnoreCase(configKey, true);
     }
+    if (!Utils.isEmpty(groupName)) {
+      where.groupName = Utils.getIgnoreCase(groupName, true);
+      includeChildren = false;
+    }
     // 默认任何参数都没有,返回所有一级Key的配置
-    const [err, result] = await Utils.toPromise(
-      this.systemConfigSchemaService
-        .getParentConfigModel()
-        .find(where, { __v: 0 })
-        .sort({ _id: -1 }),
-    );
+    // 分几种情况:1.无参数 查一级, 2.没有groupName 查一级, 3.有groupName 必查二级 4.只有查一级 includeChildren才能是true
+    let err: ErrorPromise, result: ParentConfigQuery | ChildrenConfigQuery;
+    if (Utils.isEmpty(groupName)) {
+      [err, result] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getParentConfigModel()
+          .find(where, { __v: 0 })
+          .sort({ _id: -1 }),
+      );
+    } else {
+      [err, result] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getChildrenConfigModel()
+          .find(where, { __v: 0 })
+          .sort({ _id: -1 }),
+      );
+    }
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
       resp.msg = err.message;
       return resp;
+    }
+    const childrenConfigMap = new Map<string, ModifyParentConfigDto[]>();
+    if (includeChildren && result.length > 0) {
+      const parentKeys: string[] = result.map((v) => v.id);
+      const childrenWhere = {
+        groupName: {
+          $in: parentKeys,
+        },
+      };
+      const [errChildren, childrenArray] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getChildrenConfigModel()
+          .find(childrenWhere, { __v: 0 })
+          .sort({ _id: -1 }),
+      );
+      if (errChildren) {
+        resp.code = CodeEnum.DB_EXEC_ERROR;
+        resp.msg = errChildren.message;
+        return resp;
+      }
+      for (const childRow of childrenArray) {
+        const groupName = childRow.groupName;
+        const configEle: ModifyParentConfigDto = {
+          id: childRow.id,
+          configKey: childRow.key,
+          configValue: childRow.value,
+          description: childRow.description,
+          isEncrypt: childRow.isEncrypt,
+        };
+        if (childrenConfigMap.has(groupName)) {
+          childrenConfigMap.get(groupName).push(configEle);
+        } else {
+          childrenConfigMap.set(groupName, [configEle]);
+        }
+      }
     }
     const systemConfigList: ListSystemConfigDto[] = [];
     for (const row of result) {
@@ -77,7 +134,6 @@ export class SystemConfigService {
         configValue: row.value,
         description: row.description,
         isEncrypt: row.isEncrypt,
-        childrenConfig: [],
       });
     }
     resp.configList = systemConfigList;
