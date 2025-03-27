@@ -19,6 +19,7 @@ import {
   SequenceSchemaModule,
   SystemDataSchemaModule,
   DeleteLogSchemaModule,
+  SystemConfigSchemaModule,
 } from '@/entities/modules';
 
 @Module({
@@ -29,6 +30,7 @@ import {
     SystemDataSchemaModule,
     DeleteLogSchemaModule,
     UserLogsModule,
+    SystemConfigSchemaModule,
   ],
   controllers: [
     SystemController,

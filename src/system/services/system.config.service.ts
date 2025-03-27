@@ -13,15 +13,30 @@ import {
 } from '../dto/config';
 
 import { CmsSession, RespErrorResult, configKeyExp } from '@/common';
-import { CodeEnum } from '@/common/enum';
+import { CodeEnum, LogTypeEnum } from '@/common/enum';
 
 import { ParentConfigDocument } from '@/entities/schema';
+import { SystemConfigSchemaService } from '@/entities/services';
 import { RightsEnum } from '@/rights';
+import { UserLogsService } from '@/logs';
+
+type CheckSystemConfig = {
+  key: string;
+  _id?: {
+    $ne: string;
+  };
+};
 
 @Injectable()
 export class SystemConfigService {
   @Inject()
   private readonly globalService: GlobalService;
+
+  @Inject()
+  private readonly systemConfigSchemaService: SystemConfigSchemaService;
+
+  @Inject()
+  private readonly userLogsService: UserLogsService;
 
   getSystemConfigList(params: ReqSystemConfigListDto) {
     const resp = new RespSystemConfigListDto();
@@ -102,13 +117,85 @@ export class SystemConfigService {
       return resp;
     }
     if (!configKeyExp.test(params.configKey)) {
-      resp.code = CodeEnum.EMPTY;
+      resp.code = CodeEnum.FAIL;
       resp.msg = this.globalService.serverLang(
         session,
         '配置Key格式错误:以大写字母开头,数字、字母、下划线组合,最长10个字符',
         'systemConfig.keyFormatError',
       );
       return resp;
+    }
+
+    // 判断配置Key有没有重复
+    const where: CheckSystemConfig = {
+      key: params.configKey,
+    };
+    if (!isNew) {
+      where._id = {
+        $ne: params.id,
+      };
+    }
+
+    const [errFind, count] = await Utils.toPromise(
+      this.systemConfigSchemaService
+        .getParentConfigModel()
+        .countDocuments(where),
+    );
+    if (errFind) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = errFind.message;
+      return resp;
+    }
+    if (count > 0) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '一级配置Key({0})已重复',
+        'systemConfig.parentKeyIsExists',
+        params.configKey,
+      );
+      return resp;
+    }
+
+    if (isCheck) {
+      return resp;
+    }
+
+    if (isNew) {
+      const createSystemConfigParent = {
+        key: params.configKey,
+        value: params.configValue,
+        description: params.description,
+        createUser: session.adminId,
+        createDate: new Date(),
+        isEncrypt: undefined,
+      };
+      if (params.isEncrypt) {
+        createSystemConfigParent.isEncrypt = params.isEncrypt;
+      }
+      const [errCreate, createObj] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getParentConfigModel()
+          .create(createSystemConfigParent),
+      );
+      if (errCreate) {
+        resp.code = CodeEnum.DB_EXEC_ERROR;
+        resp.msg = errCreate.message;
+        return resp;
+      }
+      resp.id = createObj.id;
+      const content = this.globalService.serverLang(
+        session,
+        '新建一级配置:({0})',
+        'systemConfig.createParentLog',
+        createObj.key,
+      );
+      await this.userLogsService.writeUserLog(
+        session,
+        LogTypeEnum.SystemConfig,
+        content,
+        createObj.id,
+      );
     }
 
     return resp;
