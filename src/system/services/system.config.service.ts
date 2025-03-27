@@ -12,6 +12,7 @@ import {
   RespSystemConfigListDto,
   ListSystemConfigDto,
   ModifyParentConfigDto,
+  ModifyChildrenConfigDto,
 } from '../dto/config';
 
 import {
@@ -92,7 +93,7 @@ export class SystemConfigService {
       resp.msg = err.message;
       return resp;
     }
-    const childrenConfigMap = new Map<string, ModifyParentConfigDto[]>();
+    const childrenConfigMap = new Map<string, ModifyChildrenConfigDto[]>();
     if (includeChildren === 'true' && result.length > 0) {
       const parentKeys: string[] = result.map((v) => v.id);
       const childrenWhere = {
@@ -113,12 +114,13 @@ export class SystemConfigService {
       }
       for (const childRow of childrenArray) {
         const groupName = childRow.groupName;
-        const configEle: ModifyParentConfigDto = {
+        const configEle: ModifyChildrenConfigDto = {
           id: childRow.id,
           configKey: childRow.key,
           configValue: childRow.value,
           description: childRow.description,
           isEncrypt: childRow.isEncrypt,
+          groupName: childRow.groupName,
         };
         if (childrenConfigMap.has(groupName)) {
           childrenConfigMap.get(groupName).push(configEle);

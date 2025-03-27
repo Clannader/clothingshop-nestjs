@@ -11,7 +11,7 @@ export class ReqSystemConfigListDto {
   @Expose()
   @IsOptional()
   @IsString()
-  @Matches(/^true|false$/, {
+  @Matches(/^(true|false)$/, {
     message: '$property must be a boolean value',
   })
   // @IsEnum(SystemConfigTypeEnum)
