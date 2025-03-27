@@ -128,13 +128,17 @@ export class SystemConfigService {
     }
     const systemConfigList: ListSystemConfigDto[] = [];
     for (const row of result) {
-      systemConfigList.push({
+      const listSystemConfig: ListSystemConfigDto = {
         id: row.id,
         configKey: row.key,
         configValue: row.value,
         description: row.description,
         isEncrypt: row.isEncrypt,
-      });
+      }
+      if (includeChildren) {
+        listSystemConfig.childrenConfig = childrenConfigMap.get(row.key)
+      }
+      systemConfigList.push(listSystemConfig);
     }
     resp.configList = systemConfigList;
     resp.total = result.length;
