@@ -13,7 +13,12 @@ import {
   ListSystemConfigDto,
 } from '../dto/config';
 
-import { CmsSession, RespErrorResult, configKeyExp, IgnoreCaseType } from '@/common';
+import {
+  CmsSession,
+  RespErrorResult,
+  configKeyExp,
+  IgnoreCaseType,
+} from '@/common';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 
 import { ParentConfigDocument } from '@/entities/schema';
@@ -48,15 +53,17 @@ export class SystemConfigService {
     const includeChildren = params.includeChildren;
     const configKey = params.configKey;
     const groupName = params.groupName;
-    const where: SearchSystemConfig = {}
+    const where: SearchSystemConfig = {};
     if (!Utils.isEmpty(configKey)) {
       where.configKey = Utils.getIgnoreCase(configKey, true);
     }
     // 默认任何参数都没有,返回所有一级Key的配置
     const [err, result] = await Utils.toPromise(
-      this.systemConfigSchemaService.getParentConfigModel()
-        .find(where, { __v: 0}).sort({ _id: -1 }),
-    )
+      this.systemConfigSchemaService
+        .getParentConfigModel()
+        .find(where, { __v: 0 })
+        .sort({ _id: -1 }),
+    );
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
       resp.msg = err.message;
@@ -70,11 +77,11 @@ export class SystemConfigService {
         configValue: row.value,
         description: row.description,
         isEncrypt: row.isEncrypt,
-        childrenConfig: []
-      })
+        childrenConfig: [],
+      });
     }
     resp.configList = systemConfigList;
-    resp.total = result.length
+    resp.total = result.length;
     return resp;
   }
 
