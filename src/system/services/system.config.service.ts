@@ -68,7 +68,7 @@ export class SystemConfigService {
     }
     if (!Utils.isEmpty(groupName)) {
       where.groupName = Utils.getIgnoreCase(groupName, true);
-      includeChildren = 'false';
+      includeChildren = false;
     }
     // 默认任何参数都没有,返回所有一级Key的配置
     // 分几种情况:1.无参数 查一级, 2.没有groupName 查一级, 3.有groupName 必查二级 4.只有查一级 includeChildren才能是true
@@ -94,7 +94,7 @@ export class SystemConfigService {
       return resp;
     }
     const childrenConfigMap = new Map<string, ModifyChildrenConfigDto[]>();
-    if (includeChildren === 'true' && result.length > 0) {
+    if (includeChildren && result.length > 0) {
       const parentKeys: string[] = result.map((v) => v.id);
       const childrenWhere = {
         groupName: {
@@ -138,7 +138,7 @@ export class SystemConfigService {
         description: row.description,
         isEncrypt: row.isEncrypt,
       };
-      if (includeChildren === 'true') {
+      if (includeChildren) {
         listSystemConfig.childrenConfig = childrenConfigMap.get(row.key) || [];
       }
       systemConfigList.push(listSystemConfig);
