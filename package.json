@@ -15,15 +15,15 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "cross-env NODE_ENV=production nest build -c nest-cli-build.json && npm run build:zip",
+    "build": "cross-env NODE_ENV=production && npm run build:dev && npm run build:zip",
     "build:dev": "nest build -c nest-cli-build.json",
     "build:prod": "npm run test && npm run test:e2e && npm run build",
     "build:prod:lint": "npm run lint && npm run build:prod",
     "build:zip": "node scripts/build.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.js\"",
     "start": "cross-env NODE_ENV=development nest start",
-    "start:dev": "cross-env NODE_ENV=development nest start --watch",
-    "start:debug": "cross-env NODE_ENV=development nest start --debug --watch",
+    "start:dev": "npm run start -- --watch",
+    "start:debug": "npm run start -- --debug --watch",
     "start:prod": "cross-env NODE_ENV=production node build/main",
     "publish:npm": "npm publish --access public",
     "lint": "eslint",
@@ -102,7 +102,7 @@
     "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.16",
     "@types/multer": "^1.4.12",
-    "@types/node": "^22.13.10",
+    "@types/node": "^22.13.14",
     "@types/on-finished": "^2.3.4",
     "@types/passport-saml": "^1.1.7",
     "@types/qrcode": "^1.5.5",
@@ -117,7 +117,7 @@
     "ajv": "^8.17.1",
     "archiver": "^7.0.1",
     "copy-webpack-plugin": "^13.0.0",
-    "eslint": "^9.22.0",
+    "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
     "jest": "^29.7.0",
@@ -129,7 +129,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.28.0"
+    "typescript-eslint": "^8.29.0"
   },
   "jest": {
     "moduleFileExtensions": [

@@ -147,7 +147,6 @@ export class SystemConfigController {
       modifyParams,
       isNew,
       true,
-      true,
     );
   }
 }

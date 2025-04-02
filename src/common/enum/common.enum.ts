@@ -62,6 +62,7 @@ export enum LogTypeEnum {
   ServerLog = 'ServerLog',
   User = 'User',
   TimeZone = 'TimeZone',
+  SystemConfig = 'SystemConfig',
 }
 
 /**

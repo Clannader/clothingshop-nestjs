@@ -10,21 +10,141 @@ import {
   ReqSystemConfigListDto,
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
+  ListSystemConfigDto,
+  ModifyParentConfigDto,
+  ModifyChildrenConfigDto,
 } from '../dto/config';
 
-import { CmsSession, RespErrorResult } from '@/common';
-import { CodeEnum } from '@/common/enum';
+import {
+  CmsSession,
+  RespErrorResult,
+  configKeyExp,
+  IgnoreCaseType,
+} from '@/common';
+import { CodeEnum, LogTypeEnum } from '@/common/enum';
+import { ErrorPromise } from '@/common/types';
 
-import { ParentConfigDocument } from '@/entities/schema';
+import {
+  ParentConfigDocument,
+  ParentConfigQuery,
+  ChildrenConfigQuery,
+} from '@/entities/schema';
+import { SystemConfigSchemaService } from '@/entities/services';
 import { RightsEnum } from '@/rights';
+import { UserLogsService } from '@/logs';
+
+type CheckSystemConfig = {
+  key: string;
+  _id?: {
+    $ne: string;
+  };
+};
+
+type SearchSystemConfig = {
+  key?: IgnoreCaseType;
+  groupName?: IgnoreCaseType;
+};
 
 @Injectable()
 export class SystemConfigService {
   @Inject()
   private readonly globalService: GlobalService;
 
-  getSystemConfigList(params: ReqSystemConfigListDto) {
+  @Inject()
+  private readonly systemConfigSchemaService: SystemConfigSchemaService;
+
+  @Inject()
+  private readonly userLogsService: UserLogsService;
+
+  async getSystemConfigList(params: ReqSystemConfigListDto) {
     const resp = new RespSystemConfigListDto();
+    // 有点无语,使用get请求没办法传入boolean类型
+    let includeChildren = params.includeChildren; // 这个只有查询一级配置时,如果需要二级配置才需要传true
+    const configKey = params.configKey; // 一级或者二级的Key
+    const groupName = params.groupName; // 查询二级配置时传入
+    const where: SearchSystemConfig = {};
+    if (!Utils.isEmpty(configKey)) {
+      where.key = Utils.getIgnoreCase(configKey, true);
+    }
+    if (!Utils.isEmpty(groupName)) {
+      where.groupName = Utils.getIgnoreCase(groupName, true);
+      includeChildren = false;
+    }
+    // 默认任何参数都没有,返回所有一级Key的配置
+    // 分几种情况:1.无参数 查一级, 2.没有groupName 查一级, 3.有groupName 必查二级 4.只有查一级 includeChildren才能是true
+    let err: ErrorPromise, result: ParentConfigQuery | ChildrenConfigQuery;
+    if (Utils.isEmpty(groupName)) {
+      [err, result] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getParentConfigModel()
+          .find(where, { __v: 0 })
+          .sort({ _id: -1 }),
+      );
+    } else {
+      [err, result] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getChildrenConfigModel()
+          .find(where, { __v: 0 })
+          .sort({ _id: -1 }),
+      );
+    }
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    const childrenConfigMap = new Map<string, ModifyChildrenConfigDto[]>();
+    if (includeChildren && result.length > 0) {
+      const parentKeys: string[] = result.map((v) => v.id);
+      const childrenWhere = {
+        groupName: {
+          $in: parentKeys,
+        },
+      };
+      const [errChildren, childrenArray] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getChildrenConfigModel()
+          .find(childrenWhere, { __v: 0 })
+          .sort({ _id: -1 }),
+      );
+      if (errChildren) {
+        resp.code = CodeEnum.DB_EXEC_ERROR;
+        resp.msg = errChildren.message;
+        return resp;
+      }
+      for (const childRow of childrenArray) {
+        const groupName = childRow.groupName;
+        const configEle: ModifyChildrenConfigDto = {
+          id: childRow.id,
+          configKey: childRow.key,
+          configValue: childRow.value,
+          description: childRow.description,
+          isEncrypt: childRow.isEncrypt,
+          groupName: childRow.groupName,
+        };
+        if (childrenConfigMap.has(groupName)) {
+          childrenConfigMap.get(groupName).push(configEle);
+        } else {
+          childrenConfigMap.set(groupName, [configEle]);
+        }
+      }
+    }
+    const systemConfigList: ListSystemConfigDto[] = [];
+    for (const row of result) {
+      const listSystemConfig: ListSystemConfigDto = {
+        id: row.id,
+        configKey: row.key,
+        configValue: row.value,
+        description: row.description,
+        isEncrypt: row.isEncrypt,
+      };
+      if (includeChildren) {
+        listSystemConfig.childrenConfig = childrenConfigMap.get(row.key) || [];
+      }
+      systemConfigList.push(listSystemConfig);
+    }
+    resp.configList = systemConfigList;
+    resp.total = result.length;
     return resp;
   }
 
@@ -40,7 +160,6 @@ export class SystemConfigService {
       params,
       isNew,
       false,
-      true,
     );
 
     if (!checkResp.isSuccess()) {
@@ -58,18 +177,17 @@ export class SystemConfigService {
    * @param params 编辑对象
    * @param isNew 是否是新建
    * @param isCheck 是否是仅检查
-   * @param isParent 是否是一级配置
    */
   async checkInfoSystemConfig(
     session: CmsSession,
     params: ReqParentConfigModifyDto,
     isNew: boolean,
     isCheck: boolean,
-    isParent: boolean,
   ) {
     const resp = new RespSystemConfigCreateDto();
+    // 判断是否是新建还是编辑,如果是编辑,id必填
     const id = params.id;
-    if (!isNew && Utils.isEmpty(params.id)) {
+    if (!isNew && Utils.isEmpty(id)) {
       resp.code = CodeEnum.EMPTY;
       resp.msg = this.globalService.serverLang(
         session,
@@ -83,6 +201,106 @@ export class SystemConfigService {
       newParentConfig: ParentConfigDocument,
       err: Error;
     if (!isNew) {
+    }
+
+    if (Utils.isEmpty(params.configKey)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '配置Key不能为空',
+        'systemConfig.keyIsNotEmpty',
+      );
+      return resp;
+    }
+    if (Utils.isEmpty(params.configValue)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '配置值不能为空',
+        'systemConfig.valueIsNotEmpty',
+      );
+      return resp;
+    }
+    if (!configKeyExp.test(params.configKey)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '配置Key格式错误:以大写字母开头,数字、字母、下划线组合,最长10个字符',
+        'systemConfig.keyFormatError',
+      );
+      return resp;
+    }
+
+    // 判断配置Key有没有重复
+    const where: CheckSystemConfig = {
+      key: params.configKey,
+    };
+    if (!isNew) {
+      where._id = {
+        $ne: params.id,
+      };
+    }
+
+    const [errFind, count] = await Utils.toPromise(
+      this.systemConfigSchemaService
+        .getParentConfigModel()
+        .countDocuments(where),
+    );
+    if (errFind) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = errFind.message;
+      return resp;
+    }
+    if (count > 0) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '一级配置Key({0})已重复',
+        'systemConfig.parentKeyIsExists',
+        params.configKey,
+      );
+      return resp;
+    }
+
+    if (isCheck) {
+      return resp;
+    }
+
+    if (isNew) {
+      const createSystemConfigParent = {
+        key: params.configKey,
+        value: params.configValue,
+        description: params.description,
+        createUser: session.adminId,
+        createDate: new Date(),
+        isEncrypt: undefined,
+      };
+      if (params.isEncrypt) {
+        createSystemConfigParent.isEncrypt = params.isEncrypt;
+      }
+      const [errCreate, createObj] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getParentConfigModel()
+          .create(createSystemConfigParent),
+      );
+      if (errCreate) {
+        resp.code = CodeEnum.DB_EXEC_ERROR;
+        resp.msg = errCreate.message;
+        return resp;
+      }
+      resp.id = createObj.id;
+      const content = this.globalService.serverLang(
+        session,
+        '新建一级配置:({0})',
+        'systemConfig.createParentLog',
+        createObj.key,
+      );
+      await this.userLogsService.writeUserLog(
+        session,
+        LogTypeEnum.SystemConfig,
+        content,
+        createObj.id,
+      );
     }
 
     return resp;

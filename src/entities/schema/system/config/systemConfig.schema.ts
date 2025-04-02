@@ -7,7 +7,7 @@ import { Model, HydratedDocument } from 'mongoose';
 
 import { SystemConfigTypeEnum } from '@/common/enum';
 import { Utils } from '@/common/utils';
-import { codeExp } from '@/common';
+import { configKeyExp } from '@/common';
 
 import { SecretSchema } from '../../secret.schema';
 import { WriteLog } from '@/common/decorator';
@@ -19,13 +19,13 @@ export class CommonConfig {
     trim: true,
     default: 'SYSTEM',
   })
-  shopId: string;
+  shopId: string = 'SYSTEM';
 
   @Prop({
     type: String,
     required: true,
     trim: true,
-    match: codeExp,
+    match: configKeyExp,
   })
   @WriteLog({
     origin: '参数Key',

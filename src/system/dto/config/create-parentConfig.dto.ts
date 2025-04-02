@@ -2,13 +2,13 @@
  * Create by oliver.wu 2025/2/12
  */
 import { Expose } from 'class-transformer';
-import { IsDefined, IsString, IsOptional, IsBoolean } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator';
 
 export class CreateParentConfigDto {
   /**
    * 配置的KEY
    */
-  @IsDefined()
+  @IsNotEmpty()
   @IsString()
   @Expose()
   configKey: string;
@@ -16,7 +16,7 @@ export class CreateParentConfigDto {
   /**
    * 配置的值
    */
-  @IsDefined()
+  @IsNotEmpty()
   @IsString()
   @Expose()
   configValue: string;
@@ -27,7 +27,7 @@ export class CreateParentConfigDto {
   @IsOptional()
   @IsBoolean()
   @Expose()
-  isEncrypt?: boolean;
+  isEncrypt?: boolean = false;
 
   /**
    * 配置的描述

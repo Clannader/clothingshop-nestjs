@@ -21,6 +21,7 @@ export const rightsExp =
 export const ipExp =
   /((25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))/;
 export const timeZoneExp = /^[+\-]([01][0-9]|2[0-4]):([0-5][0-9])$/;
+export const configKeyExp = /^[A-Z][\w]{1,9}$/;
 export const sessionName = 'cmsApp';
 export const sessionSecret = '123456cms';
 export const interfaceHeader = 'CMS-Interface';
