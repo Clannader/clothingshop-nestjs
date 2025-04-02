@@ -95,7 +95,7 @@ export class ServerLogService {
       return false;
     }
     const [ip, port] = address;
-    return validator.isIP(ip) && validator.isPort(port);
+    return (ip === 'localhost' || validator.isIP(ip)) && validator.isPort(port);
   }
 
   getInternalServerLogList(params: ReqServerLogListDto) {

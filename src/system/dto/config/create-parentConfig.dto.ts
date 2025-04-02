@@ -27,7 +27,7 @@ export class CreateParentConfigDto {
   @IsOptional()
   @IsBoolean()
   @Expose()
-  isEncrypt?: boolean;
+  isEncrypt?: boolean = false;
 
   /**
    * 配置的描述

@@ -1,8 +1,8 @@
 /**
  * Create by oliver.wu 2024/11/27
  */
-import { Expose } from 'class-transformer';
-import { IsOptional } from 'class-validator';
+import { Expose, Transform } from 'class-transformer';
+import { IsOptional, IsString } from 'class-validator';
 
 export class ReqSystemConfigListDto {
   /**
@@ -10,14 +10,20 @@ export class ReqSystemConfigListDto {
    */
   @Expose()
   @IsOptional()
+  // @IsString()
+  // @Matches(/^(true|false)$/, {
+  //   message: '$property must be a boolean value',
+  // })
+  @Transform(({ value }) => value === 'true')
   // @IsEnum(SystemConfigTypeEnum)
-  includeChildren?: boolean;
+  includeChildren?: boolean = false;
 
   /**
    * 父级的组名
    */
   @Expose()
   @IsOptional()
+  @IsString()
   groupName?: string;
 
   /**
@@ -25,5 +31,6 @@ export class ReqSystemConfigListDto {
    */
   @Expose()
   @IsOptional()
+  @IsString()
   configKey?: string;
 }

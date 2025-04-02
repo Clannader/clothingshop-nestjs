@@ -35,11 +35,12 @@ export class ValidationPipe<T> implements PipeTransform<T> {
     // 返回的错误确实是无序的,需要使用keys这个数组按优先级判断哪些错误优先,否则返回错误不对
     const keys = [
       'isDefined',
+      'isBoolean',
       'isString',
       'isArray',
-      'isNotEmpty',
-      'isEnum',
       'isDateString',
+      'isEnum',
+      'isNotEmpty',
       'matches',
       'min',
       'max',
