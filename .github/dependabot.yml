@@ -10,4 +10,4 @@ updates:
     directory: "/" # 依赖文件所在目录，默认为根目录‌
     schedule:
       interval: "weekly" # 检查频率（daily/weekly/monthly）‌
-    open-pull-request-limit: 10 # 最大并发 PR 数量‌
+    open-pull-requests-limit: 10 # 最大并发 PR 数量‌
