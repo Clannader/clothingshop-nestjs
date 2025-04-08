@@ -6,7 +6,8 @@
 version: 2
 updates:
   # Enable version updates for npm
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "npm" # 指定包管理器类型（如 npm、maven、nuget 等）‌
+    directory: "/" # 依赖文件所在目录，默认为根目录‌
     schedule:
-      interval: "weekly"
+      interval: "weekly" # 检查频率（daily/weekly/monthly）‌
+    open-pull-requests-limit: 10 # 最大并发 PR 数量‌
