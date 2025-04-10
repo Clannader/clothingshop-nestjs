@@ -3,31 +3,32 @@
  */
 import { Inject, Injectable } from '@nestjs/common';
 import { GlobalService, Utils } from '@/common/utils';
+import { instanceToInstance } from 'class-transformer';
 
 import {
+  ListSystemConfigDto,
+  ModifyChildrenConfigDto,
   ReqParentConfigDeleteDto,
   ReqParentConfigModifyDto,
   ReqSystemConfigListDto,
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
-  ListSystemConfigDto,
-  ModifyParentConfigDto,
-  ModifyChildrenConfigDto,
 } from '../dto/config';
 
 import {
   CmsSession,
-  RespErrorResult,
   configKeyExp,
   IgnoreCaseType,
+  RespErrorResult,
 } from '@/common';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { ErrorPromise } from '@/common/types';
 
 import {
+  ChildrenConfigQuery,
+  ParentConfig,
   ParentConfigDocument,
   ParentConfigQuery,
-  ChildrenConfigQuery,
 } from '@/entities/schema';
 import { SystemConfigSchemaService } from '@/entities/services';
 import { RightsEnum } from '@/rights';
@@ -201,6 +202,35 @@ export class SystemConfigService {
       newParentConfig: ParentConfigDocument,
       err: Error;
     if (!isNew) {
+      // 如果是编辑,判断id值是否存在该配置
+      [err, oldParentConfig] = await Utils.toPromise(
+        this.systemConfigSchemaService.getParentConfigModel().findById(id),
+      );
+      if (err) {
+        resp.code = CodeEnum.DB_EXEC_ERROR;
+        resp.msg = err.message;
+        return resp;
+      }
+      if (Utils.isEmpty(oldParentConfig)) {
+        resp.code = CodeEnum.FAIL;
+        resp.msg = this.globalService.serverLang(
+          session,
+          '该一级配置不存在',
+          'systemConfig.parentConfigNotExist',
+        );
+        return resp;
+      }
+      newParentConfig = instanceToInstance(oldParentConfig);
+      if (!Utils.isEmpty(params.configKey)) {
+        newParentConfig.key = params.configKey;
+      } else {
+        params.configKey = oldParentConfig.key;
+      }
+      if (!Utils.isEmpty(params.configValue)) {
+        newParentConfig.value = params.configValue;
+      } else {
+        params.configValue = oldParentConfig.value;
+      }
     }
 
     if (Utils.isEmpty(params.configKey)) {
@@ -301,6 +331,37 @@ export class SystemConfigService {
         content,
         createObj.id,
       );
+    } else {
+      newParentConfig.updateUser = session.adminId;
+      newParentConfig.updateDate = new Date();
+      await this.systemConfigSchemaService
+        .getSystemConfigModel()
+        .syncSaveDBObject(newParentConfig);
+      resp.id = newParentConfig.id;
+      const contentArray = [
+        this.globalService.serverLang(
+          session,
+          '编辑一级配置:({0})',
+          'systemConfig.modifyParentLog',
+          newParentConfig.key,
+        ),
+      ];
+      contentArray.push(
+        ...this.globalService.compareObjectWriteLog(
+          session,
+          ParentConfig,
+          oldParentConfig,
+          newParentConfig,
+        ),
+      );
+      if (contentArray.length > 1) {
+        await this.userLogsService.writeUserLog(
+          session,
+          LogTypeEnum.SystemConfig,
+          contentArray.join('\r\n'),
+          newParentConfig.id,
+        );
+      }
     }
 
     return resp;
