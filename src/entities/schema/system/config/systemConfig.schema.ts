@@ -11,6 +11,7 @@ import { configKeyExp } from '@/common';
 
 import { SecretSchema } from '../../secret.schema';
 import { WriteLog } from '@/common/decorator';
+import { CommonData } from '@/entities/schema';
 
 export class CommonConfig {
   @Prop({
@@ -132,6 +133,27 @@ SystemConfigSchema.statics.getAliasName = function () {
   return 'SystemConfig';
 };
 
+SystemConfigSchema.statics.syncSaveDBObject = async function <
+  T extends CommonConfig,
+>(dbDataDocs: HydratedDocument<T>): Promise<HydratedDocument<T>> {
+  const [err, result] = await Utils.toPromise(dbDataDocs.save());
+  if (err) {
+    // 版本更新报错,查一遍最新数据
+    const [err2, newResult] = await Utils.toPromise<HydratedDocument<T>>(
+      this.findById(dbDataDocs.id, { __v: 1 }),
+    );
+    if (err2) {
+      throw err2;
+    }
+    dbDataDocs.__v = newResult.__v;
+    return dbDataDocs.save();
+  }
+  return result;
+};
+
 export interface SystemConfigModel extends Model<SystemConfig> {
   getAliasName(): string;
+  syncSaveDBObject<T extends CommonData>(
+    dbDataDocs: HydratedDocument<T>,
+  ): Promise<HydratedDocument<T>>;
 }

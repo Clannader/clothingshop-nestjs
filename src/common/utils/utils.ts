@@ -171,6 +171,10 @@ export class Utils {
     return typeof obj === 'undefined';
   }
 
+  static isNull(obj: any): boolean {
+    return obj == null || this.isUndefined(obj);
+  }
+
   /**
    * 判断对象是否为空
    * @param obj
