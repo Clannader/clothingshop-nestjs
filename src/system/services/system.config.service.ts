@@ -231,7 +231,9 @@ export class SystemConfigService {
       } else {
         params.configValue = oldParentConfig.value;
       }
-      if (!Utils.isEmpty(params.description)) {
+      // 这个写法是为了可以清空描述,从有值变成空,如果用isEmpty,则无法把描述变空值
+      // 并且这里还发现如果用了isNull写法,会导致写日志那边的'null'似乎无法触发了
+      if (!Utils.isNull(params.description)) {
         newParentConfig.description = params.description;
       }
     }
