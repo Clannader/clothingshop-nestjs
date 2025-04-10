@@ -231,6 +231,9 @@ export class SystemConfigService {
       } else {
         params.configValue = oldParentConfig.value;
       }
+      if (!Utils.isEmpty(params.description)) {
+        newParentConfig.description = params.description;
+      }
     }
 
     if (Utils.isEmpty(params.configKey)) {
