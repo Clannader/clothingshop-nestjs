@@ -9,7 +9,7 @@ import { AdminAccessModel, AdminAccess } from '../../schema';
 @Injectable()
 export class AdminAccessSchemaService {
   @InjectModel(AdminAccess.name)
-  private adminAccessModel: AdminAccessModel;
+  private readonly adminAccessModel: AdminAccessModel;
 
   getModel() {
     return this.adminAccessModel;

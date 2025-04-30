@@ -21,10 +21,10 @@ export class AopMiddleware implements NestMiddleware {
   private configService: ConfigService;
 
   @Inject()
-  private aopAspect: AopAspect;
+  private readonly aopAspect: AopAspect;
 
   @Inject()
-  private memoryCacheService: MemoryCacheService;
+  private readonly memoryCacheService: MemoryCacheService;
 
   async use(req: RequestSession, res: CmsResponse, next: NextFunction) {
     const url = req.baseUrl;

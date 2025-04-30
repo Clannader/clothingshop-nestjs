@@ -13,10 +13,10 @@ const cluster = require('node:cluster');
 @Injectable()
 export class AdminLogSchemaService {
   @InjectModel(AdminLog.name)
-  private adminLogModel: AdminLogModel;
+  private readonly adminLogModel: AdminLogModel;
 
   @Inject()
-  private configService: ConfigService;
+  private readonly configService: ConfigService;
 
   getModel() {
     return this.adminLogModel;

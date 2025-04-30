@@ -23,10 +23,10 @@ type LoginWhere = {
 @Injectable()
 export class AdminSchemaService {
   @InjectModel(Admin.name)
-  private adminModel: AdminModel;
+  private readonly adminModel: AdminModel;
 
   @Inject()
-  private globalService: GlobalService;
+  private readonly globalService: GlobalService;
 
   getModel() {
     return this.adminModel;

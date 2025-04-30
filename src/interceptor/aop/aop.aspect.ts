@@ -19,10 +19,10 @@ export class AopAspect {
   private readonly logger = new AopLogger(AopAspect.name);
 
   @Inject()
-  private configService: ConfigService;
+  private readonly configService: ConfigService;
 
   @Inject()
-  private adminAccessSchemaService: AdminAccessSchemaService;
+  private readonly adminAccessSchemaService: AdminAccessSchemaService;
 
   @Inject()
   private readonly traceIdCacheService: TraceIdCacheService;
@@ -112,7 +112,9 @@ export class AopAspect {
         //     returnData[field] = Utils.piiData(returnData[field]);
         //   }
         // });
-      } catch (e) {}
+      } catch (e) {
+        console.log(`Exception while doing something: ${e.message}`);
+      }
       const headers = Object.assign(req.headers, {
         cookie: req.cookies,
       });
