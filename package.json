@@ -50,7 +50,7 @@
     "@node-saml/passport-saml": "^5.0.1",
     "agentkeepalive": "^4.5.0",
     "axios": "^1.9.0",
-    "body-parser": "^1.20.3",
+    "body-parser": "^2.2.0",
     "cache-manager": "^6.4.2",
     "cacheable": "^1.8.10",
     "class-transformer": "^0.5.1",
