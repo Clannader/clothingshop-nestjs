@@ -54,7 +54,7 @@
     "cache-manager": "^6.4.2",
     "cacheable": "^1.8.10",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1",
+    "class-validator": "^0.14.2",
     "connect-mongo": "^5.1.0",
     "cookie": "^0.7.2",
     "cookie-parser": "^1.4.7",
