@@ -18,7 +18,7 @@ export class AopMiddleware implements NestMiddleware {
   private readonly logger = new AopLogger(AopMiddleware.name);
 
   @Inject()
-  private configService: ConfigService;
+  private readonly configService: ConfigService;
 
   @Inject()
   private readonly aopAspect: AopAspect;
@@ -78,7 +78,9 @@ export class AopMiddleware implements NestMiddleware {
             chunk = Buffer.from(JSON.stringify(resultJSON), 'utf8');
             this.set('Content-Length', chunk.length); // 如果不设置这句话,修改chunk是没有返回的
           }
-        } catch (e) {}
+        } catch (e) {
+          // do nothing
+        }
       }
       return _end.apply(this, [chunk, encoding]);
     };
