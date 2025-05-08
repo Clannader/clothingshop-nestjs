@@ -71,7 +71,7 @@ Log4js.configure({
             return 'oliver';
           },
           originalContext: function (logEvent: Log4js.LoggingEvent) {
-            return logEvent.context['originalContext'] || 'Console';
+            return logEvent.context['originalContext'] ?? 'Console';
           },
         },
         serializers: {
@@ -88,7 +88,7 @@ Log4js.configure({
           '%[[%d{yyyy-MM-dd hh:mm:ss,SSS}] %z %p [%x{originalContext}] %c -%] %m',
         tokens: {
           originalContext: function (logEvent: Log4js.LoggingEvent) {
-            return logEvent.context['originalContext'] || 'Console';
+            return logEvent.context['originalContext'] ?? 'Console';
           },
         },
         serializers: {

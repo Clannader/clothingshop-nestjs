@@ -11,7 +11,7 @@ import { Utils } from '@/common/utils';
 @Injectable()
 export class SequenceSchemaService {
   @InjectModel(Sequence.name)
-  private sequenceModel: SequenceModel;
+  private readonly sequenceModel: SequenceModel;
 
   getModel() {
     return this.sequenceModel;

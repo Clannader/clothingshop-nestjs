@@ -16,7 +16,7 @@ import { join } from 'path';
 @Injectable()
 export class MongooseConfigService implements MongooseOptionsFactory {
   @Inject()
-  private configService: ConfigService;
+  private readonly configService: ConfigService;
 
   private connection: Connection;
 

@@ -80,7 +80,7 @@ export class ServerLogService {
       const data = requestResult.data;
       serverLogList.push({
         serverName: `Server${++i}`,
-        logs: data.logs || [],
+        logs: data.logs ?? [],
       });
     }
     resp.code = CodeEnum.SUCCESS;

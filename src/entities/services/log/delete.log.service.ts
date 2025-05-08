@@ -15,7 +15,7 @@ type CreateDeleteLog = DeleteLog & {
 @Injectable()
 export class DeleteLogSchemaService {
   @InjectModel(DeleteLog.name)
-  private deleteLogModel: DeleteLogModel;
+  private readonly deleteLogModel: DeleteLogModel;
 
   getModel() {
     return this.deleteLogModel;
