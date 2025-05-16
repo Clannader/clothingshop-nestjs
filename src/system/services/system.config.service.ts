@@ -554,10 +554,10 @@ export class SystemConfigService {
     } else {
       // 这里是删除全部都失败的情况
       resp.code = CodeEnum.FAIL;
-      resp.errResult = errResult;
-      return resp;
     }
-
+    if (errResult.length > 0) {
+      resp.errResult = errResult;
+    }
     return resp;
   }
 }
