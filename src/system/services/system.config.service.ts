@@ -564,7 +564,9 @@ export class SystemConfigService {
         keyWords: configInfo.key,
         searchWhere: {
           key: configInfo.key,
-          ...{ groupName: configInfo['groupName'] },
+          ...(configInfo['groupName']
+            ? { groupName: configInfo['groupName'] }
+            : {}),
         },
         id: configInfo.id,
       });
@@ -572,14 +574,20 @@ export class SystemConfigService {
 
     if (writeLogResult.length > 0) {
       // 只要有一个删除成功就算成功
-      const content = this.globalService.serverLang(
-        session,
-        isParent ? '删除一级配置:({0})' : '删除二级配置:({0})',
-        isParent
-          ? 'systemConfig.deleteParentLog'
-          : 'systemConfig.deleteChildrenLog',
-        writeLogResult.join(','),
-      );
+      const content = isParent
+        ? this.globalService.serverLang(
+            session,
+            '删除一级配置:({0})',
+            'systemConfig.deleteParentLog',
+            writeLogResult.join(','),
+          )
+        : this.globalService.serverLang(
+            session,
+            '删除({0})下的二级配置:({1})',
+            'systemConfig.deleteChildrenLog',
+            groupName,
+            writeLogResult.join(','),
+          );
       await this.userLogsService.writeUserLog(
         session,
         LogTypeEnum.SystemConfig,
