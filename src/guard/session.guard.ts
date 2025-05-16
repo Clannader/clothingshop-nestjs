@@ -19,15 +19,15 @@ import { AopLogger } from '@/logger';
 
 @Injectable()
 export class SessionGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {}
 
   private readonly logger = new AopLogger(SessionGuard.name);
 
   @Inject()
-  private globalService: GlobalService;
+  private readonly globalService: GlobalService;
 
   @Inject()
-  private userSessionService: UserSessionService;
+  private readonly userSessionService: UserSessionService;
 
   async canActivate(context: ExecutionContext) {
     const http = context.switchToHttp();

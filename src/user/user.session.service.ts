@@ -14,10 +14,10 @@ import type { LanguageType } from '@/common';
 @Injectable()
 export class UserSessionService {
   @Inject()
-  private globalService: GlobalService;
+  private readonly globalService: GlobalService;
 
   @Inject(CONFIG_SECRET)
-  private secretConfig: Record<string, any>;
+  private readonly secretConfig: Record<string, any>;
 
   deleteSession(req: RequestSession): Promise<void> {
     delete req.session;

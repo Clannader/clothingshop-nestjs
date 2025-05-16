@@ -16,13 +16,13 @@ import {
 @Injectable()
 export class SystemConfigSchemaService {
   @InjectModel(SystemConfig.name)
-  private systemConfigModel: SystemConfigModel;
+  private readonly systemConfigModel: SystemConfigModel;
 
   @InjectModel(ParentConfig.name)
-  private parentConfigModel: ParentConfigModel;
+  private readonly parentConfigModel: ParentConfigModel;
 
   @InjectModel(ChildrenConfig.name)
-  private childrenConfigModel: ChildrenConfigModel;
+  private readonly childrenConfigModel: ChildrenConfigModel;
 
   getSystemConfigModel() {
     return this.systemConfigModel;

@@ -16,10 +16,10 @@ import { Utils } from '@/common/utils';
 @Injectable()
 export class SystemDataSchemaService {
   @InjectModel(SystemData.name)
-  private systemDataModel: SystemDataModel;
+  private readonly systemDataModel: SystemDataModel;
 
   @InjectModel(TimeZoneData.name)
-  private timeZoneDataModel: TimeZoneDataModel;
+  private readonly timeZoneDataModel: TimeZoneDataModel;
 
   getSystemDataModel() {
     return this.systemDataModel;

@@ -10,7 +10,7 @@ import type { RightCodeModel } from '../../schema';
 @Injectable()
 export class RightCodeSchemaService {
   @InjectModel(RightCode.name)
-  private rightCodeModel: RightCodeModel;
+  private readonly rightCodeModel: RightCodeModel;
 
   getModel() {
     return this.rightCodeModel;

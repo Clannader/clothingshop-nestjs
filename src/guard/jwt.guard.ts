@@ -19,15 +19,15 @@ import { RIGHTS_KEY, RIGHTS_KEY_OR, RightsEnum } from '@/rights';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {}
 
   private readonly logger = new AopLogger(JwtGuard.name);
 
   @Inject()
-  private userSessionService: UserSessionService;
+  private readonly userSessionService: UserSessionService;
 
   @Inject()
-  private globalService: GlobalService;
+  private readonly globalService: GlobalService;
 
   async canActivate(context: ExecutionContext) {
     const http = context.switchToHttp();
