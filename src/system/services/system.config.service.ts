@@ -30,7 +30,10 @@ import {
   ParentConfigDocument,
   ParentConfigQuery,
 } from '@/entities/schema';
-import { DeleteLogSchemaService, SystemConfigSchemaService } from '@/entities/services';
+import {
+  DeleteLogSchemaService,
+  SystemConfigSchemaService,
+} from '@/entities/services';
 import { RightsEnum } from '@/rights';
 import { UserLogsService } from '@/logs';
 
@@ -49,12 +52,12 @@ type SearchSystemConfig = {
 type DeleteSystemConfigWhere = {
   groupName?: string;
   _id?: {
-    $in: string[]
-  },
+    $in: string[];
+  };
   key?: {
-    $in: string[]
-  }
-}
+    $in: string[];
+  };
+};
 
 @Injectable()
 export class SystemConfigService {
@@ -385,7 +388,10 @@ export class SystemConfigService {
     return resp;
   }
 
-  async deleteSystemConfig(session: CmsSession, params: ReqParentConfigDeleteDto) {
+  async deleteSystemConfig(
+    session: CmsSession,
+    params: ReqParentConfigDeleteDto,
+  ) {
     const resp = new RespErrorResult();
     // 因为是统一删除一二级配置方法,所以逻辑如下:
     // 如果有groupName的,则认为是删除二级配置,并且判断有二级配置的新建和编辑权限
@@ -456,24 +462,26 @@ export class SystemConfigService {
     // 如果删除一级配置,需要保证自身的二级都删除完毕
     if (!Utils.arrayIsNull(ids)) {
       deleteWhere._id = {
-        $in: ids
-      }
+        $in: ids,
+      };
       idsParams = ids;
     } else if (!Utils.arrayIsNull(keys)) {
       deleteWhere.key = {
-        $in: keys
-      }
+        $in: keys,
+      };
       idsParams = keys;
     }
     let err: ErrorPromise, result: ParentConfigQuery | ChildrenConfigQuery;
     if (isParent) {
       [err, result] = await Utils.toPromise(
-        this.systemConfigSchemaService.getParentConfigModel().find(deleteWhere)
-      )
+        this.systemConfigSchemaService.getParentConfigModel().find(deleteWhere),
+      );
     } else {
       [err, result] = await Utils.toPromise(
-        this.systemConfigSchemaService.getChildrenConfigModel().find(deleteWhere)
-      )
+        this.systemConfigSchemaService
+          .getChildrenConfigModel()
+          .find(deleteWhere),
+      );
     }
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
@@ -488,9 +496,9 @@ export class SystemConfigService {
 
     for (const configInfo of result) {
       if (!Utils.arrayIsNull(ids)) {
-        configExistId.push(configInfo.id)
+        configExistId.push(configInfo.id);
       } else if (!Utils.arrayIsNull(keys)) {
-        configExistId.push(configInfo.key)
+        configExistId.push(configInfo.key);
       }
     }
 
@@ -500,11 +508,11 @@ export class SystemConfigService {
         if (!configExistId.includes(id)) {
           errResult.push(
             `(${id}) ` +
-            this.globalService.serverLang(
-              session,
-              '该配置不存在',
-              'systemConfig.isNotExist',
-            ),
+              this.globalService.serverLang(
+                session,
+                '该配置不存在',
+                'systemConfig.isNotExist',
+              ),
           );
         }
       }
@@ -512,15 +520,40 @@ export class SystemConfigService {
 
     // 如果是一级配置,需要重新判断他的二级数量是否为0
     if (isParent) {
-
+      for (const configInfo of result) {
+        const countWhere = {
+          groupName: configInfo.key,
+        };
+        const [errCount, count] = await Utils.toPromise(
+          this.systemConfigSchemaService
+            .getChildrenConfigModel()
+            .countDocuments(countWhere),
+        );
+        if (errCount) {
+          resp.code = CodeEnum.DB_EXEC_ERROR;
+          resp.msg = errCount.message;
+          return resp;
+        }
+        if (count > 0) {
+          excludeConfigId.push(configInfo.id);
+        }
+      }
     }
 
     const modelName = isParent
       ? this.systemConfigSchemaService.getParentConfigModel().getAliasName()
-      : this.systemConfigSchemaService.getChildrenConfigModel().getAliasName()
+      : this.systemConfigSchemaService.getChildrenConfigModel().getAliasName();
 
-    for(const configInfo of result) {
+    for (const configInfo of result) {
       if (excludeConfigId.includes(configInfo.id)) {
+        errResult.push(
+          `(${configInfo.key}) ` +
+            this.globalService.serverLang(
+              session,
+              '该配置还存在二级配置,无法删除',
+              'systemConfig.unableDelete',
+            ),
+        );
         continue;
       }
       await configInfo.deleteOne();
@@ -542,7 +575,9 @@ export class SystemConfigService {
       const content = this.globalService.serverLang(
         session,
         isParent ? '删除一级配置:({0})' : '删除二级配置:({0})',
-        isParent ? 'systemConfig.deleteParentLog' : 'systemConfig.deleteChildrenLog',
+        isParent
+          ? 'systemConfig.deleteParentLog'
+          : 'systemConfig.deleteChildrenLog',
         writeLogResult.join(','),
       );
       await this.userLogsService.writeUserLog(
