@@ -564,7 +564,7 @@ export class SystemConfigService {
         keyWords: configInfo.key,
         searchWhere: {
           key: configInfo.key,
-          // ...{ groupName: configInfo.groupName },
+          ...{ groupName: configInfo['groupName'] },
         },
         id: configInfo.id,
       });
