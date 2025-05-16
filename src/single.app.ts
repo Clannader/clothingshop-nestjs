@@ -15,7 +15,7 @@ import type { NestApplicationOptions } from '@nestjs/common';
 // 使用require时,使用lint解析又报错,只能忽略这个错误了,以后再说了,坑爹
 
 // const MongoStore = require('connect-mongo');
-import { SessionMongoStore } from './dao';
+import { SessionMongoStore, MongooseConfigService } from './dao';
 import * as cookieParser from 'cookie-parser';
 
 import './logger/log4js.logger';
@@ -32,7 +32,6 @@ import {
   GLOBAL_CONFIG,
 } from './common';
 import { ConfigService } from './common/config';
-import { MongooseConfigService } from './dao';
 import { SessionMiddleware } from './middleware';
 // import * as bodyParser from 'body-parser';
 import { rateLimit, MemoryStore } from 'express-rate-limit';

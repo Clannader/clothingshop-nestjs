@@ -13,7 +13,7 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class SecurityInterceptor implements NestInterceptor {
   @Inject()
-  private memoryCacheService: MemoryCacheService;
+  private readonly memoryCacheService: MemoryCacheService;
 
   async intercept(context: ExecutionContext, next: CallHandler) {
     const request: RequestSession = context.switchToHttp().getRequest();

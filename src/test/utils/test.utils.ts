@@ -10,7 +10,7 @@ const isString = (val: any): val is string => typeof val === 'string';
 // 可以获取swagger模型的所有字段值
 export const getModelProperties = function (prototype) {
   const properties =
-    Reflect.getMetadata(API_MODEL_PROPERTIES_ARRAY, prototype) || [];
+    Reflect.getMetadata(API_MODEL_PROPERTIES_ARRAY, prototype) ?? [];
   return properties
     .filter(isString)
     .filter((key) => key.charAt(0) === ':' && !isFunction(prototype[key]))

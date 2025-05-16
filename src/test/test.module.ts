@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TestController } from './test.controller';
-import { MemoryCacheModule } from '@/cache/modules';
+import {
+  MemoryCacheModule,
+  TokenCacheModule,
+  SecuritySessionCacheModule,
+} from '@/cache/modules';
 import {
   AdminSchemaModule,
   SystemDataSchemaModule,
@@ -11,7 +15,6 @@ import {
 import { TestService } from './test.service';
 import { AnimalFactoryModule } from './abstract';
 import { HttpFactoryModule } from '@/http';
-import { TokenCacheModule, SecuritySessionCacheModule } from '@/cache/modules';
 import { TestInterfacesModule } from './interfaces';
 import { BoxController } from './box.controller';
 

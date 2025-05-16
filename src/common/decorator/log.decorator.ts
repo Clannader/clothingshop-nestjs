@@ -23,7 +23,7 @@ export type MetadataLog = PropOptionsLog & {
 export function WriteLog(options: PropOptionsLog): PropertyDecorator {
   return function (target: object, propertyName: string): void {
     const metaData: MetadataLog[] =
-      Reflect.getMetadata(WRITE_LOG, target) || [];
+      Reflect.getMetadata(WRITE_LOG, target) ?? [];
     metaData.push({
       ...options,
       propertyName,

@@ -9,7 +9,7 @@ import { RightCodeGroupModel, RightCodeGroup } from '../../schema';
 @Injectable()
 export class RightCodeGroupSchemaService {
   @InjectModel(RightCodeGroup.name)
-  private rightCodeGroupModel: RightCodeGroupModel;
+  private readonly rightCodeGroupModel: RightCodeGroupModel;
 
   getModel() {
     return this.rightCodeGroupModel;
