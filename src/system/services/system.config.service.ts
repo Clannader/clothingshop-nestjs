@@ -46,6 +46,16 @@ type SearchSystemConfig = {
   groupName?: IgnoreCaseType;
 };
 
+type DeleteSystemConfigWhere = {
+  groupName?: string;
+  _id?: {
+    $in: string[]
+  },
+  key?: {
+    $in: string[]
+  }
+}
+
 @Injectable()
 export class SystemConfigService {
   @Inject()
@@ -372,7 +382,7 @@ export class SystemConfigService {
     return resp;
   }
 
-  deleteSystemConfig(session: CmsSession, params: ReqParentConfigDeleteDto) {
+  async deleteSystemConfig(session: CmsSession, params: ReqParentConfigDeleteDto) {
     const resp = new RespErrorResult();
     // 因为是统一删除一二级配置方法,所以逻辑如下:
     // 如果有groupName的,则认为是删除二级配置,并且判断有二级配置的新建和编辑权限
@@ -381,6 +391,7 @@ export class SystemConfigService {
     const ids = params.ids;
     const keys = params.keys;
     const groupName = params.groupName;
+    const isParent = Utils.isEmpty(groupName);
 
     if (Utils.arrayIsNull(ids) && Utils.arrayIsNull(keys)) {
       resp.code = CodeEnum.EMPTY;
@@ -398,7 +409,9 @@ export class SystemConfigService {
       return resp;
     }
 
+    // 忘记自己为什么写这个权限判断了,估计是为了测试能不能返回提示吧,笑哭
     if (
+      isParent &&
       !Utils.hasOrRights(
         session,
         RightsEnum.ConfigCreate,
@@ -414,8 +427,87 @@ export class SystemConfigService {
         `${RightsEnum.ConfigCreate},${RightsEnum.ConfigModify}`,
       );
       return resp;
+    } else if (
+      !isParent &&
+      !Utils.hasOrRights(
+        session,
+        RightsEnum.ConfigChildrenCreate,
+        RightsEnum.ConfigChildrenModify,
+      )
+    ) {
+      resp.code = CodeEnum.NO_RIGHTS;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '用户{0}缺少所需权限{1}.',
+        'common.hasNoPermissions',
+        session.adminId,
+        `${RightsEnum.ConfigChildrenCreate},${RightsEnum.ConfigChildrenModify}`,
+      );
+      return resp;
     }
 
+    let idsParams: string[];
+    const deleteWhere: DeleteSystemConfigWhere = {
+      groupName: groupName,
+    };
+    // 如果删除一级配置,需要保证自身的二级都删除完毕
+    if (ids.length > 0) {
+      deleteWhere._id = {
+        $in: ids
+      }
+      idsParams = ids;
+    } else if (keys.length > 0) {
+      deleteWhere.key = {
+        $in: keys
+      }
+      idsParams = keys;
+    }
+    let err: ErrorPromise, result: ParentConfigQuery | ChildrenConfigQuery;
+    if (isParent) {
+      [err, result] = await Utils.toPromise(
+        this.systemConfigSchemaService.getParentConfigModel().find(deleteWhere)
+      )
+    } else {
+      [err, result] = await Utils.toPromise(
+        this.systemConfigSchemaService.getChildrenConfigModel().find(deleteWhere)
+      )
+    }
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    const writeLogResult = []; // 写log时需要的配置名称
+    const errResult = []; // 错误集合
+    const configExistId = []; // 已经存在的配置ID
+    const deleteConfigId: string[] = []; // 需要删除的配置ID
+
+    for (const configInfo of result) {
+      if (ids.length > 0) {
+        configExistId.push(configInfo.id)
+      } else if (keys.length > 0) {
+        configExistId.push(configInfo.key)
+      }
+    }
+
+    if (configExistId.length !== idsParams.length) {
+      // 存在 不存在的id数据
+      for (const id of idsParams) {
+        if (!configExistId.includes(id)) {
+          errResult.push(
+            `(${id}) ` +
+            this.globalService.serverLang(
+              session,
+              '该配置不存在',
+              'systemConfig.isNotExist',
+            ),
+          );
+        }
+      }
+    }
+
+    resp.code = CodeEnum.FAIL;
+    resp.errResult = errResult;
     return resp;
   }
 }
