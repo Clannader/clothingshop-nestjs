@@ -7,8 +7,8 @@ export class CodeException extends HttpException {
   constructor(
     code: number,
     description: string,
-    objectOrError?: string | object | any,
+    objectOrError?: string | Record<string, any>,
   ) {
-    super(HttpException.createBody(objectOrError, description, code), code);
+    super(HttpException.createBody(typeof objectOrError === 'string' ? objectOrError : JSON.stringify(objectOrError), description, code), code);
   }
 }
