@@ -172,8 +172,8 @@ export class UploadFileController {
     // 如果存在就遍历里面的值
     const fileDir = fs.readdirSync(fileDirPath, 'utf-8');
     const chunkArr: number[] = [];
-    for (let i = 0; i < fileDir.length; i++) {
-      const fileName = fileDir[i];
+    for (const element of fileDir) {
+      const fileName = element;
       const execFileName = /^([a-f0-9]{32})_([\d]+).temp/.exec(fileName);
       if (execFileName) {
         const [, , index] = execFileName;
@@ -225,8 +225,8 @@ export class UploadFileController {
     const fileDir = fs.readdirSync(fileDirPath, 'utf-8');
     const chunkSet: Set<number> = new Set<number>();
     const mergeFileDir = [];
-    for (let i = 0; i < fileDir.length; i++) {
-      const fileName = fileDir[i];
+    for (const element of fileDir) {
+      const fileName = element;
       const execFileName = /^([a-f0-9]{32})_([\d]+).temp/.exec(fileName);
       if (execFileName) {
         // 里面的文件名规则正确才会去合并文件,否则不合并
@@ -258,8 +258,8 @@ export class UploadFileController {
         fs.appendFileSync(fileNamePath, fs.readFileSync(join(fileDirPath, v)));
       });
     // 然后删除临时文件
-    for (let i = 0; i < fileDir.length; i++) {
-      fs.unlinkSync(join(fileDirPath, fileDir[i]));
+    for (const element of fileDir) {
+      fs.unlinkSync(join(fileDirPath, element));
     }
     fs.rmdirSync(fileDirPath);
     resp.code = 1000;

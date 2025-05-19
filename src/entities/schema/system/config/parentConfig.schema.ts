@@ -13,8 +13,10 @@ export const ParentConfigSchema = SchemaFactory.createForClass(ParentConfig);
 
 export type ParentConfigDocument = HydratedDocument<ParentConfig>;
 
-export type ParentConfigQuery = (Document<unknown, {}, ParentConfig> &
-  ParentConfig & { _id: Types.ObjectId } & { __v: number })[];
+export type ParentConfigElement = Document<unknown, {}, ParentConfig> &
+  ParentConfig & { _id: Types.ObjectId } & { __v: number };
+
+export type ParentConfigQuery = ParentConfigElement[];
 
 ParentConfigSchema.statics.getAliasName = function () {
   return 'ParentConfig';
