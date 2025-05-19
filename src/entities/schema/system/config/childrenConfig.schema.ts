@@ -18,8 +18,10 @@ export class ChildrenConfig extends CommonConfig {
 
 export type ChildrenConfigDocument = HydratedDocument<ChildrenConfig>;
 
-export type ChildrenConfigQuery = (Document<unknown, {}, ChildrenConfig> &
-  ChildrenConfig & { _id: Types.ObjectId } & { __v: number })[];
+export type ChildrenConfigElement = Document<unknown, {}, ChildrenConfig> &
+  ChildrenConfig & { _id: Types.ObjectId } & { __v: number };
+
+export type ChildrenConfigQuery = ChildrenConfigElement[];
 
 export const ChildrenConfigSchema =
   SchemaFactory.createForClass(ChildrenConfig);

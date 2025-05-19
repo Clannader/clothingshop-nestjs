@@ -32,7 +32,7 @@ export class JwtGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
     const http = context.switchToHttp();
     const req: RequestSession = http.getRequest();
-    const authHeader = req.headers['authorization'] as string;
+    const authHeader = typeof req.headers['authorization'] === 'string' ? req.headers['authorization'] : '';
     const language = Utils.getHeadersLanguage(req);
     if (Utils.isEmpty(authHeader)) {
       throw new CodeException(

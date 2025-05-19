@@ -41,7 +41,7 @@ export class DatabaseService {
   private readonly mongooseConnection: Connection;
 
   @Inject()
-  private globalService: GlobalService;
+  private readonly globalService: GlobalService;
 
   async getDbStatistics(session: CmsSession, params: ReqDbStatisticsDto) {
     const resp = new RespDbStatisticsDto();

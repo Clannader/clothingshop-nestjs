@@ -14,8 +14,8 @@ export class ApiTagsDescriptionRegistry {
     const apiTagsMap = new Map<string, string>();
     const container = (app as any).container as NestContainer;
     const modules: Module[] = [...container.getModules().values()];
-    modules.map(({ controllers }) => {
-      [...controllers.values()].map((wrapper: InstanceWrapper<Controller>) => {
+    modules.forEach(({ controllers }) => {
+      [...controllers.values()].forEach((wrapper: InstanceWrapper<Controller>) => {
         const { /*instance, */ metatype } = wrapper;
         // const prototype = Object.getPrototypeOf(instance);
         const tagsOptions: ApiTagsOptions = Reflect.getMetadata(

@@ -30,7 +30,10 @@ import {
   ParentConfigDocument,
   ParentConfigQuery,
 } from '@/entities/schema';
-import { SystemConfigSchemaService } from '@/entities/services';
+import {
+  DeleteLogSchemaService,
+  SystemConfigSchemaService,
+} from '@/entities/services';
 import { RightsEnum } from '@/rights';
 import { UserLogsService } from '@/logs';
 
@@ -46,6 +49,16 @@ type SearchSystemConfig = {
   groupName?: IgnoreCaseType;
 };
 
+type DeleteSystemConfigWhere = {
+  groupName?: string;
+  _id?: {
+    $in: string[];
+  };
+  key?: {
+    $in: string[];
+  };
+};
+
 @Injectable()
 export class SystemConfigService {
   @Inject()
@@ -56,6 +69,9 @@ export class SystemConfigService {
 
   @Inject()
   private readonly userLogsService: UserLogsService;
+
+  @Inject()
+  private readonly deleteLogSchemaService: DeleteLogSchemaService;
 
   async getSystemConfigList(params: ReqSystemConfigListDto) {
     const resp = new RespSystemConfigListDto();
@@ -372,7 +388,10 @@ export class SystemConfigService {
     return resp;
   }
 
-  deleteSystemConfig(session: CmsSession, params: ReqParentConfigDeleteDto) {
+  async deleteSystemConfig(
+    session: CmsSession,
+    params: ReqParentConfigDeleteDto,
+  ) {
     const resp = new RespErrorResult();
     // 因为是统一删除一二级配置方法,所以逻辑如下:
     // 如果有groupName的,则认为是删除二级配置,并且判断有二级配置的新建和编辑权限
@@ -381,6 +400,7 @@ export class SystemConfigService {
     const ids = params.ids;
     const keys = params.keys;
     const groupName = params.groupName;
+    const isParent = Utils.isEmpty(groupName);
 
     if (Utils.arrayIsNull(ids) && Utils.arrayIsNull(keys)) {
       resp.code = CodeEnum.EMPTY;
@@ -398,7 +418,9 @@ export class SystemConfigService {
       return resp;
     }
 
+    // 忘记自己为什么写这个权限判断了,估计是为了测试能不能返回提示吧,笑哭
     if (
+      isParent &&
       !Utils.hasOrRights(
         session,
         RightsEnum.ConfigCreate,
@@ -414,8 +436,171 @@ export class SystemConfigService {
         `${RightsEnum.ConfigCreate},${RightsEnum.ConfigModify}`,
       );
       return resp;
+    } else if (
+      !isParent &&
+      !Utils.hasOrRights(
+        session,
+        RightsEnum.ConfigChildrenCreate,
+        RightsEnum.ConfigChildrenModify,
+      )
+    ) {
+      resp.code = CodeEnum.NO_RIGHTS;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '用户{0}缺少所需权限{1}.',
+        'common.hasNoPermissions',
+        session.adminId,
+        `${RightsEnum.ConfigChildrenCreate},${RightsEnum.ConfigChildrenModify}`,
+      );
+      return resp;
     }
 
+    let idsParams: string[];
+    const deleteWhere: DeleteSystemConfigWhere = {
+      groupName: groupName,
+    };
+    // 如果删除一级配置,需要保证自身的二级都删除完毕
+    if (!Utils.arrayIsNull(ids)) {
+      deleteWhere._id = {
+        $in: ids,
+      };
+      idsParams = ids;
+    } else if (!Utils.arrayIsNull(keys)) {
+      deleteWhere.key = {
+        $in: keys,
+      };
+      idsParams = keys;
+    }
+    let err: ErrorPromise, result: ParentConfigQuery | ChildrenConfigQuery;
+    if (isParent) {
+      [err, result] = await Utils.toPromise(
+        this.systemConfigSchemaService.getParentConfigModel().find(deleteWhere),
+      );
+    } else {
+      [err, result] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getChildrenConfigModel()
+          .find(deleteWhere),
+      );
+    }
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    const writeLogResult = []; // 写log时需要的配置名称
+    const errResult = []; // 错误集合
+    const configExistId = []; // 已经存在的配置ID
+    const deleteConfigId: string[] = []; // 需要删除的配置ID
+    const excludeConfigId: string[] = []; // 仅一级配置使用,查出来含有二级配置无法删除
+
+    for (const configInfo of result) {
+      if (!Utils.arrayIsNull(ids)) {
+        configExistId.push(configInfo.id);
+      } else if (!Utils.arrayIsNull(keys)) {
+        configExistId.push(configInfo.key);
+      }
+    }
+
+    if (configExistId.length !== idsParams.length) {
+      // 存在 不存在的id数据
+      for (const id of idsParams) {
+        if (!configExistId.includes(id)) {
+          errResult.push(
+            `(${id}) ` +
+              this.globalService.serverLang(
+                session,
+                '该配置不存在',
+                'systemConfig.isNotExist',
+              ),
+          );
+        }
+      }
+    }
+
+    // 如果是一级配置,需要重新判断他的二级数量是否为0
+    if (isParent) {
+      for (const configInfo of result) {
+        const countWhere = {
+          groupName: configInfo.key,
+        };
+        const [errCount, count] = await Utils.toPromise(
+          this.systemConfigSchemaService
+            .getChildrenConfigModel()
+            .countDocuments(countWhere),
+        );
+        if (errCount) {
+          resp.code = CodeEnum.DB_EXEC_ERROR;
+          resp.msg = errCount.message;
+          return resp;
+        }
+        if (count > 0) {
+          excludeConfigId.push(configInfo.id);
+        }
+      }
+    }
+
+    const modelName = isParent
+      ? this.systemConfigSchemaService.getParentConfigModel().getAliasName()
+      : this.systemConfigSchemaService.getChildrenConfigModel().getAliasName();
+
+    for (const configInfo of result) {
+      if (excludeConfigId.includes(configInfo.id)) {
+        errResult.push(
+          `(${configInfo.key}) ` +
+            this.globalService.serverLang(
+              session,
+              '该配置还存在二级配置,无法删除',
+              'systemConfig.unableDelete',
+            ),
+        );
+        continue;
+      }
+      await configInfo.deleteOne();
+      writeLogResult.push(configInfo.key);
+      deleteConfigId.push(configInfo.id);
+      await this.deleteLogSchemaService.createDeleteLog({
+        modelName,
+        keyWords: configInfo.key,
+        searchWhere: {
+          key: configInfo.key,
+          ...(configInfo['groupName']
+            ? { groupName: configInfo['groupName'] }
+            : {}),
+        },
+        id: configInfo.id,
+      });
+    }
+
+    if (writeLogResult.length > 0) {
+      // 只要有一个删除成功就算成功
+      const content = isParent
+        ? this.globalService.serverLang(
+            session,
+            '删除一级配置:({0})',
+            'systemConfig.deleteParentLog',
+            writeLogResult.join(','),
+          )
+        : this.globalService.serverLang(
+            session,
+            '删除({0})下的二级配置:({1})',
+            'systemConfig.deleteChildrenLog',
+            groupName,
+            writeLogResult.join(','),
+          );
+      await this.userLogsService.writeUserLog(
+        session,
+        LogTypeEnum.SystemConfig,
+        content,
+        deleteConfigId,
+      );
+    } else {
+      // 这里是删除全部都失败的情况
+      resp.code = CodeEnum.FAIL;
+    }
+    if (errResult.length > 0) {
+      resp.errResult = errResult;
+    }
     return resp;
   }
 }
