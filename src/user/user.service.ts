@@ -229,7 +229,10 @@ export class UserService {
   async regenerateUserSession(req: RequestSession, authUser: LoginResult) {
     //登录成功写log
     //登录时用cookie做默认语言
-    const userAgent = typeof req.headers['user-agent'] === 'string' ? req.headers['user-agent'] : '';
+    const userAgent =
+      typeof req.headers['user-agent'] === 'string'
+        ? req.headers['user-agent']
+        : '';
     const store = req.sessionStore;
     const admin: Admin = authUser.adminInfo;
     const currentDate: Date = authUser.currentDate;
