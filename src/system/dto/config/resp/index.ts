@@ -3,3 +3,4 @@
  */
 export * from './resp-systemConfig-list.dto';
 export * from './resp-systemConfig-create.dto';
+export * from './resp-systemChildrenConfig-create.dto';

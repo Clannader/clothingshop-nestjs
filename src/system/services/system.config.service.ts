@@ -8,9 +8,11 @@ import { instanceToInstance } from 'class-transformer';
 import {
   ListSystemConfigDto,
   ModifyChildrenConfigDto,
+  ReqChildrenConfigModifyDto,
   ReqParentConfigDeleteDto,
   ReqParentConfigModifyDto,
   ReqSystemConfigListDto,
+  RespSystemChildrenConfigCreateDto,
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
 } from '../dto/config';
@@ -601,6 +603,40 @@ export class SystemConfigService {
     if (errResult.length > 0) {
       resp.errResult = errResult;
     }
+    return resp;
+  }
+
+  async saveSystemChildrenConfig(
+    session: CmsSession,
+    params: ReqChildrenConfigModifyDto,
+    isNew: boolean,
+  ): Promise<RespSystemChildrenConfigCreateDto> {
+    const resp = new RespSystemChildrenConfigCreateDto();
+
+    const checkResp = await this.checkInfoChildrenConfig(
+      session,
+      params,
+      isNew,
+      false,
+    );
+
+    if (!checkResp.isSuccess()) {
+      resp.code = checkResp.code;
+      resp.msg = checkResp.msg;
+      return resp;
+    }
+    resp.id = checkResp.id;
+    resp.groupName = checkResp.groupName;
+    return resp;
+  }
+
+  async checkInfoChildrenConfig(
+    session: CmsSession,
+    params: ReqChildrenConfigModifyDto,
+    isNew: boolean,
+    isCheck: boolean,
+  ) {
+    const resp = new RespSystemChildrenConfigCreateDto();
     return resp;
   }
 }

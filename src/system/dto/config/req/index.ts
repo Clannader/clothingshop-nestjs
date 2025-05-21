@@ -6,3 +6,5 @@ export * from './req-parentConfig-create.dto';
 export * from './req-parentConfig-modify.dto';
 export * from './req-parentConfig-delete.dto';
 export * from './req-parentConfig-checkInfo.dto';
+export * from './req-childrenConfig-create.dto';
+export * from './req-childrenConfig-modify.dto';
