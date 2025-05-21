@@ -27,6 +27,7 @@ import { SessionGuard } from '@/guard';
 import { ApiOrRights, ApiRights, RightsEnum } from '@/rights';
 import { SystemConfigService } from '../services';
 import {
+  ReqChildrenConfigCheckInfoDto,
   ReqChildrenConfigCreateDto,
   ReqChildrenConfigModifyDto,
   ReqParentConfigCheckInfoDto,
@@ -145,7 +146,7 @@ export class SystemConfigController {
   ) {
     const isNew = Utils.isEmpty(params.id);
     const modifyParams = plainToInstance(ReqParentConfigModifyDto, params);
-    return this.systemConfigService.checkInfoSystemConfig(
+    return this.systemConfigService.checkInfoParentConfig(
       session,
       modifyParams,
       isNew,
@@ -193,6 +194,30 @@ export class SystemConfigController {
       session,
       params,
       false,
+    );
+  }
+
+  @Post('/children/checkInfo')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '校验二级配置数据',
+    description: '校验二级配置数据',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  @ApiOrRights(RightsEnum.ConfigChildrenCreate, RightsEnum.ConfigChildrenModify)
+  checkInfoChildrenConfig(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqChildrenConfigCheckInfoDto,
+  ) {
+    const isNew = Utils.isEmpty(params.id);
+    const modifyParams = plainToInstance(ReqChildrenConfigModifyDto, params);
+    return this.systemConfigService.checkInfoChildrenConfig(
+      session,
+      modifyParams,
+      isNew,
+      true,
     );
   }
 }

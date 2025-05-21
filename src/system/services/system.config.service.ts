@@ -174,7 +174,7 @@ export class SystemConfigService {
   ): Promise<RespSystemConfigCreateDto> {
     const resp = new RespSystemConfigCreateDto();
 
-    const checkResp = await this.checkInfoSystemConfig(
+    const checkResp = await this.checkInfoParentConfig(
       session,
       params,
       isNew,
@@ -197,7 +197,7 @@ export class SystemConfigService {
    * @param isNew 是否是新建
    * @param isCheck 是否是仅检查
    */
-  async checkInfoSystemConfig(
+  async checkInfoParentConfig(
     session: CmsSession,
     params: ReqParentConfigModifyDto,
     isNew: boolean,
