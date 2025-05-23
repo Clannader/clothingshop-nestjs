@@ -27,6 +27,7 @@ import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { ErrorPromise } from '@/common/types';
 
 import {
+  ChildrenConfig,
   ChildrenConfigDocument,
   ChildrenConfigQuery,
   ParentConfig,
@@ -714,39 +715,69 @@ export class SystemConfigService {
       );
       return resp;
     }
-    if (Utils.isEmpty(params.groupName)) {
-      resp.code = CodeEnum.EMPTY;
+
+    if (isNew) {
+      // 新建二级key需要判断一级key是否存在
+      if (Utils.isEmpty(params.groupName)) {
+        resp.code = CodeEnum.EMPTY;
+        resp.msg = this.globalService.serverLang(
+          session,
+          '一级组名不能为空',
+          'systemConfig.groupNameIsNotEmpty',
+        );
+        return resp;
+      }
+
+      // 判断一级groupName必须存在
+      const searchGroupName = {
+        key: params.groupName,
+      };
+      const [errSearch, groupCount] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getParentConfigModel()
+          .countDocuments(searchGroupName),
+      );
+      if (errSearch) {
+        resp.code = CodeEnum.DB_EXEC_ERROR;
+        resp.msg = errSearch.message;
+        return resp;
+      }
+      if (groupCount <= 0) {
+        resp.code = CodeEnum.FAIL;
+        resp.msg = this.globalService.serverLang(
+          session,
+          '一级组名不存在',
+          'systemConfig.parentGroupNotExists',
+        );
+        return resp;
+      }
+    }
+
+    // 判断二级key是否在全部的一级key中存在
+    const checkParentName = {
+      key: params.configKey,
+    }
+    const [errCheck, countParent] = await Utils.toPromise(
+      this.systemConfigSchemaService
+        .getParentConfigModel()
+        .countDocuments(checkParentName),
+    );
+    if (errCheck) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = errCheck.message;
+      return resp;
+    }
+    if (countParent > 0) {
+      resp.code = CodeEnum.FAIL;
       resp.msg = this.globalService.serverLang(
         session,
-        '一级组名不能为空',
-        'systemConfig.groupNameIsNotEmpty',
+        '无法创建与一级配置同名KEY',
+        'systemConfig.unableCreateGroupName',
       );
       return resp;
     }
 
-    // 判断一级groupName必须存在
-    const searchGroupName = {
-      key: params.groupName,
-    };
-    const [errSearch, groupCount] = await Utils.toPromise(
-      this.systemConfigSchemaService
-        .getParentConfigModel()
-        .countDocuments(searchGroupName),
-    );
-    if (errSearch) {
-      resp.code = CodeEnum.DB_EXEC_ERROR;
-      resp.msg = errSearch.message;
-      return resp;
-    }
-    if (groupCount <= 0) {
-      resp.code = CodeEnum.FAIL;
-      resp.msg = this.globalService.serverLang(
-        session,
-        '一级组名不存在',
-        'systemConfig.parentGroupNotExists',
-      );
-      return resp;
-    }
+    // 判断二级key在自己的一级key中是否存在
     const where: CheckSystemConfig = {
       key: params.configKey,
       groupName: params.groupName,
@@ -770,7 +801,7 @@ export class SystemConfigService {
       resp.code = CodeEnum.FAIL;
       resp.msg = this.globalService.serverLang(
         session,
-        '({0})下的二级配置Key({1})已重复',
+        '({0})下的二级配置:({1})已重复',
         'systemConfig.childrenKeyIsExists',
         params.groupName,
         params.configKey,
@@ -808,7 +839,7 @@ export class SystemConfigService {
       const content = this.globalService.serverLang(
         session,
         '新建({0})下的二级配置:({1})',
-        'systemConfig.createParentLog',
+        'systemConfig.createChildrenLog',
         createObj.groupName,
         createObj.key,
       );
@@ -829,7 +860,7 @@ export class SystemConfigService {
         this.globalService.serverLang(
           session,
           '编辑({0})下的二级配置:({1})',
-          'systemConfig.modifyParentLog',
+          'systemConfig.modifyChildrenLog',
           newChildrenConfig.groupName,
           newChildrenConfig.key,
         ),
@@ -837,7 +868,7 @@ export class SystemConfigService {
       contentArray.push(
         ...this.globalService.compareObjectWriteLog(
           session,
-          ParentConfig,
+          ChildrenConfig,
           oldChildrenConfig,
           newChildrenConfig,
         ),
