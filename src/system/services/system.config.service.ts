@@ -117,7 +117,7 @@ export class SystemConfigService {
     }
     const childrenConfigMap = new Map<string, ModifyChildrenConfigDto[]>();
     if (includeChildren && result.length > 0) {
-      const parentKeys: string[] = result.map((v) => v.id);
+      const parentKeys: string[] = result.map((v) => v.key);
       const childrenWhere = {
         groupName: {
           $in: parentKeys,
@@ -673,6 +673,7 @@ export class SystemConfigService {
         return resp;
       }
       newChildrenConfig = instanceToInstance(oldChildrenConfig);
+      params.groupName = newChildrenConfig.groupName; // 编辑时不可修改该字段
       if (!Utils.isEmpty(params.configKey)) {
         newChildrenConfig.key = params.configKey;
       } else {
