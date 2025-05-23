@@ -287,6 +287,30 @@ export class SystemConfigService {
       return resp;
     }
 
+    // 新增判断一级Key不能存在于二级Key中
+    const checkChildrenName = {
+      key: params.configKey,
+    }
+    const [errCheck, countChildren] = await Utils.toPromise(
+      this.systemConfigSchemaService
+        .getChildrenConfigModel()
+        .countDocuments(checkChildrenName)
+    )
+    if (errCheck) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = errCheck.message;
+      return resp;
+    }
+    if (countChildren > 0) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '无法创建已存在同名二级Key',
+        'systemConfig.unableCreateChildrenName',
+      );
+      return resp;
+    }
+
     // 判断配置Key有没有重复
     const where: CheckSystemConfig = {
       key: params.configKey,
@@ -772,8 +796,8 @@ export class SystemConfigService {
       resp.code = CodeEnum.FAIL;
       resp.msg = this.globalService.serverLang(
         session,
-        '无法创建与一级配置同名KEY',
-        'systemConfig.unableCreateGroupName',
+        '无法创建已存在同名一级Key',
+        'systemConfig.unableCreateParentName',
       );
       return resp;
     }
