@@ -673,7 +673,7 @@ export class SystemConfigService {
         return resp;
       }
       newChildrenConfig = instanceToInstance(oldChildrenConfig);
-      params.groupName = newChildrenConfig.groupName; // 编辑时不可修改该字段
+      params.groupName = oldChildrenConfig.groupName; // 编辑时不可修改该字段
       if (!Utils.isEmpty(params.configKey)) {
         newChildrenConfig.key = params.configKey;
       } else {
