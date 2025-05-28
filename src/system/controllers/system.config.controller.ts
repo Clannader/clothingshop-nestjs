@@ -27,11 +27,15 @@ import { SessionGuard } from '@/guard';
 import { ApiOrRights, ApiRights, RightsEnum } from '@/rights';
 import { SystemConfigService } from '../services';
 import {
+  ReqChildrenConfigCheckInfoDto,
+  ReqChildrenConfigCreateDto,
+  ReqChildrenConfigModifyDto,
   ReqParentConfigCheckInfoDto,
   ReqParentConfigCreateDto,
   ReqParentConfigDeleteDto,
   ReqParentConfigModifyDto,
   ReqSystemConfigListDto,
+  RespSystemChildrenConfigCreateDto,
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
 } from '../dto/config';
@@ -142,7 +146,74 @@ export class SystemConfigController {
   ) {
     const isNew = Utils.isEmpty(params.id);
     const modifyParams = plainToInstance(ReqParentConfigModifyDto, params);
-    return this.systemConfigService.checkInfoSystemConfig(
+    return this.systemConfigService.checkInfoParentConfig(
+      session,
+      modifyParams,
+      isNew,
+      true,
+    );
+  }
+
+  @Post('/children/create')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '新增二级配置',
+    description: '新增二级配置',
+  })
+  @ApiCustomResponse({
+    type: RespSystemChildrenConfigCreateDto,
+  })
+  @ApiRights(RightsEnum.ConfigChildrenCreate)
+  createChildrenConfig(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqChildrenConfigCreateDto,
+  ): Promise<RespSystemChildrenConfigCreateDto> {
+    const modifyParams = plainToInstance(ReqChildrenConfigModifyDto, params);
+    return this.systemConfigService.saveSystemChildrenConfig(
+      session,
+      modifyParams,
+      true,
+    );
+  }
+
+  @Put('/children/modify')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '编辑二级配置',
+    description: '编辑已存在的二级配置',
+  })
+  @ApiCustomResponse({
+    type: RespSystemChildrenConfigCreateDto,
+  })
+  @ApiRights(RightsEnum.ConfigChildrenModify)
+  modifyChildrenConfig(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqChildrenConfigModifyDto,
+  ): Promise<RespSystemChildrenConfigCreateDto> {
+    return this.systemConfigService.saveSystemChildrenConfig(
+      session,
+      params,
+      false,
+    );
+  }
+
+  @Post('/children/checkInfo')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '校验二级配置数据',
+    description: '校验二级配置数据',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  @ApiOrRights(RightsEnum.ConfigChildrenCreate, RightsEnum.ConfigChildrenModify)
+  checkInfoChildrenConfig(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqChildrenConfigCheckInfoDto,
+  ) {
+    const isNew = Utils.isEmpty(params.id);
+    const modifyParams = plainToInstance(ReqChildrenConfigModifyDto, params);
+    return this.systemConfigService.checkInfoChildrenConfig(
       session,
       modifyParams,
       isNew,

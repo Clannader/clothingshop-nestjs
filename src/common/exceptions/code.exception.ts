@@ -9,6 +9,15 @@ export class CodeException extends HttpException {
     description: string,
     objectOrError?: string | Record<string, any>,
   ) {
-    super(HttpException.createBody(typeof objectOrError === 'string' ? objectOrError : JSON.stringify(objectOrError), description, code), code);
+    super(
+      HttpException.createBody(
+        typeof objectOrError === 'string'
+          ? objectOrError
+          : JSON.stringify(objectOrError),
+        description,
+        code,
+      ),
+      code,
+    );
   }
 }
