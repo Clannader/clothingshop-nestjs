@@ -15,17 +15,19 @@ export class ApiTagsDescriptionRegistry {
     const container = (app as any).container as NestContainer;
     const modules: Module[] = [...container.getModules().values()];
     modules.forEach(({ controllers }) => {
-      [...controllers.values()].forEach((wrapper: InstanceWrapper<Controller>) => {
-        const { /*instance, */ metatype } = wrapper;
-        // const prototype = Object.getPrototypeOf(instance);
-        const tagsOptions: ApiTagsOptions = Reflect.getMetadata(
-          API_TAGS_DESC,
-          metatype,
-        );
-        if (tagsOptions) {
-          apiTagsMap.set(tagsOptions.name, tagsOptions.description);
-        }
-      });
+      [...controllers.values()].forEach(
+        (wrapper: InstanceWrapper<Controller>) => {
+          const { /*instance, */ metatype } = wrapper;
+          // const prototype = Object.getPrototypeOf(instance);
+          const tagsOptions: ApiTagsOptions = Reflect.getMetadata(
+            API_TAGS_DESC,
+            metatype,
+          );
+          if (tagsOptions) {
+            apiTagsMap.set(tagsOptions.name, tagsOptions.description);
+          }
+        },
+      );
     });
     return apiTagsMap;
   }

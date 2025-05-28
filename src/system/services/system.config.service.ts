@@ -8,9 +8,11 @@ import { instanceToInstance } from 'class-transformer';
 import {
   ListSystemConfigDto,
   ModifyChildrenConfigDto,
+  ReqChildrenConfigModifyDto,
   ReqParentConfigDeleteDto,
   ReqParentConfigModifyDto,
   ReqSystemConfigListDto,
+  RespSystemChildrenConfigCreateDto,
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
 } from '../dto/config';
@@ -25,6 +27,8 @@ import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { ErrorPromise } from '@/common/types';
 
 import {
+  ChildrenConfig,
+  ChildrenConfigDocument,
   ChildrenConfigQuery,
   ParentConfig,
   ParentConfigDocument,
@@ -39,6 +43,7 @@ import { UserLogsService } from '@/logs';
 
 type CheckSystemConfig = {
   key: string;
+  groupName?: string;
   _id?: {
     $ne: string;
   };
@@ -112,7 +117,7 @@ export class SystemConfigService {
     }
     const childrenConfigMap = new Map<string, ModifyChildrenConfigDto[]>();
     if (includeChildren && result.length > 0) {
-      const parentKeys: string[] = result.map((v) => v.id);
+      const parentKeys: string[] = result.map((v) => v.key);
       const childrenWhere = {
         groupName: {
           $in: parentKeys,
@@ -172,7 +177,7 @@ export class SystemConfigService {
   ): Promise<RespSystemConfigCreateDto> {
     const resp = new RespSystemConfigCreateDto();
 
-    const checkResp = await this.checkInfoSystemConfig(
+    const checkResp = await this.checkInfoParentConfig(
       session,
       params,
       isNew,
@@ -195,7 +200,7 @@ export class SystemConfigService {
    * @param isNew 是否是新建
    * @param isCheck 是否是仅检查
    */
-  async checkInfoSystemConfig(
+  async checkInfoParentConfig(
     session: CmsSession,
     params: ReqParentConfigModifyDto,
     isNew: boolean,
@@ -278,6 +283,30 @@ export class SystemConfigService {
         session,
         '配置Key格式错误:以大写字母开头,数字、字母、下划线组合,最长10个字符',
         'systemConfig.keyFormatError',
+      );
+      return resp;
+    }
+
+    // 新增判断一级Key不能存在于二级Key中
+    const checkChildrenName = {
+      key: params.configKey,
+    }
+    const [errCheck, countChildren] = await Utils.toPromise(
+      this.systemConfigSchemaService
+        .getChildrenConfigModel()
+        .countDocuments(checkChildrenName)
+    )
+    if (errCheck) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = errCheck.message;
+      return resp;
+    }
+    if (countChildren > 0) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '无法创建已存在同名二级Key',
+        'systemConfig.unableCreateChildrenName',
       );
       return resp;
     }
@@ -601,6 +630,284 @@ export class SystemConfigService {
     if (errResult.length > 0) {
       resp.errResult = errResult;
     }
+    return resp;
+  }
+
+  async saveSystemChildrenConfig(
+    session: CmsSession,
+    params: ReqChildrenConfigModifyDto,
+    isNew: boolean,
+  ): Promise<RespSystemChildrenConfigCreateDto> {
+    const resp = new RespSystemChildrenConfigCreateDto();
+
+    const checkResp = await this.checkInfoChildrenConfig(
+      session,
+      params,
+      isNew,
+      false,
+    );
+
+    if (!checkResp.isSuccess()) {
+      resp.code = checkResp.code;
+      resp.msg = checkResp.msg;
+      return resp;
+    }
+    resp.id = checkResp.id;
+    resp.groupName = checkResp.groupName;
+    return resp;
+  }
+
+  async checkInfoChildrenConfig(
+    session: CmsSession,
+    params: ReqChildrenConfigModifyDto,
+    isNew: boolean,
+    isCheck: boolean,
+  ) {
+    const resp = new RespSystemChildrenConfigCreateDto();
+    const id = params.id;
+    if (!isNew && Utils.isEmpty(id)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        'ID值不能为空',
+        'common.idIsEmpty',
+      );
+      return resp;
+    }
+
+    let oldChildrenConfig: ChildrenConfigDocument,
+      newChildrenConfig: ChildrenConfigDocument,
+      err: Error;
+    if (!isNew) {
+      [err, oldChildrenConfig] = await Utils.toPromise(
+        this.systemConfigSchemaService.getChildrenConfigModel().findById(id),
+      );
+      if (err) {
+        resp.code = CodeEnum.DB_EXEC_ERROR;
+        resp.msg = err.message;
+        return resp;
+      }
+      if (Utils.isEmpty(oldChildrenConfig)) {
+        resp.code = CodeEnum.FAIL;
+        resp.msg = this.globalService.serverLang(
+          session,
+          '该二级配置不存在',
+          'systemConfig.childrenConfigNotExist',
+        );
+        return resp;
+      }
+      newChildrenConfig = instanceToInstance(oldChildrenConfig);
+      params.groupName = oldChildrenConfig.groupName; // 编辑时不可修改该字段
+      if (!Utils.isEmpty(params.configKey)) {
+        newChildrenConfig.key = params.configKey;
+      } else {
+        params.configKey = oldChildrenConfig.key;
+      }
+      if (!Utils.isEmpty(params.configValue)) {
+        newChildrenConfig.value = params.configValue;
+      } else {
+        params.configValue = oldChildrenConfig.value;
+      }
+      if (!Utils.isNull(params.description)) {
+        newChildrenConfig.description = params.description;
+      }
+    }
+
+    if (Utils.isEmpty(params.configKey)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '配置Key不能为空',
+        'systemConfig.keyIsNotEmpty',
+      );
+      return resp;
+    }
+    if (Utils.isEmpty(params.configValue)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '配置值不能为空',
+        'systemConfig.valueIsNotEmpty',
+      );
+      return resp;
+    }
+    if (!configKeyExp.test(params.configKey)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '配置Key格式错误:以大写字母开头,数字、字母、下划线组合,最长10个字符',
+        'systemConfig.keyFormatError',
+      );
+      return resp;
+    }
+
+    if (isNew) {
+      // 新建二级key需要判断一级key是否存在
+      if (Utils.isEmpty(params.groupName)) {
+        resp.code = CodeEnum.EMPTY;
+        resp.msg = this.globalService.serverLang(
+          session,
+          '一级组名不能为空',
+          'systemConfig.groupNameIsNotEmpty',
+        );
+        return resp;
+      }
+
+      // 判断一级groupName必须存在
+      const searchGroupName = {
+        key: params.groupName,
+      };
+      const [errSearch, groupCount] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getParentConfigModel()
+          .countDocuments(searchGroupName),
+      );
+      if (errSearch) {
+        resp.code = CodeEnum.DB_EXEC_ERROR;
+        resp.msg = errSearch.message;
+        return resp;
+      }
+      if (groupCount <= 0) {
+        resp.code = CodeEnum.FAIL;
+        resp.msg = this.globalService.serverLang(
+          session,
+          '一级组名不存在',
+          'systemConfig.parentGroupNotExists',
+        );
+        return resp;
+      }
+    }
+
+    // 判断二级key是否在全部的一级key中存在
+    const checkParentName = {
+      key: params.configKey,
+    }
+    const [errCheck, countParent] = await Utils.toPromise(
+      this.systemConfigSchemaService
+        .getParentConfigModel()
+        .countDocuments(checkParentName),
+    );
+    if (errCheck) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = errCheck.message;
+      return resp;
+    }
+    if (countParent > 0) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '无法创建已存在同名一级Key',
+        'systemConfig.unableCreateParentName',
+      );
+      return resp;
+    }
+
+    // 判断二级key在自己的一级key中是否存在
+    const where: CheckSystemConfig = {
+      key: params.configKey,
+      groupName: params.groupName,
+    };
+    if (!isNew) {
+      where._id = {
+        $ne: params.id,
+      };
+    }
+    const [errFind, count] = await Utils.toPromise(
+      this.systemConfigSchemaService
+        .getChildrenConfigModel()
+        .countDocuments(where),
+    );
+    if (errFind) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = errFind.message;
+      return resp;
+    }
+    if (count > 0) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '({0})下的二级配置:({1})已重复',
+        'systemConfig.childrenKeyIsExists',
+        params.groupName,
+        params.configKey,
+      );
+      return resp;
+    }
+    if (isCheck) {
+      return resp;
+    }
+
+    if (isNew) {
+      const createChildrenConfig = {
+        key: params.configKey,
+        value: params.configValue,
+        groupName: params.groupName,
+        description: params.description,
+        createUser: session.adminId,
+        createDate: new Date(),
+        isEncrypt: undefined,
+      };
+      if (params.isEncrypt) {
+        createChildrenConfig.isEncrypt = params.isEncrypt;
+      }
+      const [errCreate, createObj] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getChildrenConfigModel()
+          .create(createChildrenConfig),
+      );
+      if (errCreate) {
+        resp.code = CodeEnum.DB_EXEC_ERROR;
+        resp.msg = errCreate.message;
+        return resp;
+      }
+      resp.id = createObj.id;
+      const content = this.globalService.serverLang(
+        session,
+        '新建({0})下的二级配置:({1})',
+        'systemConfig.createChildrenLog',
+        createObj.groupName,
+        createObj.key,
+      );
+      await this.userLogsService.writeUserLog(
+        session,
+        LogTypeEnum.SystemConfig,
+        content,
+        createObj.id,
+      );
+    } else {
+      newChildrenConfig.updateUser = session.adminId;
+      newChildrenConfig.updateDate = new Date();
+      await this.systemConfigSchemaService
+        .getSystemConfigModel()
+        .syncSaveDBObject(newChildrenConfig);
+      resp.id = newChildrenConfig.id;
+      const contentArray = [
+        this.globalService.serverLang(
+          session,
+          '编辑({0})下的二级配置:({1})',
+          'systemConfig.modifyChildrenLog',
+          newChildrenConfig.groupName,
+          newChildrenConfig.key,
+        ),
+      ];
+      contentArray.push(
+        ...this.globalService.compareObjectWriteLog(
+          session,
+          ChildrenConfig,
+          oldChildrenConfig,
+          newChildrenConfig,
+        ),
+      );
+      if (contentArray.length > 1) {
+        await this.userLogsService.writeUserLog(
+          session,
+          LogTypeEnum.SystemConfig,
+          contentArray.join('\r\n'),
+          newChildrenConfig.id,
+        );
+      }
+    }
+
     return resp;
   }
 }

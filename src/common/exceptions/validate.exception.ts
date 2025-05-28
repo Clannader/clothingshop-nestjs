@@ -5,9 +5,18 @@ import { HttpException } from '@nestjs/common';
 import { CodeEnum } from '../enum';
 
 export class ValidateException extends HttpException {
-  constructor(description: string, objectOrError?: string | Record<string, any>) {
+  constructor(
+    description: string,
+    objectOrError?: string | Record<string, any>,
+  ) {
     super(
-      HttpException.createBody(typeof objectOrError === 'string' ? objectOrError : JSON.stringify(objectOrError), description, CodeEnum.EXCEPTION),
+      HttpException.createBody(
+        typeof objectOrError === 'string'
+          ? objectOrError
+          : JSON.stringify(objectOrError),
+        description,
+        CodeEnum.EXCEPTION,
+      ),
       CodeEnum.EXCEPTION,
     );
   }
