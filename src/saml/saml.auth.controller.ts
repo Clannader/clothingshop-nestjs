@@ -12,7 +12,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { SamlAuthGuard } from '@/guard';
 import { Response } from 'express';
 import { ApiTagsController } from '@/common/decorator';
 import { ApiOperation } from '@nestjs/swagger';
@@ -31,7 +31,7 @@ export class SamlAuthController {
     summary: 'SSO登录跳转',
     description: 'SSO登录跳转',
   })
-  @UseGuards(AuthGuard('saml'))
+  @UseGuards(SamlAuthGuard)
   ssoLogin(@Res() res: Response) {
     res.redirect('/index'); // 其实这个重定向没什么作用,会直接跳转到微软的登录界面
   }
@@ -42,7 +42,7 @@ export class SamlAuthController {
     summary: 'SSO登录后回调',
     description: 'SSO登录后回调',
   })
-  @UseGuards(AuthGuard('saml'))
+  @UseGuards(SamlAuthGuard)
   async ssoLoginCallback(@Req() req: RequestSession) {
     // 如果微软校验通过,app认证用户存在则req.user有值
     // 如果有任何错误,直接抛出异常得了
