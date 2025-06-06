@@ -83,7 +83,7 @@
     "swagger-ui-express": "^5.0.1",
     "tunnel": "^0.0.6",
     "uuid": "^11.0.3",
-    "validator": "^13.15.0",
+    "validator": "^13.15.15",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
