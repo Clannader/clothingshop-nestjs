@@ -113,7 +113,9 @@ export class AopAspect {
         //   }
         // });
       } catch (e) {
-        console.log(`Exception while doing something: ${e.message}`);
+        console.log(
+          `[Aop.Aspect.ts]Exception while doing something: ${e.message}`,
+        );
       }
       const headers = Object.assign(req.headers, {
         cookie: req.cookies,
