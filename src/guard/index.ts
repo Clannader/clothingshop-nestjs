@@ -3,3 +3,4 @@
  */
 export * from './session.guard';
 export * from './jwt.guard';
+export * from './samlAuth.guard';

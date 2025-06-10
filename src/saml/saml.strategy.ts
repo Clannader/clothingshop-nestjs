@@ -21,7 +21,7 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
 
   constructor(
     @Inject(SECRET_CONFIG)
-    private readonly secretConfig: ConfigService,
+    private secretConfig: ConfigService,
   ) {
     let idpCert = ' ';
     let privateKey = '';
@@ -45,19 +45,22 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
       entryPoint: secretConfig.get<string>('entryPoint'), // 设置为微软的Set up XXX -> Login URL 登录地址
       issuer: secretConfig.get<string>('issuer'), // 有些时候需要加上spn:{{issuerID}}, Application ID
       idpCert, // 微软的SAML Certificates -> 下载证书
-      authnContext: [
-        // 默认是 urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
-        'urn:oasis:names:tc:SAML:2.0:ac:classes:Password',
-      ],
+      // 如果authnContext为空并且设置disableRequestedAuthnContext=true,那么微软就会根据用户的授权方式进行授权,而不是每次都是
+      // 使用密码来进行授权,微软的邮箱可以通过很多方式授权,每个账号可能都不一样,如果这里写死,那么就变成必须按照这种方式进行授权
+      // 如果为空则根据用户的设置来进行授权
+      // authnContext: [
+      //   // 默认是 urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
+      //   'urn:oasis:names:tc:SAML:2.0:ac:classes:Password',
+      // ],
       signatureAlgorithm: 'sha256', // 签名算法,默认是sha256
       digestAlgorithm: 'sha256', // 摘要算法,默认是sha256
-      privateKey,
-      publicCert,
+      ...(privateKey ? { privateKey } : {}),
+      ...(publicCert ? { publicCert } : {}),
       // signMetadata: true,
       authnRequestBinding: 'HTTP-Redirect', // 默认为HTTP-Redirect, 如果设置HTTP-POST才可以带签名过去
       // identifierFormat: null, // 好像是解析SAML响应报文的用户邮箱格式,使用默认的即可
       // validateInResponseTo: 'never', // 可使用值never, ifPresent, always,这个好像是判断请求ID,使用缓存逻辑,用默认内置的代码即可
-      // disableRequestedAuthnContext: true, // 如果是真的话,就不需要特定的身份验证上下文
+      disableRequestedAuthnContext: true, // 如果是真的话,就不需要特定的身份验证上下文
       wantAuthnResponseSigned: false, // 跳过响应xml签名验证,如果响应的xml没有签名可以跳过
       // wantAssertionsSigned: false, // 跳过断言xml签名验证
       // forceAuthn: true, // 每次跳转都要重新验证

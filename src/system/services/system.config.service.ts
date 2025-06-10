@@ -290,12 +290,12 @@ export class SystemConfigService {
     // 新增判断一级Key不能存在于二级Key中
     const checkChildrenName = {
       key: params.configKey,
-    }
+    };
     const [errCheck, countChildren] = await Utils.toPromise(
       this.systemConfigSchemaService
         .getChildrenConfigModel()
-        .countDocuments(checkChildrenName)
-    )
+        .countDocuments(checkChildrenName),
+    );
     if (errCheck) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
       resp.msg = errCheck.message;
@@ -781,7 +781,7 @@ export class SystemConfigService {
     // 判断二级key是否在全部的一级key中存在
     const checkParentName = {
       key: params.configKey,
-    }
+    };
     const [errCheck, countParent] = await Utils.toPromise(
       this.systemConfigSchemaService
         .getParentConfigModel()
