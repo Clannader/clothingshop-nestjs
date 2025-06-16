@@ -690,4 +690,11 @@ export class Utils {
   static arrayIsNull(obj: any): boolean {
     return !Array.isArray(obj) || obj.length === 0;
   }
+
+  // 把mongodb的_id转化成时间戳
+  static objectIdToDate(objectId: string) {
+    const hexTimestamp = objectId.substring(0, 8);
+    const timestamp = parseInt(hexTimestamp, 16) * 1000;
+    return new Date(timestamp);
+  }
 }
