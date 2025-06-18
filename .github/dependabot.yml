@@ -11,3 +11,8 @@ updates:
     schedule:
       interval: "weekly" # 检查频率（daily/weekly/monthly）‌
     open-pull-requests-limit: 10 # 最大并发 PR 数量‌
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'mongoose'
+        versions: ['>8.15.x']

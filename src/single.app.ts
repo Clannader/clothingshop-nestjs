@@ -28,7 +28,7 @@ import * as session from 'express-session';
 import {
   sessionName,
   sessionSecret,
-  dbSession_Expires,
+  DbSession_Expires,
   GLOBAL_CONFIG,
 } from './common';
 import { ConfigService } from './common/config';
@@ -118,7 +118,7 @@ export async function bootstrap() {
       resave: true,
       store: SessionMongoStore.create({
         client: mongooseService.getConnection().getClient(),
-        ttl: dbSession_Expires,
+        ttl: DbSession_Expires,
       }),
     }),
   );

@@ -4,7 +4,7 @@ export const dateSdf = 'YYYY-MM-DD HH:mm:ss';
 export const ZH = 'ZH';
 export const EN = 'EN';
 // Session过期时间,这里的过期时间要重新定义,不是自己定义的session过期时间,而是Mongodb Session过期时间
-export const dbSession_Expires = 60 * 60; // 1小时,单位秒,其实现在这个就是session失效的时间
+export const DbSession_Expires = 60 * 60; // 1小时,单位秒,其实现在这个就是session失效的时间
 export const Session_Expires = 60 * 60 * 1000; // 1小时,单位毫秒
 export const Active_Expires = 10 * 60 * 1000; // 用户活跃时间
 export const Cookie_Expires = 7 * 24 * 60 * 60 * 1000; // 7天
@@ -22,6 +22,7 @@ export const ipExp =
   /((25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))/;
 export const timeZoneExp = /^[+\-]([01][0-9]|2[0-4]):([0-5][0-9])$/;
 export const configKeyExp = /^[A-Z][\w]{1,9}$/;
+export const passwordExp = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*\W).{8,}$/ // 必须包含数字大小写字母特殊符合大于等于8位的密码
 export const sessionName = 'cmsApp';
 export const sessionSecret = '123456cms';
 export const interfaceHeader = 'CMS-Interface';
