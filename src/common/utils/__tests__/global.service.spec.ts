@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   dateSdf,
-  dbSession_Expires,
+  DbSession_Expires,
   Supervisor_Rights,
   userNameExp,
   tripleDES,
@@ -75,8 +75,8 @@ describe('GlobalService', () => {
   });
 
   it('测试获取全局静态参数 session过期时间', () => {
-    expect(GlobalService.GlobalStatic.dbSession_Expires).toBe(
-      dbSession_Expires,
+    expect(GlobalService.GlobalStatic.DbSession_Expires).toBe(
+      DbSession_Expires,
     );
   });
 
