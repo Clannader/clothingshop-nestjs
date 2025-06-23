@@ -67,7 +67,7 @@
     "express-rate-limit": "^7.4.1",
     "express-session": "^1.18.1",
     "helmet": "^8.1.0",
-    "keyv": "^5.3.3",
+    "keyv": "^5.3.4",
     "lodash": "^4.17.21",
     "log4js": "^6.9.1",
     "moment": "^2.30.1",
