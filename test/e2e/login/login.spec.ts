@@ -6,7 +6,7 @@ import { INestApplication } from '@nestjs/common';
 import { AppModule } from '@/app.module';
 import * as cookieParser from 'cookie-parser';
 import { SessionMiddleware } from '@/middleware';
-import { sessionName, sessionSecret, dbSession_Expires } from '@/common';
+import { sessionName, sessionSecret, DbSession_Expires } from '@/common';
 import { MongooseConfigService, SessionMongoStore } from '@/dao';
 import * as request from 'supertest';
 import * as session from 'express-session';
@@ -33,7 +33,7 @@ describe('LoginController (e2e)', () => {
         resave: true,
         store: SessionMongoStore.create({
           client: mongooseService.getConnection().getClient(),
-          ttl: dbSession_Expires,
+          ttl: DbSession_Expires,
         }),
       }),
     );
