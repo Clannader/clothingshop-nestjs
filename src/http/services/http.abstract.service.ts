@@ -67,7 +67,7 @@ export abstract class HttpAbstractService {
           response.config.baseURL +
             response.config.url +
             '耗时: ' +
-            (Date.now() - response.config.fetchOptions.startTime) +
+            (Date.now() - response.config.fetchOptions['startTime']) +
             'ms',
         );
         return Promise.resolve(response);
