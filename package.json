@@ -39,7 +39,7 @@
     "@andybeat/schedule": "^2.0.1",
     "@nestjs/cache-manager": "^3.0.1",
     "@nestjs/common": "^11.1.3",
-    "@nestjs/core": "^11.1.2",
+    "@nestjs/core": "^11.1.3",
     "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mapped-types": "^2.1.0",
