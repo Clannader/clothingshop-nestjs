@@ -50,3 +50,8 @@ git pull xxx/xxx.git branch号 发现可以通过github的命令合并他人项�
 11.项目中新增renovate.json可以让github的机器人自动更新最新依赖包版本
 12.electron项目的build,第一次的时候需要使用管理员权限执行npm run build才能成功,后面的build可以使用IDEA执行
 ```
+
+```
+13.远程获取别的项目分支:git remote add [仓库分类名:upstream] [原仓库URL]
+git fetch [仓库分类名:upstream] [分支名] 获取目标仓库分支
+```
