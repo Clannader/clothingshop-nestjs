@@ -34,6 +34,7 @@ import {
   ParentConfig,
   ParentConfigDocument,
   ParentConfigQuery,
+  SecretSchema,
 } from '@/entities/schema';
 import {
   DeleteLogSchemaService,
@@ -302,13 +303,16 @@ export class SystemConfigService {
     // 如果isEncrypt=false,那么value加不加密都无所谓
 
     // 判断value是否加密,用解密方法解出来成功就行??
+    let secretValue: SecretSchema;
     if (params.isEncrypt) {
       const plainValue = await this.memoryCacheService.tripleDesDecrypt(
         session.language,
         params.configValue,
         securityOptions,
       );
-      console.log(plainValue);
+      params.configValue = '******';
+      secretValue =
+        await this.memoryCacheService.internalRsaEncrypt(plainValue);
     }
 
     // 新增判断一级Key不能存在于二级Key中
@@ -378,9 +382,11 @@ export class SystemConfigService {
         createUser: session.adminId,
         createDate: new Date(),
         isEncrypt: undefined,
+        secretValue: undefined,
       };
       if (params.isEncrypt) {
         createSystemConfigParent.isEncrypt = params.isEncrypt;
+        createSystemConfigParent.secretValue = secretValue;
       }
       const [errCreate, createObj] = await Utils.toPromise(
         this.systemConfigSchemaService
