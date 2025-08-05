@@ -49,15 +49,15 @@ type HeadersOptions = {
 };
 
 export function ApiCommon(options?: HeadersOptions) {
-  options = Object.assign(
-    {
+  options = {
+    ...{
       showCredential: true,
       showJwtToken: false,
       showRsaToken: false,
       rsaTokenRequired: false,
     },
-    options ?? {},
-  );
+    ...(options ?? {}),
+  };
   if (options.showJwtToken) {
     options.showCredential = false; // 这两个条件互斥的
   }
@@ -176,8 +176,25 @@ export function ApiCommon(options?: HeadersOptions) {
   );
 }
 
-export function ApiCustomResponse(options: ApiResponseOptions) {
-  return BindMethod(
+export function ApiCustomResponse(
+  options: ApiResponseOptions,
+  addHeaders: HeadersOptions = {},
+) {
+  const headers: ApiHeaderOptions[] = [];
+  if (addHeaders.showRsaToken) {
+    headers.push({
+      name: 'Security-Token',
+      description: '客户端使用公钥加密生成的密钥',
+      required: addHeaders.rsaTokenRequired,
+    });
+    headers.push({
+      name: 'Security-Id',
+      description: '服务器授权的安全ID号',
+      required: addHeaders.rsaTokenRequired,
+    });
+  }
+  return applyDecorators(
+    ApiHeaders(headers),
     // HttpCode(HttpStatus.OK) // 这个状态码在POST请求时统一改不了成200,看了源代码,只认方法有名字为HttpCode的修饰器的值
     // 所以我换了一个名字,不写HttpCode的时候,取到的值是undefined,所以如果要改,只能每个post方法自己加上了,否则就默认是201
     ApiResponse({

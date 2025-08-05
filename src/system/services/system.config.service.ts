@@ -22,6 +22,7 @@ import {
   configKeyExp,
   IgnoreCaseType,
   RespErrorResult,
+  SecurityOptions,
 } from '@/common';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { ErrorPromise } from '@/common/types';
@@ -40,6 +41,7 @@ import {
 } from '@/entities/services';
 import { RightsEnum } from '@/rights';
 import { UserLogsService } from '@/logs';
+import { MemoryCacheService } from '@/cache/services';
 
 type CheckSystemConfig = {
   key: string;
@@ -77,6 +79,9 @@ export class SystemConfigService {
 
   @Inject()
   private readonly deleteLogSchemaService: DeleteLogSchemaService;
+
+  @Inject()
+  private readonly memoryCacheService: MemoryCacheService;
 
   async getSystemConfigList(params: ReqSystemConfigListDto) {
     const resp = new RespSystemConfigListDto();
@@ -174,6 +179,7 @@ export class SystemConfigService {
     session: CmsSession,
     params: ReqParentConfigModifyDto,
     isNew: boolean,
+    securityOptions?: SecurityOptions,
   ): Promise<RespSystemConfigCreateDto> {
     const resp = new RespSystemConfigCreateDto();
 
@@ -182,6 +188,7 @@ export class SystemConfigService {
       params,
       isNew,
       false,
+      securityOptions,
     );
 
     if (!checkResp.isSuccess()) {
@@ -199,12 +206,14 @@ export class SystemConfigService {
    * @param params 编辑对象
    * @param isNew 是否是新建
    * @param isCheck 是否是仅检查
+   * @param securityOptions 加密参数
    */
   async checkInfoParentConfig(
     session: CmsSession,
     params: ReqParentConfigModifyDto,
     isNew: boolean,
     isCheck: boolean,
+    securityOptions?: SecurityOptions,
   ) {
     const resp = new RespSystemConfigCreateDto();
     // 判断是否是新建还是编辑,如果是编辑,id必填
@@ -257,6 +266,7 @@ export class SystemConfigService {
       if (!Utils.isNull(params.description)) {
         newParentConfig.description = params.description;
       }
+      // TODO 判断如果之前是加密存储的,编辑值的时候也需要加密
     }
 
     if (Utils.isEmpty(params.configKey)) {
@@ -285,6 +295,20 @@ export class SystemConfigService {
         'systemConfig.keyFormatError',
       );
       return resp;
+    }
+
+    // 新增如果加密值的话,需要判断传入的value是否能解密成功
+    // 如果isEncrypt=true,那么value就必须要加密
+    // 如果isEncrypt=false,那么value加不加密都无所谓
+
+    // 判断value是否加密,用解密方法解出来成功就行??
+    if (params.isEncrypt) {
+      const plainValue = await this.memoryCacheService.tripleDesDecrypt(
+        session.language,
+        params.configValue,
+        securityOptions,
+      );
+      console.log(plainValue);
     }
 
     // 新增判断一级Key不能存在于二级Key中

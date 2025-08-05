@@ -6,6 +6,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   HttpCode,
   HttpStatus,
   Inject,
@@ -39,7 +40,12 @@ import {
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
 } from '../dto/config';
-import { CmsSession, CommonResult, RespErrorResult } from '@/common';
+import {
+  CmsSession,
+  CommonResult,
+  RespErrorResult,
+  SecurityOptions,
+} from '@/common';
 import { plainToInstance } from 'class-transformer';
 import { Utils } from '@/common/utils';
 
@@ -76,19 +82,32 @@ export class SystemConfigController {
     summary: '新增一级配置',
     description: '新增一级配置',
   })
-  @ApiCustomResponse({
-    type: RespSystemConfigCreateDto,
-  })
+  @ApiCustomResponse(
+    {
+      type: RespSystemConfigCreateDto,
+    },
+    {
+      showRsaToken: true,
+      rsaTokenRequired: false,
+    },
+  )
   @ApiRights(RightsEnum.ConfigCreate)
   createParentConfig(
     @UserSession() session: CmsSession,
     @Body() params: ReqParentConfigCreateDto,
+    @Headers('Security-Token') securityToken: string,
+    @Headers('Security-Id') securityId: string,
   ): Promise<RespSystemConfigCreateDto> {
+    const securityOptions: SecurityOptions = {
+      securityToken,
+      securityId,
+    };
     const modifyParams = plainToInstance(ReqParentConfigModifyDto, params);
     return this.systemConfigService.saveSystemParentConfig(
       session,
       modifyParams,
       true,
+      securityOptions,
     );
   }
 
