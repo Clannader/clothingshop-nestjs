@@ -688,6 +688,7 @@ export class SystemConfigService {
     session: CmsSession,
     params: ReqChildrenConfigModifyDto,
     isNew: boolean,
+    securityOptions?: SecurityOptions,
   ): Promise<RespSystemChildrenConfigCreateDto> {
     const resp = new RespSystemChildrenConfigCreateDto();
 
@@ -696,6 +697,7 @@ export class SystemConfigService {
       params,
       isNew,
       false,
+      securityOptions
     );
 
     if (!checkResp.isSuccess()) {
@@ -713,6 +715,7 @@ export class SystemConfigService {
     params: ReqChildrenConfigModifyDto,
     isNew: boolean,
     isCheck: boolean,
+    securityOptions?: SecurityOptions,
   ) {
     const resp = new RespSystemChildrenConfigCreateDto();
     const id = params.id;
@@ -754,6 +757,12 @@ export class SystemConfigService {
       } else {
         params.configKey = oldChildrenConfig.key;
       }
+      // 判断如果之前是加密存储的,编辑值的时候也需要加密
+      if (!Utils.isEmpty(params.isEncrypt)) {
+        newChildrenConfig.isEncrypt = params.isEncrypt;
+      } else {
+        params.isEncrypt = oldChildrenConfig.isEncrypt;
+      }
       if (!Utils.isEmpty(params.configValue)) {
         newChildrenConfig.value = params.configValue;
       } else {
@@ -790,6 +799,23 @@ export class SystemConfigService {
         'systemConfig.keyFormatError',
       );
       return resp;
+    }
+
+    let secretValue: SecretSchema;
+    if (params.isEncrypt) {
+      if (isNew || oldChildrenConfig.value !== newChildrenConfig.value) {
+        //如果是新建或者编辑时value值不一样,就要解密然后服务器加密
+        const plainValue = await this.memoryCacheService.tripleDesDecrypt(
+          session.language,
+          params.configValue,
+          securityOptions,
+        );
+        secretValue =
+          await this.memoryCacheService.internalRsaEncrypt(plainValue);
+      } else if (oldChildrenConfig.value === newChildrenConfig.value) {
+        // 编辑时,value没有变化
+        secretValue = oldChildrenConfig.secretValue;
+      }
     }
 
     if (isNew) {
@@ -896,10 +922,13 @@ export class SystemConfigService {
         description: params.description,
         createUser: session.adminId,
         createDate: new Date(),
-        isEncrypt: undefined,
+        isEncrypt: false,
+        secretValue: secretValue,
       };
       if (params.isEncrypt) {
         createChildrenConfig.isEncrypt = params.isEncrypt;
+        createChildrenConfig.value = '******';
+        createChildrenConfig.secretValue = secretValue;
       }
       const [errCreate, createObj] = await Utils.toPromise(
         this.systemConfigSchemaService
@@ -928,6 +957,12 @@ export class SystemConfigService {
     } else {
       newChildrenConfig.updateUser = session.adminId;
       newChildrenConfig.updateDate = new Date();
+      if (params.isEncrypt) {
+        newChildrenConfig.value = '******';
+        newChildrenConfig.secretValue = secretValue;
+      } else {
+        newChildrenConfig.secretValue = undefined;
+      }
       await this.systemConfigSchemaService
         .getSystemConfigModel()
         .syncSaveDBObject(newChildrenConfig);

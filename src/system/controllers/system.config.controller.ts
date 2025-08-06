@@ -168,21 +168,34 @@ export class SystemConfigController {
     summary: '校验一级配置数据',
     description: '校验一级配置数据',
   })
-  @ApiCustomResponse({
-    type: CommonResult,
-  })
+  @ApiCustomResponse(
+    {
+      type: CommonResult,
+    },
+    {
+      showRsaToken: true,
+      rsaTokenRequired: false,
+    },
+  )
   @ApiOrRights(RightsEnum.ConfigCreate, RightsEnum.ConfigModify)
   checkInfoParentConfig(
     @UserSession() session: CmsSession,
     @Body() params: ReqParentConfigCheckInfoDto,
+    @Headers('Security-Token') securityToken: string,
+    @Headers('Security-Id') securityId: string,
   ) {
     const isNew = Utils.isEmpty(params.id);
+    const securityOptions: SecurityOptions = {
+      securityToken,
+      securityId,
+    };
     const modifyParams = plainToInstance(ReqParentConfigModifyDto, params);
     return this.systemConfigService.checkInfoParentConfig(
       session,
       modifyParams,
       isNew,
       true,
+      securityOptions,
     );
   }
 
@@ -192,19 +205,32 @@ export class SystemConfigController {
     summary: '新增二级配置',
     description: '新增二级配置',
   })
-  @ApiCustomResponse({
-    type: RespSystemChildrenConfigCreateDto,
-  })
+  @ApiCustomResponse(
+    {
+      type: RespSystemChildrenConfigCreateDto,
+    },
+    {
+      showRsaToken: true,
+      rsaTokenRequired: false,
+    },
+  )
   @ApiRights(RightsEnum.ConfigChildrenCreate)
   createChildrenConfig(
     @UserSession() session: CmsSession,
     @Body() params: ReqChildrenConfigCreateDto,
+    @Headers('Security-Token') securityToken: string,
+    @Headers('Security-Id') securityId: string,
   ): Promise<RespSystemChildrenConfigCreateDto> {
     const modifyParams = plainToInstance(ReqChildrenConfigModifyDto, params);
+    const securityOptions: SecurityOptions = {
+      securityToken,
+      securityId,
+    };
     return this.systemConfigService.saveSystemChildrenConfig(
       session,
       modifyParams,
       true,
+      securityOptions,
     );
   }
 
@@ -214,18 +240,31 @@ export class SystemConfigController {
     summary: '编辑二级配置',
     description: '编辑已存在的二级配置',
   })
-  @ApiCustomResponse({
-    type: RespSystemChildrenConfigCreateDto,
-  })
+  @ApiCustomResponse(
+    {
+      type: RespSystemChildrenConfigCreateDto,
+    },
+    {
+      showRsaToken: true,
+      rsaTokenRequired: false,
+    },
+  )
   @ApiRights(RightsEnum.ConfigChildrenModify)
   modifyChildrenConfig(
     @UserSession() session: CmsSession,
     @Body() params: ReqChildrenConfigModifyDto,
+    @Headers('Security-Token') securityToken: string,
+    @Headers('Security-Id') securityId: string,
   ): Promise<RespSystemChildrenConfigCreateDto> {
+    const securityOptions: SecurityOptions = {
+      securityToken,
+      securityId,
+    };
     return this.systemConfigService.saveSystemChildrenConfig(
       session,
       params,
       false,
+      securityOptions,
     );
   }
 
@@ -235,21 +274,34 @@ export class SystemConfigController {
     summary: '校验二级配置数据',
     description: '校验二级配置数据',
   })
-  @ApiCustomResponse({
-    type: CommonResult,
-  })
+  @ApiCustomResponse(
+    {
+      type: CommonResult,
+    },
+    {
+      showRsaToken: true,
+      rsaTokenRequired: false,
+    },
+  )
   @ApiOrRights(RightsEnum.ConfigChildrenCreate, RightsEnum.ConfigChildrenModify)
   checkInfoChildrenConfig(
     @UserSession() session: CmsSession,
     @Body() params: ReqChildrenConfigCheckInfoDto,
+    @Headers('Security-Token') securityToken: string,
+    @Headers('Security-Id') securityId: string,
   ) {
     const isNew = Utils.isEmpty(params.id);
+    const securityOptions: SecurityOptions = {
+      securityToken,
+      securityId,
+    };
     const modifyParams = plainToInstance(ReqChildrenConfigModifyDto, params);
     return this.systemConfigService.checkInfoChildrenConfig(
       session,
       modifyParams,
       isNew,
       true,
+      securityOptions,
     );
   }
 }
