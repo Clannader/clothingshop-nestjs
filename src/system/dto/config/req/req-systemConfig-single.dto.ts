@@ -27,5 +27,5 @@ export class ReqSystemConfigSingleDto {
   @Expose()
   @IsOptional()
   @IsString()
-  id: string;
+  id?: string;
 }

@@ -17,6 +17,7 @@ import {
   RespSystemConfigListDto,
   ReqSystemConfigSingleDto,
   RespSystemConfigSingleDto,
+  InfoSystemConfigDto,
 } from '../dto/config';
 
 import {
@@ -32,9 +33,11 @@ import { ErrorPromise } from '@/common/types';
 import {
   ChildrenConfig,
   ChildrenConfigDocument,
+  ChildrenConfigElement,
   ChildrenConfigQuery,
   ParentConfig,
   ParentConfigDocument,
+  ParentConfigElement,
   ParentConfigQuery,
   SecretSchema,
 } from '@/entities/schema';
@@ -57,6 +60,7 @@ type CheckSystemConfig = {
 type SearchSystemConfig = {
   key?: IgnoreCaseType;
   groupName?: IgnoreCaseType;
+  _id?: string;
 };
 
 type DeleteSystemConfigWhere = {
@@ -1000,11 +1004,75 @@ export class SystemConfigService {
   }
 
   async getSystemConfigInfo(
+    session: CmsSession,
     params: ReqSystemConfigSingleDto,
-    securityOptions?: SecurityOptions,
+    securityOptions: SecurityOptions = {},
   ) {
     const resp = new RespSystemConfigSingleDto();
+    const id = params.id;
+    const configKey = params.configKey;
+    const groupName = params.groupName;
 
+    const where: SearchSystemConfig = {};
+
+    if (!Utils.isEmpty(configKey)) {
+      where.key = Utils.getIgnoreCase(configKey, true);
+    }
+    if (!Utils.isEmpty(groupName)) {
+      where.groupName = Utils.getIgnoreCase(groupName, true);
+    }
+    if (!Utils.isEmpty(id)) {
+      where._id = id;
+    }
+
+    if (Utils.isEmpty(configKey) && Utils.isEmpty(id)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        'ID和configKey必填其一',
+        'systemConfig.whereIsNotEmpty',
+      );
+      return resp;
+    }
+
+    let err: ErrorPromise, result: ParentConfigElement | ChildrenConfigElement;
+    if (Utils.isEmpty(groupName)) {
+      [err, result] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getParentConfigModel()
+          .findOne(where, { __v: 0 }),
+      );
+    } else {
+      [err, result] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getChildrenConfigModel()
+          .findOne(where, { __v: 0 }),
+      );
+    }
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    if (Utils.isEmpty(result)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '该配置不存在',
+        'systemConfig.configNotExist',
+      );
+      return resp;
+    }
+
+    const configInfo = new InfoSystemConfigDto();
+    configInfo.configKey = result.key;
+    configInfo.configValue = result.value;
+    configInfo.groupName = (result as ChildrenConfigElement)?.groupName;
+    configInfo.id = result.id;
+    configInfo.isEncrypt = result.isEncrypt;
+
+    resp.code = CodeEnum.SUCCESS;
+    resp.configInfo = configInfo;
     return resp;
   }
 }

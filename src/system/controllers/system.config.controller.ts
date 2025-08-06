@@ -323,6 +323,7 @@ export class SystemConfigController {
   )
   @ApiRights(RightsEnum.AllConfigList)
   getSystemConfigInfo(
+    @UserSession() session: CmsSession,
     @Query() params: ReqSystemConfigSingleDto,
     @Headers('Security-Token') securityToken: string,
     @Headers('Security-Id') securityId: string,
@@ -332,6 +333,7 @@ export class SystemConfigController {
       securityId,
     };
     return this.systemConfigService.getSystemConfigInfo(
+      session,
       params,
       securityOptions,
     );
