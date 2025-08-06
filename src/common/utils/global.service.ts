@@ -87,7 +87,7 @@ export class GlobalService {
       const oldValue = oldObject[metaData.propertyName];
       const newValue = newObject[metaData.propertyName];
       const title = this.serverLang(session, metaData.origin, metaData.key); // 字段翻译
-      const piiData = metaData.piiData;
+      const piiData = metaData.piiData; // 是否是敏感字段,写日志的值需要脱敏
       if ([String, Number, Boolean].includes(propertyType)) {
         if (oldValue !== newValue) {
           const fromValue = oldValue ?? 'null';
@@ -110,7 +110,7 @@ export class GlobalService {
           ...this.compareObjectWriteLog(
             session,
             propertyType,
-            oldValue ?? new propertyType(),
+            oldValue ?? new propertyType(), // 没有值时,就创建一个空对象
             newValue ?? new propertyType(),
           ),
         );
@@ -119,6 +119,7 @@ export class GlobalService {
     return logArray;
   }
 
+  // 判断是否是class对象
   isClass(target: any): boolean {
     return (
       typeof target === 'function' && /^\s*class\s+/.test(target.toString())

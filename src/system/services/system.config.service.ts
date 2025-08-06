@@ -309,10 +309,10 @@ export class SystemConfigService {
 
     // 判断value是否加密,用解密方法解出来成功就行??
     let secretValue: SecretSchema;
-    let plainValue: string;
     if (params.isEncrypt) {
       if (isNew || oldParentConfig.value !== newParentConfig.value) {
-        plainValue = await this.memoryCacheService.tripleDesDecrypt(
+        //如果是新建或者编辑时value值不一样,就要解密然后服务器加密
+        const plainValue = await this.memoryCacheService.tripleDesDecrypt(
           session.language,
           params.configValue,
           securityOptions,
@@ -320,6 +320,7 @@ export class SystemConfigService {
         secretValue =
           await this.memoryCacheService.internalRsaEncrypt(plainValue);
       } else if (oldParentConfig.value === newParentConfig.value) {
+        // 编辑时,value没有变化
         secretValue = oldParentConfig.secretValue;
       }
     }
