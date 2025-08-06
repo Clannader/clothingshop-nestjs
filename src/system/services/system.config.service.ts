@@ -47,7 +47,7 @@ import {
 } from '@/entities/services';
 import { RightsEnum } from '@/rights';
 import { UserLogsService } from '@/logs';
-import { MemoryCacheService } from '@/cache/services';
+import { MemoryCacheService, SecretPem } from '@/cache/services';
 
 type CheckSystemConfig = {
   key: string;
@@ -1065,11 +1065,32 @@ export class SystemConfigService {
     }
 
     const configInfo = new InfoSystemConfigDto();
+    configInfo.id = result.id;
     configInfo.configKey = result.key;
     configInfo.configValue = result.value;
     configInfo.groupName = (result as ChildrenConfigElement)?.groupName;
-    configInfo.id = result.id;
     configInfo.isEncrypt = result.isEncrypt;
+    configInfo.description = result.description;
+    configInfo.createUser = result.createUser;
+    configInfo.createDate = result.createDate;
+    configInfo.updateUser = result.updateUser;
+    configInfo.updateDate = result.updateDate;
+
+    if (result.isEncrypt && Object.keys(securityOptions).length !== 0) {
+      const secretValue: SecretSchema = result.secretValue;
+      const secretPem = await this.memoryCacheService.getInternalRsaPem(
+        secretValue.secretId,
+      );
+      const plainData = Utils.rsaPrivateDecrypt(
+        secretValue.secretText,
+        secretPem.privatePem,
+      );
+      configInfo.configValue = await this.memoryCacheService.tripleDesEncrypt(
+        session.language,
+        plainData,
+        securityOptions,
+      );
+    }
 
     resp.code = CodeEnum.SUCCESS;
     resp.configInfo = configInfo;
