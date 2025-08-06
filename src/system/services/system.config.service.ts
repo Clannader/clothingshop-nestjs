@@ -15,6 +15,9 @@ import {
   RespSystemChildrenConfigCreateDto,
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
+  ReqSystemConfigSingleDto,
+  RespSystemConfigSingleDto,
+  InfoSystemConfigDto,
 } from '../dto/config';
 
 import {
@@ -22,6 +25,7 @@ import {
   configKeyExp,
   IgnoreCaseType,
   RespErrorResult,
+  SecurityOptions,
 } from '@/common';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { ErrorPromise } from '@/common/types';
@@ -29,10 +33,13 @@ import { ErrorPromise } from '@/common/types';
 import {
   ChildrenConfig,
   ChildrenConfigDocument,
+  ChildrenConfigElement,
   ChildrenConfigQuery,
   ParentConfig,
   ParentConfigDocument,
+  ParentConfigElement,
   ParentConfigQuery,
+  SecretSchema,
 } from '@/entities/schema';
 import {
   DeleteLogSchemaService,
@@ -40,6 +47,7 @@ import {
 } from '@/entities/services';
 import { RightsEnum } from '@/rights';
 import { UserLogsService } from '@/logs';
+import { MemoryCacheService, SecretPem } from '@/cache/services';
 
 type CheckSystemConfig = {
   key: string;
@@ -52,6 +60,7 @@ type CheckSystemConfig = {
 type SearchSystemConfig = {
   key?: IgnoreCaseType;
   groupName?: IgnoreCaseType;
+  _id?: string;
 };
 
 type DeleteSystemConfigWhere = {
@@ -77,6 +86,9 @@ export class SystemConfigService {
 
   @Inject()
   private readonly deleteLogSchemaService: DeleteLogSchemaService;
+
+  @Inject()
+  private readonly memoryCacheService: MemoryCacheService;
 
   async getSystemConfigList(params: ReqSystemConfigListDto) {
     const resp = new RespSystemConfigListDto();
@@ -174,6 +186,7 @@ export class SystemConfigService {
     session: CmsSession,
     params: ReqParentConfigModifyDto,
     isNew: boolean,
+    securityOptions?: SecurityOptions,
   ): Promise<RespSystemConfigCreateDto> {
     const resp = new RespSystemConfigCreateDto();
 
@@ -182,6 +195,7 @@ export class SystemConfigService {
       params,
       isNew,
       false,
+      securityOptions,
     );
 
     if (!checkResp.isSuccess()) {
@@ -199,12 +213,14 @@ export class SystemConfigService {
    * @param params 编辑对象
    * @param isNew 是否是新建
    * @param isCheck 是否是仅检查
+   * @param securityOptions 加密参数
    */
   async checkInfoParentConfig(
     session: CmsSession,
     params: ReqParentConfigModifyDto,
     isNew: boolean,
     isCheck: boolean,
+    securityOptions?: SecurityOptions,
   ) {
     const resp = new RespSystemConfigCreateDto();
     // 判断是否是新建还是编辑,如果是编辑,id必填
@@ -247,6 +263,12 @@ export class SystemConfigService {
       } else {
         params.configKey = oldParentConfig.key;
       }
+      // 判断如果之前是加密存储的,编辑值的时候也需要加密
+      if (!Utils.isEmpty(params.isEncrypt)) {
+        newParentConfig.isEncrypt = params.isEncrypt;
+      } else {
+        params.isEncrypt = oldParentConfig.isEncrypt;
+      }
       if (!Utils.isEmpty(params.configValue)) {
         newParentConfig.value = params.configValue;
       } else {
@@ -285,6 +307,28 @@ export class SystemConfigService {
         'systemConfig.keyFormatError',
       );
       return resp;
+    }
+
+    // 新增如果加密值的话,需要判断传入的value是否能解密成功
+    // 如果isEncrypt=true,那么value就必须要加密
+    // 如果isEncrypt=false,那么value加不加密都无所谓
+
+    // 判断value是否加密,用解密方法解出来成功就行??
+    let secretValue: SecretSchema;
+    if (params.isEncrypt) {
+      if (isNew || oldParentConfig.value !== newParentConfig.value) {
+        //如果是新建或者编辑时value值不一样,就要解密然后服务器加密
+        const plainValue = await this.memoryCacheService.tripleDesDecrypt(
+          session.language,
+          params.configValue,
+          securityOptions,
+        );
+        secretValue =
+          await this.memoryCacheService.internalRsaEncrypt(plainValue);
+      } else if (oldParentConfig.value === newParentConfig.value) {
+        // 编辑时,value没有变化
+        secretValue = oldParentConfig.secretValue;
+      }
     }
 
     // 新增判断一级Key不能存在于二级Key中
@@ -353,10 +397,15 @@ export class SystemConfigService {
         description: params.description,
         createUser: session.adminId,
         createDate: new Date(),
-        isEncrypt: undefined,
+        isEncrypt: false,
+        secretValue: secretValue,
       };
       if (params.isEncrypt) {
         createSystemConfigParent.isEncrypt = params.isEncrypt;
+        // 加密后,原本值就变成星号
+        createSystemConfigParent.value = '******';
+        // 暂时没有办法用数据库的验证器校验字段类型是否合法???
+        createSystemConfigParent.secretValue = secretValue;
       }
       const [errCreate, createObj] = await Utils.toPromise(
         this.systemConfigSchemaService
@@ -384,6 +433,14 @@ export class SystemConfigService {
     } else {
       newParentConfig.updateUser = session.adminId;
       newParentConfig.updateDate = new Date();
+      // isEncrypt由false->true
+      if (params.isEncrypt) {
+        newParentConfig.value = '******';
+        newParentConfig.secretValue = secretValue;
+      } else {
+        // isEncrypt由true->false
+        newParentConfig.secretValue = undefined;
+      }
       await this.systemConfigSchemaService
         .getSystemConfigModel()
         .syncSaveDBObject(newParentConfig);
@@ -637,6 +694,7 @@ export class SystemConfigService {
     session: CmsSession,
     params: ReqChildrenConfigModifyDto,
     isNew: boolean,
+    securityOptions?: SecurityOptions,
   ): Promise<RespSystemChildrenConfigCreateDto> {
     const resp = new RespSystemChildrenConfigCreateDto();
 
@@ -645,6 +703,7 @@ export class SystemConfigService {
       params,
       isNew,
       false,
+      securityOptions,
     );
 
     if (!checkResp.isSuccess()) {
@@ -662,6 +721,7 @@ export class SystemConfigService {
     params: ReqChildrenConfigModifyDto,
     isNew: boolean,
     isCheck: boolean,
+    securityOptions?: SecurityOptions,
   ) {
     const resp = new RespSystemChildrenConfigCreateDto();
     const id = params.id;
@@ -703,6 +763,12 @@ export class SystemConfigService {
       } else {
         params.configKey = oldChildrenConfig.key;
       }
+      // 判断如果之前是加密存储的,编辑值的时候也需要加密
+      if (!Utils.isEmpty(params.isEncrypt)) {
+        newChildrenConfig.isEncrypt = params.isEncrypt;
+      } else {
+        params.isEncrypt = oldChildrenConfig.isEncrypt;
+      }
       if (!Utils.isEmpty(params.configValue)) {
         newChildrenConfig.value = params.configValue;
       } else {
@@ -739,6 +805,23 @@ export class SystemConfigService {
         'systemConfig.keyFormatError',
       );
       return resp;
+    }
+
+    let secretValue: SecretSchema;
+    if (params.isEncrypt) {
+      if (isNew || oldChildrenConfig.value !== newChildrenConfig.value) {
+        //如果是新建或者编辑时value值不一样,就要解密然后服务器加密
+        const plainValue = await this.memoryCacheService.tripleDesDecrypt(
+          session.language,
+          params.configValue,
+          securityOptions,
+        );
+        secretValue =
+          await this.memoryCacheService.internalRsaEncrypt(plainValue);
+      } else if (oldChildrenConfig.value === newChildrenConfig.value) {
+        // 编辑时,value没有变化
+        secretValue = oldChildrenConfig.secretValue;
+      }
     }
 
     if (isNew) {
@@ -845,10 +928,13 @@ export class SystemConfigService {
         description: params.description,
         createUser: session.adminId,
         createDate: new Date(),
-        isEncrypt: undefined,
+        isEncrypt: false,
+        secretValue: secretValue,
       };
       if (params.isEncrypt) {
         createChildrenConfig.isEncrypt = params.isEncrypt;
+        createChildrenConfig.value = '******';
+        createChildrenConfig.secretValue = secretValue;
       }
       const [errCreate, createObj] = await Utils.toPromise(
         this.systemConfigSchemaService
@@ -877,6 +963,12 @@ export class SystemConfigService {
     } else {
       newChildrenConfig.updateUser = session.adminId;
       newChildrenConfig.updateDate = new Date();
+      if (params.isEncrypt) {
+        newChildrenConfig.value = '******';
+        newChildrenConfig.secretValue = secretValue;
+      } else {
+        newChildrenConfig.secretValue = undefined;
+      }
       await this.systemConfigSchemaService
         .getSystemConfigModel()
         .syncSaveDBObject(newChildrenConfig);
@@ -908,6 +1000,100 @@ export class SystemConfigService {
       }
     }
 
+    return resp;
+  }
+
+  async getSystemConfigInfo(
+    session: CmsSession,
+    params: ReqSystemConfigSingleDto,
+    securityOptions: SecurityOptions = {},
+  ) {
+    const resp = new RespSystemConfigSingleDto();
+    const id = params.id;
+    const configKey = params.configKey;
+    const groupName = params.groupName;
+
+    const where: SearchSystemConfig = {};
+
+    if (!Utils.isEmpty(configKey)) {
+      where.key = Utils.getIgnoreCase(configKey, true);
+    }
+    if (!Utils.isEmpty(groupName)) {
+      where.groupName = Utils.getIgnoreCase(groupName, true);
+    }
+    if (!Utils.isEmpty(id)) {
+      where._id = id;
+    }
+
+    if (Utils.isEmpty(configKey) && Utils.isEmpty(id)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        'ID和configKey必填其一',
+        'systemConfig.whereIsNotEmpty',
+      );
+      return resp;
+    }
+
+    let err: ErrorPromise, result: ParentConfigElement | ChildrenConfigElement;
+    if (Utils.isEmpty(groupName)) {
+      [err, result] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getParentConfigModel()
+          .findOne(where, { __v: 0 }),
+      );
+    } else {
+      [err, result] = await Utils.toPromise(
+        this.systemConfigSchemaService
+          .getChildrenConfigModel()
+          .findOne(where, { __v: 0 }),
+      );
+    }
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    if (Utils.isEmpty(result)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '该配置不存在',
+        'systemConfig.configNotExist',
+      );
+      return resp;
+    }
+
+    const configInfo = new InfoSystemConfigDto();
+    configInfo.id = result.id;
+    configInfo.configKey = result.key;
+    configInfo.configValue = result.value;
+    configInfo.groupName = (result as ChildrenConfigElement)?.groupName;
+    configInfo.isEncrypt = result.isEncrypt;
+    configInfo.description = result.description;
+    configInfo.createUser = result.createUser;
+    configInfo.createDate = result.createDate;
+    configInfo.updateUser = result.updateUser;
+    configInfo.updateDate = result.updateDate;
+
+    if (result.isEncrypt && Object.keys(securityOptions).length !== 0) {
+      const secretValue: SecretSchema = result.secretValue;
+      const secretPem = await this.memoryCacheService.getInternalRsaPem(
+        secretValue.secretId,
+      );
+      const plainData = Utils.rsaPrivateDecrypt(
+        secretValue.secretText,
+        secretPem.privatePem,
+      );
+      configInfo.configValue = await this.memoryCacheService.tripleDesEncrypt(
+        session.language,
+        plainData,
+        securityOptions,
+      );
+    }
+
+    resp.code = CodeEnum.SUCCESS;
+    resp.configInfo = configInfo;
     return resp;
   }
 }

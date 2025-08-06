@@ -17,6 +17,7 @@ import validator from 'validator';
 import { SecuritySessionCacheService } from './security.session.cache.service';
 import type { SecuritySessionStorage } from '@/security';
 import { OnEventMessage, SendEventMessage } from '@/lib/event-message';
+import { SecretSchema } from '@/entities/schema';
 
 const publicPemName = 'public-rsa.pem';
 const privatePemName = 'private-rsa.pem';
@@ -282,5 +283,14 @@ export class MemoryCacheService {
     };
     await this.updateMemoryCache(secretId, secretPem);
     return Promise.resolve(secretPem);
+  }
+
+  // 用于服务器内部最新RSA密钥加密数据
+  async internalRsaEncrypt(data: string): Promise<SecretSchema> {
+    const secretPem = await this.getLatestRsaPem();
+    const secretSchema = new SecretSchema();
+    secretSchema.secretId = secretPem.secretId;
+    secretSchema.secretText = Utils.rsaPublicEncrypt(data, secretPem.publicPem);
+    return Promise.resolve(secretSchema);
   }
 }

@@ -12,6 +12,7 @@ interface ArgsFnParams {
 type PropOptionsLog = {
   origin: string; // 对应翻译函数的参数值
   key: string;
+  piiData?: boolean;
   argsFn?: (params: ArgsFnParams) => any; // 翻译函数需要的args
 };
 

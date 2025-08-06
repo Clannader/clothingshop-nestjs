@@ -62,8 +62,8 @@ export type ErrorPromise = Error & {
 };
 
 export type SecurityOptions = {
-  securityToken: string;
-  securityId: string;
+  securityToken?: string;
+  securityId?: string;
 };
 
 export type IgnoreCaseType = {

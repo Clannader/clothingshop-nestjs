@@ -62,6 +62,8 @@ export class AopAspect {
         'accessToken',
         'credential',
         'publicKey',
+        'accessKey',
+        'vectorValue',
       ];
       // params = Utils.piiJsonData(params, ...piiFields)
       // piiFields.forEach((field) => {
