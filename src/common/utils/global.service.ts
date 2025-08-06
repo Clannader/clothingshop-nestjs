@@ -87,10 +87,13 @@ export class GlobalService {
       const oldValue = oldObject[metaData.propertyName];
       const newValue = newObject[metaData.propertyName];
       const title = this.serverLang(session, metaData.origin, metaData.key); // 字段翻译
-      if ([String, Number].includes(propertyType)) {
+      const piiData = metaData.piiData; // 是否是敏感字段,写日志的值需要脱敏
+      if ([String, Number, Boolean].includes(propertyType)) {
         if (oldValue !== newValue) {
+          const fromValue = oldValue ?? 'null';
+          const toValue = newValue ?? 'null';
           logArray.push(
-            `${title}: ${oldValue ?? 'null'} -> ${newValue ?? 'null'}`,
+            `${title}: ${piiData ? Utils.piiData(fromValue) : fromValue} -> ${piiData ? Utils.piiData(toValue) : toValue}`,
           );
         }
       } else if (Date === propertyType) {
@@ -102,8 +105,24 @@ export class GlobalService {
             -> ${newDate.isValid() ? newDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSSZ') : 'null'}`,
           );
         }
+      } else if (this.isClass(propertyType)) {
+        logArray.push(
+          ...this.compareObjectWriteLog(
+            session,
+            propertyType,
+            oldValue ?? new propertyType(), // 没有值时,就创建一个空对象
+            newValue ?? new propertyType(),
+          ),
+        );
       }
     });
     return logArray;
+  }
+
+  // 判断是否是class对象
+  isClass(target: any): boolean {
+    return (
+      typeof target === 'function' && /^\s*class\s+/.test(target.toString())
+    );
   }
 }

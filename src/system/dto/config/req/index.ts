@@ -9,3 +9,4 @@ export * from './req-parentConfig-checkInfo.dto';
 export * from './req-childrenConfig-create.dto';
 export * from './req-childrenConfig-modify.dto';
 export * from './req-childrenConfig-checkInfo.dto';
+export * from './req-systemConfig-single.dto';

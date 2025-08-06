@@ -21,6 +21,7 @@ import {
   DeleteLogSchemaModule,
   SystemConfigSchemaModule,
 } from '@/entities/modules';
+import { MemoryCacheModule } from '@/cache/modules';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import {
     DeleteLogSchemaModule,
     UserLogsModule,
     SystemConfigSchemaModule,
+    MemoryCacheModule,
   ],
   controllers: [
     SystemController,

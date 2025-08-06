@@ -8,3 +8,4 @@ export * from './create-childrenConfig.dto';
 export * from './modify-parentConfig.dto';
 export * from './list-systemConfig.dto';
 export * from './modify-childrenConfig.dto';
+export * from './info-systemConfig.dto';
