@@ -110,8 +110,8 @@ export class GlobalService {
           ...this.compareObjectWriteLog(
             session,
             propertyType,
-            oldValue,
-            newValue,
+            oldValue ?? new propertyType(),
+            newValue ?? new propertyType(),
           ),
         );
       }

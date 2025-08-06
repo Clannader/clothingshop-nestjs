@@ -310,17 +310,18 @@ export class SystemConfigService {
     // 判断value是否加密,用解密方法解出来成功就行??
     let secretValue: SecretSchema;
     let plainValue: string;
-    if (
-      params.isEncrypt &&
-      (isNew || oldParentConfig.value !== newParentConfig.value)
-    ) {
-      plainValue = await this.memoryCacheService.tripleDesDecrypt(
-        session.language,
-        params.configValue,
-        securityOptions,
-      );
-      secretValue =
-        await this.memoryCacheService.internalRsaEncrypt(plainValue);
+    if (params.isEncrypt) {
+      if (isNew || oldParentConfig.value !== newParentConfig.value) {
+        plainValue = await this.memoryCacheService.tripleDesDecrypt(
+          session.language,
+          params.configValue,
+          securityOptions,
+        );
+        secretValue =
+          await this.memoryCacheService.internalRsaEncrypt(plainValue);
+      } else if (oldParentConfig.value === newParentConfig.value) {
+        secretValue = oldParentConfig.secretValue;
+      }
     }
 
     // 新增判断一级Key不能存在于二级Key中
