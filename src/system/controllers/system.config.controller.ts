@@ -117,18 +117,31 @@ export class SystemConfigController {
     summary: '编辑一级配置',
     description: '编辑已存在的一级配置',
   })
-  @ApiCustomResponse({
-    type: RespSystemConfigCreateDto,
-  })
+  @ApiCustomResponse(
+    {
+      type: RespSystemConfigCreateDto,
+    },
+    {
+      showRsaToken: true,
+      rsaTokenRequired: false,
+    },
+  )
   @ApiRights(RightsEnum.ConfigModify)
   modifyParentConfig(
     @UserSession() session: CmsSession,
     @Body() params: ReqParentConfigModifyDto,
+    @Headers('Security-Token') securityToken: string,
+    @Headers('Security-Id') securityId: string,
   ): Promise<RespSystemConfigCreateDto> {
+    const securityOptions: SecurityOptions = {
+      securityToken,
+      securityId,
+    };
     return this.systemConfigService.saveSystemParentConfig(
       session,
       params,
       false,
+      securityOptions,
     );
   }
 

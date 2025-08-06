@@ -285,7 +285,7 @@ export class MemoryCacheService {
     return Promise.resolve(secretPem);
   }
 
-  // 用服务器内部最新RSA密钥加密数据后返回
+  // 用于服务器内部最新RSA密钥加密数据
   async internalRsaEncrypt(data: string): Promise<SecretSchema> {
     const secretPem = await this.getLatestRsaPem();
     const secretSchema = new SecretSchema();

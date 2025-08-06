@@ -257,6 +257,12 @@ export class SystemConfigService {
       } else {
         params.configKey = oldParentConfig.key;
       }
+      // 判断如果之前是加密存储的,编辑值的时候也需要加密
+      if (!Utils.isEmpty(params.isEncrypt)) {
+        newParentConfig.isEncrypt = params.isEncrypt;
+      } else {
+        params.isEncrypt = oldParentConfig.isEncrypt;
+      }
       if (!Utils.isEmpty(params.configValue)) {
         newParentConfig.value = params.configValue;
       } else {
@@ -267,7 +273,6 @@ export class SystemConfigService {
       if (!Utils.isNull(params.description)) {
         newParentConfig.description = params.description;
       }
-      // TODO 判断如果之前是加密存储的,编辑值的时候也需要加密
     }
 
     if (Utils.isEmpty(params.configKey)) {
@@ -304,13 +309,16 @@ export class SystemConfigService {
 
     // 判断value是否加密,用解密方法解出来成功就行??
     let secretValue: SecretSchema;
-    if (params.isEncrypt) {
-      const plainValue = await this.memoryCacheService.tripleDesDecrypt(
+    let plainValue: string;
+    if (
+      params.isEncrypt &&
+      (isNew || oldParentConfig.value !== newParentConfig.value)
+    ) {
+      plainValue = await this.memoryCacheService.tripleDesDecrypt(
         session.language,
         params.configValue,
         securityOptions,
       );
-      params.configValue = '******';
       secretValue =
         await this.memoryCacheService.internalRsaEncrypt(plainValue);
     }
@@ -381,11 +389,14 @@ export class SystemConfigService {
         description: params.description,
         createUser: session.adminId,
         createDate: new Date(),
-        isEncrypt: undefined,
-        secretValue: undefined,
+        isEncrypt: false,
+        secretValue: secretValue,
       };
       if (params.isEncrypt) {
         createSystemConfigParent.isEncrypt = params.isEncrypt;
+        // 加密后,原本值就变成星号
+        createSystemConfigParent.value = '******';
+        // 暂时没有办法用数据库的验证器校验字段类型是否合法???
         createSystemConfigParent.secretValue = secretValue;
       }
       const [errCreate, createObj] = await Utils.toPromise(
@@ -414,6 +425,14 @@ export class SystemConfigService {
     } else {
       newParentConfig.updateUser = session.adminId;
       newParentConfig.updateDate = new Date();
+      // isEncrypt由false->true
+      if (params.isEncrypt) {
+        newParentConfig.value = '******';
+        newParentConfig.secretValue = secretValue;
+      } else {
+        // isEncrypt由true->false
+        newParentConfig.secretValue = undefined;
+      }
       await this.systemConfigSchemaService
         .getSystemConfigModel()
         .syncSaveDBObject(newParentConfig);
