@@ -39,6 +39,8 @@ import {
   RespSystemChildrenConfigCreateDto,
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
+  ReqSystemConfigSingleDto,
+  RespSystemConfigSingleDto,
 } from '../dto/config';
 import {
   CmsSession,
@@ -301,6 +303,36 @@ export class SystemConfigController {
       modifyParams,
       isNew,
       true,
+      securityOptions,
+    );
+  }
+
+  @Get('/getInfo')
+  @ApiOperation({
+    summary: '获取一级/二级配置的详细信息',
+    description: '获取一级/二级配置的详细信息',
+  })
+  @ApiCustomResponse(
+    {
+      type: RespSystemConfigSingleDto,
+    },
+    {
+      showRsaToken: true,
+      rsaTokenRequired: false,
+    },
+  )
+  @ApiRights(RightsEnum.AllConfigList)
+  getSystemConfigInfo(
+    @Query() params: ReqSystemConfigSingleDto,
+    @Headers('Security-Token') securityToken: string,
+    @Headers('Security-Id') securityId: string,
+  ) {
+    const securityOptions: SecurityOptions = {
+      securityToken,
+      securityId,
+    };
+    return this.systemConfigService.getSystemConfigInfo(
+      params,
       securityOptions,
     );
   }

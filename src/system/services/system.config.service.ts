@@ -15,6 +15,8 @@ import {
   RespSystemChildrenConfigCreateDto,
   RespSystemConfigCreateDto,
   RespSystemConfigListDto,
+  ReqSystemConfigSingleDto,
+  RespSystemConfigSingleDto,
 } from '../dto/config';
 
 import {
@@ -697,7 +699,7 @@ export class SystemConfigService {
       params,
       isNew,
       false,
-      securityOptions
+      securityOptions,
     );
 
     if (!checkResp.isSuccess()) {
@@ -993,6 +995,15 @@ export class SystemConfigService {
         );
       }
     }
+
+    return resp;
+  }
+
+  async getSystemConfigInfo(
+    params: ReqSystemConfigSingleDto,
+    securityOptions?: SecurityOptions,
+  ) {
+    const resp = new RespSystemConfigSingleDto();
 
     return resp;
   }
