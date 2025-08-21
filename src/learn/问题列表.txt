@@ -91,3 +91,6 @@ RSA数据库加解密
 
 2025-05-23
 1.系统配置表的增删改查--已完成
+2.加解密存储--已完成
+3.关于第27点问题,不使用Schema的叫做嵌套文档,使用的就是子文档,嵌套文档没办法做校验,似乎只有子文档可以https://mongoosejs.com/docs/subdocs.html
+关于嵌套文档的验证器不是很完善https://mongoosejs.com/docs/validation.html(Required Validators On Nested Objects)
