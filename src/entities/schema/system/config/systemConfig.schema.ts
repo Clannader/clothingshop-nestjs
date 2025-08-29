@@ -55,6 +55,8 @@ export class CommonConfig {
   })
   isEncrypt: boolean; // 数据值是否加密
 
+  // import { Types } from 'mongoose';
+  // Types.Subdocument就会有其他类型值出现
   @Prop({
     type: SecretSchema,
   })
