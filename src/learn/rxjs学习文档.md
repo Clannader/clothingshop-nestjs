@@ -179,3 +179,7 @@ ob.next(12)
 ob.next(13)
 ob.next(14)
 }, 6500)
+
+案例：收集10s内的数据
+const ob = new Subject()
+ob.pipe(bufferTime(10 * 1000)).subscribe(x => console.log(x));
