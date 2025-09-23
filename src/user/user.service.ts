@@ -1,6 +1,12 @@
+// nestjs
 import { Inject, Injectable } from '@nestjs/common';
+// third party
 import * as moment from 'moment';
-import { AopLogger } from '@/logger';
+import { sign } from 'cookie-signature';
+// common
+import { CodeEnum, UserTypeEnum } from '@/common/enum';
+import { ConfigService } from '@/common/config';
+import { GlobalService, Utils } from '@/common/utils';
 import {
   CommonResult,
   RequestSession,
@@ -12,9 +18,17 @@ import {
   SecurityOptions,
   sessionSecret,
 } from '@/common';
-import { CodeEnum, UserTypeEnum } from '@/common/enum';
-import { ConfigService } from '@/common/config';
-import { GlobalService, Utils } from '@/common/utils';
+// entity
+import { AdminSchemaService } from '@/entities/services';
+import { AdminDocument, Admin } from '@/entities/schema';
+// service
+import { UserSessionService } from './user.session.service';
+import { MemoryCacheService } from '@/cache/services';
+// other
+import { AopLogger } from '@/logger';
+import { UserMapper } from './user.mapper';
+import { RightsGroupList } from '@/rights';
+// self
 import {
   ReqUserLoginDto,
   ReqUserSearchDto,
@@ -22,13 +36,6 @@ import {
   RespUserRolesDto,
   RespUserLoginDto,
 } from './dto';
-import { AdminSchemaService } from '@/entities/services';
-import { AdminDocument, Admin } from '@/entities/schema';
-import { UserSessionService } from './user.session.service';
-import { UserMapper } from './user.mapper';
-import { MemoryCacheService } from '@/cache/services';
-import { RightsGroupList } from '@/rights';
-import { sign } from 'cookie-signature';
 
 @Injectable()
 export class UserService {
