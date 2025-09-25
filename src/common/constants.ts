@@ -23,6 +23,7 @@ export const ipExp =
 export const timeZoneExp = /^[+\-]([01][0-9]|2[0-4]):([0-5][0-9])$/;
 export const configKeyExp = /^[A-Z][\w]{1,9}$/;
 export const passwordExp = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*\W).{8,}$/; // 必须包含数字大小写字母特殊符合大于等于8位的密码
+// export const passwordExp2 = /^(?=.*\d.*)(?=.*[A-Z].*)(?=.*[a-z].*)(?=.*\W.*).{8,}$/; // 密码规则的另一种写法
 export const sessionName = 'cmsApp';
 export const sessionSecret = '123456cms';
 export const interfaceHeader = 'CMS-Interface';
