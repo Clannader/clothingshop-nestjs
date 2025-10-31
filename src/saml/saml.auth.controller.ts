@@ -60,7 +60,9 @@ export class SamlAuthController {
       const errorMessage = Utils.base64ToString(JSON.stringify(resp));
       // +号转义成%2B
       // /号转义成%2F
-      return res.redirect(`/login?errorMessage=${errorMessage.replace(/\+/g, '%2B').replace(/\//g, '%2F')}`);
+      return res.redirect(
+        `/login?errorMessage=${errorMessage.replace(/\+/g, '%2B').replace(/\//g, '%2F')}`,
+      );
     }
     // 这里拿到了返回的session信息后,需要重定向到前端页面
     // 例如: res.redirect('/ssoLogin?token=xxx'),加密后的token给前端解析即可
@@ -68,6 +70,8 @@ export class SamlAuthController {
     // https://github.com/Clannader/clothingshop/blob/74275f97ce24a6920a9b6b76a615d1661eded734/src/router/index.js#L98-L102
     const result = await this.userService.regenerateUserSession(req, authUser);
     const successMessage = Utils.base64ToString(JSON.stringify(result));
-    return res.redirect(`/login?token=${successMessage.replace(/\+/g, '%2B').replace(/\//g, '%2F')}`);
+    return res.redirect(
+      `/login?token=${successMessage.replace(/\+/g, '%2B').replace(/\//g, '%2F')}`,
+    );
   }
 }

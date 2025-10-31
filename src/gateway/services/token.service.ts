@@ -1,6 +1,7 @@
 /**
  * Create by CC on 2022/8/9
  */
+import type { StringValue } from "ms";
 import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CmsSession, LanguageType } from '@/common';
@@ -21,7 +22,7 @@ export class TokenService {
    * @param session
    * @param expired
    */
-  generateToken(session: CmsSession, expired: string | number) {
+  generateToken(session: CmsSession, expired: StringValue | number) {
     return this.jwtService.sign(session, { expiresIn: expired });
   }
 
