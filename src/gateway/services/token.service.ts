@@ -1,7 +1,7 @@
 /**
  * Create by CC on 2022/8/9
  */
-import type { StringValue } from "ms";
+import type { StringValue } from 'ms';
 import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CmsSession, LanguageType } from '@/common';
