@@ -49,6 +49,8 @@ export class SystemService {
   getPackageVersion(): RespPackageVersionDto {
     const resp = new RespPackageVersionDto();
 
+    // TODO 这里的pkg打包后就是写死的,并不是根据打包后的package.json内容来返回,后期需要修改
+    // 可能需要使用读文件的形式来读取package.json内容
     const modulesPackage = {
       ...pkg.dependencies,
       ...pkg.devDependencies,

@@ -248,3 +248,9 @@ OWASP ZAP: https://www.zaproxy.org/download/
 发布命令: npm publish --access public
 删除包命令: npm unpublish 包名@版本号 --force
 下载npm包zip文件: npm pack 包名
+
+25.pm2 常用指令
+启动: pm2 start ecosystem.config.js
+pm2 stop ecosystem.config.js
+pm2 ls
+pm2 monit
