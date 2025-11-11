@@ -26,6 +26,8 @@ export class AdminLogSchemaService {
     logInfo.serverName = this.configService.get<string>('serverName');
     logInfo.workerId = cluster?.worker?.id ?? 1;
     logInfo.date = logInfo?.date ?? new Date();
-    return this.adminLogModel.create(logInfo);
+    return this.adminLogModel.insertOne(logInfo, {
+      safe: { w: 0 },
+    }); // 写入优化,写关注级别,异步写入提高性能
   }
 }
