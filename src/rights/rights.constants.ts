@@ -260,4 +260,20 @@ export const RightsGroupList = [
     groupName: '超级管理员',
     rightCodes: getAllRightsCode(),
   },
+  {
+    groupCode: 'ReadOnly',
+    groupName: '只读用户',
+    rightCodes: [
+      RightsEnum.LogsManage,
+      RightsEnum.ServerLogSetup,
+      RightsEnum.ServerLogView,
+      RightsEnum.OtherSetup,
+      RightsEnum.SystemDataSetup,
+      RightsEnum.SystemBaseSetup,
+      RightsEnum.AllConfigList,
+      RightsEnum.PackageVersionSetup,
+      RightsEnum.TimeZoneSetup,
+      RightsEnum.TimeZoneList,
+    ],
+  },
 ];
