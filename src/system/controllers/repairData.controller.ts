@@ -14,6 +14,7 @@ import {
   ApiCommon,
   ApiCustomResponse,
   ApiTagsController,
+  UserSession,
 } from '@/common/decorator';
 import { HttpInterceptor } from '@/interceptor/http';
 import { SessionGuard } from '@/guard';
@@ -21,6 +22,7 @@ import { ApiRights, RightsEnum } from '@/rights';
 
 import { RepairDataService } from '../services/repairData.service';
 import { CommonResult } from '@/common/dto';
+import { CmsSession } from '@/common';
 
 @ApiCommon()
 @Controller('/cms/api/repair')
@@ -55,8 +57,8 @@ export class RepairDataController {
     type: CommonResult,
   })
   @ApiRights(RightsEnum.RepairDBIndex)
-  repairDBIndex() {
-    return this.repairService.repairDBIndex();
+  repairDBIndex(@UserSession() session: CmsSession) {
+    return this.repairService.repairDBIndex(session);
   }
 
   @Post('rightsGroup')
@@ -69,8 +71,8 @@ export class RepairDataController {
     type: CommonResult,
   })
   @ApiRights(RightsEnum.RepairRightsGroup)
-  repairRightsGroup() {
-    return this.repairService.repairRightsGroup();
+  repairRightsGroup(@UserSession() session: CmsSession) {
+    return this.repairService.repairRightsGroup(session);
   }
 
   @Post('selfCheck')

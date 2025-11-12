@@ -3,4 +3,6 @@
  */
 export const repairData = {
   defaultRightCode: 'Fix default permission code',
+  OtherSetup: 'Other settings',
+  SystemDataSetup: 'System Data Settings',
 };
