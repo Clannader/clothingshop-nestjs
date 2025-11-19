@@ -63,6 +63,7 @@ export enum LogTypeEnum {
   User = 'User',
   TimeZone = 'TimeZone',
   SystemConfig = 'SystemConfig',
+  RepairData = 'RepairData',
 }
 
 /**

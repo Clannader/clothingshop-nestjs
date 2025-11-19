@@ -3,6 +3,7 @@ import { test } from './test/test.zh';
 import { system } from './system/system.zh';
 import { timeZone } from './timeZone/timeZone.zh';
 import { common } from './common/common.zh';
+import { repairData } from './repairData/repairData.zh';
 
 export const ZH = {
   user,
@@ -10,4 +11,5 @@ export const ZH = {
   system,
   timeZone,
   common,
+  repairData,
 };

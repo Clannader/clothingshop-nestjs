@@ -16,7 +16,7 @@ export class RightCodeSchemaService {
     return this.rightCodeModel;
   }
 
-  async createRightCode(rightCodeDoc: RightCode) {
+  async mergeRightCode(rightCodeDoc: RightCode) {
     // 暂时这样写能把数据进库再说,后期还需要修改
     const filter = {
       code: rightCodeDoc.code,

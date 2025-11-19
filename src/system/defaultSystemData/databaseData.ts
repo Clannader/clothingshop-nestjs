@@ -103,6 +103,38 @@ export const defaultIndexes: IndexSchema[] = [
       unique: true,
     },
   },
+  {
+    aliasName: 'DeleteRecord',
+    fields: {
+      deleteDate: 1,
+    },
+    options: {
+      name: 'expireClear',
+      expireAfterSeconds: 15 * 24 * 60 * 60, // 保留15天
+    },
+  },
+  {
+    aliasName: 'UserLog',
+    fields: {
+      date: 1,
+    },
+    options: {
+      name: 'expireClear',
+      expireAfterSeconds: 15 * 24 * 60 * 60, // 保留15天
+    },
+  },
+  {
+    aliasName: 'UserLog',
+    fields: {
+      traceId: 1, // 用户日志按traceId查询
+    },
+  },
+  {
+    aliasName: 'UserLog',
+    fields: {
+      linkId: 1, // 用户日志按linkId查询
+    },
+  },
 ];
 
 export type TimeZoneSchema = {
