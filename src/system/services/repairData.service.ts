@@ -7,15 +7,18 @@ import { Connection } from 'mongoose';
 
 import { CommonResult } from '@/common/dto';
 import { CodeException } from '@/common/exceptions';
-import { CodeEnum } from '@/common/enum';
+import { CodeEnum, LogTypeEnum } from '@/common/enum';
 
 import { DatabaseService } from '@/database/services';
 import { RightCodeSchemaService } from '@/entities/services';
 
 import { defaultIndexes } from '../defaultSystemData';
 import { RightsList } from '@/rights';
+import { UserLogsService } from '@/logs';
 
 import type { RightsProp, RightsConfig } from '@/rights';
+import { CmsSession } from '@/common';
+import { GlobalService } from '@/common/utils';
 
 @Injectable()
 export class RepairDataService {
@@ -28,16 +31,30 @@ export class RepairDataService {
   @Inject()
   private readonly rightCodeSchemaService: RightCodeSchemaService;
 
+  @Inject()
+  private readonly userLogsService: UserLogsService;
+
+  @Inject()
+  private readonly globalService: GlobalService;
+
   repairBaseData() {
     const resp = new CommonResult();
     return resp;
   }
 
-  async repairDBIndex() {
+  async repairDBIndex(session: CmsSession) {
     // 修复数据库全部索引
     const modelMap = this.databaseService.getModelMap();
     const resp = new CommonResult();
-
+    await this.userLogsService.writeUserLog(
+      session,
+      LogTypeEnum.RepairData,
+      this.globalService.serverLang(
+        session,
+        '修复默认数据库索引',
+        'repairData.defaultDBIndex',
+      ),
+    );
     for (const dbIndexInfo of defaultIndexes) {
       const modelInfo = modelMap.get(dbIndexInfo.aliasName);
       if (!modelInfo) {
@@ -59,10 +76,14 @@ export class RepairDataService {
     return resp;
   }
 
-  async repairRightsGroup() {
+  async repairRightsGroup(session: CmsSession) {
     // 包括修复权限代码和默认权限组
     const resp = new CommonResult();
     const rightsArray = this.getRightsCodeArray(RightsList);
+    // TODO 以后先从数据库查出来,对比有差异再去merge到数据库中???
+    // 不然多次merge也没有意义
+    // 每一次merge都记录日志修改了哪个权限
+    // 如果是默认的code没有了,则需要删除废弃的权限代码,然后写日志,删除权限xxx
     for (const rightInfo of rightsArray) {
       const rightCodeInfo = {
         code: rightInfo.code,
@@ -71,13 +92,23 @@ export class RepairDataService {
         category: rightInfo.category,
         path: rightInfo.path,
         cnLabel: rightInfo.desc,
-        enLabel: '',
+        enLabel: this.globalService.lang(
+          'EN',
+          rightInfo.desc,
+          `repairData.${rightInfo.key}`,
+        ),
       };
-      await this.rightCodeSchemaService.createRightCode(rightCodeInfo);
+      await this.rightCodeSchemaService.mergeRightCode(rightCodeInfo);
     }
-    // 写一下修复权限代码的逻辑,如果数据库没有则插入,插入时写日志插入什么权限代码
-    // 如果有,考虑是否需要修复某些字段
-    // 数据库多出来的,考虑删除,需要写日志
+    await this.userLogsService.writeUserLog(
+      session,
+      LogTypeEnum.RepairData,
+      this.globalService.serverLang(
+        session,
+        '修复默认权限代码',
+        'repairData.defaultRightCode',
+      ),
+    );
     return resp;
   }
 
