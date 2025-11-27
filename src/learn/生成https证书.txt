@@ -1,3 +1,5 @@
 openssl genrsa -out privateKey.pem 2048
 openssl req -new -key privateKey.pem -out csr.pem
 openssl x509 -req -days 365 -in csr.pem -signkey privateKey.pem -out certificate.pem
+
+测试上传
