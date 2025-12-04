@@ -154,10 +154,12 @@ export async function bootstrap() {
   // <<< 新增SAML协议授权
   // app.use(csurf({ cookie: true })) // 不是很懂'跨站点请求伪造',暂时注释掉吧,后期有空再研究研究
 
-  app.use(expressStaticGzip(join(process.cwd(), 'public'), {
-    enableBrotli: true,
-    orderPreference: ['br', 'gz'],
-  }))
+  app.use(
+    expressStaticGzip(join(process.cwd(), 'public'), {
+      enableBrotli: true,
+      orderPreference: ['br', 'gz'],
+    }),
+  );
   app.useStaticAssets(join(process.cwd(), 'public'));
   app.setBaseViewsDir(join(process.cwd(), 'views'));
   app.engine('html', renderFile);
