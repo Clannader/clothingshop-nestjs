@@ -18,7 +18,7 @@ import { SessionGuard } from '@/guard';
 import { HttpInterceptor } from '@/interceptor/http';
 import { ApiRights, RightsEnum } from '@/rights';
 
-import { RightsCodesService } from '../services/';
+import { RightsCodesService } from '../services';
 
 import { ReqRightsCodesSearchDto, RespRightsCodesSearchDto } from '../dto';
 import { ApiOperation } from '@nestjs/swagger';
