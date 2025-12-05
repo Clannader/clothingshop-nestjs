@@ -30,17 +30,23 @@ export class RightsCodesService {
     const where: Record<string, any> = {};
 
     if (!Utils.isEmpty(codeNumber)) {
-      where.codeNumber = Utils.getIgnoreCase(codeNumber, true);
+      where.code = Utils.getIgnoreCase(codeNumber, true);
     }
     if (!Utils.isEmpty(description)) {
       where.description = Utils.getIgnoreCase(description, true);
+    }
+    if (!Utils.isEmpty(codeLabel)) {
+      where.$or = [
+        { cnLabel: Utils.getIgnoreCase(codeLabel, true) },
+        { enLabel: Utils.getIgnoreCase(codeLabel, true) },
+      ];
     }
 
     const [err, result] = await Utils.toPromise(
       this.rightsCodesSchemaService
         .getModel()
         .find(where, { __v: 0 })
-        .sort({ _id: -1 }),
+        .sort({ code: 1 }),
     );
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
