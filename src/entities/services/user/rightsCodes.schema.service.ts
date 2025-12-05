@@ -8,7 +8,7 @@ import { RightCode } from '../../schema';
 import type { RightCodeModel } from '../../schema';
 
 @Injectable()
-export class RightCodeSchemaService {
+export class RightsCodesSchemaService {
   @InjectModel(RightCode.name)
   private readonly rightCodeModel: RightCodeModel;
 

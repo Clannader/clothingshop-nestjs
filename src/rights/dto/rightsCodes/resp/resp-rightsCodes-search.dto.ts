@@ -9,4 +9,9 @@ export class RespRightsCodesSearchDto extends CommonResult {
    * 权限代码列表
    */
   rightsCodes: SearchRightsCodesDto[];
+
+  /**
+   * 总数
+   */
+  total: number;
 }

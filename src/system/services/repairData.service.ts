@@ -10,7 +10,7 @@ import { CodeException } from '@/common/exceptions';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 
 import { DatabaseService } from '@/database/services';
-import { RightCodeSchemaService } from '@/entities/services';
+import { RightsCodesSchemaService } from '@/entities/services';
 
 import { defaultIndexes } from '../defaultSystemData';
 import { RightsList } from '@/rights';
@@ -29,7 +29,7 @@ export class RepairDataService {
   private readonly mongooseConnection: Connection;
 
   @Inject()
-  private readonly rightCodeSchemaService: RightCodeSchemaService;
+  private readonly rightCodeSchemaService: RightsCodesSchemaService;
 
   @Inject()
   private readonly userLogsService: UserLogsService;
