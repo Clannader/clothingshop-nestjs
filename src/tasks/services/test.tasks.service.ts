@@ -8,7 +8,7 @@ import { Interval } from '@andybeat/schedule';
 import {
   AdminLogSchemaService,
   SequenceSchemaService,
-  RightCodeGroupSchemaService,
+  RightsCodesGroupSchemaService,
 } from '@/entities/services';
 // import type { AdminLog } from '@/entities/schema';
 import { TokenCacheService, MemoryCacheService } from '@/cache/services';
@@ -27,7 +27,7 @@ export class TestTasksService {
   private readonly adminLogSchemaService: AdminLogSchemaService;
 
   @Inject()
-  private readonly rightCodeGroupSchemaService: RightCodeGroupSchemaService;
+  private readonly rightCodeGroupSchemaService: RightsCodesGroupSchemaService;
 
   @Inject()
   private readonly tokenCacheService: TokenCacheService;

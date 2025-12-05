@@ -39,6 +39,8 @@ import { rateLimit, MemoryStore } from 'express-rate-limit';
 import parseEnv from '@/lib/parseEnv';
 import * as fs from 'fs';
 import { ApiTagsDescriptionRegistry } from '@/lib/api-tags-description';
+import * as expressStaticGzip from 'express-static-gzip';
+// import * as crypto from 'node:crypto';
 // import * as passport from 'passport';
 // import * as moment from 'moment';
 // import * as csurf from 'csurf';
@@ -87,6 +89,20 @@ export async function bootstrap() {
   //   SyncUpdateCacheService,
   // );
 
+  // 解决前端报错加CSP响应头,但是还是无法消除
+  // app.use((req: any, res: any, next: any) => {
+  //   const nonce = crypto.randomBytes(16).toString('base64');
+  //   return helmet({
+  //     contentSecurityPolicy:{
+  //       directives: {
+  //         defaultSrc: ["'self'"],
+  //         scriptSrc: ["'self'", `'nonce-${nonce}'`],
+  //         styleSrc: ["'self'"],
+  //         imgSrc: ["'self'", "data:", "https:"]
+  //       }
+  //     }
+  //   })(req, res, next)
+  // });
   app.use(helmet());
   app.disable('x-powered-by'); // 还是有效果的,一旦用了helmet,框架自动帮去掉这个头了
   // app.enableCors() // 允许开启CORS,不过不满足需求,这里是全局定义的CORS,可能需要部分开启而已
@@ -138,6 +154,12 @@ export async function bootstrap() {
   // <<< 新增SAML协议授权
   // app.use(csurf({ cookie: true })) // 不是很懂'跨站点请求伪造',暂时注释掉吧,后期有空再研究研究
 
+  app.use(
+    expressStaticGzip(join(process.cwd(), 'public'), {
+      enableBrotli: true,
+      orderPreference: ['br', 'gz'],
+    }),
+  );
   app.useStaticAssets(join(process.cwd(), 'public'));
   app.setBaseViewsDir(join(process.cwd(), 'views'));
   app.engine('html', renderFile);
