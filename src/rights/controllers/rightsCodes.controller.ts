@@ -8,8 +8,12 @@ import {
   UserSession,
 } from '@/common/decorator';
 import {
+  Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
+  Put,
   Query,
   UseGuards,
   UseInterceptors,
@@ -20,9 +24,13 @@ import { ApiRights, RightsEnum } from '@/rights';
 
 import { RightsCodesService } from '../services';
 
-import { ReqRightsCodesSearchDto, RespRightsCodesSearchDto } from '../dto';
+import {
+  ReqRightsCodesSearchDto,
+  RespRightsCodesSearchDto,
+  ReqRightsCodesModifyDto,
+} from '../dto';
 import { ApiOperation } from '@nestjs/swagger';
-import { CmsSession } from '@/common';
+import { CmsSession, RespModifyDataDto } from '@/common';
 
 @ApiCommon()
 @Controller('/cms/api/rightsCodes')
@@ -51,5 +59,22 @@ export class RightsCodesController {
     @Query() params: ReqRightsCodesSearchDto,
   ) {
     return this.rightsCodesService.getRightsCodesList(session, params);
+  }
+
+  @Put('/modify')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '编辑权限代码',
+    description: '编辑权限代码',
+  })
+  @ApiCustomResponse({
+    type: RespModifyDataDto,
+  })
+  @ApiRights(RightsEnum.RightsCodeModify)
+  modifyRightsCodes(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqRightsCodesModifyDto,
+  ) {
+    return this.rightsCodesService.saveRightsCodes(session, params);
   }
 }

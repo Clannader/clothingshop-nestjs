@@ -2,3 +2,4 @@
  * Create by oliver.wu 2025/12/4
  */
 export * from './req-rightsCodes-search.dto';
+export * from './req-rightsCodes-modify.dto';
