@@ -6,14 +6,6 @@ import { IsDefined, IsString } from 'class-validator';
 
 export class ModifyRightsCodesDto {
   /**
-   * 编辑的ID值
-   */
-  @IsDefined()
-  @IsString()
-  @Expose()
-  id: string;
-
-  /**
    * 中文显示
    */
   @IsDefined()

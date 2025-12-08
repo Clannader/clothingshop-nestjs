@@ -6,6 +6,12 @@ import { ModifyRightsCodesDto } from './modify-rightsCodes.dto';
 
 export class SearchRightsCodesDto extends ModifyRightsCodesDto {
   /**
+   * 编辑的ID值
+   */
+  @Expose()
+  id: string;
+
+  /**
    * 权限代码
    */
   @Expose()
