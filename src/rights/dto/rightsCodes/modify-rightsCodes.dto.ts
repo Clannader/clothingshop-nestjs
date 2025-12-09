@@ -2,38 +2,30 @@
  * Create by oliver.wu 2025/12/4
  */
 import { Expose } from 'class-transformer';
-import { IsDefined, IsString, IsOptional } from 'class-validator';
+import { IsDefined, IsString } from 'class-validator';
 
 export class ModifyRightsCodesDto {
   /**
-   * 编辑的ID值
+   * 中文显示
    */
   @IsDefined()
-  @IsString()
-  @Expose()
-  id: string;
-
-  /**
-   * 中文描述
-   */
-  @IsOptional()
   @IsString()
   @Expose()
   cnLabel: string;
 
   /**
-   * 英文描述
+   * 英文显示
    */
-  @IsOptional()
+  @IsDefined()
   @IsString()
   @Expose()
   enLabel: string;
 
   /**
-   * 描述
+   * 权限代码描述
    */
-  @IsOptional()
+  @IsDefined()
   @IsString()
   @Expose()
-  description?: string;
+  description: string;
 }

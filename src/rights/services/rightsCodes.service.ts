@@ -2,13 +2,14 @@
  * Create by oliver.wu 2025/12/4
  */
 import { Injectable, Inject } from '@nestjs/common';
-import { CmsSession } from '@/common';
+import { CmsSession, RespModifyDataDto } from '@/common';
 import { GlobalService, Utils } from '@/common/utils';
 
 import {
   ReqRightsCodesSearchDto,
   RespRightsCodesSearchDto,
   SearchRightsCodesDto,
+  ReqRightsCodesModifyDto,
 } from '../dto';
 
 import { RightsCodesSchemaService } from '@/entities/services';
@@ -18,6 +19,9 @@ import { CodeEnum } from '@/common/enum';
 export class RightsCodesService {
   @Inject()
   private readonly rightsCodesSchemaService: RightsCodesSchemaService;
+
+  @Inject()
+  private readonly globalService: GlobalService;
 
   async getRightsCodesList(
     session: CmsSession,
@@ -68,6 +72,11 @@ export class RightsCodesService {
     resp.rightsCodes = rightsCodesList;
     resp.total = result.length;
 
+    return resp;
+  }
+
+  async saveRightsCodes(session: CmsSession, params: ReqRightsCodesModifyDto) {
+    const resp = new RespModifyDataDto();
     return resp;
   }
 }
