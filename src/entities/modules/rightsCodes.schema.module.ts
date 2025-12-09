@@ -4,7 +4,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RightCode, RightCodeSchema } from '../schema';
-import { RightCodeSchemaService } from '../services';
+import { RightsCodesSchemaService } from '../services';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { RightCodeSchemaService } from '../services';
       { name: RightCode.name, schema: RightCodeSchema },
     ]),
   ],
-  providers: [RightCodeSchemaService],
-  exports: [RightCodeSchemaService],
+  providers: [RightsCodesSchemaService],
+  exports: [RightsCodesSchemaService],
 })
-export class RightCodeSchemaModule {}
+export class RightsCodesSchemaModule {}

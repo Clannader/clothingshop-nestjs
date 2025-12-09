@@ -49,6 +49,7 @@ export enum RightsEnum {
   RightsGroupDelete = '30313',
   RightsCodeSetup = '3032',
   RightsCodeModify = '30321',
+  RightsCodeSearch = '30322',
   RepairData = '3040',
   RepairBaseData = '3041',
   RepairDBIndex = '3042',
@@ -176,6 +177,10 @@ export const RightsList: RightsConfig = {
               RightsCodeModify: {
                 code: RightsEnum.RightsCodeModify, // 30321
                 desc: '编辑权限代码',
+              },
+              RightsCodeSearch: {
+                code: RightsEnum.RightsCodeSearch, // 30322
+                desc: '查询权限代码',
               },
             },
           },

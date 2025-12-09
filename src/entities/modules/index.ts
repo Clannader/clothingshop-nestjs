@@ -3,8 +3,8 @@
  */
 export * from './admin.access.module';
 export * from './admin.schema.module';
-export * from './rightCode.schema.module';
-export * from './rightCodeGroup.schema.module';
+export * from './rightsCodes.schema.module';
+export * from './rightsCodesGroup.schema.module';
 export * from './adminLog.schema.module';
 export * from './sequence.schema.module';
 export * from './systemConfig.schema.module';
