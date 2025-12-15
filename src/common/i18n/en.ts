@@ -4,6 +4,7 @@ import { system } from './system/system.en';
 import { timeZone } from './timeZone/timeZone.en';
 import { common } from './common/common.en';
 import { repairData } from './repairData/repairData.en';
+import { rightsCodes } from './rightsCodes/rightsCodes.en';
 
 export const EN = {
   user,
@@ -12,4 +13,5 @@ export const EN = {
   timeZone,
   common,
   repairData,
+  rightsCodes,
 };

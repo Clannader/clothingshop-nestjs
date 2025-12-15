@@ -4,6 +4,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { CmsSession, RespModifyDataDto } from '@/common';
 import { GlobalService, Utils } from '@/common/utils';
+import { instanceToInstance } from 'class-transformer';
 
 import {
   ReqRightsCodesSearchDto,
@@ -13,7 +14,9 @@ import {
 } from '../dto';
 
 import { RightsCodesSchemaService } from '@/entities/services';
-import { CodeEnum } from '@/common/enum';
+import { CodeEnum, LogTypeEnum } from '@/common/enum';
+import { RightCodeDocument, RightCode } from '@/entities/schema';
+import { UserLogsService } from '@/logs';
 
 @Injectable()
 export class RightsCodesService {
@@ -22,6 +25,9 @@ export class RightsCodesService {
 
   @Inject()
   private readonly globalService: GlobalService;
+
+  @Inject()
+  private readonly userLogsService: UserLogsService;
 
   async getRightsCodesList(
     session: CmsSession,
@@ -77,6 +83,109 @@ export class RightsCodesService {
 
   async saveRightsCodes(session: CmsSession, params: ReqRightsCodesModifyDto) {
     const resp = new RespModifyDataDto();
+    // 判断是否是新建还是编辑,如果是编辑,id必填
+    const id = params.id;
+    if (Utils.isEmpty(params.id)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        'ID值不能为空',
+        'common.idIsEmpty',
+      );
+      return resp;
+    }
+
+    let oldRightsCodes: RightCodeDocument,
+      newRightsCodes: RightCodeDocument,
+      err: Error;
+
+    [err, oldRightsCodes] = await Utils.toPromise(
+      this.rightsCodesSchemaService.getModel().findById(id),
+    );
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    if (Utils.isEmpty(oldRightsCodes)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '该权限代码不存在',
+        'rightsCodes.isNotExist',
+      );
+      return resp;
+    }
+    newRightsCodes = instanceToInstance(oldRightsCodes);
+    if (!Utils.isEmpty(params.cnLabel)) {
+      newRightsCodes.cnLabel = params.cnLabel;
+    } else {
+      params.cnLabel = oldRightsCodes.cnLabel;
+    }
+
+    if (!Utils.isEmpty(params.enLabel)) {
+      newRightsCodes.enLabel = params.enLabel;
+    } else {
+      params.enLabel = oldRightsCodes.enLabel;
+    }
+
+    if (!Utils.isEmpty(params.description)) {
+      newRightsCodes.description = params.description;
+    } else {
+      params.description = oldRightsCodes.description;
+    }
+
+    // 新旧都需要字段进行字段校验
+    if (Utils.isEmpty(params.cnLabel)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '中文标签不能为空',
+        'rightsCodes.cnLabelIsEmpty',
+      );
+    }
+    if (Utils.isEmpty(params.enLabel)) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '英文标签不能为空',
+        'rightsCodes.enLabelIsEmpty',
+      );
+    }
+
+    [err] = await Utils.toPromise(newRightsCodes.save());
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    resp.id = newRightsCodes.id;
+    // 写日志...
+    const contentArray = [
+      this.globalService.serverLang(
+        session,
+        '编辑权限代码:({0})',
+        'rightsCodes.modifiedLog',
+        newRightsCodes.code,
+      ),
+    ];
+    contentArray.push(
+      ...this.globalService.compareObjectWriteLog(
+        session,
+        RightCode,
+        oldRightsCodes,
+        newRightsCodes,
+      ),
+    );
+    if (contentArray.length > 1) {
+      await this.userLogsService.writeUserLog(
+        session,
+        LogTypeEnum.RightsCodes,
+        contentArray.join('\r\n'),
+        newRightsCodes.id,
+      );
+    }
+
     return resp;
   }
 }

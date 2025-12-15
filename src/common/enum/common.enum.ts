@@ -55,7 +55,7 @@ export enum LanguageEnum {
  * 日志类型
  */
 export enum LogTypeEnum {
-  Right = 'Right',
+  RightsCodes = 'RightsCodes',
   Config = 'Config',
   Browser = 'Browser',
   Interface = 'Interface',
