@@ -10,3 +10,4 @@ export * from './sequence.schema.module';
 export * from './systemConfig.schema.module';
 export * from './systemData.schema.module';
 export * from './deleteLog.schema.module';
+export * from './statisticsUrl.schema.module';

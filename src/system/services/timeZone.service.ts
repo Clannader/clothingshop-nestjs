@@ -232,12 +232,12 @@ export class TimeZoneService {
         'timeZone.deleteLog',
         writeLogResult.join(','),
       );
-      await this.userLogsService.writeUserLog(
+      this.userLogsService.writeUserLog(
         session,
         LogTypeEnum.TimeZone,
         content,
         deleteTimeZoneId,
-      );
+      ).then();
     } else {
       // 这里是删除全部都失败的情况
       resp.code = CodeEnum.FAIL;
@@ -440,12 +440,12 @@ export class TimeZoneService {
         'timeZone.createLog',
         createObj.timeZone,
       );
-      await this.userLogsService.writeUserLog(
+      this.userLogsService.writeUserLog(
         session,
         LogTypeEnum.TimeZone,
         content,
         createObj.id,
-      );
+      ).then();
     } else {
       newTimeZone.updateUser = session.adminId;
       newTimeZone.updateDate = new Date();
@@ -475,12 +475,12 @@ export class TimeZoneService {
         ),
       );
       if (contentArray.length > 1) {
-        await this.userLogsService.writeUserLog(
+        this.userLogsService.writeUserLog(
           session,
           LogTypeEnum.TimeZone,
           contentArray.join('\r\n'),
           newTimeZone.id,
-        );
+        ).then();
       }
     }
     return resp;
@@ -509,12 +509,12 @@ export class TimeZoneService {
         'timeZone.syncSuccess',
         successTimeZone.length,
       );
-      await this.userLogsService.writeUserLog(
+      this.userLogsService.writeUserLog(
         session,
         LogTypeEnum.TimeZone,
         content,
         successTimeZone,
-      );
+      ).then();
     }
     return new CommonResult();
   }
