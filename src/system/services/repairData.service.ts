@@ -46,15 +46,17 @@ export class RepairDataService {
     // 修复数据库全部索引
     const modelMap = this.databaseService.getModelMap();
     const resp = new CommonResult();
-    this.userLogsService.writeUserLog(
-      session,
-      LogTypeEnum.RepairData,
-      this.globalService.serverLang(
+    this.userLogsService
+      .writeUserLog(
         session,
-        '修复默认数据库索引',
-        'repairData.defaultDBIndex',
-      ),
-    ).then();
+        LogTypeEnum.RepairData,
+        this.globalService.serverLang(
+          session,
+          '修复默认数据库索引',
+          'repairData.defaultDBIndex',
+        ),
+      )
+      .then();
     for (const dbIndexInfo of defaultIndexes) {
       const modelInfo = modelMap.get(dbIndexInfo.aliasName);
       if (!modelInfo) {
@@ -100,15 +102,17 @@ export class RepairDataService {
       };
       await this.rightCodeSchemaService.mergeRightCode(rightCodeInfo);
     }
-    this.userLogsService.writeUserLog(
-      session,
-      LogTypeEnum.RepairData,
-      this.globalService.serverLang(
+    this.userLogsService
+      .writeUserLog(
         session,
-        '修复默认权限代码',
-        'repairData.defaultRightCode',
-      ),
-    ).then();
+        LogTypeEnum.RepairData,
+        this.globalService.serverLang(
+          session,
+          '修复默认权限代码',
+          'repairData.defaultRightCode',
+        ),
+      )
+      .then();
     return resp;
   }
 
