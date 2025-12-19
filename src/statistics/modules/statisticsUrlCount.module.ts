@@ -8,5 +8,6 @@ import { StatisticsUrlSchemaModule } from '@/entities/modules';
 @Module({
   imports: [StatisticsUrlSchemaModule],
   providers: [StatisticsUrlCountService],
+  exports: [StatisticsUrlCountService],
 })
 export class StatisticsUrlCountModule {}
