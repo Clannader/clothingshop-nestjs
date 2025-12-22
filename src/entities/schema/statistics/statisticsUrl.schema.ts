@@ -2,9 +2,10 @@
  * Create by oliver.wu 2025/12/18
  * 统计请求url次数
  */
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+@Schema()
 export class StatisticsUrl {
   @Prop({
     type: String,
@@ -25,6 +26,12 @@ export class StatisticsUrl {
     trim: true,
   })
   url: string; // 请求地址
+
+  @Prop({
+    type: Number,
+    required: true,
+  })
+  count: number; // 次数
 
   @Prop({
     type: String,

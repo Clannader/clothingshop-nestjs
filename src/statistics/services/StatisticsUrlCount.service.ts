@@ -74,6 +74,8 @@ export class StatisticsUrlCountService {
           url: item.url,
           count: 1,
           date: startDate,
+          serverName: this.configService.get<string>('serverName'),
+          workerId: cluster?.worker?.id ?? 1,
         });
       }
     });
