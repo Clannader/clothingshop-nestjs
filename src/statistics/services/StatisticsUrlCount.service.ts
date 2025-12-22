@@ -79,7 +79,6 @@ export class StatisticsUrlCountService {
         });
       }
     });
-    console.log('urlMap', urlMap);
     if (urlMap.size > 0) {
       const insertData = Array.from(urlMap.values());
       this.statisticsUrlSchemaService
