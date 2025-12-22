@@ -135,6 +135,16 @@ export const defaultIndexes: IndexSchema[] = [
       linkId: 1, // 用户日志按linkId查询
     },
   },
+  {
+    aliasName: 'StatisticsUrlCount',
+    fields: {
+      date: 1,
+    },
+    options: {
+      name: 'expireClear',
+      expireAfterSeconds: 7 * 24 * 60 * 60, // 保留7天
+    },
+  },
 ];
 
 export type TimeZoneSchema = {
