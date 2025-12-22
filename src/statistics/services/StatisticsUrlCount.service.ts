@@ -46,24 +46,28 @@ export class StatisticsUrlCountService {
     this.statUrlCountSubject
       .pipe(
         bufferTime(this.getNextMinuteDelay()), // 收集最近整分钟数据
-        take(1),
+        take(1), // 只取1次
         map((buffer) => {
+          // 记录当前时间
           return {
             timestamp: new Date(),
             data: buffer,
-          }
+          };
         }),
         switchMap((firstBuffer) => {
+          // 插入第一次最近整分钟记录
           this.insertManyData([firstBuffer]);
+          // 开始转化记录频率,每一分钟一次,收集10次才插入数据库
           return this.statUrlCountSubject.pipe(
             bufferTime(60 * 1000),
             map((buffer) => {
+              // 每一次都记录收集时间
               return {
                 timestamp: new Date(),
                 data: buffer,
-              }
+              };
             }),
-            bufferCount(2),
+            bufferCount(10),
           );
         }),
       )
@@ -80,11 +84,14 @@ export class StatisticsUrlCountService {
     // const startDate = new Date();
     // startDate.setSeconds(0);
     // startDate.setMilliseconds(0);
-    const urlMap = new Map();
+    const urlCountArray = [];
     result.forEach((item) => {
       const buffer = item.data;
       const startDate = item.timestamp;
-      buffer.forEach(urlCount => {
+      startDate.setSeconds(0);
+      startDate.setMilliseconds(0);
+      const urlMap = new Map();
+      buffer.forEach((urlCount) => {
         const key = `${urlCount.shopId}_${urlCount.url}`;
         if (urlMap.has(key)) {
           urlMap.get(key).count += 1;
@@ -98,13 +105,15 @@ export class StatisticsUrlCountService {
             workerId: cluster?.worker?.id ?? 1,
           });
         }
-      })
+      });
+      if (urlMap.size > 0) {
+        urlCountArray.push(...Array.from(urlMap.values()));
+      }
     });
-    if (urlMap.size > 0) {
-      const insertData = Array.from(urlMap.values());
+    if (urlCountArray.length > 0) {
       this.statisticsUrlSchemaService
         .getStatisticsUrlModel()
-        .insertMany(insertData)
+        .insertMany(urlCountArray)
         .then()
         .catch((err) => {
           console.error(err);
