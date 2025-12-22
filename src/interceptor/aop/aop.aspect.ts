@@ -10,6 +10,7 @@ import { AopLogger } from '@/logger';
 import * as onFinished from 'on-finished';
 import { AdminAccessSchemaService } from '@/entities/services';
 import { MemoryCacheService, TraceIdCacheService } from '@/cache/services';
+import { StatisticsUrlCountService } from '@/statistics/services';
 
 // @ts-ignore
 const cluster = require('node:cluster'); // 不明白这个包的引入问题,后期有解决办法修改了再说吧
@@ -30,6 +31,9 @@ export class AopAspect {
   @Inject()
   private readonly memoryCacheService: MemoryCacheService;
 
+  @Inject()
+  private readonly statisticsUrlCountService: StatisticsUrlCountService;
+
   logAspect(req: RequestSession, res: CmsResponse): void {
     const now = new Date();
     const url = req.baseUrl;
@@ -41,7 +45,19 @@ export class AopAspect {
 
     // 如果是没有session的,在onFinished里面取是直接报错的
     let session: CmsSession = req.session?.adminSession;
-
+    if (!session) {
+      session = {
+        adminId:
+          (req.headers['adminId'] as string) ?? req.body['adminId'] ?? 'NULL',
+        shopId:
+          (req.headers['shopId'] as string) ?? req.body['shopId'] ?? 'NULL',
+        adminType: UserTypeEnum.OTHER,
+      };
+    }
+    this.statisticsUrlCountService.getStatUrlCountSubject().next({
+      url,
+      shopId: session?.shopId,
+    });
     // 这里还要考虑jwt过来的时候,带入的session值解析,记录用户操作
     // 考虑做法,在jwt守卫那边解析出来值,放到req里面,然后完成响应的时候,只要判断节点里面有值,就替换session
     // 即可,这样就认为是jwt过来的session,代码里面的session直接相当参数往后传即可
@@ -91,15 +107,6 @@ export class AopAspect {
         this.memoryCacheService.removeSecuritySession(securityId).then();
       }
 
-      if (!session) {
-        session = {
-          adminId:
-            (req.headers['adminId'] as string) ?? req.body['adminId'] ?? 'NULL',
-          shopId:
-            (req.headers['shopId'] as string) ?? req.body['shopId'] ?? 'NULL',
-          adminType: UserTypeEnum.OTHER,
-        };
-      }
       const isIndex = url.indexOf(baseUrl) !== -1; //如果url含有index,说明是网页进来的
       let returnData: string | Record<string, any> = res.returnData;
       try {
