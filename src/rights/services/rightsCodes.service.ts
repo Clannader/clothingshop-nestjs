@@ -178,12 +178,14 @@ export class RightsCodesService {
       ),
     );
     if (contentArray.length > 1) {
-      await this.userLogsService.writeUserLog(
-        session,
-        LogTypeEnum.RightsCodes,
-        contentArray.join('\r\n'),
-        newRightsCodes.id,
-      );
+      this.userLogsService
+        .writeUserLog(
+          session,
+          LogTypeEnum.RightsCodes,
+          contentArray.join('\r\n'),
+          newRightsCodes.id,
+        )
+        .then();
     }
 
     return resp;

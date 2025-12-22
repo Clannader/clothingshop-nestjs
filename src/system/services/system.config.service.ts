@@ -424,12 +424,9 @@ export class SystemConfigService {
         'systemConfig.createParentLog',
         createObj.key,
       );
-      await this.userLogsService.writeUserLog(
-        session,
-        LogTypeEnum.SystemConfig,
-        content,
-        createObj.id,
-      );
+      this.userLogsService
+        .writeUserLog(session, LogTypeEnum.SystemConfig, content, createObj.id)
+        .then();
     } else {
       newParentConfig.updateUser = session.adminId;
       newParentConfig.updateDate = new Date();
@@ -462,12 +459,14 @@ export class SystemConfigService {
         ),
       );
       if (contentArray.length > 1) {
-        await this.userLogsService.writeUserLog(
-          session,
-          LogTypeEnum.SystemConfig,
-          contentArray.join('\r\n'),
-          newParentConfig.id,
-        );
+        this.userLogsService
+          .writeUserLog(
+            session,
+            LogTypeEnum.SystemConfig,
+            contentArray.join('\r\n'),
+            newParentConfig.id,
+          )
+          .then();
       }
     }
 
@@ -674,12 +673,14 @@ export class SystemConfigService {
             groupName,
             writeLogResult.join(','),
           );
-      await this.userLogsService.writeUserLog(
-        session,
-        LogTypeEnum.SystemConfig,
-        content,
-        deleteConfigId,
-      );
+      this.userLogsService
+        .writeUserLog(
+          session,
+          LogTypeEnum.SystemConfig,
+          content,
+          deleteConfigId,
+        )
+        .then();
     } else {
       // 这里是删除全部都失败的情况
       resp.code = CodeEnum.FAIL;
@@ -954,12 +955,9 @@ export class SystemConfigService {
         createObj.groupName,
         createObj.key,
       );
-      await this.userLogsService.writeUserLog(
-        session,
-        LogTypeEnum.SystemConfig,
-        content,
-        createObj.id,
-      );
+      this.userLogsService
+        .writeUserLog(session, LogTypeEnum.SystemConfig, content, createObj.id)
+        .then();
     } else {
       newChildrenConfig.updateUser = session.adminId;
       newChildrenConfig.updateDate = new Date();
@@ -991,12 +989,14 @@ export class SystemConfigService {
         ),
       );
       if (contentArray.length > 1) {
-        await this.userLogsService.writeUserLog(
-          session,
-          LogTypeEnum.SystemConfig,
-          contentArray.join('\r\n'),
-          newChildrenConfig.id,
-        );
+        this.userLogsService
+          .writeUserLog(
+            session,
+            LogTypeEnum.SystemConfig,
+            contentArray.join('\r\n'),
+            newChildrenConfig.id,
+          )
+          .then();
       }
     }
 

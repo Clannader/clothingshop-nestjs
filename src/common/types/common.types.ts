@@ -70,3 +70,8 @@ export type IgnoreCaseType = {
   $regex: string;
   $options: string;
 };
+
+export type StatUrlCountType = {
+  shopId: string;
+  url: string;
+};
