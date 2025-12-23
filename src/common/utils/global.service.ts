@@ -125,4 +125,43 @@ export class GlobalService {
       typeof target === 'function' && /^\s*class\s+/.test(target.toString())
     );
   }
+
+  // 该用户是否含有该权限
+  userHasRights(
+    session: string[] | CmsSession,
+    ...roles: Array<string>
+  ): Array<any> {
+    // 获取rightsArray中不存在session权限的值
+    let rightsArray: string[];
+    if (!Array.isArray(session)) {
+      rightsArray = session.rights;
+    } else {
+      rightsArray = session;
+    }
+    const notExistRights = roles.filter((v) => !rightsArray.includes(v));
+    return [notExistRights, notExistRights.length === 0];
+  }
+
+  // 该用户是否含有该权限
+  userHasRightsBoolean(
+    session: CmsSession,
+    ...rightsArray: Array<string>
+  ): boolean {
+    return this.userHasRights(session, ...rightsArray)[1];
+  }
+
+  userHasOrRights(
+    session: string[] | CmsSession,
+    ...roles: Array<string>
+  ): Array<any> {
+    const [notExistRights] = this.userHasRights(session, ...roles);
+    return [notExistRights, notExistRights.length !== roles.length];
+  }
+
+  userHasOrRightsBoolean(
+    session: CmsSession,
+    ...roles: Array<string>
+  ): boolean {
+    return this.userHasOrRights(session, ...roles)[1];
+  }
 }

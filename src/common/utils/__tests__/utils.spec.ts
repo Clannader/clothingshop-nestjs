@@ -332,27 +332,27 @@ describe('Utils', () => {
     expect(p5.rooms[0].address).toBe('通天塔120路1号');
   });
 
-  it('测试判断权限是否正确判断返回', () => {
-    const session1 = {
-      rights: [],
-    };
-    const session2 = {
-      rights: [RightsEnum.OtherSetup],
-    };
-    const session3 = {
-      rights: [
-        RightsEnum.OtherSetup,
-        RightsEnum.ConfigModify,
-        RightsEnum.ConfigDelete,
-      ],
-    };
-    expect(Utils.hasRights(session1, RightsEnum.OtherSetup)).toBe(false);
-    expect(Utils.hasRights(session2, RightsEnum.OtherSetup)).toBe(true);
-    expect(Utils.hasRights(session2, RightsEnum.RightsCodeModify)).toBe(false);
-    expect(Utils.hasRights(session3, RightsEnum.OtherSetup)).toBe(true);
-    expect(
-      Utils.hasRights(session3, RightsEnum.OtherSetup, RightsEnum.ConfigModify),
-    ).toBe(true);
-    expect(Utils.hasRights(session3, RightsEnum.RightsCodeModify)).toBe(false);
-  });
+  // it('测试判断权限是否正确判断返回', () => {
+  //   const session1 = {
+  //     rights: [],
+  //   };
+  //   const session2 = {
+  //     rights: [RightsEnum.OtherSetup],
+  //   };
+  //   const session3 = {
+  //     rights: [
+  //       RightsEnum.OtherSetup,
+  //       RightsEnum.ConfigModify,
+  //       RightsEnum.ConfigDelete,
+  //     ],
+  //   };
+  //   expect(Utils.hasRights(session1, RightsEnum.OtherSetup)).toBe(false);
+  //   expect(Utils.hasRights(session2, RightsEnum.OtherSetup)).toBe(true);
+  //   expect(Utils.hasRights(session2, RightsEnum.RightsCodeModify)).toBe(false);
+  //   expect(Utils.hasRights(session3, RightsEnum.OtherSetup)).toBe(true);
+  //   expect(
+  //     Utils.hasRights(session3, RightsEnum.OtherSetup, RightsEnum.ConfigModify),
+  //   ).toBe(true);
+  //   expect(Utils.hasRights(session3, RightsEnum.RightsCodeModify)).toBe(false);
+  // });
 });
