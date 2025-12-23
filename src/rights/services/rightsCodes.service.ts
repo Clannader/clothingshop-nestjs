@@ -17,6 +17,7 @@ import { RightsCodesSchemaService } from '@/entities/services';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { RightCodeDocument, RightCode } from '@/entities/schema';
 import { UserLogsService } from '@/logs';
+import { getAllRightsCode } from '../rights.constants';
 
 @Injectable()
 export class RightsCodesService {
@@ -28,6 +29,8 @@ export class RightsCodesService {
 
   @Inject()
   private readonly userLogsService: UserLogsService;
+
+  private readonly allRightsCode = getAllRightsCode();
 
   async getRightsCodesList(
     session: CmsSession,
@@ -95,6 +98,9 @@ export class RightsCodesService {
       return resp;
     }
 
+    // 1.这里需要判断用户是否有这个权限,才能编辑
+    // 2.判断修改的权限是否真的存在
+
     let oldRightsCodes: RightCodeDocument,
       newRightsCodes: RightCodeDocument,
       err: Error;
@@ -107,7 +113,10 @@ export class RightsCodesService {
       resp.msg = err.message;
       return resp;
     }
-    if (Utils.isEmpty(oldRightsCodes)) {
+    if (
+      Utils.isEmpty(oldRightsCodes) ||
+      !this.allRightsCode.includes(oldRightsCodes.code)
+    ) {
       resp.code = CodeEnum.FAIL;
       resp.msg = this.globalService.serverLang(
         session,
@@ -116,6 +125,17 @@ export class RightsCodesService {
       );
       return resp;
     }
+
+    if (!this.globalService.userIsHasRights(session, oldRightsCodes.code)) {
+      resp.code = CodeEnum.NO_RIGHTS;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '抱歉，你没有权限编辑该权限代码',
+        'rightsCodes.noRightsModifyCode',
+      );
+      return resp;
+    }
+
     newRightsCodes = instanceToInstance(oldRightsCodes);
     if (!Utils.isEmpty(params.cnLabel)) {
       newRightsCodes.cnLabel = params.cnLabel;

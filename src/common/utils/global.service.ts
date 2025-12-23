@@ -125,4 +125,9 @@ export class GlobalService {
       typeof target === 'function' && /^\s*class\s+/.test(target.toString())
     );
   }
+
+  // 该用户是否含有该权限
+  userIsHasRights(session: CmsSession, ...rightsArray: Array<string>) {
+    return rightsArray.every((v) => session.rights.includes(v));
+  }
 }
