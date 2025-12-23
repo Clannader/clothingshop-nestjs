@@ -134,10 +134,11 @@ export class SessionGuard implements CanActivate {
       );
     }
 
-    if (
-      orRights.length !== 0 &&
-      !Utils.hasOrRights(sessionRights, ...(<RightsEnum[]>orRights))
-    ) {
+    const [notOrRights, isOrRightsFlag] = this.globalService.userHasOrRights(
+      sessionRights,
+      ...(<RightsEnum[]>orRights),
+    );
+    if (orRights.length !== 0 && !isOrRightsFlag) {
       throw new CodeException(
         CodeEnum.NO_RIGHTS,
         this.globalService.lang(
@@ -145,7 +146,7 @@ export class SessionGuard implements CanActivate {
           '用户{0}缺少所需权限{1}.',
           'common.hasNoPermissions',
           adminSession.adminId,
-          `${orRights.join(',')}`,
+          `${notOrRights.join(',')}`,
         ),
       );
     }

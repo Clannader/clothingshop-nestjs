@@ -149,4 +149,19 @@ export class GlobalService {
   ): boolean {
     return this.userHasRights(session, ...rightsArray)[1];
   }
+
+  userHasOrRights(
+    session: string[] | CmsSession,
+    ...roles: Array<string>
+  ): Array<any> {
+    const [notExistRights] = this.userHasRights(session, ...roles);
+    return [notExistRights, notExistRights.length !== roles.length];
+  }
+
+  userHasOrRightsBoolean(
+    session: CmsSession,
+    ...roles: Array<string>
+  ): boolean {
+    return this.userHasOrRights(session, ...roles)[1];
+  }
 }

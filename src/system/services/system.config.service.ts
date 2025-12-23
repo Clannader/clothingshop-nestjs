@@ -504,9 +504,10 @@ export class SystemConfigService {
     }
 
     // 忘记自己为什么写这个权限判断了,估计是为了测试能不能返回提示吧,笑哭
+
     if (
       isParent &&
-      !Utils.hasOrRights(
+      !this.globalService.userHasOrRightsBoolean(
         session,
         RightsEnum.ConfigCreate,
         RightsEnum.ConfigModify,
@@ -523,7 +524,7 @@ export class SystemConfigService {
       return resp;
     } else if (
       !isParent &&
-      !Utils.hasOrRights(
+      !this.globalService.userHasOrRightsBoolean(
         session,
         RightsEnum.ConfigChildrenCreate,
         RightsEnum.ConfigChildrenModify,
