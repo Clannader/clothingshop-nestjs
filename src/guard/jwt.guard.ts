@@ -112,10 +112,11 @@ export class JwtGuard implements CanActivate {
     this.logger.log(`orRights: ${orRights}`);
     this.logger.log(`sessionRights: ${sessionRights}`);
     // 如果接口没有设置权限就放行
-    if (
-      mergeRights.length !== 0 &&
-      !Utils.hasRights(sessionRights, ...(<RightsEnum[]>mergeRights))
-    ) {
+    const [notExistRights, isHasRightsFlag] = this.globalService.userHasRights(
+      sessionRights,
+      ...(<RightsEnum[]>mergeRights),
+    );
+    if (mergeRights.length !== 0 && !isHasRightsFlag) {
       throw new CodeException(
         CodeEnum.NO_RIGHTS,
         this.globalService.lang(
@@ -123,7 +124,7 @@ export class JwtGuard implements CanActivate {
           '用户{0}缺少所需权限{1}.',
           'common.hasNoPermissions',
           jwtSession.adminId,
-          `${mergeRights.join(',')}`,
+          `${notExistRights.join(',')}`,
         ),
       );
     }

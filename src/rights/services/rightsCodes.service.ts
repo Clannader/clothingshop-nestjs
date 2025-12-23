@@ -68,7 +68,9 @@ export class RightsCodesService {
     }
     const rightsCodesList: SearchRightsCodesDto[] = [];
     result
-      .filter((item) => this.globalService.userIsHasRights(session, item.code))
+      .filter((item) =>
+        this.globalService.userHasRightsBoolean(session, item.code),
+      )
       .forEach((row) => {
         rightsCodesList.push({
           id: row.id,
@@ -128,7 +130,9 @@ export class RightsCodesService {
       return resp;
     }
 
-    if (!this.globalService.userIsHasRights(session, oldRightsCodes.code)) {
+    if (
+      !this.globalService.userHasRightsBoolean(session, oldRightsCodes.code)
+    ) {
       resp.code = CodeEnum.NO_RIGHTS;
       resp.msg = this.globalService.serverLang(
         session,

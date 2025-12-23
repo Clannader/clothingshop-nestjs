@@ -127,7 +127,26 @@ export class GlobalService {
   }
 
   // 该用户是否含有该权限
-  userIsHasRights(session: CmsSession, ...rightsArray: Array<string>) {
-    return rightsArray.every((v) => session.rights.includes(v));
+  userHasRights(
+    session: string[] | CmsSession,
+    ...roles: Array<string>
+  ): Array<any> {
+    // 获取rightsArray中不存在session权限的值
+    let rightsArray: string[];
+    if (!Array.isArray(session)) {
+      rightsArray = session.rights;
+    } else {
+      rightsArray = session;
+    }
+    const notExistRights = roles.filter((v) => !rightsArray.includes(v));
+    return [notExistRights, notExistRights.length === 0];
+  }
+
+  // 该用户是否含有该权限
+  userHasRightsBoolean(
+    session: CmsSession,
+    ...rightsArray: Array<string>
+  ): boolean {
+    return this.userHasRights(session, ...rightsArray)[1];
   }
 }
