@@ -67,19 +67,21 @@ export class RightsCodesService {
       return resp;
     }
     const rightsCodesList: SearchRightsCodesDto[] = [];
-    for (const row of result) {
-      rightsCodesList.push({
-        id: row.id,
-        codeNumber: row.code,
-        codeKey: row.key,
-        codeCategory: row.category,
-        cnLabel: row.cnLabel,
-        enLabel: row.enLabel,
-        description: row.description,
+    result
+      .filter((item) => this.globalService.userIsHasRights(session, item.code))
+      .forEach((row) => {
+        rightsCodesList.push({
+          id: row.id,
+          codeNumber: row.code,
+          codeKey: row.key,
+          codeCategory: row.category,
+          cnLabel: row.cnLabel,
+          enLabel: row.enLabel,
+          description: row.description,
+        });
       });
-    }
     resp.rightsCodes = rightsCodesList;
-    resp.total = result.length;
+    resp.total = rightsCodesList.length;
 
     return resp;
   }
