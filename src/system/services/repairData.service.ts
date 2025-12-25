@@ -12,7 +12,10 @@ import { GlobalService, Utils } from '@/common/utils';
 import { CmsSession } from '@/common';
 
 import { DatabaseService } from '@/database/services';
-import { DeleteLogSchemaService, RightsCodesSchemaService } from '@/entities/services';
+import {
+  DeleteLogSchemaService,
+  RightsCodesSchemaService,
+} from '@/entities/services';
 import { RightCodeDocument } from '@/entities/schema';
 
 import { defaultIndexes } from '../defaultSystemData';
@@ -104,7 +107,7 @@ export class RepairDataService {
     dbRightsCodeList.forEach((item) => {
       dbRightsCodeMap.set(item.code, item);
     });
-
+    const totalOperationId = [];
     // 相同的数据做合并
     // const mergeRightsCodeArray = defaultRightsArray.filter((item) => dbRightsCodeSet.has(item.code))
 
@@ -132,7 +135,11 @@ export class RepairDataService {
               `repairData.${item.key}`,
             ),
           };
-          await this.rightCodeSchemaService.getModel().insertOne(rightCodeInfo, { session: dbSession});
+          const [, insertResult] = await Utils.toPromise(
+            this.rightCodeSchemaService
+              .getModel()
+              .insertOne(rightCodeInfo, { session: dbSession }),
+          );
           await this.userLogsService.writeUserLog(
             session,
             LogTypeEnum.RepairData,
@@ -142,7 +149,10 @@ export class RepairDataService {
               'repairData.addRightsCode',
               item.code,
             ),
+            insertResult.id,
+            { session: dbSession }
           );
+          totalOperationId.push(insertResult.id);
         }
         await dbSession.commitTransaction();
       } catch (error) {
@@ -157,12 +167,15 @@ export class RepairDataService {
     const deleteRightsCodeArray = dbRightsCodeList.filter(
       (item) => !defaultRightsCodeMap.has(item.code),
     );
-    const deleteRightsCodeId = []
-    const writeLogCodes = []
-    const rightsCodesModelName = this.rightCodeSchemaService.getModel().getAliasName();
+    const deleteRightsCodeId = [];
+    const writeLogCodes = [];
+    const rightsCodesModelName = this.rightCodeSchemaService
+      .getModel()
+      .getAliasName();
     for (const item of deleteRightsCodeArray) {
       deleteRightsCodeId.push(item.id);
-      writeLogCodes.push(item.code)
+      totalOperationId.push(item.id);
+      writeLogCodes.push(item.code);
       await item.deleteOne();
       await this.deleteLogSchemaService.createDeleteLog({
         modelName: rightsCodesModelName,
@@ -195,6 +208,7 @@ export class RepairDataService {
         '修复完成默认权限代码',
         'repairData.defaultRightCode',
       ),
+      totalOperationId,
     );
     return resp;
   }
