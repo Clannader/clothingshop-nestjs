@@ -8,17 +8,17 @@ import { Connection } from 'mongoose';
 import { CommonResult } from '@/common/dto';
 import { CodeException } from '@/common/exceptions';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
+import { GlobalService, Utils } from '@/common/utils';
+import { CmsSession } from '@/common';
 
 import { DatabaseService } from '@/database/services';
 import { RightsCodesSchemaService } from '@/entities/services';
+import { RightCodeDocument } from '@/entities/schema';
 
 import { defaultIndexes } from '../defaultSystemData';
 import { RightsList } from '@/rights';
 import { UserLogsService } from '@/logs';
-
 import type { RightsProp, RightsConfig } from '@/rights';
-import { CmsSession } from '@/common';
-import { GlobalService } from '@/common/utils';
 
 @Injectable()
 export class RepairDataService {
@@ -81,34 +81,88 @@ export class RepairDataService {
   async repairRightsGroup(session: CmsSession) {
     // 包括修复权限代码和默认权限组
     const resp = new CommonResult();
-    const rightsArray = this.getRightsCodeArray(RightsList);
-    // TODO 以后先从数据库查出来,对比有差异再去merge到数据库中???
-    // 不然多次merge也没有意义
-    // 每一次merge都记录日志修改了哪个权限
-    // 如果是默认的code没有了,则需要删除废弃的权限代码,然后写日志,删除权限xxx
-    for (const rightInfo of rightsArray) {
+
+    const defaultRightsArray = this.getRightsCodeArray(RightsList);
+    // 1.先查询数据库中的数据
+    const [err, dbRightsCodeList] = await Utils.toPromise(
+      this.rightCodeSchemaService.getModel().find(),
+    )
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    // 这里要对比3种数据出来,数据库没有的插入,数据库有的合并,数据库多余的删掉
+    const defaultRightsCodeMap = new Map<string, RightsProp>();
+    defaultRightsArray.forEach((item) => {
+      defaultRightsCodeMap.set(item.code, item);
+    })
+    const dbRightsCodeMap = new Map<string, RightCodeDocument>();
+    dbRightsCodeList.forEach((item) => {
+      dbRightsCodeMap.set(item.code, item);
+    })
+
+    // 相同的数据做合并
+    // const mergeRightsCodeArray = defaultRightsArray.filter((item) => dbRightsCodeSet.has(item.code))
+
+    // 默认代码有,数据库没有的插入
+    const insertRightsCodeArray = defaultRightsArray.filter((item) => !dbRightsCodeMap.has(item.code))
+    insertRightsCodeArray.forEach((item) => {
       const rightCodeInfo = {
-        code: rightInfo.code,
-        key: rightInfo.key,
-        description: rightInfo.desc,
-        category: rightInfo.category,
-        path: rightInfo.path,
-        cnLabel: rightInfo.desc,
+        code: item.code,
+        key: item.key,
+        description: item.desc,
+        category: item.category,
+        path: item.path,
+        cnLabel: item.desc,
         enLabel: this.globalService.lang(
           'EN',
-          rightInfo.desc,
-          `repairData.${rightInfo.key}`,
+          item.desc,
+          `repairData.${item.key}`,
         ),
       };
-      await this.rightCodeSchemaService.mergeRightCode(rightCodeInfo);
-    }
+      this.rightCodeSchemaService.getModel().create(rightCodeInfo).then(() => {
+        this.userLogsService
+          .writeUserLog(
+            session,
+            LogTypeEnum.RepairData,
+            this.globalService.serverLang(
+              session,
+              '修复新增权限代码({0})',
+              'repairData.addRightsCode',
+              item.code,
+            ),
+          )
+          .then();
+      })
+    })
+
+    // 默认没有,数据库有的删除
+    const deleteRightsCodeArray = dbRightsCodeList.filter((item) => !defaultRightsCodeMap.has(item.code))
+    deleteRightsCodeArray.forEach((item) => {
+      item.deleteOne().then(() => {
+        this.userLogsService
+          .writeUserLog(
+            session,
+            LogTypeEnum.RepairData,
+            this.globalService.serverLang(
+              session,
+              '修复删除废弃权限代码({0})',
+              'repairData.deleteRightsCode',
+              item.code,
+            ),
+          )
+          .then();
+      })
+    })
+
     this.userLogsService
       .writeUserLog(
         session,
         LogTypeEnum.RepairData,
         this.globalService.serverLang(
           session,
-          '修复默认权限代码',
+          '修复完成默认权限代码',
           'repairData.defaultRightCode',
         ),
       )

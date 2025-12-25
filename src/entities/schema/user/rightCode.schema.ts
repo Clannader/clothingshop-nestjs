@@ -20,6 +20,10 @@ export class RightCode {
     required: true,
     trim: true,
   })
+  @WriteLog({
+    origin: 'Key',
+    key: 'rightsCodes.key',
+  })
   key: string; // 代码中标识的权限枚举的Key
 
   @Prop({
@@ -37,6 +41,10 @@ export class RightCode {
     type: String,
     required: true,
     trim: true,
+  })
+  @WriteLog({
+    origin: '分类',
+    key: 'rightsCodes.category',
   })
   category: string; // 权限的上一级类别Key
 
@@ -64,6 +72,10 @@ export class RightCode {
     type: String,
     required: true,
     trim: true,
+  })
+  @WriteLog({
+    origin: '路径',
+    key: 'rightsCodes.treePath',
   })
   path: string; // 代码tree的路径,例如x.x.x
 }
