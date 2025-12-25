@@ -77,6 +77,10 @@ export class RepairDataService {
         .createIndex(dbIndexInfo.fields, dbIndexInfo.options)
         .then((result) => [null, result])
         .catch((error) => [error]);
+      // TODO 这里这样写会导致前面修复成功,有一个修复失败则会返回提示失败,但是前面修复过的已经成功无法回退了
+      //  再次修复时还是会遇到这个错误的索引导致停止,无法修复之后可能会成功的索引
+      // 方案1：使用事务
+      // 方案2：使用Promise的并发,忽略错误
       if (error) {
         throw new CodeException(CodeEnum.DB_EXEC_ERROR, error.message);
       }
