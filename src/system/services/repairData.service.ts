@@ -119,6 +119,7 @@ export class RepairDataService {
     // 使用事务,避免创建失败可以回滚记录
     if (insertRightsCodeArray.length > 0) {
       const dbSession = await this.mongooseConnection.startSession();
+      const insertRightsCodeId = []
       try {
         dbSession.startTransaction(); // 开始事务
         for (const item of insertRightsCodeArray) {
@@ -152,13 +153,15 @@ export class RepairDataService {
             insertResult.id,
             { session: dbSession }
           );
-          totalOperationId.push(insertResult.id);
+          insertRightsCodeId.push(insertResult.id);
         }
         await dbSession.commitTransaction();
       } catch (error) {
         // 手动回滚事务
+        insertRightsCodeId.length = 0;
         await dbSession.abortTransaction();
       } finally {
+        totalOperationId.push(...insertRightsCodeId)
         await dbSession.endSession();
       }
     }
