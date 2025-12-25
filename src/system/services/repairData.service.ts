@@ -113,31 +113,44 @@ export class RepairDataService {
       (item) => !dbRightsCodeMap.has(item.code),
     );
     // 并行执行用 Promise.all + map
-    for (const item of insertRightsCodeArray) {
-      const rightCodeInfo = {
-        code: item.code,
-        key: item.key,
-        description: item.desc,
-        category: item.category,
-        path: item.path,
-        cnLabel: item.desc,
-        enLabel: this.globalService.lang(
-          'EN',
-          item.desc,
-          `repairData.${item.key}`,
-        ),
-      };
-      await this.rightCodeSchemaService.getModel().create(rightCodeInfo);
-      await this.userLogsService.writeUserLog(
-        session,
-        LogTypeEnum.RepairData,
-        this.globalService.serverLang(
-          session,
-          '修复新增权限代码({0})',
-          'repairData.addRightsCode',
-          item.code,
-        ),
-      );
+    // 使用事务,避免创建失败可以回滚记录
+    if (insertRightsCodeArray.length > 0) {
+      const dbSession = await this.mongooseConnection.startSession();
+      try {
+        dbSession.startTransaction(); // 开始事务
+        for (const item of insertRightsCodeArray) {
+          const rightCodeInfo = {
+            code: item.code,
+            key: item.key,
+            description: item.desc,
+            category: item.category,
+            path: item.path,
+            cnLabel: item.desc,
+            enLabel: this.globalService.lang(
+              'EN',
+              item.desc,
+              `repairData.${item.key}`,
+            ),
+          };
+          await this.rightCodeSchemaService.getModel().insertOne(rightCodeInfo, { session: dbSession});
+          await this.userLogsService.writeUserLog(
+            session,
+            LogTypeEnum.RepairData,
+            this.globalService.serverLang(
+              session,
+              '修复新增权限代码({0})',
+              'repairData.addRightsCode',
+              item.code,
+            ),
+          );
+        }
+        await dbSession.commitTransaction();
+      } catch (error) {
+        // 手动回滚事务
+        await dbSession.abortTransaction();
+      } finally {
+        await dbSession.endSession();
+      }
     }
 
     // 默认没有,数据库有的删除
