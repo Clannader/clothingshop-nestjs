@@ -39,7 +39,6 @@ export class RightCode {
 
   @Prop({
     type: String,
-    required: true,
     trim: true,
   })
   @WriteLog({
@@ -50,6 +49,7 @@ export class RightCode {
 
   @Prop({
     type: String,
+    required: true,
     trim: true,
   })
   @WriteLog({
@@ -60,6 +60,7 @@ export class RightCode {
 
   @Prop({
     type: String,
+    required: true,
     trim: true,
   })
   @WriteLog({
@@ -70,7 +71,6 @@ export class RightCode {
 
   @Prop({
     type: String,
-    required: true,
     trim: true,
   })
   @WriteLog({

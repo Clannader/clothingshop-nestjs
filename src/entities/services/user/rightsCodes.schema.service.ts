@@ -24,10 +24,12 @@ export class RightsCodesSchemaService {
     const updateFilter = {
       $set: rightCodeDoc,
     };
-    return this.rightCodeModel.findOneAndUpdate(filter, updateFilter, {
-      upsert: true,
-    }).then((result) => {
-      return result;
-    });
+    return this.rightCodeModel
+      .findOneAndUpdate(filter, updateFilter, {
+        upsert: true,
+      })
+      .then((result) => {
+        return result;
+      });
   }
 }

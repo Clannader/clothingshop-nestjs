@@ -86,7 +86,7 @@ export class RepairDataService {
     // 1.先查询数据库中的数据
     const [err, dbRightsCodeList] = await Utils.toPromise(
       this.rightCodeSchemaService.getModel().find(),
-    )
+    );
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
       resp.msg = err.message;
@@ -96,49 +96,59 @@ export class RepairDataService {
     const defaultRightsCodeMap = new Map<string, RightsProp>();
     defaultRightsArray.forEach((item) => {
       defaultRightsCodeMap.set(item.code, item);
-    })
+    });
     const dbRightsCodeMap = new Map<string, RightCodeDocument>();
     dbRightsCodeList.forEach((item) => {
       dbRightsCodeMap.set(item.code, item);
-    })
+    });
 
     // 相同的数据做合并
     // const mergeRightsCodeArray = defaultRightsArray.filter((item) => dbRightsCodeSet.has(item.code))
 
     // 默认代码有,数据库没有的插入
-    const insertRightsCodeArray = defaultRightsArray.filter((item) => !dbRightsCodeMap.has(item.code))
-    insertRightsCodeArray.forEach((item) => {
-      const rightCodeInfo = {
-        code: item.code,
-        key: item.key,
-        description: item.desc,
-        category: item.category,
-        path: item.path,
-        cnLabel: item.desc,
-        enLabel: this.globalService.lang(
-          'EN',
-          item.desc,
-          `repairData.${item.key}`,
-        ),
-      };
-      this.rightCodeSchemaService.getModel().create(rightCodeInfo).then(() => {
-        this.userLogsService
-          .writeUserLog(
-            session,
-            LogTypeEnum.RepairData,
-            this.globalService.serverLang(
-              session,
-              '修复新增权限代码({0})',
-              'repairData.addRightsCode',
-              item.code,
-            ),
-          )
-          .then();
-      })
-    })
+    const insertRightsCodeArray = defaultRightsArray.filter(
+      (item) => !dbRightsCodeMap.has(item.code),
+    );
+    // 并行执行用 Promise.all + map
+    await Promise.all(
+      insertRightsCodeArray.map((item) => {
+        const rightCodeInfo = {
+          code: item.code,
+          key: item.key,
+          description: item.desc,
+          category: item.category,
+          path: item.path,
+          cnLabel: item.desc,
+          enLabel: this.globalService.lang(
+            'EN',
+            item.desc,
+            `repairData.${item.key}`,
+          ),
+        };
+        this.rightCodeSchemaService
+          .getModel()
+          .create(rightCodeInfo)
+          .then(() => {
+            this.userLogsService
+              .writeUserLog(
+                session,
+                LogTypeEnum.RepairData,
+                this.globalService.serverLang(
+                  session,
+                  '修复新增权限代码({0})',
+                  'repairData.addRightsCode',
+                  item.code,
+                ),
+              )
+              .then();
+          });
+      }),
+    );
 
     // 默认没有,数据库有的删除
-    const deleteRightsCodeArray = dbRightsCodeList.filter((item) => !defaultRightsCodeMap.has(item.code))
+    const deleteRightsCodeArray = dbRightsCodeList.filter(
+      (item) => !defaultRightsCodeMap.has(item.code),
+    );
     deleteRightsCodeArray.forEach((item) => {
       item.deleteOne().then(() => {
         this.userLogsService
@@ -153,8 +163,8 @@ export class RepairDataService {
             ),
           )
           .then();
-      })
-    })
+      });
+    });
 
     this.userLogsService
       .writeUserLog(
