@@ -4,6 +4,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
+import { instanceToInstance } from 'class-transformer';
 
 import { CommonResult } from '@/common/dto';
 import { CodeException } from '@/common/exceptions';
@@ -16,7 +17,7 @@ import {
   DeleteLogSchemaService,
   RightsCodesSchemaService,
 } from '@/entities/services';
-import { RightCodeDocument } from '@/entities/schema';
+import { RightCodeDocument, RightCode } from '@/entities/schema';
 
 import { defaultIndexes } from '../defaultSystemData';
 import { RightsList } from '@/rights';
@@ -109,7 +110,57 @@ export class RepairDataService {
     });
     const totalOperationId = [];
     // 相同的数据做合并
-    // const mergeRightsCodeArray = defaultRightsArray.filter((item) => dbRightsCodeSet.has(item.code))
+    const mergeRightsCodeArray = defaultRightsArray.filter((item) =>
+      dbRightsCodeMap.has(item.code),
+    );
+    // 基本上以后多次点修复,都是做合并的操作了
+    for (const item of mergeRightsCodeArray) {
+      const oldRightsCode = dbRightsCodeMap.get(item.code);
+      const newRightsCode = instanceToInstance(oldRightsCode);
+
+      const defaultRightsCode = defaultRightsCodeMap.get(item.code);
+      newRightsCode.key = defaultRightsCode.key;
+      newRightsCode.description = defaultRightsCode.desc;
+      if (newRightsCode.category) {
+        newRightsCode.category = defaultRightsCode.category;
+      }
+      if (defaultRightsCode.path) {
+        newRightsCode.path = defaultRightsCode.path;
+      }
+      newRightsCode.cnLabel = defaultRightsCode.desc;
+      newRightsCode.enLabel = this.globalService.lang(
+        'EN',
+        defaultRightsCode.desc,
+        `repairData.${defaultRightsCode.key}`,
+      );
+
+      const mergeLogContent = [
+        this.globalService.serverLang(
+          session,
+          '修复合并权限代码({0})',
+          'repairData.mergeRightsCode',
+          item.code,
+        ),
+      ];
+      mergeLogContent.push(
+        ...this.globalService.compareObjectWriteLog(
+          session,
+          RightCode,
+          oldRightsCode,
+          newRightsCode,
+        ),
+      );
+      if (mergeLogContent.length > 1) {
+        await newRightsCode.save();
+        await this.userLogsService.writeUserLog(
+          session,
+          LogTypeEnum.RepairData,
+          mergeLogContent.join('\r\n'),
+          newRightsCode.id,
+        );
+        totalOperationId.push(newRightsCode.id);
+      }
+    }
 
     // 默认代码有,数据库没有的插入
     const insertRightsCodeArray = defaultRightsArray.filter(
@@ -119,7 +170,7 @@ export class RepairDataService {
     // 使用事务,避免创建失败可以回滚记录
     if (insertRightsCodeArray.length > 0) {
       const dbSession = await this.mongooseConnection.startSession();
-      const insertRightsCodeId = []
+      const insertRightsCodeId = [];
       try {
         dbSession.startTransaction(); // 开始事务
         for (const item of insertRightsCodeArray) {
@@ -151,17 +202,17 @@ export class RepairDataService {
               item.code,
             ),
             insertResult.id,
-            { session: dbSession }
+            { session: dbSession },
           );
           insertRightsCodeId.push(insertResult.id);
         }
         await dbSession.commitTransaction();
       } catch (error) {
         // 手动回滚事务
-        insertRightsCodeId.length = 0;
+        insertRightsCodeId.length = 0; // 清空数组
         await dbSession.abortTransaction();
       } finally {
-        totalOperationId.push(...insertRightsCodeId)
+        totalOperationId.push(...insertRightsCodeId);
         await dbSession.endSession();
       }
     }
