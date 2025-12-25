@@ -16,16 +16,20 @@ export class RightsCodesSchemaService {
     return this.rightCodeModel;
   }
 
-  async mergeRightCode(rightCodeDoc: RightCode) {
-    // 暂时这样写能把数据进库再说,后期还需要修改
-    const filter = {
-      code: rightCodeDoc.code,
-    };
-    const updateFilter = {
-      $set: rightCodeDoc,
-    };
-    await this.rightCodeModel.findOneAndUpdate(filter, updateFilter, {
-      upsert: true,
-    });
-  }
+  // mergeRightCode(rightCodeDoc: RightCode) {
+  //   // 暂时这样写能把数据进库再说,后期还需要修改
+  //   const filter = {
+  //     code: rightCodeDoc.code,
+  //   };
+  //   const updateFilter = {
+  //     $set: rightCodeDoc,
+  //   };
+  //   return this.rightCodeModel
+  //     .findOneAndUpdate(filter, updateFilter, {
+  //       upsert: true,
+  //     })
+  //     .then((result) => {
+  //       return result;
+  //     });
+  // }
 }

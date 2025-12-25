@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 
 import { AdminLogModel, AdminLog } from '../../schema';
 import { ConfigService } from '@/common/config';
+import type { SaveOptions } from 'mongoose';
 
 // @ts-ignore
 const cluster = require('node:cluster');
@@ -22,12 +23,13 @@ export class AdminLogSchemaService {
     return this.adminLogModel;
   }
 
-  createUserLog(logInfo: AdminLog) {
+  createUserLog(logInfo: AdminLog, options?: SaveOptions) {
     logInfo.serverName = this.configService.get<string>('serverName');
     logInfo.workerId = cluster?.worker?.id ?? 1;
     logInfo.date = logInfo?.date ?? new Date();
     return this.adminLogModel.insertOne(logInfo, {
       safe: { w: 0 },
+      ...options,
     }); // 写入优化,写关注级别,异步写入提高性能
   }
 }
