@@ -118,20 +118,20 @@ export class RepairDataService {
       const oldRightsCode = dbRightsCodeMap.get(item.code);
       const newRightsCode = instanceToInstance(oldRightsCode);
 
-      const defaultRightsCode = defaultRightsCodeMap.get(item.code);
-      newRightsCode.key = defaultRightsCode.key;
-      newRightsCode.description = defaultRightsCode.desc;
+      // const defaultRightsCode = defaultRightsCodeMap.get(item.code);
+      newRightsCode.key = item.key;
+      newRightsCode.description = item.desc;
       if (newRightsCode.category) {
-        newRightsCode.category = defaultRightsCode.category;
+        newRightsCode.category = item.category;
       }
-      if (defaultRightsCode.path) {
-        newRightsCode.path = defaultRightsCode.path;
+      if (item.path) {
+        newRightsCode.path = item.path;
       }
-      newRightsCode.cnLabel = defaultRightsCode.desc;
+      newRightsCode.cnLabel = item.desc;
       newRightsCode.enLabel = this.globalService.lang(
         'EN',
-        defaultRightsCode.desc,
-        `repairData.${defaultRightsCode.key}`,
+        item.desc,
+        `repairData.${item.key}`,
       );
 
       const mergeLogContent = [
