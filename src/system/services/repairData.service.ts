@@ -12,7 +12,7 @@ import { GlobalService, Utils } from '@/common/utils';
 import { CmsSession } from '@/common';
 
 import { DatabaseService } from '@/database/services';
-import { RightsCodesSchemaService } from '@/entities/services';
+import { DeleteLogSchemaService, RightsCodesSchemaService } from '@/entities/services';
 import { RightCodeDocument } from '@/entities/schema';
 
 import { defaultIndexes } from '../defaultSystemData';
@@ -36,6 +36,9 @@ export class RepairDataService {
 
   @Inject()
   private readonly globalService: GlobalService;
+
+  @Inject()
+  private readonly deleteLogSchemaService: DeleteLogSchemaService;
 
   repairBaseData() {
     const resp = new CommonResult();
@@ -110,73 +113,76 @@ export class RepairDataService {
       (item) => !dbRightsCodeMap.has(item.code),
     );
     // 并行执行用 Promise.all + map
-    await Promise.all(
-      insertRightsCodeArray.map((item) => {
-        const rightCodeInfo = {
-          code: item.code,
-          key: item.key,
-          description: item.desc,
-          category: item.category,
-          path: item.path,
-          cnLabel: item.desc,
-          enLabel: this.globalService.lang(
-            'EN',
-            item.desc,
-            `repairData.${item.key}`,
-          ),
-        };
-        this.rightCodeSchemaService
-          .getModel()
-          .create(rightCodeInfo)
-          .then(() => {
-            this.userLogsService
-              .writeUserLog(
-                session,
-                LogTypeEnum.RepairData,
-                this.globalService.serverLang(
-                  session,
-                  '修复新增权限代码({0})',
-                  'repairData.addRightsCode',
-                  item.code,
-                ),
-              )
-              .then();
-          });
-      }),
-    );
+    for (const item of insertRightsCodeArray) {
+      const rightCodeInfo = {
+        code: item.code,
+        key: item.key,
+        description: item.desc,
+        category: item.category,
+        path: item.path,
+        cnLabel: item.desc,
+        enLabel: this.globalService.lang(
+          'EN',
+          item.desc,
+          `repairData.${item.key}`,
+        ),
+      };
+      await this.rightCodeSchemaService.getModel().create(rightCodeInfo);
+      await this.userLogsService.writeUserLog(
+        session,
+        LogTypeEnum.RepairData,
+        this.globalService.serverLang(
+          session,
+          '修复新增权限代码({0})',
+          'repairData.addRightsCode',
+          item.code,
+        ),
+      );
+    }
 
     // 默认没有,数据库有的删除
     const deleteRightsCodeArray = dbRightsCodeList.filter(
       (item) => !defaultRightsCodeMap.has(item.code),
     );
-    deleteRightsCodeArray.forEach((item) => {
-      item.deleteOne().then(() => {
-        this.userLogsService
-          .writeUserLog(
-            session,
-            LogTypeEnum.RepairData,
-            this.globalService.serverLang(
-              session,
-              '修复删除废弃权限代码({0})',
-              'repairData.deleteRightsCode',
-              item.code,
-            ),
-          )
-          .then();
+    const deleteRightsCodeId = []
+    const writeLogCodes = []
+    const rightsCodesModelName = this.rightCodeSchemaService.getModel().getAliasName();
+    for (const item of deleteRightsCodeArray) {
+      deleteRightsCodeId.push(item.id);
+      writeLogCodes.push(item.code)
+      await item.deleteOne();
+      await this.deleteLogSchemaService.createDeleteLog({
+        modelName: rightsCodesModelName,
+        keyWords: item.code,
+        searchWhere: {
+          code: item.code,
+        },
+        id: item.id,
       });
-    });
-
-    this.userLogsService
-      .writeUserLog(
+    }
+    for (const code of writeLogCodes) {
+      await this.userLogsService.writeUserLog(
         session,
         LogTypeEnum.RepairData,
         this.globalService.serverLang(
           session,
-          '修复完成默认权限代码',
-          'repairData.defaultRightCode',
+          '修复删除废弃权限代码({0})',
+          'repairData.deleteRightsCode',
+          code,
         ),
-      )
-      .then();
+        deleteRightsCodeId,
+      );
+    }
+
+    await this.userLogsService.writeUserLog(
+      session,
+      LogTypeEnum.RepairData,
+      this.globalService.serverLang(
+        session,
+        '修复完成默认权限代码',
+        'repairData.defaultRightCode',
+      ),
+    );
     return resp;
   }
 
