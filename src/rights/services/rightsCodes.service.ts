@@ -130,9 +130,7 @@ export class RightsCodesService {
       return resp;
     }
 
-    if (
-      !this.globalService.userHasRightsBoolean(session, oldRightsCode.code)
-    ) {
+    if (!this.globalService.userHasRightsBoolean(session, oldRightsCode.code)) {
       resp.code = CodeEnum.NO_RIGHTS;
       resp.msg = this.globalService.serverLang(
         session,

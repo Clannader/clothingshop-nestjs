@@ -59,8 +59,7 @@ export class RightsGroup {
 
 export type RightsGroupDocument = HydratedDocument<RightsGroup>;
 
-export const RightsGroupSchema =
-  SchemaFactory.createForClass(RightsGroup);
+export const RightsGroupSchema = SchemaFactory.createForClass(RightsGroup);
 
 RightsGroupSchema.statics.getAliasName = function () {
   return 'CmsRightsGroup';

@@ -10,9 +10,11 @@ import {
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  Post,
   Put,
   Query,
   UseGuards,
@@ -25,8 +27,21 @@ import { ApiRights, RightsEnum } from '@/rights';
 import { RightsGroupService } from '../services';
 
 import { ApiOperation } from '@nestjs/swagger';
-import { CmsSession, RespModifyDataDto } from '@/common';
-import { ReqRightsGroupSearchDto, RespRightsGroupSearchDto } from '../dto';
+import {
+  CmsSession,
+  DeleteResultDto,
+  RespErrorResult,
+  RespModifyDataDto,
+} from '@/common';
+import {
+  ReqRightsGroupSearchDto,
+  RespRightsGroupCreateDto,
+  RespRightsGroupSearchDto,
+  ReqRightsGroupCreateDto,
+  ReqRightsGroupModifyDto,
+} from '../dto';
+import { plainToInstance } from 'class-transformer';
+import { ReqTimeZoneModifyDto, RespTimeZoneCreateDto } from '@/system/dto';
 
 @ApiCommon()
 @Controller('/cms/api/rightsGroup')
@@ -54,5 +69,57 @@ export class RightsGroupController {
     @Query() params: ReqRightsGroupSearchDto,
   ) {
     return this.rightsGroupService.getRightsGroupList(session, params);
+  }
+
+  @Delete('/delete')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '删除权限组',
+    description: '删除单条或多条权限组',
+  })
+  @ApiCustomResponse({
+    type: RespErrorResult,
+  })
+  @ApiRights(RightsEnum.RightsGroupDelete)
+  deleteRightsGroup(
+    @UserSession() session: CmsSession,
+    @Body() params: DeleteResultDto,
+  ) {
+    return this.rightsGroupService.deleteRightsGroup(session, params);
+  }
+
+  @Post('/create')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '新增权限组',
+    description: '创建权限组',
+  })
+  @ApiCustomResponse({
+    type: RespRightsGroupCreateDto,
+  })
+  @ApiRights(RightsEnum.RightsGroupCreate)
+  createTimeZone(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqRightsGroupCreateDto,
+  ) {
+    const modifyParams = plainToInstance(ReqRightsGroupModifyDto, params);
+    return this.rightsGroupService.saveRightsGroup(session, modifyParams, true);
+  }
+
+  @Put('/modify')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '编辑权限组',
+    description: '编辑已存在的权限组',
+  })
+  @ApiCustomResponse({
+    type: RespRightsGroupCreateDto,
+  })
+  @ApiRights(RightsEnum.RightsCodeModify)
+  modifyTimeZone(
+    @UserSession() session: CmsSession,
+    @Body() params: ReqRightsGroupModifyDto,
+  ) {
+    return this.rightsGroupService.saveRightsGroup(session, params, false);
   }
 }
