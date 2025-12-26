@@ -105,11 +105,11 @@ export class RightsCodesService {
     // 1.这里需要判断用户是否有这个权限,才能编辑
     // 2.判断修改的权限是否真的存在
 
-    let oldRightsCodes: RightsCodeDocument,
-      newRightsCodes: RightsCodeDocument,
+    let oldRightsCode: RightsCodeDocument,
+      newRightsCode: RightsCodeDocument,
       err: Error;
 
-    [err, oldRightsCodes] = await Utils.toPromise(
+    [err, oldRightsCode] = await Utils.toPromise(
       this.rightsCodesSchemaService.getModel().findById(id),
     );
     if (err) {
@@ -118,8 +118,8 @@ export class RightsCodesService {
       return resp;
     }
     if (
-      Utils.isEmpty(oldRightsCodes) ||
-      !this.allRightsCode.includes(oldRightsCodes.code)
+      Utils.isEmpty(oldRightsCode) ||
+      !this.allRightsCode.includes(oldRightsCode.code)
     ) {
       resp.code = CodeEnum.FAIL;
       resp.msg = this.globalService.serverLang(
@@ -131,7 +131,7 @@ export class RightsCodesService {
     }
 
     if (
-      !this.globalService.userHasRightsBoolean(session, oldRightsCodes.code)
+      !this.globalService.userHasRightsBoolean(session, oldRightsCode.code)
     ) {
       resp.code = CodeEnum.NO_RIGHTS;
       resp.msg = this.globalService.serverLang(
@@ -142,23 +142,23 @@ export class RightsCodesService {
       return resp;
     }
 
-    newRightsCodes = instanceToInstance(oldRightsCodes);
+    newRightsCode = instanceToInstance(oldRightsCode);
     if (!Utils.isEmpty(params.cnLabel)) {
-      newRightsCodes.cnLabel = params.cnLabel;
+      newRightsCode.cnLabel = params.cnLabel;
     } else {
-      params.cnLabel = oldRightsCodes.cnLabel;
+      params.cnLabel = oldRightsCode.cnLabel;
     }
 
     if (!Utils.isEmpty(params.enLabel)) {
-      newRightsCodes.enLabel = params.enLabel;
+      newRightsCode.enLabel = params.enLabel;
     } else {
-      params.enLabel = oldRightsCodes.enLabel;
+      params.enLabel = oldRightsCode.enLabel;
     }
 
     if (!Utils.isEmpty(params.description)) {
-      newRightsCodes.description = params.description;
+      newRightsCode.description = params.description;
     } else {
-      params.description = oldRightsCodes.description;
+      params.description = oldRightsCode.description;
     }
 
     // 新旧都需要字段进行字段校验
@@ -179,28 +179,28 @@ export class RightsCodesService {
       );
     }
 
-    [err] = await Utils.toPromise(newRightsCodes.save());
+    [err] = await Utils.toPromise(newRightsCode.save());
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
       resp.msg = err.message;
       return resp;
     }
-    resp.id = newRightsCodes.id;
+    resp.id = newRightsCode.id;
     // 写日志...
     const contentArray = [
       this.globalService.serverLang(
         session,
         '编辑权限代码:({0})',
         'rightsCodes.modifiedLog',
-        newRightsCodes.code,
+        newRightsCode.code,
       ),
     ];
     contentArray.push(
       ...this.globalService.compareObjectWriteLog(
         session,
         RightsCode,
-        oldRightsCodes,
-        newRightsCodes,
+        oldRightsCode,
+        newRightsCode,
       ),
     );
     if (contentArray.length > 1) {
@@ -209,7 +209,7 @@ export class RightsCodesService {
           session,
           LogTypeEnum.RightsCodes,
           contentArray.join('\r\n'),
-          newRightsCodes.id,
+          newRightsCode.id,
         )
         .then();
     }
