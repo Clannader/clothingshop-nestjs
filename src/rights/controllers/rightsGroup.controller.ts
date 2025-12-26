@@ -35,7 +35,6 @@ import {
 } from '@/common';
 import {
   ReqRightsGroupSearchDto,
-  RespRightsGroupCreateDto,
   RespRightsGroupSearchDto,
   ReqRightsGroupCreateDto,
   ReqRightsGroupModifyDto,
