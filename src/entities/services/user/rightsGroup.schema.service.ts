@@ -4,14 +4,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { RightCodeGroupModel, RightCodeGroup } from '../../schema';
+import { RightsGroupModel, RightsGroup } from '../../schema';
 
 @Injectable()
 export class RightsGroupSchemaService {
-  @InjectModel(RightCodeGroup.name)
-  private readonly rightCodeGroupModel: RightCodeGroupModel;
+  @InjectModel(RightsGroup.name)
+  private readonly rightsGroupModel: RightsGroupModel;
 
   getModel() {
-    return this.rightCodeGroupModel;
+    return this.rightsGroupModel;
   }
 }

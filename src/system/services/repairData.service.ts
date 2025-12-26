@@ -17,7 +17,7 @@ import {
   DeleteLogSchemaService,
   RightsCodeSchemaService,
 } from '@/entities/services';
-import { RightCodeDocument, RightCode } from '@/entities/schema';
+import { RightsCodeDocument, RightsCode } from '@/entities/schema';
 
 import { defaultIndexes } from '../defaultSystemData';
 import { RightsList } from '@/rights';
@@ -108,7 +108,7 @@ export class RepairDataService {
     defaultRightsArray.forEach((item) => {
       defaultRightsCodeMap.set(item.code, item);
     });
-    const dbRightsCodeMap = new Map<string, RightCodeDocument>();
+    const dbRightsCodeMap = new Map<string, RightsCodeDocument>();
     dbRightsCodeList.forEach((item) => {
       dbRightsCodeMap.set(item.code, item);
     });
@@ -149,7 +149,7 @@ export class RepairDataService {
       mergeLogContent.push(
         ...this.globalService.compareObjectWriteLog(
           session,
-          RightCode,
+          RightsCode,
           oldRightsCode,
           newRightsCode,
         ),

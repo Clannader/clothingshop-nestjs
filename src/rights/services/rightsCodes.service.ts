@@ -15,7 +15,7 @@ import {
 
 import { RightsCodeSchemaService } from '@/entities/services';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
-import { RightCodeDocument, RightCode } from '@/entities/schema';
+import { RightsCodeDocument, RightsCode } from '@/entities/schema';
 import { UserLogsService } from '@/logs';
 import { getAllRightsCode } from '../rights.constants';
 
@@ -105,8 +105,8 @@ export class RightsCodesService {
     // 1.这里需要判断用户是否有这个权限,才能编辑
     // 2.判断修改的权限是否真的存在
 
-    let oldRightsCodes: RightCodeDocument,
-      newRightsCodes: RightCodeDocument,
+    let oldRightsCodes: RightsCodeDocument,
+      newRightsCodes: RightsCodeDocument,
       err: Error;
 
     [err, oldRightsCodes] = await Utils.toPromise(
@@ -198,7 +198,7 @@ export class RightsCodesService {
     contentArray.push(
       ...this.globalService.compareObjectWriteLog(
         session,
-        RightCode,
+        RightsCode,
         oldRightsCodes,
         newRightsCodes,
       ),
