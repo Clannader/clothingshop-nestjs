@@ -15,7 +15,7 @@ import {
 import { DatabaseModule } from '@/database';
 import { UserLogsModule } from '@/logs';
 import {
-  RightsCodesSchemaModule,
+  RightsCodeSchemaModule,
   SequenceSchemaModule,
   SystemDataSchemaModule,
   DeleteLogSchemaModule,
@@ -26,7 +26,7 @@ import { MemoryCacheModule } from '@/cache/modules';
 @Module({
   imports: [
     DatabaseModule,
-    RightsCodesSchemaModule,
+    RightsCodeSchemaModule,
     SequenceSchemaModule,
     SystemDataSchemaModule,
     DeleteLogSchemaModule,
