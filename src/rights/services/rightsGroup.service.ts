@@ -17,7 +17,6 @@ import { RightsGroupSchemaService } from '@/entities/services';
 import {
   ReqRightsGroupSearchDto,
   RespRightsGroupSearchDto,
-  RespRightsGroupCreateDto,
   ReqRightsGroupModifyDto,
 } from '../dto';
 
@@ -42,7 +41,7 @@ export class RightsGroupService {
     params: ReqRightsGroupModifyDto,
     isNew: boolean,
   ) {
-    const resp = new RespRightsGroupCreateDto();
+    const resp = new RespModifyDataDto();
 
     const checkResp = this.checkRightsGroup(session, params, isNew, false);
 
@@ -61,7 +60,7 @@ export class RightsGroupService {
     isNew: boolean,
     isCheck: boolean,
   ) {
-    const resp = new RespRightsGroupCreateDto();
+    const resp = new RespModifyDataDto();
     return resp;
   }
 

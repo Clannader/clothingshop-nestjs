@@ -41,7 +41,6 @@ import {
   ReqRightsGroupModifyDto,
 } from '../dto';
 import { plainToInstance } from 'class-transformer';
-import { ReqTimeZoneModifyDto, RespTimeZoneCreateDto } from '@/system/dto';
 
 @ApiCommon()
 @Controller('/cms/api/rightsGroup')
@@ -95,7 +94,7 @@ export class RightsGroupController {
     description: '创建权限组',
   })
   @ApiCustomResponse({
-    type: RespRightsGroupCreateDto,
+    type: RespModifyDataDto,
   })
   @ApiRights(RightsEnum.RightsGroupCreate)
   createTimeZone(
@@ -113,7 +112,7 @@ export class RightsGroupController {
     description: '编辑已存在的权限组',
   })
   @ApiCustomResponse({
-    type: RespRightsGroupCreateDto,
+    type: RespModifyDataDto,
   })
   @ApiRights(RightsEnum.RightsCodeModify)
   modifyTimeZone(
