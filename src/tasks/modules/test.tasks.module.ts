@@ -7,7 +7,7 @@ import { TestTasksService } from '../services';
 import {
   SequenceSchemaModule,
   AdminLogSchemaModule,
-  RightsCodesGroupSchemaModule,
+  RightsGroupSchemaModule,
 } from '@/entities/modules';
 import { TokenCacheModule, MemoryCacheModule } from '@/cache/modules';
 
@@ -16,7 +16,7 @@ import { TokenCacheModule, MemoryCacheModule } from '@/cache/modules';
     SequenceSchemaModule,
     AdminLogSchemaModule,
     TokenCacheModule,
-    RightsCodesGroupSchemaModule,
+    RightsGroupSchemaModule,
     MemoryCacheModule,
   ],
   providers: [TestTasksService],

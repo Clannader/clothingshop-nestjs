@@ -7,7 +7,7 @@ import { Model, HydratedDocument } from 'mongoose';
 import { WriteLog } from '@/common/decorator';
 
 @Schema()
-export class RightCode {
+export class RightsCode {
   @Prop({
     type: String,
     required: true,
@@ -19,6 +19,10 @@ export class RightCode {
     type: String,
     required: true,
     trim: true,
+  })
+  @WriteLog({
+    origin: 'Key',
+    key: 'rightsCodes.key',
   })
   key: string; // 代码中标识的权限枚举的Key
 
@@ -35,13 +39,17 @@ export class RightCode {
 
   @Prop({
     type: String,
-    required: true,
     trim: true,
+  })
+  @WriteLog({
+    origin: '分类',
+    key: 'rightsCodes.category',
   })
   category: string; // 权限的上一级类别Key
 
   @Prop({
     type: String,
+    required: true,
     trim: true,
   })
   @WriteLog({
@@ -52,6 +60,7 @@ export class RightCode {
 
   @Prop({
     type: String,
+    required: true,
     trim: true,
   })
   @WriteLog({
@@ -62,20 +71,23 @@ export class RightCode {
 
   @Prop({
     type: String,
-    required: true,
     trim: true,
+  })
+  @WriteLog({
+    origin: '路径',
+    key: 'rightsCodes.treePath',
   })
   path: string; // 代码tree的路径,例如x.x.x
 }
 
-export type RightCodeDocument = HydratedDocument<RightCode>;
+export type RightsCodeDocument = HydratedDocument<RightsCode>;
 
-export const RightCodeSchema = SchemaFactory.createForClass(RightCode);
+export const RightsCodeSchema = SchemaFactory.createForClass(RightsCode);
 
-RightCodeSchema.statics.getAliasName = function () {
-  return 'CmsRightCode';
+RightsCodeSchema.statics.getAliasName = function () {
+  return 'CmsRightsCode';
 };
 
-export interface RightCodeModel extends Model<RightCode> {
+export interface RightsCodeModel extends Model<RightsCode> {
   getAliasName(): string;
 }

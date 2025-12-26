@@ -9,6 +9,7 @@ import type { AdminLog } from '@/entities/schema';
 import { LogTypeEnum } from '@/common/enum';
 import { CmsSession } from '@/common';
 import { TraceIdCacheService } from '@/cache/services';
+import type { SaveOptions } from 'mongoose';
 
 type LinkIdObj = {
   linkId?: string[];
@@ -27,6 +28,7 @@ export class UserLogsService {
     type: LogTypeEnum,
     content: string,
     linkId: Array<string> | string = [],
+    options?: SaveOptions,
   ) {
     // linkId定义Array<string>或者string[],数据库字段type: Array时,如果传入any类型,实际上是字符串,则会以字符串存储
     // linkId定义Array<string>或者string[],数据库字段type: [String]时,如果传入any类型,实际上是字符串,则会以数组存储
@@ -48,6 +50,6 @@ export class UserLogsService {
       ...linkIdObj,
       traceId: await this.traceIdCacheService.getTraceIdCache(session),
     };
-    return this.adminLogSchemaService.createUserLog(logInfo);
+    return this.adminLogSchemaService.createUserLog(logInfo, options);
   }
 }

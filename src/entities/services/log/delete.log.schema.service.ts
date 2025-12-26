@@ -29,6 +29,8 @@ export class DeleteLogSchemaService {
     const update = {
       $set: omit(log, 'id'),
     };
+    // 这里之所以不使用create,使用updateOne是为了插入deleteLog的记录的_id和传入的删除记录的_id一致
+    // 以后也可以考虑是否使用insertOne
     return this.deleteLogModel.updateOne(where, update, { upsert: true });
   }
 }

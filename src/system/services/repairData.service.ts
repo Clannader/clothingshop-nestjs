@@ -4,21 +4,25 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
+import { instanceToInstance } from 'class-transformer';
 
 import { CommonResult } from '@/common/dto';
 import { CodeException } from '@/common/exceptions';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
+import { GlobalService, Utils } from '@/common/utils';
+import { CmsSession } from '@/common';
 
 import { DatabaseService } from '@/database/services';
-import { RightsCodesSchemaService } from '@/entities/services';
+import {
+  DeleteLogSchemaService,
+  RightsCodeSchemaService,
+} from '@/entities/services';
+import { RightsCodeDocument, RightsCode } from '@/entities/schema';
 
 import { defaultIndexes } from '../defaultSystemData';
 import { RightsList } from '@/rights';
 import { UserLogsService } from '@/logs';
-
 import type { RightsProp, RightsConfig } from '@/rights';
-import { CmsSession } from '@/common';
-import { GlobalService } from '@/common/utils';
 
 @Injectable()
 export class RepairDataService {
@@ -29,13 +33,16 @@ export class RepairDataService {
   private readonly mongooseConnection: Connection;
 
   @Inject()
-  private readonly rightCodeSchemaService: RightsCodesSchemaService;
+  private readonly rightCodeSchemaService: RightsCodeSchemaService;
 
   @Inject()
   private readonly userLogsService: UserLogsService;
 
   @Inject()
   private readonly globalService: GlobalService;
+
+  @Inject()
+  private readonly deleteLogSchemaService: DeleteLogSchemaService;
 
   repairBaseData() {
     const resp = new CommonResult();
@@ -70,6 +77,10 @@ export class RepairDataService {
         .createIndex(dbIndexInfo.fields, dbIndexInfo.options)
         .then((result) => [null, result])
         .catch((error) => [error]);
+      // TODO 这里这样写会导致前面修复成功,有一个修复失败则会返回提示失败,但是前面修复过的已经成功无法回退了
+      //  再次修复时还是会遇到这个错误的索引导致停止,无法修复之后可能会成功的索引
+      // 方案1：使用事务
+      // 方案2：使用Promise的并发,忽略错误
       if (error) {
         throw new CodeException(CodeEnum.DB_EXEC_ERROR, error.message);
       }
@@ -81,38 +92,182 @@ export class RepairDataService {
   async repairRightsGroup(session: CmsSession) {
     // 包括修复权限代码和默认权限组
     const resp = new CommonResult();
-    const rightsArray = this.getRightsCodeArray(RightsList);
-    // TODO 以后先从数据库查出来,对比有差异再去merge到数据库中???
-    // 不然多次merge也没有意义
-    // 每一次merge都记录日志修改了哪个权限
-    // 如果是默认的code没有了,则需要删除废弃的权限代码,然后写日志,删除权限xxx
-    for (const rightInfo of rightsArray) {
-      const rightCodeInfo = {
-        code: rightInfo.code,
-        key: rightInfo.key,
-        description: rightInfo.desc,
-        category: rightInfo.category,
-        path: rightInfo.path,
-        cnLabel: rightInfo.desc,
-        enLabel: this.globalService.lang(
-          'EN',
-          rightInfo.desc,
-          `repairData.${rightInfo.key}`,
-        ),
-      };
-      await this.rightCodeSchemaService.mergeRightCode(rightCodeInfo);
+
+    const defaultRightsArray = this.getRightsCodeArray(RightsList);
+    // 1.先查询数据库中的数据
+    const [err, dbRightsCodeList] = await Utils.toPromise(
+      this.rightCodeSchemaService.getModel().find(),
+    );
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
     }
-    this.userLogsService
-      .writeUserLog(
+    // 这里要对比3种数据出来,数据库没有的插入,数据库有的合并,数据库多余的删掉
+    const defaultRightsCodeMap = new Map<string, RightsProp>();
+    defaultRightsArray.forEach((item) => {
+      defaultRightsCodeMap.set(item.code, item);
+    });
+    const dbRightsCodeMap = new Map<string, RightsCodeDocument>();
+    dbRightsCodeList.forEach((item) => {
+      dbRightsCodeMap.set(item.code, item);
+    });
+    const totalOperationId = [];
+    // 相同的数据做合并
+    const mergeRightsCodeArray = defaultRightsArray.filter((item) =>
+      dbRightsCodeMap.has(item.code),
+    );
+    // 基本上以后多次点修复,都是做合并的操作了
+    for (const item of mergeRightsCodeArray) {
+      const oldRightsCode = dbRightsCodeMap.get(item.code);
+      const newRightsCode = instanceToInstance(oldRightsCode);
+
+      // const defaultRightsCode = defaultRightsCodeMap.get(item.code);
+      newRightsCode.key = item.key;
+      newRightsCode.description = item.desc;
+      if (newRightsCode.category) {
+        newRightsCode.category = item.category;
+      }
+      if (item.path) {
+        newRightsCode.path = item.path;
+      }
+      newRightsCode.cnLabel = item.desc;
+      newRightsCode.enLabel = this.globalService.lang(
+        'EN',
+        item.desc,
+        `repairData.${item.key}`,
+      );
+
+      const mergeLogContent = [
+        this.globalService.serverLang(
+          session,
+          '修复合并权限代码({0})',
+          'repairData.mergeRightsCode',
+          item.code,
+        ),
+      ];
+      mergeLogContent.push(
+        ...this.globalService.compareObjectWriteLog(
+          session,
+          RightsCode,
+          oldRightsCode,
+          newRightsCode,
+        ),
+      );
+      if (mergeLogContent.length > 1) {
+        await newRightsCode.save();
+        await this.userLogsService.writeUserLog(
+          session,
+          LogTypeEnum.RepairData,
+          mergeLogContent.join('\r\n'),
+          newRightsCode.id,
+        );
+        totalOperationId.push(newRightsCode.id);
+      }
+    }
+
+    // 默认代码有,数据库没有的插入
+    const insertRightsCodeArray = defaultRightsArray.filter(
+      (item) => !dbRightsCodeMap.has(item.code),
+    );
+    // 并行执行用 Promise.all + map
+    // 使用事务,避免创建失败可以回滚记录
+    if (insertRightsCodeArray.length > 0) {
+      const dbSession = await this.mongooseConnection.startSession();
+      const insertRightsCodeId = [];
+      try {
+        dbSession.startTransaction(); // 开始事务
+        for (const item of insertRightsCodeArray) {
+          const rightCodeInfo = {
+            code: item.code,
+            key: item.key,
+            description: item.desc,
+            category: item.category,
+            path: item.path,
+            cnLabel: item.desc,
+            enLabel: this.globalService.lang(
+              'EN',
+              item.desc,
+              `repairData.${item.key}`,
+            ),
+          };
+          const [, insertResult] = await Utils.toPromise(
+            this.rightCodeSchemaService
+              .getModel()
+              .insertOne(rightCodeInfo, { session: dbSession }),
+          );
+          await this.userLogsService.writeUserLog(
+            session,
+            LogTypeEnum.RepairData,
+            this.globalService.serverLang(
+              session,
+              '修复新增权限代码({0})',
+              'repairData.addRightsCode',
+              item.code,
+            ),
+            insertResult.id,
+            { session: dbSession },
+          );
+          insertRightsCodeId.push(insertResult.id);
+        }
+        await dbSession.commitTransaction();
+      } catch (error) {
+        // 手动回滚事务
+        insertRightsCodeId.length = 0; // 清空数组
+        await dbSession.abortTransaction();
+      } finally {
+        totalOperationId.push(...insertRightsCodeId);
+        await dbSession.endSession();
+      }
+    }
+
+    // 默认没有,数据库有的删除
+    const deleteRightsCodeArray = dbRightsCodeList.filter(
+      (item) => !defaultRightsCodeMap.has(item.code),
+    );
+    const deleteRightsCodeId = [];
+    const writeLogCodes = [];
+    const rightsCodesModelName = this.rightCodeSchemaService
+      .getModel()
+      .getAliasName();
+    for (const item of deleteRightsCodeArray) {
+      deleteRightsCodeId.push(item.id);
+      totalOperationId.push(item.id);
+      writeLogCodes.push(item.code);
+      await item.deleteOne();
+      await this.deleteLogSchemaService.createDeleteLog({
+        modelName: rightsCodesModelName,
+        keyWords: item.code,
+        searchWhere: {
+          code: item.code,
+        },
+        id: item.id,
+      });
+    }
+    for (const code of writeLogCodes) {
+      await this.userLogsService.writeUserLog(
         session,
         LogTypeEnum.RepairData,
         this.globalService.serverLang(
           session,
-          '修复默认权限代码',
-          'repairData.defaultRightCode',
+          '修复删除废弃权限代码({0})',
+          'repairData.deleteRightsCode',
+          code,
         ),
-      )
-      .then();
+        deleteRightsCodeId,
+      );
+    }
+
+    await this.userLogsService.writeUserLog(
+      session,
+      LogTypeEnum.RepairData,
+      this.globalService.serverLang(
+        session,
+        '修复完成默认权限代码',
+        'repairData.defaultRightCode',
+      ),
+      totalOperationId,
+    );
     return resp;
   }
 
