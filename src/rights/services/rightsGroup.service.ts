@@ -2,14 +2,23 @@
  * Create by oliver.wu 2025/12/4
  */
 import { Injectable, Inject } from '@nestjs/common';
-import { CmsSession, RespModifyDataDto } from '@/common';
+import {
+  CmsSession,
+  DeleteResultDto,
+  RespErrorResult,
+  RespModifyDataDto,
+} from '@/common';
 import { GlobalService, Utils } from '@/common/utils';
 import { instanceToInstance } from 'class-transformer';
 
 import { UserLogsService } from '@/logs';
 import { RightsGroupSchemaService } from '@/entities/services';
 
-import { ReqRightsGroupSearchDto, RespRightsGroupSearchDto } from '../dto';
+import {
+  ReqRightsGroupSearchDto,
+  RespRightsGroupSearchDto,
+  ReqRightsGroupModifyDto,
+} from '../dto';
 
 @Injectable()
 export class RightsGroupService {
@@ -19,14 +28,44 @@ export class RightsGroupService {
   @Inject()
   private readonly userLogsService: UserLogsService;
 
+  @Inject()
+  private readonly rightsGroupSchemaService: RightsGroupSchemaService;
+
   getRightsGroupList(session: CmsSession, params: ReqRightsGroupSearchDto) {
     const resp = new RespRightsGroupSearchDto();
     return resp;
   }
 
-  saveRightsGroup() {}
+  saveRightsGroup(
+    session: CmsSession,
+    params: ReqRightsGroupModifyDto,
+    isNew: boolean,
+  ) {
+    const resp = new RespModifyDataDto();
 
-  checkRightsGroup() {}
+    const checkResp = this.checkRightsGroup(session, params, isNew, false);
 
-  deleteRightsGroup() {}
+    if (!checkResp.isSuccess()) {
+      resp.code = checkResp.code;
+      resp.msg = checkResp.msg;
+      return resp;
+    }
+    resp.id = checkResp.id;
+    return resp;
+  }
+
+  checkRightsGroup(
+    session: CmsSession,
+    params: ReqRightsGroupModifyDto,
+    isNew: boolean,
+    isCheck: boolean,
+  ) {
+    const resp = new RespModifyDataDto();
+    return resp;
+  }
+
+  deleteRightsGroup(session: CmsSession, params: DeleteResultDto) {
+    const resp = new RespErrorResult();
+    return resp;
+  }
 }
