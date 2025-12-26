@@ -7,7 +7,7 @@ import { Model, HydratedDocument } from 'mongoose';
 import { groupCodeExp, rightsExp } from '@/common';
 
 @Schema()
-export class RightCodeGroup {
+export class RightsGroup {
   @Prop({
     type: String,
     required: true,
@@ -57,15 +57,15 @@ export class RightCodeGroup {
   modifyUser: string; // 上一次修改的人
 }
 
-export type RightCodeGroupDocument = HydratedDocument<RightCodeGroup>;
+export type RightsGroupDocument = HydratedDocument<RightsGroup>;
 
-export const RightCodeGroupSchema =
-  SchemaFactory.createForClass(RightCodeGroup);
+export const RightsGroupSchema =
+  SchemaFactory.createForClass(RightsGroup);
 
-RightCodeGroupSchema.statics.getAliasName = function () {
-  return 'CmsRightCodeGroup';
+RightsGroupSchema.statics.getAliasName = function () {
+  return 'CmsRightsGroup';
 };
 
-export interface RightCodeGroupModel extends Model<RightCodeGroup> {
+export interface RightsGroupModel extends Model<RightsGroup> {
   getAliasName(): string;
 }

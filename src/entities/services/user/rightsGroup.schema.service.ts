@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { RightCodeGroupModel, RightCodeGroup } from '../../schema';
 
 @Injectable()
-export class RightsCodesGroupSchemaService {
+export class RightsGroupSchemaService {
   @InjectModel(RightCodeGroup.name)
   private readonly rightCodeGroupModel: RightCodeGroupModel;
 

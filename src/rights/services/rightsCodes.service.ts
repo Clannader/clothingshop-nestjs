@@ -13,7 +13,7 @@ import {
   ReqRightsCodesModifyDto,
 } from '../dto';
 
-import { RightsCodesSchemaService } from '@/entities/services';
+import { RightsCodeSchemaService } from '@/entities/services';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 import { RightCodeDocument, RightCode } from '@/entities/schema';
 import { UserLogsService } from '@/logs';
@@ -22,7 +22,7 @@ import { getAllRightsCode } from '../rights.constants';
 @Injectable()
 export class RightsCodesService {
   @Inject()
-  private readonly rightsCodesSchemaService: RightsCodesSchemaService;
+  private readonly rightsCodesSchemaService: RightsCodeSchemaService;
 
   @Inject()
   private readonly globalService: GlobalService;

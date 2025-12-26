@@ -15,7 +15,7 @@ import { CmsSession } from '@/common';
 import { DatabaseService } from '@/database/services';
 import {
   DeleteLogSchemaService,
-  RightsCodesSchemaService,
+  RightsCodeSchemaService,
 } from '@/entities/services';
 import { RightCodeDocument, RightCode } from '@/entities/schema';
 
@@ -33,7 +33,7 @@ export class RepairDataService {
   private readonly mongooseConnection: Connection;
 
   @Inject()
-  private readonly rightCodeSchemaService: RightsCodesSchemaService;
+  private readonly rightCodeSchemaService: RightsCodeSchemaService;
 
   @Inject()
   private readonly userLogsService: UserLogsService;

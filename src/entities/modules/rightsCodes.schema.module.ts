@@ -3,16 +3,16 @@
  */
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RightCode, RightCodeSchema } from '../schema';
-import { RightsCodesSchemaService } from '../services';
+import { RightCode, RightsCodeSchema } from '../schema';
+import { RightsCodeSchemaService } from '../services';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: RightCode.name, schema: RightCodeSchema },
+      { name: RightCode.name, schema: RightsCodeSchema },
     ]),
   ],
-  providers: [RightsCodesSchemaService],
-  exports: [RightsCodesSchemaService],
+  providers: [RightsCodeSchemaService],
+  exports: [RightsCodeSchemaService],
 })
 export class RightsCodesSchemaModule {}

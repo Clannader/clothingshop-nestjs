@@ -7,7 +7,7 @@ import { GlobalService, Utils } from '@/common/utils';
 import { instanceToInstance } from 'class-transformer';
 
 import { UserLogsService } from '@/logs';
-import { RightsCodesGroupSchemaService } from '@/entities/services';
+import { RightsGroupSchemaService } from '@/entities/services';
 
 import { ReqRightsGroupSearchDto, RespRightsGroupSearchDto } from '../dto';
 
