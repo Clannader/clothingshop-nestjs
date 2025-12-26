@@ -15,4 +15,4 @@ import { AdminAccessSchemaService } from '../services';
   providers: [AdminAccessSchemaService],
   exports: [AdminAccessSchemaService],
 })
-export class AdminAccessModule {}
+export class AdminAccessSchemaModule {}

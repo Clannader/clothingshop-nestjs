@@ -4,3 +4,4 @@
 export * from './rights.constants';
 export * from './rights.decorator';
 export * from './rightsCodes.module';
+export * from './rightsGroup.module';

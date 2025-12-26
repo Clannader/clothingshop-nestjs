@@ -15,9 +15,9 @@ import { CmsSession } from '@/common';
 import { DatabaseService } from '@/database/services';
 import {
   DeleteLogSchemaService,
-  RightsCodesSchemaService,
+  RightsCodeSchemaService,
 } from '@/entities/services';
-import { RightCodeDocument, RightCode } from '@/entities/schema';
+import { RightsCodeDocument, RightsCode } from '@/entities/schema';
 
 import { defaultIndexes } from '../defaultSystemData';
 import { RightsList } from '@/rights';
@@ -33,7 +33,7 @@ export class RepairDataService {
   private readonly mongooseConnection: Connection;
 
   @Inject()
-  private readonly rightCodeSchemaService: RightsCodesSchemaService;
+  private readonly rightCodeSchemaService: RightsCodeSchemaService;
 
   @Inject()
   private readonly userLogsService: UserLogsService;
@@ -77,6 +77,10 @@ export class RepairDataService {
         .createIndex(dbIndexInfo.fields, dbIndexInfo.options)
         .then((result) => [null, result])
         .catch((error) => [error]);
+      // TODO 这里这样写会导致前面修复成功,有一个修复失败则会返回提示失败,但是前面修复过的已经成功无法回退了
+      //  再次修复时还是会遇到这个错误的索引导致停止,无法修复之后可能会成功的索引
+      // 方案1：使用事务
+      // 方案2：使用Promise的并发,忽略错误
       if (error) {
         throw new CodeException(CodeEnum.DB_EXEC_ERROR, error.message);
       }
@@ -104,7 +108,7 @@ export class RepairDataService {
     defaultRightsArray.forEach((item) => {
       defaultRightsCodeMap.set(item.code, item);
     });
-    const dbRightsCodeMap = new Map<string, RightCodeDocument>();
+    const dbRightsCodeMap = new Map<string, RightsCodeDocument>();
     dbRightsCodeList.forEach((item) => {
       dbRightsCodeMap.set(item.code, item);
     });
@@ -118,20 +122,20 @@ export class RepairDataService {
       const oldRightsCode = dbRightsCodeMap.get(item.code);
       const newRightsCode = instanceToInstance(oldRightsCode);
 
-      const defaultRightsCode = defaultRightsCodeMap.get(item.code);
-      newRightsCode.key = defaultRightsCode.key;
-      newRightsCode.description = defaultRightsCode.desc;
+      // const defaultRightsCode = defaultRightsCodeMap.get(item.code);
+      newRightsCode.key = item.key;
+      newRightsCode.description = item.desc;
       if (newRightsCode.category) {
-        newRightsCode.category = defaultRightsCode.category;
+        newRightsCode.category = item.category;
       }
-      if (defaultRightsCode.path) {
-        newRightsCode.path = defaultRightsCode.path;
+      if (item.path) {
+        newRightsCode.path = item.path;
       }
-      newRightsCode.cnLabel = defaultRightsCode.desc;
+      newRightsCode.cnLabel = item.desc;
       newRightsCode.enLabel = this.globalService.lang(
         'EN',
-        defaultRightsCode.desc,
-        `repairData.${defaultRightsCode.key}`,
+        item.desc,
+        `repairData.${item.key}`,
       );
 
       const mergeLogContent = [
@@ -145,7 +149,7 @@ export class RepairDataService {
       mergeLogContent.push(
         ...this.globalService.compareObjectWriteLog(
           session,
-          RightCode,
+          RightsCode,
           oldRightsCode,
           newRightsCode,
         ),

@@ -7,7 +7,7 @@ import { Model, HydratedDocument } from 'mongoose';
 import { WriteLog } from '@/common/decorator';
 
 @Schema()
-export class RightCode {
+export class RightsCode {
   @Prop({
     type: String,
     required: true,
@@ -80,14 +80,14 @@ export class RightCode {
   path: string; // 代码tree的路径,例如x.x.x
 }
 
-export type RightCodeDocument = HydratedDocument<RightCode>;
+export type RightsCodeDocument = HydratedDocument<RightsCode>;
 
-export const RightCodeSchema = SchemaFactory.createForClass(RightCode);
+export const RightsCodeSchema = SchemaFactory.createForClass(RightsCode);
 
-RightCodeSchema.statics.getAliasName = function () {
-  return 'CmsRightCode';
+RightsCodeSchema.statics.getAliasName = function () {
+  return 'CmsRightsCode';
 };
 
-export interface RightCodeModel extends Model<RightCode> {
+export interface RightsCodeModel extends Model<RightsCode> {
   getAliasName(): string;
 }

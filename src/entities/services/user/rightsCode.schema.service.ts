@@ -4,16 +4,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { RightCode } from '../../schema';
-import type { RightCodeModel } from '../../schema';
+import { RightsCode } from '../../schema';
+import type { RightsCodeModel } from '../../schema';
 
 @Injectable()
-export class RightsCodesSchemaService {
-  @InjectModel(RightCode.name)
-  private readonly rightCodeModel: RightCodeModel;
+export class RightsCodeSchemaService {
+  @InjectModel(RightsCode.name)
+  private readonly rightsCodeModel: RightsCodeModel;
 
   getModel() {
-    return this.rightCodeModel;
+    return this.rightsCodeModel;
   }
 
   // mergeRightCode(rightCodeDoc: RightCode) {
