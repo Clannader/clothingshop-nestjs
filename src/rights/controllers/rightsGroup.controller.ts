@@ -113,7 +113,7 @@ export class RightsGroupController {
   @ApiCustomResponse({
     type: RespModifyDataDto,
   })
-  @ApiRights(RightsEnum.RightsCodeModify)
+  @ApiRights(RightsEnum.RightsGroupModify)
   modifyTimeZone(
     @UserSession() session: CmsSession,
     @Body() params: ReqRightsGroupModifyDto,
