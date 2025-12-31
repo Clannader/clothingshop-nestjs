@@ -8,8 +8,9 @@ import {
   IsOptional,
   Matches,
   IsArray,
+  ArrayMinSize,
 } from 'class-validator';
-import { groupCodeExp } from '@/common';
+import { groupCodeExp, singleGroupExp } from '@/common';
 
 export class CreateRightsGroupDto {
   /**
@@ -36,6 +37,16 @@ export class CreateRightsGroupDto {
    */
   @IsDefined()
   @IsArray()
+  @ArrayMinSize(1)
+  @Matches(singleGroupExp, {
+    each: true,
+    message: (validationArguments) => {
+      const args = Array.isArray(validationArguments.value)
+        ? validationArguments.value.join(',')
+        : '$value';
+      return `The rightCodes (${args}) is invalid`;
+    },
+  })
   @Expose()
   rightCodes: string[];
 }
