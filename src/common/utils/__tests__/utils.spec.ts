@@ -380,9 +380,9 @@ describe('Utils', () => {
       expect(regExp.test('-wyi123')).toBe(false);
       expect(regExp.test('-wyi')).toBe(true);
       expect(regExp.test('-w')).toBe(false);
-    }
-    expFun(singleGroupExp)
-    expFun(rightsExp)
+    };
+    expFun(singleGroupExp);
+    expFun(rightsExp);
     expect(rightsExp.test('-1234,4568')).toBe(true);
     expect(rightsExp.test('-1234,qwe')).toBe(true);
     expect(rightsExp.test('1234,qwe')).toBe(true);

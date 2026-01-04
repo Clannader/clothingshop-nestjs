@@ -6,7 +6,7 @@ import { PartialType } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { IsDefined, IsString } from 'class-validator';
 
-export class ReqRightsGroupModifyDto extends PartialType(CreateRightsGroupDto){
+export class ReqRightsGroupModifyDto extends PartialType(CreateRightsGroupDto) {
   /**
    * 编辑的ID值
    */

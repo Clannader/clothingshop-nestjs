@@ -5,6 +5,7 @@ import { timeZone } from './timeZone/timeZone.zh';
 import { common } from './common/common.zh';
 import { repairData } from './repairData/repairData.zh';
 import { rightsCodes } from './rightsCodes/rightsCodes.zh';
+import { rightsGroup } from './rightsGroup/rightsGroup.zh';
 
 export const ZH = {
   user,
@@ -14,4 +15,5 @@ export const ZH = {
   common,
   repairData,
   rightsCodes,
+  rightsGroup,
 };

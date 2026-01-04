@@ -4,7 +4,7 @@
 import { ListRightsGroupDto } from '../list-rightsGroup.dto';
 import { CommonResult } from '@/common';
 
-export class RespRightsGroupSearchDto extends CommonResult{
+export class RespRightsGroupSearchDto extends CommonResult {
   /**
    * 权限组列表
    */
