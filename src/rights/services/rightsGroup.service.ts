@@ -1,13 +1,13 @@
 /**
  * Create by oliver.wu 2025/12/4
  */
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   CmsSession,
   DeleteResultDto,
+  groupCodeExp,
   RespErrorResult,
   RespModifyDataDto,
-  groupCodeExp,
   singleGroupExp,
 } from '@/common';
 import { GlobalService, Utils } from '@/common/utils';
@@ -15,12 +15,12 @@ import { instanceToInstance } from 'class-transformer';
 
 import { UserLogsService } from '@/logs';
 import { RightsGroupSchemaService } from '@/entities/services';
-import { RightsGroupDocument } from '@/entities/schema';
+import { RightsGroup, RightsGroupDocument } from '@/entities/schema';
 
 import {
+  ReqRightsGroupModifyDto,
   ReqRightsGroupSearchDto,
   RespRightsGroupSearchDto,
-  ReqRightsGroupModifyDto,
 } from '../dto';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 
@@ -222,7 +222,36 @@ export class RightsGroupService {
     } else {
       newRightsGroup.updateUser = session.adminId;
       newRightsGroup.updateDate = new Date();
-      // TODO
+      await this.rightsGroupSchemaService
+        .getModel()
+        .syncSaveDBObject(newRightsGroup);
+      resp.id = newRightsGroup.id;
+      const contentArray = [
+        this.globalService.serverLang(
+          session,
+          '编辑权限组:({0})',
+          'rightsGroup.modifyRightsGroup',
+          newRightsGroup.groupCode,
+        ),
+      ];
+      contentArray.push(
+        ...this.globalService.compareObjectWriteLog(
+          session,
+          RightsGroup,
+          oldRightsGroup,
+          newRightsGroup,
+        ),
+      );
+      if (contentArray.length > 1) {
+        this.userLogsService
+          .writeUserLog(
+            session,
+            LogTypeEnum.RightsGroup,
+            contentArray.join('\r\n'),
+            newRightsGroup.id,
+          )
+          .then();
+      }
     }
 
     return resp;
