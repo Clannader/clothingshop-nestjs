@@ -4,7 +4,7 @@
 import { CreateTimeZoneDto } from '../timeZone';
 import { PartialType } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsDefined, IsString } from 'class-validator';
+import { IsDefined, IsString, IsMongoId } from 'class-validator';
 
 export class ReqTimeZoneModifyDto extends PartialType(CreateTimeZoneDto) {
   /**
@@ -12,6 +12,7 @@ export class ReqTimeZoneModifyDto extends PartialType(CreateTimeZoneDto) {
    */
   @IsDefined()
   @IsString()
+  @IsMongoId()
   @Expose()
   id: string;
 }

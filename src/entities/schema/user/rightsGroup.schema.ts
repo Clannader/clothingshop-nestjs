@@ -4,7 +4,8 @@
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model, HydratedDocument } from 'mongoose';
-import { groupCodeExp, rightsExp } from '@/common';
+import { groupCodeExp } from '@/common';
+import { WriteLog } from '@/common/decorator';
 
 @Schema()
 export class RightsGroup {
@@ -15,6 +16,10 @@ export class RightsGroup {
     unique: true, // 唯一
     match: groupCodeExp,
   })
+  @WriteLog({
+    origin: '权限组名',
+    key: 'rightsGroup.groupCode',
+  })
   groupCode: string; // 权限组名代码
 
   @Prop({
@@ -22,13 +27,20 @@ export class RightsGroup {
     trim: true,
     default: '',
   })
+  @WriteLog({
+    origin: '权限组描述',
+    key: 'rightsGroup.groupName',
+  })
   groupName: string; // 权限组描述
 
   @Prop({
     type: [String],
     required: true,
     default: [],
-    match: rightsExp,
+  })
+  @WriteLog({
+    origin: '权限代码',
+    key: 'rightsGroup.rightCodes',
   })
   rightCodes: string[]; // 权限组包含的权限代码
 
@@ -48,13 +60,21 @@ export class RightsGroup {
   @Prop({
     type: Date,
   })
-  modifyDate: Date; // 上一次修改的时间
+  @WriteLog({
+    origin: '上一次修改的时间',
+    key: 'rightsGroup.updateDate',
+  })
+  updateDate: Date; // 上一次修改的时间
 
   @Prop({
     type: String,
     trim: true,
   })
-  modifyUser: string; // 上一次修改的人
+  @WriteLog({
+    origin: '上一次修改的人',
+    key: 'rightsGroup.updateUser',
+  })
+  updateUser: string; // 上一次修改的人
 }
 
 export type RightsGroupDocument = HydratedDocument<RightsGroup>;

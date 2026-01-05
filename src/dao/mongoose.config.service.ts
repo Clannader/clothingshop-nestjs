@@ -8,7 +8,7 @@ import {
 } from '@nestjs/mongoose';
 import { ConfigService } from '@/common/config';
 import { Connection } from 'mongoose';
-import { monitorPlugin } from './plugins';
+import { monitorPlugin, syncSavePlugin } from './plugins';
 import { join } from 'path';
 
 // import { MongodbLogger } from '@/logger';
@@ -68,6 +68,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
           }
         });
         connection.plugin(monitorPlugin);
+        connection.plugin(syncSavePlugin);
 
         // 参考https://www.mongodb.com/zh-cn/docs/drivers/node/current/fundamentals/logging/
         const client = connection.getClient();

@@ -4,7 +4,7 @@
 import { ModifyRightsCodesDto } from '../modify-rightsCodes.dto';
 import { PartialType } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsDefined, IsString } from 'class-validator';
+import { IsDefined, IsString, IsMongoId } from 'class-validator';
 
 export class ReqRightsCodesModifyDto extends PartialType(ModifyRightsCodesDto) {
   /**
@@ -13,5 +13,6 @@ export class ReqRightsCodesModifyDto extends PartialType(ModifyRightsCodesDto) {
   @Expose()
   @IsDefined()
   @IsString()
+  @IsMongoId()
   id: string;
 }
