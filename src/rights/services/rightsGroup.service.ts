@@ -152,7 +152,7 @@ export class RightsGroupService {
       );
       return resp;
     }
-    paramsRightCodes.forEach((code) => {
+    for (const code of paramsRightCodes) {
       if (!singleGroupExp.test(code)) {
         resp.code = CodeEnum.FAIL;
         resp.msg = this.globalService.serverLang(
@@ -162,7 +162,7 @@ export class RightsGroupService {
         );
         return resp;
       }
-    });
+    }
 
     // 1.判断组名不能为默认组名
     const defaultGroupMap = this.rightsGroupSchemaService.getDefaultRightsGroup()
@@ -178,7 +178,7 @@ export class RightsGroupService {
       return resp;
     }
     // 2.判断权限代码只能是默认代码中的一个
-    paramsRightCodes.forEach((code) => {
+    for (const code of paramsRightCodes) {
       if (!defaultAllCode.includes(code)) {
         resp.code = CodeEnum.FAIL;
         resp.msg = this.globalService.serverLang(
@@ -189,7 +189,7 @@ export class RightsGroupService {
         );
         return resp;
       }
-    });
+    }
     // 3.判断不能新建非自身权限代码
     if (!this.globalService.userHasRightsBoolean(session, ...paramsRightCodes)) {
       resp.code = CodeEnum.FAIL;
