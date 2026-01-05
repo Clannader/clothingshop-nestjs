@@ -256,7 +256,7 @@ export const RightsList: RightsConfig = {
 
 export const getAllRightsCode = () => {
   const [, codeArr] = Utils.enumToArray(RightsEnum);
-  return codeArr;
+  return codeArr as string[];
 };
 
 export const RightsGroupList = [
