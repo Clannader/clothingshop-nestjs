@@ -3,4 +3,5 @@
  */
 export const rightsGroup = {
   groupCode: 'Permission group name',
+  limitPermission: 'Limited authority for user permission assignment',
 };

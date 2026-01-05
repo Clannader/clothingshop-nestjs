@@ -191,6 +191,15 @@ export class RightsGroupService {
       }
     });
     // 3.判断不能新建非自身权限代码
+    if (!this.globalService.userHasRightsBoolean(session, ...paramsRightCodes)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '设置权限越权',
+        'rightsGroup.limitPermission',
+      );
+      return resp;
+    }
 
     const where = {
       groupCode: paramsGroupCode,
