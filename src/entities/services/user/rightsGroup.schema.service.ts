@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { RightsGroupModel, RightsGroup } from '../../schema';
-import { RightsGroupList, getAllRightsCode } from '@/rights';
+import { RightsGroupList, getAllRightsCode } from '@/rights/rights.constants';
 
 @Injectable()
 export class RightsGroupSchemaService {
