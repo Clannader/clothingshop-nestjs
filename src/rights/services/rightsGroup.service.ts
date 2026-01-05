@@ -121,9 +121,9 @@ export class RightsGroupService {
       }
     }
 
-    const paramsGroupCode = params.groupCode
-    const paramsGroupName = params.groupName
-    const paramsRightCodes = params.rightCodes
+    const paramsGroupCode = params.groupCode;
+    const paramsGroupName = params.groupName;
+    const paramsRightCodes = params.rightCodes;
 
     if (Utils.isEmpty(paramsGroupCode)) {
       resp.code = CodeEnum.EMPTY;
@@ -165,9 +165,10 @@ export class RightsGroupService {
     }
 
     // 1.判断组名不能为默认组名
-    const defaultGroupMap = this.rightsGroupSchemaService.getDefaultRightsGroup()
-    const defaultKeys = defaultGroupMap.keys()
-    const defaultAllCode = this.rightsGroupSchemaService.getAllRightsCode()
+    const defaultGroupMap =
+      this.rightsGroupSchemaService.getDefaultRightsGroup();
+    const defaultKeys = defaultGroupMap.keys();
+    const defaultAllCode = this.rightsGroupSchemaService.getAllRightsCode();
     if (Array.from(defaultKeys).includes(paramsGroupCode)) {
       resp.code = CodeEnum.FAIL;
       resp.msg = this.globalService.serverLang(
@@ -185,13 +186,15 @@ export class RightsGroupService {
           session,
           '非法权限代码:({0})',
           'rightsGroup.rightCodesIsInvalid',
-          code
+          code,
         );
         return resp;
       }
     }
     // 3.判断不能新建非自身权限代码
-    if (!this.globalService.userHasRightsBoolean(session, ...paramsRightCodes)) {
+    if (
+      !this.globalService.userHasRightsBoolean(session, ...paramsRightCodes)
+    ) {
       resp.code = CodeEnum.FAIL;
       resp.msg = this.globalService.serverLang(
         session,

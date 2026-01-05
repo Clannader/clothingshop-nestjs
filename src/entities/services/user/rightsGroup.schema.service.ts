@@ -12,7 +12,7 @@ export class RightsGroupSchemaService {
   @InjectModel(RightsGroup.name)
   private readonly rightsGroupModel: RightsGroupModel;
 
-  private defaultGroupMap: Map<string, Array<string>> = new Map()
+  private defaultGroupMap: Map<string, Array<string>> = new Map();
 
   getModel() {
     return this.rightsGroupModel;
@@ -24,13 +24,13 @@ export class RightsGroupSchemaService {
   getDefaultRightsGroup() {
     if (this.defaultGroupMap.size === 0) {
       RightsGroupList.forEach((item) => {
-        this.defaultGroupMap.set(item.groupCode, item.rightCodes)
-      })
+        this.defaultGroupMap.set(item.groupCode, item.rightCodes);
+      });
     }
     return this.defaultGroupMap;
   }
 
   getAllRightsCode() {
-    return getAllRightsCode()
+    return getAllRightsCode();
   }
 }
