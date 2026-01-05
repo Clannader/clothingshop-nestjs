@@ -4,7 +4,7 @@
 import { CreateRightsGroupDto } from '../create-rightsGroup.dto';
 import { PartialType } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsDefined, IsString } from 'class-validator';
+import { IsDefined, IsString, IsMongoId } from 'class-validator';
 
 export class ReqRightsGroupModifyDto extends PartialType(CreateRightsGroupDto) {
   /**
@@ -12,6 +12,7 @@ export class ReqRightsGroupModifyDto extends PartialType(CreateRightsGroupDto) {
    */
   @IsDefined()
   @IsString()
+  @IsMongoId()
   @Expose()
   id: string;
 }

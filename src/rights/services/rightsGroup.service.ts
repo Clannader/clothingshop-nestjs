@@ -214,7 +214,7 @@ export class RightsGroupService {
         session,
         '新建权限组:({0})',
         'rightsGroup.createLog',
-        createObj.groupName,
+        createObj.groupCode,
       );
       this.userLogsService
         .writeUserLog(session, LogTypeEnum.RightsGroup, content, createObj.id)
