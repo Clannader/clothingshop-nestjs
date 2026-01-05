@@ -4,7 +4,7 @@
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model, HydratedDocument } from 'mongoose';
-import { groupCodeExp, rightsExp } from '@/common';
+import { groupCodeExp } from '@/common';
 import { WriteLog } from '@/common/decorator';
 
 @Schema()
@@ -37,7 +37,6 @@ export class RightsGroup {
     type: [String],
     required: true,
     default: [],
-    match: rightsExp,
   })
   @WriteLog({
     origin: '权限代码',

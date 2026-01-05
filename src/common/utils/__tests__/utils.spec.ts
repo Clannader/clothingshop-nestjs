@@ -1,6 +1,6 @@
 import { Utils } from '@/common/utils';
 import { RightsEnum } from '@/rights';
-import { rightsExp, singleGroupExp } from '@/common';
+import { userRightsCodeExp, userRightsGroupExp } from '@/common';
 
 describe('Utils', () => {
   it('32位系统路径转义', () => {
@@ -381,14 +381,14 @@ describe('Utils', () => {
       expect(regExp.test('-wyi')).toBe(true);
       expect(regExp.test('-w')).toBe(false);
     };
-    expFun(singleGroupExp);
-    expFun(rightsExp);
-    expect(rightsExp.test('-1234,4568')).toBe(true);
-    expect(rightsExp.test('-1234,qwe')).toBe(true);
-    expect(rightsExp.test('1234,qwe')).toBe(true);
-    expect(rightsExp.test('ert,qwe')).toBe(true);
-    expect(rightsExp.test('456,qwe')).toBe(false);
-    expect(rightsExp.test('456,-qwe')).toBe(false);
-    expect(rightsExp.test('1456,-qwe')).toBe(true);
+    expFun(userRightsGroupExp);
+    expFun(userRightsCodeExp);
+    expect(userRightsCodeExp.test('-1234,4568')).toBe(true);
+    expect(userRightsCodeExp.test('-1234,qwe')).toBe(true);
+    expect(userRightsCodeExp.test('1234,qwe')).toBe(true);
+    expect(userRightsCodeExp.test('ert,qwe')).toBe(true);
+    expect(userRightsCodeExp.test('456,qwe')).toBe(false);
+    expect(userRightsCodeExp.test('456,-qwe')).toBe(false);
+    expect(userRightsCodeExp.test('1456,-qwe')).toBe(true);
   });
 });
