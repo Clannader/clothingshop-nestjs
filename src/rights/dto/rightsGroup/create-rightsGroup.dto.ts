@@ -10,9 +10,20 @@ import {
   IsArray,
   ArrayMinSize,
 } from 'class-validator';
-import { groupCodeExp, singleGroupExp } from '@/common';
+import { groupCodeExp, singleGroupExp, shopIdExp } from '@/common';
 
 export class CreateRightsGroupDto {
+  /**
+   * 店铺ID
+   */
+  @IsOptional()
+  @IsString()
+  @Matches(shopIdExp, {
+    message: 'The shopId format ($value) is invalid',
+  })
+  @Expose()
+  shopId?: string;
+
   /**
    * 权限组名
    */
