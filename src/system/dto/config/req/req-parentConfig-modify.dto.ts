@@ -4,7 +4,7 @@
 import { CreateParentConfigDto } from '../create-parentConfig.dto';
 import { PartialType } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsDefined, IsString } from 'class-validator';
+import { IsDefined, IsString, IsMongoId } from 'class-validator';
 
 export class ReqParentConfigModifyDto extends PartialType(
   CreateParentConfigDto,
@@ -14,6 +14,7 @@ export class ReqParentConfigModifyDto extends PartialType(
    */
   @IsDefined()
   @IsString()
+  @IsMongoId()
   @Expose()
   id: string;
 }

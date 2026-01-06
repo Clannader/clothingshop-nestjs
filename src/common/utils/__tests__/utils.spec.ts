@@ -1,5 +1,6 @@
 import { Utils } from '@/common/utils';
 import { RightsEnum } from '@/rights';
+import { userRightsCodeExp, userRightsGroupExp } from '@/common';
 
 describe('Utils', () => {
   it('32位系统路径转义', () => {
@@ -355,4 +356,39 @@ describe('Utils', () => {
   //   ).toBe(true);
   //   expect(Utils.hasRights(session3, RightsEnum.RightsCodeModify)).toBe(false);
   // });
+
+  it('测试权限组正则验证', () => {
+    const expFun = (regExp: RegExp) => {
+      expect(regExp.test('')).toBe(false);
+      expect(regExp.test('1')).toBe(false);
+      expect(regExp.test('12')).toBe(false);
+      expect(regExp.test('123')).toBe(false);
+      expect(regExp.test('1234')).toBe(true);
+      expect(regExp.test('12345')).toBe(true);
+      expect(regExp.test('123456')).toBe(false);
+      expect(regExp.test('w')).toBe(false);
+      expect(regExp.test('wy')).toBe(true);
+      expect(regExp.test('wyi')).toBe(true);
+      expect(regExp.test('wyi123')).toBe(false);
+      expect(regExp.test('-')).toBe(false);
+      expect(regExp.test('-1')).toBe(false);
+      expect(regExp.test('-12')).toBe(false);
+      expect(regExp.test('-123')).toBe(false);
+      expect(regExp.test('-1234')).toBe(true);
+      expect(regExp.test('-12345')).toBe(true);
+      expect(regExp.test('-123456')).toBe(false);
+      expect(regExp.test('-wyi123')).toBe(false);
+      expect(regExp.test('-wyi')).toBe(true);
+      expect(regExp.test('-w')).toBe(false);
+    };
+    expFun(userRightsGroupExp);
+    expFun(userRightsCodeExp);
+    expect(userRightsCodeExp.test('-1234,4568')).toBe(true);
+    expect(userRightsCodeExp.test('-1234,qwe')).toBe(true);
+    expect(userRightsCodeExp.test('1234,qwe')).toBe(true);
+    expect(userRightsCodeExp.test('ert,qwe')).toBe(true);
+    expect(userRightsCodeExp.test('456,qwe')).toBe(false);
+    expect(userRightsCodeExp.test('456,-qwe')).toBe(false);
+    expect(userRightsCodeExp.test('1456,-qwe')).toBe(true);
+  });
 });

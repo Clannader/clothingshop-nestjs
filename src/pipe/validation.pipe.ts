@@ -41,6 +41,7 @@ export class ValidationPipe<T> implements PipeTransform<T> {
       'isDateString',
       'isEnum',
       'isNotEmpty',
+      'isMongoId',
       'matches',
       'min',
       'max',

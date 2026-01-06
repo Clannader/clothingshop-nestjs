@@ -130,7 +130,7 @@ export class GlobalService {
   userHasRights(
     session: string[] | CmsSession,
     ...roles: Array<string>
-  ): Array<any> {
+  ): [Array<string>, boolean] {
     // 获取rightsArray中不存在session权限的值
     let rightsArray: string[];
     if (!Array.isArray(session)) {
@@ -153,7 +153,7 @@ export class GlobalService {
   userHasOrRights(
     session: string[] | CmsSession,
     ...roles: Array<string>
-  ): Array<any> {
+  ): [Array<string>, boolean] {
     const [notExistRights] = this.userHasRights(session, ...roles);
     return [notExistRights, notExistRights.length !== roles.length];
   }

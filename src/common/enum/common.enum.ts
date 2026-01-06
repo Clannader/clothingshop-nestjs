@@ -56,6 +56,7 @@ export enum LanguageEnum {
  */
 export enum LogTypeEnum {
   RightsCodes = 'RightsCodes',
+  RightsGroup = 'RightsGroup',
   Config = 'Config',
   Browser = 'Browser',
   Interface = 'Interface',

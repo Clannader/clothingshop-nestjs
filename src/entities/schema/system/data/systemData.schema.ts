@@ -72,23 +72,23 @@ SystemDataSchema.statics.getAliasName = function () {
   return 'SystemData';
 };
 
-SystemDataSchema.statics.syncSaveDBObject = async function <
-  T extends CommonData,
->(dbDataDocs: HydratedDocument<T>): Promise<HydratedDocument<T>> {
-  const [err, result] = await Utils.toPromise(dbDataDocs.save());
-  if (err) {
-    // 版本更新报错,查一遍最新数据
-    const [err2, newResult] = await Utils.toPromise<HydratedDocument<T>>(
-      this.findById(dbDataDocs.id, { __v: 1 }),
-    );
-    if (err2) {
-      throw err2;
-    }
-    dbDataDocs.__v = newResult.__v;
-    return dbDataDocs.save();
-  }
-  return result;
-};
+// SystemDataSchema.statics.syncSaveDBObject = async function <
+//   T extends CommonData,
+// >(dbDataDocs: HydratedDocument<T>): Promise<HydratedDocument<T>> {
+//   const [err, result] = await Utils.toPromise(dbDataDocs.save());
+//   if (err) {
+//     // 版本更新报错,查一遍最新数据
+//     const [err2, newResult] = await Utils.toPromise<HydratedDocument<T>>(
+//       this.findById(dbDataDocs.id, { __v: 1 }),
+//     );
+//     if (err2) {
+//       throw err2;
+//     }
+//     dbDataDocs.__v = newResult.__v;
+//     return dbDataDocs.save();
+//   }
+//   return result;
+// };
 
 // SystemDataSchema.virtual('id').get(function () {
 //   return this._id.toString();
@@ -96,7 +96,7 @@ SystemDataSchema.statics.syncSaveDBObject = async function <
 
 export interface SystemDataModel extends Model<SystemData> {
   getAliasName(): string;
-  syncSaveDBObject<T extends CommonData>(
-    dbDataDocs: HydratedDocument<T>,
-  ): Promise<HydratedDocument<T>>;
+  // syncSaveDBObject<T extends CommonData>(
+  //   dbDataDocs: HydratedDocument<T>,
+  // ): Promise<HydratedDocument<T>>;
 }

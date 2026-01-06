@@ -16,9 +16,10 @@ export const groupCodeExp = /^[A-Za-z]+$/;
 export const mailExp = /^[\w\.\-]+@[\w]+((\.[\w]{2,10}){1,5})$/;
 export const nameExp = /^[\w\u4e00-\u9fa5]+$/;
 export const codeExp = /^[\w]+$/;
-export const singleGroupExp = /^\-?([1-9]{1}\d{3,4}|[A-Za-z]{2,15})$/; // 单个权限组里面code校验
-export const rightsExp =
-  /^(\-?([1-9]{1}\d{3,4}|[A-Za-z]{2,15}),)*(?=(\-?([1-9]{1}\d{3,4}|[A-Za-z]{2,15}))$)/;
+export const singleGroupExp = /^[1-9]\d{3,4}$/; // 单个权限组里面code校验
+export const userRightsGroupExp = /^\-?([1-9]\d{3,4}|[A-Za-z]{2,15})$/; // 用户权限组里面单个元素校验
+export const userRightsCodeExp =
+  /^(\-?([1-9]\d{3,4}|[A-Za-z]{2,15}),)*(?=(\-?([1-9]\d{3,4}|[A-Za-z]{2,15}))$)/;
 export const ipExp =
   /((25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))/;
 export const timeZoneExp = /^[+\-]([01][0-9]|2[0-4]):([0-5][0-9])$/;
