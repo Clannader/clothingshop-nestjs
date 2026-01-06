@@ -47,6 +47,7 @@ export class ValidationPipe<T> implements PipeTransform<T> {
       'max',
       'customValidation',
       'arrayMinSize',
+      'arrayNotEmpty',
     ];
     let content = 'Validation failed';
     forEach(keys, (v) => {

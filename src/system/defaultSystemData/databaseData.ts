@@ -72,6 +72,7 @@ export const defaultIndexes: IndexSchema[] = [
   {
     aliasName: 'CmsRightCodeGroup',
     fields: {
+      shopId: 1,
       groupCode: 1,
     },
     options: {

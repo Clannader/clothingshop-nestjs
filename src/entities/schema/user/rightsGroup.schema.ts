@@ -4,7 +4,7 @@
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model, HydratedDocument } from 'mongoose';
-import { groupCodeExp } from '@/common';
+import { groupCodeExp, shopIdExp } from '@/common';
 import { WriteLog } from '@/common/decorator';
 
 @Schema()
@@ -13,7 +13,16 @@ export class RightsGroup {
     type: String,
     required: true,
     trim: true,
-    unique: true, // 唯一
+    default: 'SYSTEM',
+    match: shopIdExp,
+  })
+  shopId: string; // 店铺ID
+
+  @Prop({
+    type: String,
+    required: true,
+    trim: true,
+    // unique: true, // 唯一
     match: groupCodeExp,
   })
   @WriteLog({
