@@ -18,7 +18,12 @@ import {
   RightsCodeSchemaService,
   RightsGroupSchemaService,
 } from '@/entities/services';
-import { RightsCodeDocument, RightsCode, RightsGroupDocument, RightsGroup } from '@/entities/schema';
+import {
+  RightsCodeDocument,
+  RightsCode,
+  RightsGroupDocument,
+  RightsGroup,
+} from '@/entities/schema';
 
 import { defaultIndexes } from '../defaultSystemData';
 import { RightsList, RightsGroupList } from '@/rights';
@@ -320,7 +325,7 @@ export class RepairDataService {
       resp.msg = errGroup.message;
       return resp;
     }
-    const defaultRightsGroupMap = new Map<string, RightsGroupType>()
+    const defaultRightsGroupMap = new Map<string, RightsGroupType>();
     RightsGroupList.forEach((item) => {
       defaultRightsGroupMap.set(item.groupCode, item);
     });
@@ -357,6 +362,8 @@ export class RepairDataService {
         ),
       );
       if (mergeLogContent.length > 1) {
+        newRightsGroup.updateUser = session.adminId;
+        newRightsGroup.updateDate = new Date();
         await newRightsGroup.save();
         await this.userLogsService.writeUserLog(
           session,
@@ -381,6 +388,8 @@ export class RepairDataService {
             groupCode: item.groupCode,
             groupName: item.groupName,
             rightCodes: item.rightCodes,
+            createUser: session.adminId,
+            createDate: new Date(),
           };
           const [, insertResult] = await Utils.toPromise(
             this.rightsGroupSchemaService

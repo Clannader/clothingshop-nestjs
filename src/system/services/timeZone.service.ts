@@ -541,7 +541,8 @@ export class TimeZoneService {
           newTimeZone,
         ),
       );
-      if (mergeLogContent.length > 1) { // 排除更新者和时间的差异
+      if (mergeLogContent.length > 1) {
+        // 排除更新者和时间的差异
         newTimeZone.updateUser = session.adminId;
         newTimeZone.updateDate = new Date();
         await newTimeZone.save();
