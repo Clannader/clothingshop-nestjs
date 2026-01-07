@@ -16,11 +16,12 @@ import { DatabaseService } from '@/database/services';
 import {
   DeleteLogSchemaService,
   RightsCodeSchemaService,
+  RightsGroupSchemaService,
 } from '@/entities/services';
 import { RightsCodeDocument, RightsCode } from '@/entities/schema';
 
 import { defaultIndexes } from '../defaultSystemData';
-import { RightsList } from '@/rights';
+import { RightsList, RightsGroupList } from '@/rights';
 import { UserLogsService } from '@/logs';
 import type { RightsProp, RightsConfig } from '@/rights';
 
@@ -33,7 +34,10 @@ export class RepairDataService {
   private readonly mongooseConnection: Connection;
 
   @Inject()
-  private readonly rightCodeSchemaService: RightsCodeSchemaService;
+  private readonly rightsCodeSchemaService: RightsCodeSchemaService;
+
+  @Inject()
+  private readonly rightsGroupSchemaService: RightsGroupSchemaService;
 
   @Inject()
   private readonly userLogsService: UserLogsService;
@@ -96,7 +100,7 @@ export class RepairDataService {
     const defaultRightsArray = this.getRightsCodeArray(RightsList);
     // 1.先查询数据库中的数据
     const [err, dbRightsCodeList] = await Utils.toPromise(
-      this.rightCodeSchemaService.getModel().find(),
+      this.rightsCodeSchemaService.getModel().find(),
     );
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
@@ -192,7 +196,7 @@ export class RepairDataService {
             ),
           };
           const [, insertResult] = await Utils.toPromise(
-            this.rightCodeSchemaService
+            this.rightsCodeSchemaService
               .getModel()
               .insertOne(rightCodeInfo, { session: dbSession }),
           );
@@ -227,7 +231,7 @@ export class RepairDataService {
     );
     const deleteRightsCodeId = [];
     const writeLogCodes = [];
-    const rightsCodesModelName = this.rightCodeSchemaService
+    const rightsCodesModelName = this.rightsCodeSchemaService
       .getModel()
       .getAliasName();
     for (const item of deleteRightsCodeArray) {
@@ -258,6 +262,18 @@ export class RepairDataService {
       );
     }
 
+    // 修复权限组代码
+    {
+      // 1.先查询数据库中的数据
+      const groupWhere = {
+        shopId: Utils.SYSTEM
+      }
+      const [errGroup, dbRightsGroupList] = await Utils.toPromise(
+        this.rightsGroupSchemaService.getModel().find(groupWhere),
+      );
+    }
+
+    // 修复完成
     await this.userLogsService.writeUserLog(
       session,
       LogTypeEnum.RepairData,

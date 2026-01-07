@@ -27,7 +27,7 @@ export class TestTasksService {
   private readonly adminLogSchemaService: AdminLogSchemaService;
 
   @Inject()
-  private readonly rightCodeGroupSchemaService: RightsGroupSchemaService;
+  private readonly rightsGroupSchemaService: RightsGroupSchemaService;
 
   @Inject()
   private readonly tokenCacheService: TokenCacheService;
@@ -46,12 +46,12 @@ export class TestTasksService {
     // );
     // console.log(`服务器ID: ${workerId}--------------------------${cache}`);
 
-    // await this.rightCodeGroupSchemaService.getModel().create({
+    // await this.rightsGroupSchemaService.getModel().create({
     //   groupCode: 'TEST',
     //   groupName: '测试组',
     //   rightCodes: []
     // })
-    // const rightCodeGroupModel = this.rightCodeGroupSchemaService.getModel();
+    // const rightCodeGroupModel = this.rightsGroupSchemaService.getModel();
     // const where = {
     //   groupCode: 'TEST',
     // };

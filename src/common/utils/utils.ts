@@ -40,6 +40,7 @@ if (existsSync(privatePath)) {
  */
 export class Utils {
   private static readonly logger = new AopLogger(Utils.name);
+  public static readonly SYSTEM: string = 'SYSTEM';
 
   /**
    * 转义32位和64位系统时的斜杠

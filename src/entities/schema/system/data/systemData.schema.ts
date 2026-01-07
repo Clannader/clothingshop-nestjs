@@ -3,14 +3,24 @@
  * 系统数据设置基类
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Model, HydratedDocument } from 'mongoose';
+import { Model } from 'mongoose';
 
 import { SystemDataTypeEnum } from '@/common/enum';
 import { Utils } from '@/common/utils';
 import { WriteLog } from '@/common/decorator';
+import { shopIdExp } from '@/common';
 
 // 定义SystemData表的其他公共字段类
 export class CommonData {
+  @Prop({
+    type: String,
+    required: true,
+    trim: true,
+    default: 'SYSTEM',
+    match: shopIdExp,
+  })
+  shopId: string; // 店铺ID
+
   @Prop({
     type: String,
     trim: true,
