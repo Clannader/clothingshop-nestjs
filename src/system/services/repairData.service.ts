@@ -266,8 +266,8 @@ export class RepairDataService {
     {
       // 1.先查询数据库中的数据
       const groupWhere = {
-        shopId: Utils.SYSTEM
-      }
+        shopId: Utils.SYSTEM,
+      };
       const [errGroup, dbRightsGroupList] = await Utils.toPromise(
         this.rightsGroupSchemaService.getModel().find(groupWhere),
       );

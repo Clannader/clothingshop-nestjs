@@ -16,7 +16,7 @@ import {
 import { TimeZoneData, TimeZoneDataDocument } from '@/entities/schema';
 import { UserLogsService } from '@/logs';
 
-import { defaultTimeZone } from '../defaultSystemData';
+import { defaultTimeZone, TimeZoneSchema } from '../defaultSystemData';
 import {
   ReqTimeZoneListDto,
   RespTimeZoneListDto,
@@ -26,6 +26,8 @@ import {
   CreateTimeZoneDto,
   RespTimeZoneCreateDto,
 } from '../dto';
+import { InjectConnection } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
 
 type SearchTimeZone = {
   timeZone?: Record<string, any>;
@@ -51,6 +53,9 @@ export class TimeZoneService {
 
   @Inject()
   private readonly globalService: GlobalService;
+
+  @InjectConnection()
+  private readonly mongooseConnection: Connection;
 
   async getTimeZoneList(params: ReqTimeZoneListDto) {
     const resp = new RespTimeZoneListDto();
@@ -484,31 +489,129 @@ export class TimeZoneService {
 
   async syncTimeZoneData(session: CmsSession) {
     // 同步默认时区数据到数据库中
-    const successTimeZone: string[] = [];
-    for (const timeZoneInfo of defaultTimeZone) {
-      const saveTimeZone: TimeZoneData = <TimeZoneData>timeZoneInfo;
-      saveTimeZone.createUser = 'SYSTEM';
-      saveTimeZone.createDate = new Date();
-      const [, result] = await Utils.toPromise(
-        this.systemDataSchemaService.syncTimeZoneObject(saveTimeZone),
-      );
-      // 这里可以设置每次都返回更新后的文档,但是之前的需求是只想第一次新建时返回
-      // 后期已存在数据时不想返回,为了体现每次修复实际更新几个数据
-      // 如果设置了,就会导致每次都有返回,每次都写日志
-      // 其实考虑实际每次都写日志也算是正常的
-      successTimeZone.push(result.id);
+    const resp = new CommonResult();
+    // 1.先查询数据库的数据
+    const where = {
+      shopId: Utils.SYSTEM,
+    };
+    const [err, dbTimeZoneList] = await Utils.toPromise(
+      this.systemDataSchemaService.getTimeZoneDataModel().find(where),
+    );
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
     }
-    if (successTimeZone.length > 0) {
+    // 对比数据差异
+    const defaultTimeZoneMap = new Map<string, TimeZoneSchema>();
+    defaultTimeZone.forEach((item) => {
+      defaultTimeZoneMap.set(item.timeZone, item);
+    });
+    const dbTimeZoneMap = new Map<string, TimeZoneDataDocument>();
+    dbTimeZoneList.forEach((item) => {
+      dbTimeZoneMap.set(item.timeZone, item);
+    });
+    const totalOperationId = [];
+    // 相同数据做合并
+    const mergeTimeZoneArray = defaultTimeZone.filter((item) =>
+      dbTimeZoneMap.has(item.timeZone),
+    );
+    for (const timeZoneInfo of mergeTimeZoneArray) {
+      const oldTimeZone: TimeZoneDataDocument = dbTimeZoneMap.get(
+        timeZoneInfo.timeZone,
+      );
+      const newTimeZone: TimeZoneDataDocument = instanceToInstance(oldTimeZone);
+      newTimeZone.timeZone = timeZoneInfo.timeZone;
+      newTimeZone.summer = timeZoneInfo.summer;
+      newTimeZone.winter = timeZoneInfo.winter;
+      newTimeZone.updateUser = session.adminId;
+      newTimeZone.updateDate = new Date();
+
+      const mergeLogContent = [
+        this.globalService.serverLang(
+          session,
+          '合并时区代码({0})',
+          'repairData.mergeTimeZone',
+          timeZoneInfo.timeZone,
+        ),
+      ];
+      mergeLogContent.push(
+        ...this.globalService.compareObjectWriteLog(
+          session,
+          TimeZoneData,
+          oldTimeZone,
+          newTimeZone,
+        ),
+      );
+      if (mergeLogContent.length > 1) {
+        await newTimeZone.save();
+        await this.userLogsService.writeUserLog(
+          session,
+          LogTypeEnum.RepairData,
+          mergeLogContent.join('\r\n'),
+          newTimeZone.id,
+        );
+        totalOperationId.push(newTimeZone.id);
+      }
+    }
+    // 默认代码有,数据库没有的插入
+    const insertTimeZoneArray = defaultTimeZone.filter(
+      (item) => !dbTimeZoneMap.has(item.timeZone),
+    );
+    if (insertTimeZoneArray.length > 0) {
+      const dbSession = await this.mongooseConnection.startSession();
+      const insertTimeZoneId = [];
+      try {
+        dbSession.startTransaction(); // 开始事务
+        for (const item of insertTimeZoneArray) {
+          const timeZoneInfo = {
+            timeZone: item.timeZone,
+            summer: item.summer,
+            winter: item.winter,
+            createUser: session.adminId,
+            createDate: new Date(),
+          };
+          const [, insertResult] = await Utils.toPromise(
+            this.systemDataSchemaService
+              .getTimeZoneDataModel()
+              .insertOne(timeZoneInfo, { session: dbSession }),
+          );
+          await this.userLogsService.writeUserLog(
+            session,
+            LogTypeEnum.RepairData,
+            this.globalService.serverLang(
+              session,
+              '修复新增时区({0})',
+              'repairData.addTimeZone',
+              item.timeZone,
+            ),
+            insertResult.id,
+            { session: dbSession },
+          );
+          insertTimeZoneId.push(insertResult.id);
+        }
+        await dbSession.commitTransaction();
+      } catch (error) {
+        // 手动回滚事务
+        insertTimeZoneId.length = 0; // 清空数组
+        await dbSession.abortTransaction();
+      } finally {
+        totalOperationId.push(...insertTimeZoneId);
+        await dbSession.endSession();
+      }
+    }
+
+    if (totalOperationId.length > 0) {
       const content = this.globalService.serverLang(
         session,
         '成功同步{0}条默认时区数据',
         'timeZone.syncSuccess',
-        successTimeZone.length,
+        totalOperationId.length,
       );
       this.userLogsService
-        .writeUserLog(session, LogTypeEnum.TimeZone, content, successTimeZone)
+        .writeUserLog(session, LogTypeEnum.TimeZone, content, totalOperationId)
         .then();
     }
-    return new CommonResult();
+    return resp;
   }
 }

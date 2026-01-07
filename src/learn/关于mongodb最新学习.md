@@ -203,6 +203,7 @@ https://www.mongodb.com/zh-cn/docs/drivers/php/laravel-mongodb/v5.x/fundamentals
 直连参数?directConnection=true
 副本集参数?replicaSet=rs0
 读偏好参数?readPreference=secondary
+数据库地址参数文档:https://www.mongodb.com/zh-cn/docs/manual/reference/connection-string-options/#tls-options
 
 21.mongodb连接地址的readPreference如何理解
 测试这个只读结果可以开启monitorCommands=true,可以查看每条语句执行时使用的address来判断节点
