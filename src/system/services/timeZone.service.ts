@@ -524,8 +524,6 @@ export class TimeZoneService {
       newTimeZone.timeZone = timeZoneInfo.timeZone;
       newTimeZone.summer = timeZoneInfo.summer;
       newTimeZone.winter = timeZoneInfo.winter;
-      newTimeZone.updateUser = session.adminId;
-      newTimeZone.updateDate = new Date();
 
       const mergeLogContent = [
         this.globalService.serverLang(
@@ -543,7 +541,9 @@ export class TimeZoneService {
           newTimeZone,
         ),
       );
-      if (mergeLogContent.length > 1) {
+      if (mergeLogContent.length > 1) { // 排除更新者和时间的差异
+        newTimeZone.updateUser = session.adminId;
+        newTimeZone.updateDate = new Date();
         await newTimeZone.save();
         await this.userLogsService.writeUserLog(
           session,
