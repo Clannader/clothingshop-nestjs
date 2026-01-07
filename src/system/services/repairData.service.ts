@@ -93,7 +93,7 @@ export class RepairDataService {
     return resp;
   }
 
-  async repairRightsGroup(session: CmsSession) {
+  async repairRightsCode(session: CmsSession) {
     // 包括修复权限代码和默认权限组
     const resp = new CommonResult();
 
@@ -262,17 +262,6 @@ export class RepairDataService {
       );
     }
 
-    // 修复权限组代码
-    {
-      // 1.先查询数据库中的数据
-      const groupWhere = {
-        shopId: Utils.SYSTEM,
-      };
-      const [errGroup, dbRightsGroupList] = await Utils.toPromise(
-        this.rightsGroupSchemaService.getModel().find(groupWhere),
-      );
-    }
-
     // 修复完成
     await this.userLogsService.writeUserLog(
       session,
@@ -313,6 +302,17 @@ export class RepairDataService {
       }
     }
     return rightsList;
+  }
+
+  async repairRightsGroup(session: CmsSession) {
+    // 修复权限组代码
+    // 1.先查询数据库中的数据
+    const groupWhere = {
+      shopId: Utils.SYSTEM,
+    };
+    const [errGroup, dbRightsGroupList] = await Utils.toPromise(
+      this.rightsGroupSchemaService.getModel().find(groupWhere),
+    );
   }
 
   doSelfCheck() {

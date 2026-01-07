@@ -61,11 +61,25 @@ export class RepairDataController {
     return this.repairService.repairDBIndex(session);
   }
 
+  @Post('rightsCode')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '修复权限代码列表',
+    description: '修复默认权限代码',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  @ApiRights(RightsEnum.RepairRightsCode)
+  repairRightsCode(@UserSession() session: CmsSession) {
+    return this.repairService.repairRightsCode(session);
+  }
+
   @Post('rightsGroup')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '修复权限组列表',
-    description: '修复默认权限和权限组',
+    description: '修复默认权限组',
   })
   @ApiCustomResponse({
     type: CommonResult,
