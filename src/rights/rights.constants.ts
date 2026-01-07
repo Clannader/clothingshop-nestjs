@@ -264,7 +264,13 @@ export const getAllRightsCode = () => {
   return codeArr as string[];
 };
 
-export const RightsGroupList = [
+export type RightsGroupType = {
+  groupCode: string;
+  groupName: string;
+  rightCodes: string[];
+};
+
+export const RightsGroupList: RightsGroupType[] = [
   {
     groupCode: 'SUPERVISOR',
     groupName: '超级管理员',

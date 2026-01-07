@@ -18,12 +18,12 @@ import {
   RightsCodeSchemaService,
   RightsGroupSchemaService,
 } from '@/entities/services';
-import { RightsCodeDocument, RightsCode } from '@/entities/schema';
+import { RightsCodeDocument, RightsCode, RightsGroupDocument, RightsGroup } from '@/entities/schema';
 
 import { defaultIndexes } from '../defaultSystemData';
 import { RightsList, RightsGroupList } from '@/rights';
 import { UserLogsService } from '@/logs';
-import type { RightsProp, RightsConfig } from '@/rights';
+import type { RightsProp, RightsConfig, RightsGroupType } from '@/rights';
 
 @Injectable()
 export class RepairDataService {
@@ -94,7 +94,7 @@ export class RepairDataService {
   }
 
   async repairRightsCode(session: CmsSession) {
-    // 包括修复权限代码和默认权限组
+    // 修复权限代码
     const resp = new CommonResult();
 
     const defaultRightsArray = this.getRightsCodeArray(RightsList);
@@ -182,7 +182,7 @@ export class RepairDataService {
       try {
         dbSession.startTransaction(); // 开始事务
         for (const item of insertRightsCodeArray) {
-          const rightCodeInfo = {
+          const rightsCodeInfo = {
             code: item.code,
             key: item.key,
             description: item.desc,
@@ -198,7 +198,7 @@ export class RepairDataService {
           const [, insertResult] = await Utils.toPromise(
             this.rightsCodeSchemaService
               .getModel()
-              .insertOne(rightCodeInfo, { session: dbSession }),
+              .insertOne(rightsCodeInfo, { session: dbSession }),
           );
           await this.userLogsService.writeUserLog(
             session,
@@ -226,6 +226,7 @@ export class RepairDataService {
     }
 
     // 默认没有,数据库有的删除
+    // 这里的权限代码删除估计还需要判断使用有权限组或者用户使用
     const deleteRightsCodeArray = dbRightsCodeList.filter(
       (item) => !defaultRightsCodeMap.has(item.code),
     );
@@ -269,7 +270,7 @@ export class RepairDataService {
       this.globalService.serverLang(
         session,
         '修复完成默认权限代码',
-        'repairData.defaultRightCode',
+        'repairData.defaultRightsCode',
       ),
       totalOperationId,
     );
@@ -306,6 +307,7 @@ export class RepairDataService {
 
   async repairRightsGroup(session: CmsSession) {
     // 修复权限组代码
+    const resp = new CommonResult();
     // 1.先查询数据库中的数据
     const groupWhere = {
       shopId: Utils.SYSTEM,
@@ -313,6 +315,118 @@ export class RepairDataService {
     const [errGroup, dbRightsGroupList] = await Utils.toPromise(
       this.rightsGroupSchemaService.getModel().find(groupWhere),
     );
+    if (errGroup) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = errGroup.message;
+      return resp;
+    }
+    const defaultRightsGroupMap = new Map<string, RightsGroupType>()
+    RightsGroupList.forEach((item) => {
+      defaultRightsGroupMap.set(item.groupCode, item);
+    });
+    const dbRightsGroupMap = new Map<string, RightsGroupDocument>();
+    dbRightsGroupList.forEach((item) => {
+      dbRightsGroupMap.set(item.groupCode, item);
+    });
+    const totalOperationId = [];
+    const mergeRightsGroupArray = RightsGroupList.filter((item) =>
+      dbRightsGroupMap.has(item.groupCode),
+    );
+    for (const item of mergeRightsGroupArray) {
+      const oldRightsGroup = dbRightsGroupMap.get(item.groupCode);
+      const newRightsGroup = instanceToInstance(oldRightsGroup);
+
+      newRightsGroup.groupCode = item.groupCode;
+      newRightsGroup.groupName = item.groupName;
+      newRightsGroup.rightCodes = item.rightCodes;
+
+      const mergeLogContent = [
+        this.globalService.serverLang(
+          session,
+          '修复合并权限组({0})',
+          'repairData.mergeRightsGroup',
+          item.groupCode,
+        ),
+      ];
+      mergeLogContent.push(
+        ...this.globalService.compareObjectWriteLog(
+          session,
+          RightsGroup,
+          oldRightsGroup,
+          newRightsGroup,
+        ),
+      );
+      if (mergeLogContent.length > 1) {
+        await newRightsGroup.save();
+        await this.userLogsService.writeUserLog(
+          session,
+          LogTypeEnum.RepairData,
+          mergeLogContent.join('\r\n'),
+          newRightsGroup.id,
+        );
+        totalOperationId.push(newRightsGroup.id);
+      }
+    }
+
+    const insertRightsGroupArray = RightsGroupList.filter(
+      (item) => !dbRightsGroupMap.has(item.groupCode),
+    );
+    if (insertRightsGroupArray.length > 0) {
+      const dbSession = await this.mongooseConnection.startSession();
+      const insertRightsGroupId = [];
+      try {
+        dbSession.startTransaction(); // 开始事务
+        for (const item of insertRightsGroupArray) {
+          const rightsGroupInfo = {
+            groupCode: item.groupCode,
+            groupName: item.groupName,
+            rightCodes: item.rightCodes,
+          };
+          const [, insertResult] = await Utils.toPromise(
+            this.rightsGroupSchemaService
+              .getModel()
+              .insertOne(rightsGroupInfo, { session: dbSession }),
+          );
+          await this.userLogsService.writeUserLog(
+            session,
+            LogTypeEnum.RepairData,
+            this.globalService.serverLang(
+              session,
+              '修复新增权限组({0})',
+              'repairData.addRightsGroup',
+              item.groupCode,
+            ),
+            insertResult.id,
+            { session: dbSession },
+          );
+          insertRightsGroupId.push(insertResult.id);
+        }
+        await dbSession.commitTransaction();
+      } catch (error) {
+        // 手动回滚事务
+        insertRightsGroupId.length = 0; // 清空数组
+        await dbSession.abortTransaction();
+      } finally {
+        totalOperationId.push(...insertRightsGroupId);
+        await dbSession.endSession();
+      }
+    }
+
+    // 删除默认权限组的逻辑待定,因为有可能有用户使用,这样是不能删除的
+    // 所以可能基本不可能删除
+
+    // 修复完成
+    await this.userLogsService.writeUserLog(
+      session,
+      LogTypeEnum.RepairData,
+      this.globalService.serverLang(
+        session,
+        '修复完成默认权限组',
+        'repairData.defaultRightsGroup',
+      ),
+      totalOperationId,
+    );
+    return resp;
   }
 
   doSelfCheck() {
