@@ -456,7 +456,6 @@ export class RightsGroupService {
     if (!Utils.isEmpty(paramsGroupCode)) {
       where.groupCode = paramsGroupCode;
     }
-    console.log(where);
     if (Object.keys(where).length <= 1) {
       resp.code = CodeEnum.EMPTY;
       resp.msg = this.globalService.serverLang(
