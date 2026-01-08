@@ -123,7 +123,7 @@ export class RightsGroupController {
     return this.rightsGroupService.saveRightsGroup(session, params, false);
   }
 
-  @Get('/search')
+  @Get('/getInfo')
   @ApiOperation({
     summary: '获取单个权限组',
     description: '获取单个权限组',

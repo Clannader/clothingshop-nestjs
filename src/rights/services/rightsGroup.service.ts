@@ -445,7 +445,7 @@ export class RightsGroupService {
     const resp = new RespRightsGroupSingleDto();
     const paramsId = params.id;
     const paramsShopId = params.shopId;
-    const paramsGroupName = params.groupName;
+    const paramsGroupCode = params.groupCode;
 
     const where: Record<string, any> = {
       shopId: paramsShopId,
@@ -453,9 +453,10 @@ export class RightsGroupService {
     if (!Utils.isEmpty(paramsId)) {
       where._id = paramsId;
     }
-    if (!Utils.isEmpty(paramsGroupName)) {
-      where.groupName = paramsGroupName;
+    if (!Utils.isEmpty(paramsGroupCode)) {
+      where.groupCode = paramsGroupCode;
     }
+    console.log(where);
     if (Object.keys(where).length <= 1) {
       resp.code = CodeEnum.EMPTY;
       resp.msg = this.globalService.serverLang(

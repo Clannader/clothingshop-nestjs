@@ -1,7 +1,7 @@
 /**
  * Create by oliver.wu 2026/1/8
  */
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import { IsOptional, IsString, IsMongoId } from 'class-validator';
 import { Utils } from '@/common/utils';
 
@@ -12,7 +12,8 @@ export class ReqRightsGroupSingleDto {
   @IsOptional()
   @IsString()
   @Expose()
-  shopId = Utils.SYSTEM;
+  @Transform(({ value }) => value ?? Utils.SYSTEM)
+  shopId: string = Utils.SYSTEM;
 
   /**
    * 搜索权限组描述
@@ -20,7 +21,7 @@ export class ReqRightsGroupSingleDto {
   @IsOptional()
   @IsString()
   @Expose()
-  groupName?: string;
+  groupCode?: string;
 
   /**
    * 权限组ID
