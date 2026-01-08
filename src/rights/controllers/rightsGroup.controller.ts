@@ -38,6 +38,8 @@ import {
   RespRightsGroupSearchDto,
   ReqRightsGroupCreateDto,
   ReqRightsGroupModifyDto,
+  ReqRightsGroupSingleDto,
+  RespRightsGroupSingleDto,
 } from '../dto';
 import { plainToInstance } from 'class-transformer';
 
@@ -119,5 +121,20 @@ export class RightsGroupController {
     @Body() params: ReqRightsGroupModifyDto,
   ) {
     return this.rightsGroupService.saveRightsGroup(session, params, false);
+  }
+
+  @Get('/search')
+  @ApiOperation({
+    summary: '获取单个权限组',
+    description: '获取单个权限组',
+  })
+  @ApiCustomResponse({
+    type: RespRightsGroupSingleDto,
+  })
+  getSingleRightsGroup(
+    @UserSession() session: CmsSession,
+    @Query() params: ReqRightsGroupSingleDto,
+  ) {
+    return this.rightsGroupService.getSingleRightsGroup(session, params);
   }
 }

@@ -24,6 +24,9 @@ import {
   ReqRightsGroupModifyDto,
   ReqRightsGroupSearchDto,
   RespRightsGroupSearchDto,
+  ReqRightsGroupSingleDto,
+  RespRightsGroupSingleDto,
+  ListRightsGroupDto,
 } from '../dto';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 
@@ -43,6 +46,9 @@ export class RightsGroupService {
 
   getRightsGroupList(session: CmsSession, params: ReqRightsGroupSearchDto) {
     const resp = new RespRightsGroupSearchDto();
+    // 考虑是否分页
+    // 考虑是否在数据库中加入默认权限组标识
+    // 分页第一页把默认权限组放第一页
     return resp;
   }
 
@@ -429,6 +435,73 @@ export class RightsGroupService {
     resp.code = writeLogResult.length > 0 ? CodeEnum.SUCCESS : CodeEnum.FAIL;
     resp.errResult = errResult;
 
+    return resp;
+  }
+
+  async getSingleRightsGroup(
+    session: CmsSession,
+    params: ReqRightsGroupSingleDto,
+  ): Promise<RespRightsGroupSingleDto> {
+    const resp = new RespRightsGroupSingleDto();
+    const paramsId = params.id;
+    const paramsShopId = params.shopId;
+    const paramsGroupName = params.groupName;
+
+    const where: Record<string, any> = {
+      shopId: paramsShopId,
+    };
+    if (!Utils.isEmpty(paramsId)) {
+      where._id = paramsId;
+    }
+    if (!Utils.isEmpty(paramsGroupName)) {
+      where.groupName = paramsGroupName;
+    }
+    if (Object.keys(where).length <= 1) {
+      resp.code = CodeEnum.EMPTY;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '缺少必要参数',
+        'common.missingParams',
+      );
+      return resp;
+    }
+
+    const [err, rightsGroupInfo] = await Utils.toPromise(
+      this.rightsGroupSchemaService.getModel().findOne(where),
+    );
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    if (Utils.isEmpty(rightsGroupInfo)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '权限组不存在',
+        'rightsGroup.isNotExist',
+      );
+      return resp;
+    }
+    if (
+      !this.globalService.userHasRightsBoolean(
+        session,
+        ...rightsGroupInfo.rightCodes,
+      )
+    ) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = this.globalService.serverLang(
+        session,
+        '无权查看该权限组',
+        'rightsGroup.NoPermissionView',
+      );
+      return resp;
+    }
+
+    resp.rightsGroupInfo = Object.assign(
+      new ListRightsGroupDto(),
+      rightsGroupInfo.toObject(),
+    );
     return resp;
   }
 }

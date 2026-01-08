@@ -255,3 +255,7 @@ OWASP ZAP: https://www.zaproxy.org/download/
 pm2 stop ecosystem.config.js
 pm2 ls
 pm2 monit
+
+26.修改Mongodb的索引方式
+db.runCommand({collMod: "表名",index: {name: "索引名",expireAfterSeconds: 修改时间}})
+db.runCommand({collMod: "commonLogs",index: {name: "expire_clear",expireAfterSeconds: 2764800}})
