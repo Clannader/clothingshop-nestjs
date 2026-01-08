@@ -20,7 +20,6 @@ import parseEnv from '@/lib/parseEnv';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import * as crypto from 'node:crypto';
-import { RightsEnum } from '@/rights';
 
 // RSA公钥和私钥只需加载一次
 const pemPath = parseEnv.getPemPath();

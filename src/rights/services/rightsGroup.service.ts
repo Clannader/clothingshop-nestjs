@@ -11,7 +11,7 @@ import {
   singleGroupExp,
 } from '@/common';
 import { GlobalService, Utils } from '@/common/utils';
-import { instanceToInstance } from 'class-transformer';
+import { instanceToInstance, plainToClass } from 'class-transformer';
 
 import { UserLogsService } from '@/logs';
 import {
@@ -26,7 +26,7 @@ import {
   RespRightsGroupSearchDto,
   ReqRightsGroupSingleDto,
   RespRightsGroupSingleDto,
-  ListRightsGroupDto,
+  InfoRightsGroupDto,
 } from '../dto';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 
@@ -498,10 +498,10 @@ export class RightsGroupService {
       return resp;
     }
 
-    resp.rightsGroupInfo = Object.assign(
-      new ListRightsGroupDto(),
-      rightsGroupInfo.toObject(),
-    );
+    // 把数据库的值复制到返回类中,返回类需要加上@Expose()修饰器,说明那些字段需要返回
+    resp.rightsGroupInfo = plainToClass(InfoRightsGroupDto, rightsGroupInfo, {
+      excludeExtraneousValues: true,
+    });
     return resp;
   }
 }
