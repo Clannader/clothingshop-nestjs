@@ -72,6 +72,7 @@ export const defaultIndexes: IndexSchema[] = [
   {
     aliasName: 'CmsRightCodeGroup',
     fields: {
+      shopId: 1,
       groupCode: 1,
     },
     options: {
@@ -258,12 +259,12 @@ export const defaultTimeZone: TimeZoneSchema[] = [
   {
     timeZone: 'Australia/Broken_Hill',
     summer: '+10:30',
-    winter: '+9:30',
+    winter: '+09:30',
   },
   {
     timeZone: 'Australia/Adelaide',
     summer: '+10:30',
-    winter: '+9:30',
+    winter: '+09:30',
   },
   {
     timeZone: 'Australia/Melbourne',
