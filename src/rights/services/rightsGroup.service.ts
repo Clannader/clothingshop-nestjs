@@ -27,6 +27,7 @@ import {
   ReqRightsGroupSingleDto,
   RespRightsGroupSingleDto,
   InfoRightsGroupDto,
+  ListRightsGroupDto,
 } from '../dto';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 
@@ -44,11 +45,54 @@ export class RightsGroupService {
   @Inject()
   private readonly deleteLogSchemaService: DeleteLogSchemaService;
 
-  getRightsGroupList(session: CmsSession, params: ReqRightsGroupSearchDto) {
+  async getRightsGroupList(
+    session: CmsSession,
+    params: ReqRightsGroupSearchDto,
+  ) {
     const resp = new RespRightsGroupSearchDto();
-    // 考虑是否分页
-    // 考虑是否在数据库中加入默认权限组标识
-    // 分页第一页把默认权限组放第一页
+    // 考虑是否分页,暂时不考虑
+    const paramsShopId = params.shopId;
+    const paramsGroupCode = params.groupCode;
+    const paramsGroupName = params.groupName;
+    const paramsRightCodes = params.rightCodes;
+
+    const where: Record<string, any> = {
+      shopId: paramsShopId,
+    };
+    if (!Utils.isEmpty(paramsGroupCode)) {
+      where.groupCode = Utils.getIgnoreCase(paramsGroupCode, true);
+    }
+    if (!Utils.isEmpty(paramsGroupName)) {
+      where.groupName = Utils.getIgnoreCase(paramsGroupName, true);
+    }
+    if (!Utils.isEmpty(paramsRightCodes)) {
+      where.rightCodes = {
+        $all: paramsRightCodes,
+      };
+    }
+    const [err, result] = await Utils.toPromise(
+      this.rightsGroupSchemaService
+        .getModel()
+        .find(where, { __v: 0 })
+        .sort({ groupType: -1 }),
+    );
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    const rightsGroupsList: ListRightsGroupDto[] = [];
+    for (const row of result) {
+      if (this.globalService.userHasRightsBoolean(session, ...row.rightCodes)) {
+        rightsGroupsList.push(
+          plainToInstance(ListRightsGroupDto, row, {
+            excludeExtraneousValues: true,
+          }),
+        );
+      }
+    }
+    resp.rightsGroups = rightsGroupsList;
+    resp.total = rightsGroupsList.length;
     return resp;
   }
 
@@ -259,6 +303,7 @@ export class RightsGroupService {
       const createRightsGroup = {
         groupName: paramsGroupName,
         groupCode: paramsGroupCode,
+        groupType: 'custom',
         rightCodes: paramsRightCodes,
         createUser: session.adminId,
         createDate: new Date(),
@@ -284,6 +329,7 @@ export class RightsGroupService {
     } else {
       newRightsGroup.updateUser = session.adminId;
       newRightsGroup.updateDate = new Date();
+      newRightsGroup.groupType = 'custom';
       await this.rightsGroupSchemaService
         .getModel()
         .syncSaveDBObject(newRightsGroup);
@@ -499,9 +545,13 @@ export class RightsGroupService {
     }
 
     // 把数据库的值复制到返回类中,返回类需要加上@Expose()修饰器,说明那些字段需要返回
-    resp.rightsGroupInfo = plainToInstance(InfoRightsGroupDto, rightsGroupInfo, {
-      excludeExtraneousValues: true,
-    });
+    resp.rightsGroupInfo = plainToInstance(
+      InfoRightsGroupDto,
+      rightsGroupInfo,
+      {
+        excludeExtraneousValues: true,
+      },
+    );
     return resp;
   }
 }

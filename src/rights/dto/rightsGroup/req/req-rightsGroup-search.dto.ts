@@ -1,10 +1,20 @@
 /**
  * Create by oliver.wu 2025/12/26
  */
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import { IsOptional, IsString, IsArray } from 'class-validator';
+import { Utils } from '@/common/utils';
 
 export class ReqRightsGroupSearchDto {
+  /**
+   * 店铺ID
+   */
+  @IsOptional()
+  @IsString()
+  @Expose()
+  @Transform(({ value }) => value ?? Utils.SYSTEM)
+  shopId: string = Utils.SYSTEM;
+
   /**
    * 搜索权限组名
    */
