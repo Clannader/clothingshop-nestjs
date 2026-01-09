@@ -20,7 +20,6 @@ import parseEnv from '@/lib/parseEnv';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import * as crypto from 'node:crypto';
-import { RightsEnum } from '@/rights';
 
 // RSA公钥和私钥只需加载一次
 const pemPath = parseEnv.getPemPath();
@@ -40,6 +39,7 @@ if (existsSync(privatePath)) {
  */
 export class Utils {
   private static readonly logger = new AopLogger(Utils.name);
+  public static readonly SYSTEM: string = 'SYSTEM';
 
   /**
    * 转义32位和64位系统时的斜杠

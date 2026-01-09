@@ -2,7 +2,7 @@
  * Create by oliver.wu 2024/10/16
  */
 import { Expose } from 'class-transformer';
-import { IsDefined, IsArray } from 'class-validator';
+import { IsDefined, IsArray, ArrayNotEmpty, IsMongoId } from 'class-validator';
 
 export class DeleteResultDto {
   /**
@@ -10,6 +10,8 @@ export class DeleteResultDto {
    */
   @IsDefined()
   @IsArray()
+  @ArrayNotEmpty()
+  @IsMongoId({ each: true })
   @Expose()
   ids: string[];
 }

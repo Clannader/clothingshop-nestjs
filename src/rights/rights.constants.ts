@@ -54,7 +54,8 @@ export enum RightsEnum {
   RepairBaseData = '3041',
   RepairDBIndex = '3042',
   RepairRightsGroup = '3043',
-  SelfCheck = '3044',
+  RepairRightsCode = '3044',
+  SelfCheck = '3045',
   DatabaseManage = '3050',
   DbStatistics = '3051',
   DbIndexManage = '3052',
@@ -200,10 +201,14 @@ export const RightsList: RightsConfig = {
           },
           RepairRightsGroup: {
             code: RightsEnum.RepairRightsGroup, // 3043
-            desc: '修复权限数据',
+            desc: '修复权限组数据',
+          },
+          RepairRightsCode: {
+            code: RightsEnum.RepairRightsCode, // 3044
+            desc: '修复权限代码数据',
           },
           SelfCheck: {
-            code: RightsEnum.SelfCheck, // 3044
+            code: RightsEnum.SelfCheck, // 3045
             desc: '自动检查',
           },
         },
@@ -259,7 +264,13 @@ export const getAllRightsCode = () => {
   return codeArr as string[];
 };
 
-export const RightsGroupList = [
+export type RightsGroupType = {
+  groupCode: string;
+  groupName: string;
+  rightCodes: string[];
+};
+
+export const RightsGroupList: RightsGroupType[] = [
   {
     groupCode: 'SUPERVISOR',
     groupName: '超级管理员',

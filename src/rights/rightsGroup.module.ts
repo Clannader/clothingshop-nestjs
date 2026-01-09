@@ -4,11 +4,14 @@
 import { Module } from '@nestjs/common';
 import { RightsGroupService } from './services';
 import { RightsGroupController } from './controllers';
-import { RightsGroupSchemaModule } from '@/entities/modules';
+import {
+  RightsGroupSchemaModule,
+  DeleteLogSchemaModule,
+} from '@/entities/modules';
 import { UserLogsModule } from '@/logs';
 
 @Module({
-  imports: [RightsGroupSchemaModule, UserLogsModule],
+  imports: [RightsGroupSchemaModule, UserLogsModule, DeleteLogSchemaModule],
   controllers: [RightsGroupController],
   providers: [RightsGroupService],
 })

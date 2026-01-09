@@ -20,6 +20,7 @@ import {
   SystemDataSchemaModule,
   DeleteLogSchemaModule,
   SystemConfigSchemaModule,
+  RightsGroupSchemaModule,
 } from '@/entities/modules';
 import { MemoryCacheModule } from '@/cache/modules';
 
@@ -27,6 +28,7 @@ import { MemoryCacheModule } from '@/cache/modules';
   imports: [
     DatabaseModule,
     RightsCodeSchemaModule,
+    RightsGroupSchemaModule,
     SequenceSchemaModule,
     SystemDataSchemaModule,
     DeleteLogSchemaModule,
