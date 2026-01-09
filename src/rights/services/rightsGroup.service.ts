@@ -67,7 +67,7 @@ export class RightsGroupService {
     }
     if (!Utils.isEmpty(paramsRightCodes)) {
       where.rightCodes = {
-        $in: paramsRightCodes,
+        $all: paramsRightCodes,
       };
     }
     const [err, result] = await Utils.toPromise(
