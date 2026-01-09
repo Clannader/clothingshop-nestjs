@@ -26,7 +26,8 @@ import {
   RespRightsGroupSearchDto,
   ReqRightsGroupSingleDto,
   RespRightsGroupSingleDto,
-  InfoRightsGroupDto, ListRightsGroupDto,
+  InfoRightsGroupDto,
+  ListRightsGroupDto,
 } from '../dto';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 
@@ -44,7 +45,10 @@ export class RightsGroupService {
   @Inject()
   private readonly deleteLogSchemaService: DeleteLogSchemaService;
 
-  async getRightsGroupList(session: CmsSession, params: ReqRightsGroupSearchDto) {
+  async getRightsGroupList(
+    session: CmsSession,
+    params: ReqRightsGroupSearchDto,
+  ) {
     const resp = new RespRightsGroupSearchDto();
     // 考虑是否分页,暂时不考虑
     const paramsShopId = params.shopId;
@@ -67,7 +71,10 @@ export class RightsGroupService {
       };
     }
     const [err, result] = await Utils.toPromise(
-      this.rightsGroupSchemaService.getModel().find(where, { __v: 0 }).sort({groupType: -1}),
+      this.rightsGroupSchemaService
+        .getModel()
+        .find(where, { __v: 0 })
+        .sort({ groupType: -1 }),
     );
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
@@ -77,7 +84,7 @@ export class RightsGroupService {
     const rightsGroupsList: ListRightsGroupDto[] = [];
     for (const row of result) {
       if (this.globalService.userHasRightsBoolean(session, ...row.rightCodes)) {
-        rightsGroupsList.push(plainToInstance(ListRightsGroupDto, row))
+        rightsGroupsList.push(plainToInstance(ListRightsGroupDto, row));
       }
     }
     resp.rightsGroups = rightsGroupsList;
@@ -534,9 +541,13 @@ export class RightsGroupService {
     }
 
     // 把数据库的值复制到返回类中,返回类需要加上@Expose()修饰器,说明那些字段需要返回
-    resp.rightsGroupInfo = plainToInstance(InfoRightsGroupDto, rightsGroupInfo, {
-      excludeExtraneousValues: true,
-    });
+    resp.rightsGroupInfo = plainToInstance(
+      InfoRightsGroupDto,
+      rightsGroupInfo,
+      {
+        excludeExtraneousValues: true,
+      },
+    );
     return resp;
   }
 }
