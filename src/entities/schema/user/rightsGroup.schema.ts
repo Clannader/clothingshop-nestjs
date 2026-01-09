@@ -55,6 +55,17 @@ export class RightsGroup {
 
   @Prop({
     type: String,
+    trim: true,
+    default: '', // 如果是默认权限组则为default
+  })
+  @WriteLog({
+    origin: '权限组类型',
+    key: 'rightsGroup.groupType', // 一般不可改变,所以一般不会有这个日志的变化
+  })
+  groupType: string; // 权限组类型
+
+  @Prop({
+    type: String,
     required: true,
     trim: true,
   })

@@ -10,4 +10,10 @@ export class ListRightsGroupDto extends CreateRightsGroupDto {
    */
   @Expose()
   id: string;
+
+  /**
+   * 权限组类型
+   */
+  @Expose()
+  groupType: string;
 }
