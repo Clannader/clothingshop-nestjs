@@ -46,9 +46,8 @@ export class RightsGroupService {
 
   getRightsGroupList(session: CmsSession, params: ReqRightsGroupSearchDto) {
     const resp = new RespRightsGroupSearchDto();
-    // 考虑是否分页
-    // 考虑是否在数据库中加入默认权限组标识
-    // 分页第一页把默认权限组放第一页
+    // 考虑是否分页,暂时不考虑
+
     return resp;
   }
 
@@ -259,6 +258,7 @@ export class RightsGroupService {
       const createRightsGroup = {
         groupName: paramsGroupName,
         groupCode: paramsGroupCode,
+        groupType: 'custom',
         rightCodes: paramsRightCodes,
         createUser: session.adminId,
         createDate: new Date(),
@@ -284,6 +284,7 @@ export class RightsGroupService {
     } else {
       newRightsGroup.updateUser = session.adminId;
       newRightsGroup.updateDate = new Date();
+      newRightsGroup.groupType = 'custom';
       await this.rightsGroupSchemaService
         .getModel()
         .syncSaveDBObject(newRightsGroup);

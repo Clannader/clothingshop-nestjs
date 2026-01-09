@@ -344,6 +344,7 @@ export class RepairDataService {
       newRightsGroup.groupCode = item.groupCode;
       newRightsGroup.groupName = item.groupName;
       newRightsGroup.rightCodes = item.rightCodes;
+      newRightsGroup.groupType = 'default';
 
       const mergeLogContent = [
         this.globalService.serverLang(
@@ -388,6 +389,7 @@ export class RepairDataService {
             groupCode: item.groupCode,
             groupName: item.groupName,
             rightCodes: item.rightCodes,
+            groupType: 'default',
             createUser: session.adminId,
             createDate: new Date(),
           };
