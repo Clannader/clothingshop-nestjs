@@ -84,7 +84,11 @@ export class RightsGroupService {
     const rightsGroupsList: ListRightsGroupDto[] = [];
     for (const row of result) {
       if (this.globalService.userHasRightsBoolean(session, ...row.rightCodes)) {
-        rightsGroupsList.push(plainToInstance(ListRightsGroupDto, row));
+        rightsGroupsList.push(
+          plainToInstance(ListRightsGroupDto, row, {
+            excludeExtraneousValues: true,
+          }),
+        );
       }
     }
     resp.rightsGroups = rightsGroupsList;
