@@ -11,7 +11,7 @@ import {
   singleGroupExp,
 } from '@/common';
 import { GlobalService, Utils } from '@/common/utils';
-import { instanceToInstance, plainToClass } from 'class-transformer';
+import { instanceToInstance, plainToInstance } from 'class-transformer';
 
 import { UserLogsService } from '@/logs';
 import {
@@ -499,7 +499,7 @@ export class RightsGroupService {
     }
 
     // 把数据库的值复制到返回类中,返回类需要加上@Expose()修饰器,说明那些字段需要返回
-    resp.rightsGroupInfo = plainToClass(InfoRightsGroupDto, rightsGroupInfo, {
+    resp.rightsGroupInfo = plainToInstance(InfoRightsGroupDto, rightsGroupInfo, {
       excludeExtraneousValues: true,
     });
     return resp;
