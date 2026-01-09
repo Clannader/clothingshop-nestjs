@@ -349,9 +349,9 @@ export class Utils {
   static getIgnoreCase(fieldName: string, mode = false): IgnoreCaseType {
     if (mode) {
       // mode=true就是模糊查询
-      return { $regex: fieldName, $options: 'i' };
+      return { $regex: this.escapeString(fieldName), $options: 'i' };
     }
-    return { $regex: '^' + fieldName + '$', $options: 'i' };
+    return { $regex: '^' + this.escapeString(fieldName) + '$', $options: 'i' };
   }
 
   static isSupervisor(session: CmsSession) {

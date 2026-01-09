@@ -26,7 +26,7 @@ import {
   RespRightsGroupSearchDto,
   ReqRightsGroupSingleDto,
   RespRightsGroupSingleDto,
-  InfoRightsGroupDto,
+  InfoRightsGroupDto, ListRightsGroupDto,
 } from '../dto';
 import { CodeEnum, LogTypeEnum } from '@/common/enum';
 
@@ -44,10 +44,44 @@ export class RightsGroupService {
   @Inject()
   private readonly deleteLogSchemaService: DeleteLogSchemaService;
 
-  getRightsGroupList(session: CmsSession, params: ReqRightsGroupSearchDto) {
+  async getRightsGroupList(session: CmsSession, params: ReqRightsGroupSearchDto) {
     const resp = new RespRightsGroupSearchDto();
     // 考虑是否分页,暂时不考虑
+    const paramsShopId = params.shopId;
+    const paramsGroupCode = params.groupCode;
+    const paramsGroupName = params.groupName;
+    const paramsRightCodes = params.rightCodes;
 
+    const where: Record<string, any> = {
+      shopId: paramsShopId,
+    };
+    if (!Utils.isEmpty(paramsGroupCode)) {
+      where.groupCode = Utils.getIgnoreCase(paramsGroupCode, true);
+    }
+    if (!Utils.isEmpty(paramsGroupName)) {
+      where.groupName = Utils.getIgnoreCase(paramsGroupName, true);
+    }
+    if (!Utils.isEmpty(paramsRightCodes)) {
+      where.rightCodes = {
+        $in: paramsRightCodes,
+      };
+    }
+    const [err, result] = await Utils.toPromise(
+      this.rightsGroupSchemaService.getModel().find(where, { __v: 0 }).sort({groupType: -1}),
+    );
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    const rightsGroupsList: ListRightsGroupDto[] = [];
+    for (const row of result) {
+      if (this.globalService.userHasRightsBoolean(session, ...row.rightCodes)) {
+        rightsGroupsList.push(plainToInstance(ListRightsGroupDto, row))
+      }
+    }
+    resp.rightsGroups = rightsGroupsList;
+    resp.total = rightsGroupsList.length;
     return resp;
   }
 
