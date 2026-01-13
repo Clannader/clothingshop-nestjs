@@ -75,7 +75,7 @@ Log4js.configure({
           },
         },
         serializers: {
-          bigint: (value: BigInt) => String(value), // 修改logs4js打印报错TypeError: Do not know how to serialize a BigInt
+          bigint: (value: bigint) => String(value), // 修改logs4js打印报错TypeError: Do not know how to serialize a BigInt
         },
       },
     },
@@ -92,7 +92,7 @@ Log4js.configure({
           },
         },
         serializers: {
-          bigint: (value: BigInt) => String(value), // 修改logs4js打印报错TypeError: Do not know how to serialize a BigInt
+          bigint: (value: bigint) => String(value), // 修改logs4js打印报错TypeError: Do not know how to serialize a BigInt
         },
       },
     },
