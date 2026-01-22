@@ -96,5 +96,6 @@ RSA数据库加解密
 关于嵌套文档的验证器不是很完善https://mongoosejs.com/docs/validation.html(Required Validators On Nested Objects)
 
 2026-01-07
-1.删除日志表新增shopId字段
+1.(删除日志表)新增shopId字段
 2.新增完用户表逻辑后,调整所有关于shopId的新建逻辑
+3.子文档的分页查询新增删除需要新增例子
