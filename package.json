@@ -118,7 +118,7 @@
     "@typescript-eslint/parser": "8.55.0",
     "ajv": "^8.17.1",
     "archiver": "^7.0.1",
-    "copy-webpack-plugin": "^13.0.1",
+    "copy-webpack-plugin": "^14.0.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
