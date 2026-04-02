@@ -21,6 +21,7 @@ print('总数:' + i)
 getLog 是一条管理命令,可返回最近记录的 1024 个 mongod 事件.
 getLog 无法从 mongod 日志文件中读取日志数据.相反,它会从记录的 mongod 事件的 RAM 缓存中读取数据.要运行 getLog,请使用 db.adminCommand() 方法.
 db.adminCommand( { getLog:'global'} ).log.forEach(x => {print(x)})
+日志文档,类型说明等https://www.mongodb.com/zh-cn/docs/manual/reference/log-messages/#std-label-log-severity-levels
 
 5.按条件导出数据
 文档  https://www.mongodb.com/zh-cn/docs/database-tools/mongoexport/
@@ -141,6 +142,9 @@ rs.reconfig(cfg)
 注意使用工具连接需要勾上直连Direct Connection,否则会使用副本集连接
 直连会出现: rs0 [direct: secondary] admin
 直连副本集是只能只读,只有主节点的才能写
+6.退出mongosh命令:quit()
+7.如何查看副本集哪一台是主节点:使用mongosh进入一台服务器,命令db.isMaster()可以查看副本集信息
+8.关于Mongodb日志记录优先级db.getLogComponents(),修改日志优先级db.setLogLevel(0)
 
 给副本集加入共享密码
 https://www.mongodb.com/zh-cn/docs/manual/tutorial/enforce-keyfile-access-control-in-existing-replica-set/
