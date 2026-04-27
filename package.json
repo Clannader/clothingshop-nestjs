@@ -40,7 +40,7 @@
     "@nestjs/cache-manager": "^3.1.0",
     "@nestjs/common": "^11.1.19",
     "@nestjs/core": "^11.1.18",
-    "@nestjs/event-emitter": "^3.0.1",
+    "@nestjs/event-emitter": "^3.1.0",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/mapped-types": "^2.1.1",
     "@nestjs/mongoose": "^11.0.4",
