@@ -16,5 +16,17 @@
       "runtimeExecutable": "npm",
       "console": "integratedTerminal"
     },
+    {
+      "name": "Run install dependencies",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeArgs": [
+        "uninstall",
+        "all"
+      ],
+      "runtimeExecutable": "npm",
+      "console": "integratedTerminal"
+    }
   ]
 }
