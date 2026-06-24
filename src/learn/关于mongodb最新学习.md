@@ -254,6 +254,13 @@ OWASP ZAP: https://www.zaproxy.org/download/
 删除包命令: npm unpublish 包名@版本号 --force
 下载npm包zip文件: npm pack 包名
 
+场景 A：刚发布就有问题（< 72 小时）
+│    # 直接删除有问题的版本
+│    npm unpublish my-package@1.0.0
+│    # 修复后升级版本号重新发布                                     
+│    npm version patch
+│    npm publish
+
 25.pm2 常用指令
 启动: pm2 start ecosystem.config.js
 pm2 stop ecosystem.config.js
