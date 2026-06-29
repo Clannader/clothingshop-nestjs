@@ -101,7 +101,7 @@ export class TimeZoneService {
     const [err, result] = await Utils.toPromise(
       this.systemDataSchemaService
         .getTimeZoneDataModel()
-        .find({}, { __v: 0, _id: 0 })
+        .find({}, { _id: 0 })
         .sort({ summer: 1 }),
     );
     if (err) {
