@@ -290,3 +290,8 @@ const schema = new Schema({
 `
 扩展地址: https://thecodebarbarian.com/whats-new-in-mongoose-5-13-sanitizeprojection.html
 mongoose文档更新博客: https://thecodebarbarian.com/tag/mongodb.html
+nestjs创建连接参数查看@nestjs/mongoose mongoose-core.module.js的createMongooseConnection
+`
+console.log(connection.get('XXX'))
+console.log(connection.config)
+`

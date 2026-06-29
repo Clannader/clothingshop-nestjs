@@ -61,6 +61,7 @@ export class TimeZoneService {
     const resp = new RespTimeZoneListDto();
     const timeZoneParams = params.timeZone;
     const where: SearchTimeZone = {};
+    console.log(this.mongooseConnection.config)
     if (!Utils.isEmpty(timeZoneParams)) {
       where.timeZone = Utils.getIgnoreCase(timeZoneParams, true);
     }
