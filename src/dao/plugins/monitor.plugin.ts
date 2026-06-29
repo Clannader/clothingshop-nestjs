@@ -1,7 +1,7 @@
 /**
  * Create by CC on 2022/6/3
  */
-import { Schema } from 'mongoose';
+import { Schema, SchemaOptions } from 'mongoose';
 import * as Log4js from 'log4js';
 import { Utils } from '@/common/utils';
 import { omit } from 'lodash';
@@ -16,6 +16,7 @@ type schemaConfig = {
       call: (arg0: any) => any;
     };
   };
+  get<K extends keyof SchemaOptions>(key: K): SchemaOptions[K];
 };
 
 export const monitorPlugin = function (schema: Schema): void {
@@ -87,6 +88,11 @@ export const monitorPlugin = function (schema: Schema): void {
 
     this.setOptions({
       _lastTime: new Date().getTime(),
+      // sanitizeFilter: true, // 如果想全局设置sanitizeFilter,只能通过中间件来设置,才有效
+    });
+    // 默认不返回__v
+    this.select({
+      [versionKey]: false,
     });
 
     // 查询使用下面的方法其实是设置更新的条件,也就是this.getUpdate()=this.set(xxx, value)里面的值
@@ -106,6 +112,10 @@ export const monitorPlugin = function (schema: Schema): void {
   schema.pre('findOne', function () {
     this.setOptions({
       _lastTime: new Date().getTime(),
+      // sanitizeFilter: true,
+    });
+    this.select({
+      [versionKey]: false,
     });
   });
   schema.post('findOne', function (result) {
@@ -115,6 +125,10 @@ export const monitorPlugin = function (schema: Schema): void {
   schema.pre('findOneAndUpdate', function () {
     this.setOptions({
       _lastTime: new Date().getTime(),
+      // sanitizeFilter: true,
+    });
+    this.select({
+      [versionKey]: false,
     });
     // 如果参数里面设置了{upsert: true}, __v则不会加1,就算数据库中有数据也不会加1,因为这个参数的意思就是新建
     // 所以只有findOneAndUpdate加了upsert参数后就认为是新建了,会重置所有字段的值,所以每次运行都只能设置成0
@@ -138,6 +152,10 @@ export const monitorPlugin = function (schema: Schema): void {
   schema.pre('updateOne', function () {
     this.setOptions({
       _lastTime: new Date().getTime(),
+      // sanitizeFilter: true,
+    });
+    this.select({
+      [versionKey]: false,
     });
     const $where = this.getUpdate();
     // 更新时如果加上{upsert: true},需要删除$setOnInsert里面的__v,不然报异常
@@ -163,6 +181,10 @@ export const monitorPlugin = function (schema: Schema): void {
   schema.pre('deleteOne', function () {
     this.setOptions({
       _lastTime: new Date().getTime(),
+      // sanitizeFilter: true,
+    });
+    this.select({
+      [versionKey]: false,
     });
   });
   schema.post('deleteOne', function (result) {
@@ -188,11 +210,12 @@ const writeQueryLog = function (schema: schemaConfig, result: any) {
 
 const writeDocumentLog = function (schema: schemaConfig, result: any) {
   const cloneResult = JSON.parse(JSON.stringify(result));
+  const versionKey: string = schema.get('versionKey') as string;
   const logJSON = {
     methodName: this.$op, // 要不然写死create|save,要么写this.$op
     modelName: schema.statics['getAliasName'].call(this),
     result: JSON.stringify(cloneResult),
-    params: JSON.stringify(omit(cloneResult, '_id', '__v')),
+    params: JSON.stringify(omit(cloneResult, '_id', versionKey)),
     diffTime: new Date().getTime() - this.$locals.lastTime,
     id: cloneResult._id,
     type: 'DocumentLog',

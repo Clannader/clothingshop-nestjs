@@ -295,3 +295,6 @@ nestjs创建连接参数查看@nestjs/mongoose mongoose-core.module.js的createM
 console.log(connection.get('XXX'))
 console.log(connection.config)
 `
+
+28.Schema可以添加timestamps:true来自动给Schema添加修改日期,生成日期等属性,也可以修改__v这个版本的字段名
+@Schema({ discriminatorKey: 'type', timestamps: true })
