@@ -1039,15 +1039,11 @@ export class SystemConfigService {
     let err: ErrorPromise, result: ParentConfigElement | ChildrenConfigElement;
     if (Utils.isEmpty(groupName)) {
       [err, result] = await Utils.toPromise(
-        this.systemConfigSchemaService
-          .getParentConfigModel()
-          .findOne(where),
+        this.systemConfigSchemaService.getParentConfigModel().findOne(where),
       );
     } else {
       [err, result] = await Utils.toPromise(
-        this.systemConfigSchemaService
-          .getChildrenConfigModel()
-          .findOne(where),
+        this.systemConfigSchemaService.getChildrenConfigModel().findOne(where),
       );
     }
     if (err) {

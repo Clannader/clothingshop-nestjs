@@ -467,9 +467,7 @@ export class SessionMongoStore extends session.Store {
     callback: (
       err: any,
       obj?:
-        | session.SessionData[]
-        | { [sid: string]: session.SessionData }
-        | null,
+        session.SessionData[] | { [sid: string]: session.SessionData } | null,
     ) => void,
   ): void {
     (async () => {
