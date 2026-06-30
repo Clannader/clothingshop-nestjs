@@ -58,7 +58,7 @@ export class RightsCodesService {
     const [err, result] = await Utils.toPromise(
       this.rightsCodesSchemaService
         .getModel()
-        .find(where, { __v: 0 })
+        .find(where)
         .sort({ code: 1 }),
     );
     if (err) {

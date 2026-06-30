@@ -97,6 +97,9 @@ export class MongooseConfigService implements MongooseOptionsFactory {
         this.connection = connection;
         return connection;
       },
+      // 问题是设置这个属性无效,真是奇怪,connection里面是有这个属性了,但是没有效果
+      // 难道model和connection的设置是分开的???
+      sanitizeFilter: true, // 解决NoSQL注入,全局设置过滤属性,但是会有问题,不清楚是用户输入的条件还是开发的硬编码条件
     };
     if (this.configService.get<boolean>('mongoDBSSL')) {
       options.tls = true;

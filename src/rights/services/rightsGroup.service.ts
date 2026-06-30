@@ -73,7 +73,7 @@ export class RightsGroupService {
     const [err, result] = await Utils.toPromise(
       this.rightsGroupSchemaService
         .getModel()
-        .find(where, { __v: 0 })
+        .find(where)
         .sort({ groupType: -1 }),
     );
     if (err) {

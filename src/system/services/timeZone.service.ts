@@ -61,14 +61,18 @@ export class TimeZoneService {
     const resp = new RespTimeZoneListDto();
     const timeZoneParams = params.timeZone;
     const where: SearchTimeZone = {};
+
+    // console.log(this.mongooseConnection.config)
+
     if (!Utils.isEmpty(timeZoneParams)) {
       where.timeZone = Utils.getIgnoreCase(timeZoneParams, true);
     }
     const [err, result] = await Utils.toPromise(
       this.systemDataSchemaService
         .getTimeZoneDataModel()
-        .find(where, { __v: 0 })
+        .find(where)
         .sort({ _id: -1 }),
+      //.select('__v'),
     );
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
@@ -97,7 +101,7 @@ export class TimeZoneService {
     const [err, result] = await Utils.toPromise(
       this.systemDataSchemaService
         .getTimeZoneDataModel()
-        .find({}, { __v: 0, _id: 0 })
+        .find({}, { _id: 0 })
         .sort({ summer: 1 }),
     );
     if (err) {
