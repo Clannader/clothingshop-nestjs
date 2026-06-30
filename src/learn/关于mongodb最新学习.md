@@ -270,3 +270,31 @@ pm2 monit
 26.修改Mongodb的索引方式
 db.runCommand({collMod: "表名",index: {name: "索引名",expireAfterSeconds: 修改时间}})
 db.runCommand({collMod: "commonLogs",index: {name: "expire_clear",expireAfterSeconds: 2764800}})
+
+27.修复Mongoose NoSQL注入问题
+github问题贴:https://github.com/AndyBeat/clothingshop-nestjs/security/dependabot/118
+sanitizeFilter 文档：https://mongoosejs.com/docs/api/mongoose.html#Mongoose.prototype.sanitizeFilter()
+关于 sanitizeFilter 的原始博客文章：https://thecodebarbarian.com/whats-new-in-mongoose-6-sanitizefilter.html
+方式1: 条件方法加 .setOptions({sanitizeFilter:true}) √
+方式2: mongoose的options加sanitizeFilter:true似乎无效 ×
+方式3: import { sanitizeFilter } from 'mongoose'; orgWhere = sanitizeFilter(where) √
+方式4: import { trusted } from 'mongoose'; 加入可信过滤器: orgWhere = trusted({ $ne: true }), 把该条件转成可信的SQL √
+
+扩展问题: 当Schema设置某个字段无法select,也就是无法通过filter筛选出来时,但是还可以通过.select({ name: '$password' });返回password该字段的值
+需要加.setOptions({ sanitizeProjection: true });来设置不返回password,返回的是name.
+`
+const schema = new Schema({
+  name: String,
+  password: { type: String, select: false }
+});
+`
+扩展地址: https://thecodebarbarian.com/whats-new-in-mongoose-5-13-sanitizeprojection.html
+mongoose文档更新博客: https://thecodebarbarian.com/tag/mongodb.html
+nestjs创建连接参数查看@nestjs/mongoose mongoose-core.module.js的createMongooseConnection
+`
+console.log(connection.get('XXX'))
+console.log(connection.config)
+`
+
+28.Schema可以添加timestamps:true来自动给Schema添加修改日期,生成日期等属性,也可以修改__v这个版本的字段名
+@Schema({ discriminatorKey: 'type', timestamps: true })

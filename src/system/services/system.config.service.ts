@@ -111,14 +111,14 @@ export class SystemConfigService {
       [err, result] = await Utils.toPromise(
         this.systemConfigSchemaService
           .getParentConfigModel()
-          .find(where, { __v: 0 })
+          .find(where)
           .sort({ _id: -1 }),
       );
     } else {
       [err, result] = await Utils.toPromise(
         this.systemConfigSchemaService
           .getChildrenConfigModel()
-          .find(where, { __v: 0 })
+          .find(where)
           .sort({ _id: -1 }),
       );
     }
@@ -138,7 +138,7 @@ export class SystemConfigService {
       const [errChildren, childrenArray] = await Utils.toPromise(
         this.systemConfigSchemaService
           .getChildrenConfigModel()
-          .find(childrenWhere, { __v: 0 })
+          .find(childrenWhere)
           .sort({ _id: -1 }),
       );
       if (errChildren) {
@@ -1041,13 +1041,13 @@ export class SystemConfigService {
       [err, result] = await Utils.toPromise(
         this.systemConfigSchemaService
           .getParentConfigModel()
-          .findOne(where, { __v: 0 }),
+          .findOne(where),
       );
     } else {
       [err, result] = await Utils.toPromise(
         this.systemConfigSchemaService
           .getChildrenConfigModel()
-          .findOne(where, { __v: 0 }),
+          .findOne(where),
       );
     }
     if (err) {
