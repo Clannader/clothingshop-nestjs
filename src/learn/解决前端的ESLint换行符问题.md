@@ -1,4 +1,4 @@
-# 解决前端的 ESLint 换行符问题
+﻿# 解决前端的 ESLint 换行符问题
 
 > 原文链接：https://zhuanlan.zhihu.com/p/418972384
 

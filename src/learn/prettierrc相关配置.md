@@ -1,4 +1,4 @@
-# Prettier 相关配置说明
+﻿# Prettier 相关配置说明
 
 ## 配置解析
 

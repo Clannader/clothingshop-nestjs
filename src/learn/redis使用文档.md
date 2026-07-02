@@ -1,4 +1,4 @@
-# Redis 使用文档
+﻿# Redis 使用文档
 
 ## ioredis 和 redis 包区别 — 两个 npm 包对比分析
 

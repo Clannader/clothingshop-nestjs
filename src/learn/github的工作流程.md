@@ -1,4 +1,4 @@
-# GitHub 工作流程
+﻿# GitHub 工作流程
 
 ---
 
@@ -76,11 +76,11 @@ git pull xxx/xxx.git branch号
 
 ## 8. 项目配置相关
 
-1. 项目中新增 `.npmrc` 可以覆盖全局的 `.npmrc` 配置
-2. 项目中新增 `.github` 目录下的 `workflows` 可以指定 PR 和 push 分支时自动执行检测脚本
-3. 项目中的 `.github` 还可以设置默认的 PR 检查列表
-4. 项目中新增 `renovate.json` 可以让 github 的机器人自动更新最新依赖包版本
-5. electron 项目的 build，第一次的时候需要使用管理员权限执行 `npm run build` 才能成功，后面的 build 可以使用 IDEA 执行
+- 8. 项目中新增 `.npmrc` 可以覆盖全局的 `.npmrc` 配置
+- 9. 项目中新增 `.github` 目录下的 `workflows` 可以指定 PR 和 push 分支时自动执行检测脚本
+- 10. 项目中的 `.github` 还可以设置默认的 PR 检查列表
+- 11. 项目中新增 `renovate.json` 可以让 github 的机器人自动更新最新依赖包版本
+- 12. electron 项目的 build，第一次的时候需要使用管理员权限执行 `npm run build` 才能成功，后面的 build 可以使用 IDEA 执行
 
 ---
 

@@ -1,4 +1,4 @@
-# MongoDB 最新学习笔记
+﻿# MongoDB 最新学习笔记
 
 > 涵盖 MongoDB 日常运维、副本集搭建、索引优化、Mongoose 安全防护等 28 个知识点。
 
