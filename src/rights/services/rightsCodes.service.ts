@@ -56,10 +56,7 @@ export class RightsCodesService {
     }
 
     const [err, result] = await Utils.toPromise(
-      this.rightsCodesSchemaService
-        .getModel()
-        .find(where)
-        .sort({ code: 1 }),
+      this.rightsCodesSchemaService.getModel().find(where).sort({ code: 1 }),
     );
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;

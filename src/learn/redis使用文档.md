@@ -1,15 +1,24 @@
-ioredis和redis这2个包有什么区别
+﻿# Redis 使用文档
+
+## ioredis 和 redis 包区别 — 两个 npm 包对比分析
 
 ---
 
+## 1. ioredis 和 redis 两个 npm 包的区别
 
 ioredis 和 redis 两个 npm 包的区别：
 
-**1. 维护状态**
+---
+
+### 1.1 维护状态
+
 - `ioredis`：活跃维护，推荐使用
 - `redis`：旧版本（v3）已停止维护，v4+ 重新活跃
 
-**2. API 风格**
+---
+
+### 1.2 API 风格
+
 ```javascript
 // ioredis - 默认 Promise
 const Redis = require('ioredis');
@@ -29,7 +38,10 @@ await client.connect();
 await client.set('key', 'value');
 ```
 
-**3. 集群支持**
+---
+
+### 1.3 集群支持
+
 ```javascript
 // ioredis - 原生支持集群
 const Redis = require('ioredis');
@@ -48,7 +60,10 @@ const cluster = redis.createCluster({
 });
 ```
 
-**4. 哨兵模式**
+---
+
+### 1.4 哨兵模式
+
 ```javascript
 // ioredis - 简单配置
 const redis = new Redis({
@@ -68,7 +83,10 @@ const client = redis.createClient({
 });
 ```
 
-**5. Pipeline**
+---
+
+### 1.5 Pipeline
+
 ```javascript
 // ioredis
 const pipeline = redis.pipeline();
@@ -84,7 +102,9 @@ const results = await client
   .exec();
 ```
 
-**6. 性能和功能对比**
+---
+
+### 1.6 性能和功能对比
 
 | 特性 | ioredis | redis v4+ |
 |------|---------|-----------|
@@ -96,7 +116,10 @@ const results = await client
 | TypeScript | ✅ | ✅ |
 | 文档 | 完善 | 完善 |
 
-**推荐选择：**
+---
+
+### 1.7 推荐选择
+
 ```javascript
 // 推荐 ioredis（更成熟稳定）
 npm install ioredis
@@ -105,7 +128,10 @@ npm install ioredis
 npm install redis
 ```
 
-**总结：**
+---
+
+### 1.8 总结
+
 - `ioredis`：功能更丰富，集群支持更好，社区首选
 - `redis v4+`：官方包，功能追赶中，也是不错的选择
 - 两者都支持 Promise，性能相近
@@ -113,11 +139,11 @@ npm install redis
 
 ---
 
-给我一个企业级流程使用Redis案例
-
----
+## 2. 企业级 Redis 使用案例 — 分布式任务队列系统
 
 企业级 Redis 使用案例 - 分布式任务队列系统：
+
+### 2.1 完整代码实现
 
 ```typescript
 import Redis from 'ioredis';
@@ -331,7 +357,10 @@ export class OrderService {
 }
 ```
 
-**核心功能：**
+---
+
+### 2.2 核心功能
+
 - 分布式锁：防止并发问题
 - 任务队列：异步处理
 - 延迟队列：定时任务
@@ -342,17 +371,15 @@ export class OrderService {
 - 发布订阅：事件驱动
 - 布隆过滤器：防缓存穿透
 
-
 ---
 
-使用Nestjs如何连接Redis服务器
-
----
-
+## 3. NestJS 连接 Redis 服务器
 
 NestJS 连接 Redis 服务器的方法：
 
-**方案1：使用 @liaoliaots/nestjs-redis（推荐）**
+---
+
+### 3.1 方案 1：使用 @liaoliaots/nestjs-redis（推荐）
 
 ```bash
 npm install @liaoliaots/nestjs-redis ioredis
@@ -396,7 +423,9 @@ export class AppService {
 }
 ```
 
-**方案2：使用 nestjs-redis**
+---
+
+### 3.2 方案 2：使用 nestjs-redis
 
 ```bash
 npm install nestjs-redis ioredis
@@ -419,7 +448,9 @@ import { RedisModule } from 'nestjs-redis';
 export class AppModule {}
 ```
 
-**方案3：直接使用 ioredis**
+---
+
+### 3.3 方案 3：直接使用 ioredis
 
 ```bash
 npm install ioredis
@@ -468,16 +499,15 @@ export class AppService {
 }
 ```
 
-**推荐使用 `@liaoliaots/nestjs-redis`**，功能完善且维护活跃。
+> **推荐使用 `@liaoliaots/nestjs-redis`**，功能完善且维护活跃。
 
 ---
 
-如何使用ioredis使用redis的基本功能，请写出例子
-
----
-
+## 4. ioredis 基本功能示例
 
 使用 ioredis 的基本功能示例：
+
+### 4.1 基本操作示例
 
 ```javascript
 const Redis = require('ioredis');
@@ -553,7 +583,10 @@ pub.publish('channel', 'Hello Redis');
 await redis.quit();
 ```
 
-**常用方法总结：**
+---
+
+### 4.2 常用方法总结
+
 ```javascript
 // 字符串
 redis.set(key, value)

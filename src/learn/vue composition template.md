@@ -1,4 +1,10 @@
-模版一:
+﻿# Vue Composition API 模板
+
+---
+
+## 1. 模板一
+
+```vue
 <script setup${SCRIPT_LANG_ATTR}>
 
 </script>
@@ -10,8 +16,13 @@
 <style scoped${STYLE_LANG_ATTR}>
 
 </style>
+```
 
-模版二:
+---
+
+## 2. 模板二
+
+```vue
 <template>
 #[[$END$]]#
 </template>
@@ -21,3 +32,4 @@
        name: '${NAME}'
     })
 </script>
+```
