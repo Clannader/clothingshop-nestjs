@@ -4,7 +4,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { TestSubRecordModel, TestSubRecord } from '../../schema'
+import { TestSubRecordModel, TestSubRecord } from '../../schema';
 
 @Injectable()
 export class TestSubRecordSchemaService {

@@ -13,13 +13,19 @@ export class TestSubRecord {
     trim: true,
   })
   name: string; // 子文档名称
+
+  @Prop({
+    type: String,
+    trim: true,
+  })
+  phone: string; // 测试字段-电话
 }
 
-export type TestSubRecordDocument = HydratedDocument<TestSubRecord>
+export type TestSubRecordDocument = HydratedDocument<TestSubRecord>;
 export const TestSubRecordSchema = SchemaFactory.createForClass(TestSubRecord);
 TestSubRecordSchema.statics.getAliasName = function () {
   return 'TestSubRecord';
-}
+};
 export interface TestSubRecordModel extends Model<TestSubRecord> {
   getAliasName(): string;
 }

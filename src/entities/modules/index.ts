@@ -5,3 +5,4 @@ export * from './log';
 export * from './statistics';
 export * from './system';
 export * from './user';
+export * from './test';
