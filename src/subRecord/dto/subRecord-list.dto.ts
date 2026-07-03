@@ -20,5 +20,5 @@ export class SubRecordListDto {
    * 价格
    */
   @Expose()
-  price: BigInt;
+  price: number;
 }

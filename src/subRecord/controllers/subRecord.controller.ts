@@ -36,7 +36,7 @@ export class SubRecordController {
   @ApiCustomResponse({
     type: RespSubRecordListDto,
   })
-  getTimeZoneList(@Query() params: ReqSubRecordListDto) {
+  getTestOrderList(@Query() params: ReqSubRecordListDto) {
     return this.subRecordService.getTestOrderList(params);
   }
 }

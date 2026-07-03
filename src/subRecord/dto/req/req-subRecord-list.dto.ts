@@ -2,7 +2,7 @@
  * Create by oliver.wu 2026/7/3
  */
 import { Expose } from 'class-transformer';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class ReqSubRecordListDto {
   /**
@@ -10,5 +10,6 @@ export class ReqSubRecordListDto {
    */
   @Expose()
   @IsString()
+  @IsOptional()
   subName: string;
 }
