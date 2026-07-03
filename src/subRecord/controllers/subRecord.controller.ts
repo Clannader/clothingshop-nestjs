@@ -19,7 +19,6 @@ import { HttpInterceptor } from '@/interceptor/http';
 import { SubRecordService } from '../services';
 import { ApiOperation } from '@nestjs/swagger';
 import { ReqSubRecordListDto, RespSubRecordListDto } from '@/subRecord/dto';
-import { ApiRights, RightsEnum } from '@/rights';
 
 @ApiCommon()
 @Controller('/cms/api/subRecord')
@@ -37,7 +36,6 @@ export class SubRecordController {
   @ApiCustomResponse({
     type: RespSubRecordListDto,
   })
-  @ApiRights(RightsEnum.TimeZoneList)
   getTimeZoneList(@Query() params: ReqSubRecordListDto) {
     return this.subRecordService.getTestOrderList(params);
   }
