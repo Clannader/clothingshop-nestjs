@@ -11,5 +11,5 @@ export class ReqSubRecordListDto {
   @Expose()
   @IsString()
   @IsOptional()
-  subName: string;
+  subName?: string;
 }
