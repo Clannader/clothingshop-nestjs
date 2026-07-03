@@ -10,8 +10,8 @@ import {
   ParentConfigSchema,
   ChildrenConfig,
   ChildrenConfigSchema,
-} from '../schema';
-import { SystemConfigSchemaService } from '../services';
+} from '../../schema';
+import { SystemConfigSchemaService } from '../../services';
 
 @Module({
   imports: [

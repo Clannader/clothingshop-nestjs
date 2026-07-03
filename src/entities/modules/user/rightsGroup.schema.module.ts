@@ -3,8 +3,8 @@
  */
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RightsGroup, RightsGroupSchema } from '../schema';
-import { RightsGroupSchemaService } from '../services';
+import { RightsGroup, RightsGroupSchema } from '../../schema';
+import { RightsGroupSchemaService } from '../../services';
 
 @Module({
   imports: [

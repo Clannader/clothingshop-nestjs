@@ -3,8 +3,8 @@
  */
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { DeleteLog, DeleteLogSchema } from '../schema';
-import { DeleteLogSchemaService } from '../services';
+import { DeleteLog, DeleteLogSchema } from '../../schema';
+import { DeleteLogSchemaService } from '../../services';
 
 @Module({
   imports: [

@@ -8,8 +8,8 @@ import {
   SystemData,
   TimeZoneData,
   TimeZoneDataSchema,
-} from '../schema';
-import { SystemDataSchemaService } from '../services';
+} from '../../schema';
+import { SystemDataSchemaService } from '../../services';
 
 @Module({
   imports: [

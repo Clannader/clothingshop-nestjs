@@ -3,8 +3,8 @@
  */
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Sequence, SequenceSchema } from '../schema';
-import { SequenceSchemaService } from '../services';
+import { Sequence, SequenceSchema } from '../../schema';
+import { SequenceSchemaService } from '../../services';
 
 @Module({
   imports: [
