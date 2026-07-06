@@ -7,6 +7,7 @@ import { Model, HydratedDocument } from 'mongoose';
 
 @Schema({
   autoIndex: true, // 要设置这个参数,@Prop下的自动索引才能生效
+  versionKey: 'v',
 })
 export class TestSubRecord {
   @Prop({
@@ -23,6 +24,10 @@ export class TestSubRecord {
   })
   phone: string; // 测试字段-电话
 }
+
+// TODO 测试的方向：
+// 1. 2种方式引入子文档,创建子文档时看是否能校验字段
+// 2. 查询分页子文档,多进程创建子文档(漏洞:可能会创建多个),删除修改子文档等操作
 
 export type TestSubRecordDocument = HydratedDocument<TestSubRecord>;
 export const TestSubRecordSchema = SchemaFactory.createForClass(TestSubRecord);

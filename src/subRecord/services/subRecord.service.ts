@@ -10,9 +10,11 @@ import {
   RespSubRecordListDto,
   SubRecordListDto,
   ReqSubRecordCreateMasterDto,
+  ReqSubRecordQueryMasterDto,
+  RespSubRecordQueryMasterDto,
 } from '@/subRecord/dto';
 
-import { CmsSession, CommonResult } from '@/common';
+import { CmsSession, CommonResult, RespModifyDataDto } from '@/common';
 import { CodeEnum } from '@/common/enum';
 import { Utils } from '@/common/utils';
 
@@ -34,6 +36,7 @@ export class SubRecordService {
     }
     const orderList: SubRecordListDto[] = [];
     for (const row of result) {
+      const order = new SubRecordListDto();
     }
 
     resp.orders = orderList;
@@ -43,7 +46,7 @@ export class SubRecordService {
   }
 
   async createMasterDoc(params: ReqSubRecordCreateMasterDto) {
-    const resp = new CommonResult();
+    const resp = new RespModifyDataDto();
 
     const createMaster = {
       name: params.name,
@@ -51,7 +54,32 @@ export class SubRecordService {
     };
 
     // 新增全局拦截Mongodb异常,不用每个地方都单独处理,除非逻辑上需要改变
-    await this.testSubRecordSchemaService.getModel().create(createMaster);
+    const newRecord = await this.testSubRecordSchemaService
+      .getModel()
+      .create(createMaster);
+
+    resp.id = newRecord.id;
+    return resp;
+  }
+
+  async getMasterList(params: ReqSubRecordQueryMasterDto) {
+    const resp = new RespSubRecordQueryMasterDto();
+
+    const [err, result] = await Utils.toPromise(
+      this.testSubRecordSchemaService.getModel().find(),
+    );
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
+    const orderList: SubRecordListDto[] = [];
+    for (const row of result) {
+      const order = new SubRecordListDto();
+    }
+
+    // resp.orders = orderList;
+    resp.code = CodeEnum.SUCCESS;
 
     return resp;
   }
