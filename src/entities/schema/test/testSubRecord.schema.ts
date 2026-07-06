@@ -11,6 +11,7 @@ export class TestSubRecord {
     type: String,
     required: true,
     trim: true,
+    unique: true, // 自动创建唯一索引
   })
   name: string; // 子文档名称
 

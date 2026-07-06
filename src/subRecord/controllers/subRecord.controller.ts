@@ -12,13 +12,20 @@ import {
   Query,
   UseGuards,
   UseInterceptors,
+  Post,
+  Body,
 } from '@nestjs/common';
 import { SessionGuard } from '@/guard';
 import { HttpInterceptor } from '@/interceptor/http';
 
 import { SubRecordService } from '../services';
 import { ApiOperation } from '@nestjs/swagger';
-import { ReqSubRecordListDto, RespSubRecordListDto } from '@/subRecord/dto';
+import {
+  ReqSubRecordListDto,
+  RespSubRecordListDto,
+  ReqSubRecordCreateMasterDto,
+} from '@/subRecord/dto';
+import { CommonResult } from '@/common';
 
 @ApiCommon()
 @Controller('/cms/api/subRecord')
@@ -38,5 +45,17 @@ export class SubRecordController {
   })
   getTestOrderList(@Query() params: ReqSubRecordListDto) {
     return this.subRecordService.getTestOrderList(params);
+  }
+
+  @Post('/createMaster')
+  @ApiOperation({
+    summary: '创建主文档',
+    description: '创建主文档',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  createMasterDoc(@Body() params: ReqSubRecordCreateMasterDto) {
+    return this.subRecordService.createMasterDoc(params);
   }
 }

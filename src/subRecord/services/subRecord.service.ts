@@ -9,9 +9,10 @@ import {
   ReqSubRecordListDto,
   RespSubRecordListDto,
   SubRecordListDto,
+  ReqSubRecordCreateMasterDto,
 } from '@/subRecord/dto';
 
-import { CmsSession } from '@/common';
+import { CmsSession, CommonResult } from '@/common';
 import { CodeEnum } from '@/common/enum';
 import { Utils } from '@/common/utils';
 
@@ -38,6 +39,24 @@ export class SubRecordService {
     resp.orders = orderList;
     resp.code = CodeEnum.SUCCESS;
 
+    return resp;
+  }
+
+  async createMasterDoc(params: ReqSubRecordCreateMasterDto) {
+    const resp = new CommonResult();
+
+    const createMaster = {
+      name: params.name,
+      phone: params.phone,
+    };
+    const [err] = await Utils.toPromise(
+      this.testSubRecordSchemaService.getModel().create(createMaster),
+    );
+    if (err) {
+      resp.code = CodeEnum.DB_EXEC_ERROR;
+      resp.msg = err.message;
+      return resp;
+    }
     return resp;
   }
 }
