@@ -17,6 +17,7 @@ import {
 import { CmsSession, CommonResult, RespModifyDataDto } from '@/common';
 import { CodeEnum } from '@/common/enum';
 import { Utils } from '@/common/utils';
+import { SubRecordInfoMasterDto } from '@/subRecord/dto/subRecord-InfoMaster.dto';
 
 @Injectable()
 export class SubRecordService {
@@ -65,22 +66,27 @@ export class SubRecordService {
   async getMasterList(params: ReqSubRecordQueryMasterDto) {
     const resp = new RespSubRecordQueryMasterDto();
 
-    const [err, result] = await Utils.toPromise(
-      this.testSubRecordSchemaService.getModel().find(),
-    );
-    if (err) {
-      resp.code = CodeEnum.DB_EXEC_ERROR;
-      resp.msg = err.message;
-      return resp;
-    }
-    const orderList: SubRecordListDto[] = [];
+    // 考虑测试name={$ne:''}这种NoSQL的漏洞查询
+    const where = {
+      name: params.name,
+      phone: params.phone,
+    };
+
+    const result = await this.testSubRecordSchemaService
+      .getModel()
+      .find(where)
+      .setOptions({ sanitizeFilter: true });
+
+    const itemList: SubRecordInfoMasterDto[] = [];
     for (const row of result) {
-      const order = new SubRecordListDto();
+      const item = new SubRecordInfoMasterDto();
+      item.name = row.name;
+      item.phone = row.phone;
+      itemList.push(item);
     }
 
-    // resp.orders = orderList;
+    resp.items = itemList;
     resp.code = CodeEnum.SUCCESS;
-
     return resp;
   }
 }
