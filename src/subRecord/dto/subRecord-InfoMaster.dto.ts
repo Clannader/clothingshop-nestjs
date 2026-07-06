@@ -9,6 +9,11 @@ import { IsDefined, IsArray } from 'class-validator';
 
 export class SubRecordInfoMasterDto extends SubRecordCreateMasterDto {
   /**
+   *  数据的ID
+   */
+  id: string;
+
+  /**
    * 订单列表
    */
   @Expose()

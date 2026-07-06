@@ -67,10 +67,13 @@ export class SubRecordService {
     const resp = new RespSubRecordQueryMasterDto();
 
     // 考虑测试name={$ne:''}这种NoSQL的漏洞查询
-    const where = {
-      name: params.name,
-      phone: params.phone,
-    };
+    const where: Record<string, any> = {};
+    if (!Utils.isEmpty(params.name)) {
+      where.name = params.name;
+    }
+    if (!Utils.isEmpty(params.name)) {
+      where.phone = params.phone;
+    }
 
     const result = await this.testSubRecordSchemaService
       .getModel()
@@ -82,6 +85,7 @@ export class SubRecordService {
       const item = new SubRecordInfoMasterDto();
       item.name = row.name;
       item.phone = row.phone;
+      item.id = row.id;
       itemList.push(item);
     }
 
