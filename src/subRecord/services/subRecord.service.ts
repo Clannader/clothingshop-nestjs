@@ -12,12 +12,12 @@ import {
   ReqSubRecordCreateMasterDto,
   ReqSubRecordQueryMasterDto,
   RespSubRecordQueryMasterDto,
+  SubRecordInfoMasterDto,
 } from '@/subRecord/dto';
 
 import { CmsSession, CommonResult, RespModifyDataDto } from '@/common';
 import { CodeEnum } from '@/common/enum';
 import { Utils } from '@/common/utils';
-import { SubRecordInfoMasterDto } from '@/subRecord/dto/subRecord-InfoMaster.dto';
 
 @Injectable()
 export class SubRecordService {
@@ -69,10 +69,10 @@ export class SubRecordService {
     // 考虑测试name={$ne:''}这种NoSQL的漏洞查询
     const where: Record<string, any> = {};
     if (!Utils.isEmpty(params.name)) {
-      where.name = params.name;
+      where.name = Utils.getIgnoreCase(params.name, true);
     }
-    if (!Utils.isEmpty(params.name)) {
-      where.phone = params.phone;
+    if (!Utils.isEmpty(params.phone)) {
+      where.phone = Utils.getIgnoreCase(params.phone, true);
     }
 
     const result = await this.testSubRecordSchemaService
