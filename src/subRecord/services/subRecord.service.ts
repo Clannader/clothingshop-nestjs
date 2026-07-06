@@ -49,14 +49,10 @@ export class SubRecordService {
       name: params.name,
       phone: params.phone,
     };
-    const [err] = await Utils.toPromise(
-      this.testSubRecordSchemaService.getModel().create(createMaster),
-    );
-    if (err) {
-      resp.code = CodeEnum.DB_EXEC_ERROR;
-      resp.msg = err.message;
-      return resp;
-    }
+
+    // 新增全局拦截Mongodb异常,不用每个地方都单独处理,除非逻辑上需要改变
+    await this.testSubRecordSchemaService.getModel().create(createMaster);
+
     return resp;
   }
 }
