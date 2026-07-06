@@ -321,9 +321,9 @@ rs.reconfig(cfg)
 
 ### 16.4 其他常用操作
 
-6. 退出 mongosh 命令：`quit()`
-7. 如何查看副本集哪一台是主节点：使用 mongosh 进入一台服务器，命令 `db.isMaster()` 可以查看副本集信息
-8. 关于 MongoDB 日志记录优先级 `db.getLogComponents()`，修改日志优先级 `db.setLogLevel(0)`
+1. 退出 mongosh 命令：`quit()`
+2. 如何查看副本集哪一台是主节点：使用 mongosh 进入一台服务器，命令 `db.isMaster()` 可以查看副本集信息
+3. 关于 MongoDB 日志记录优先级 `db.getLogComponents()`，修改日志优先级 `db.setLogLevel(0)`
 
 ### 16.5 给副本集加入共享密码
 

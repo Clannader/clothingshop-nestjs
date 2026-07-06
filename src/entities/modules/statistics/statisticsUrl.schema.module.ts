@@ -3,8 +3,8 @@
  */
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { StatisticsUrl, StatisticsUrlSchema } from '../schema';
-import { StatisticsUrlSchemaService } from '../services';
+import { StatisticsUrl, StatisticsUrlSchema } from '../../schema';
+import { StatisticsUrlSchemaService } from '../../services';
 
 @Module({
   imports: [

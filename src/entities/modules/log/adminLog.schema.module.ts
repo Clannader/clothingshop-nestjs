@@ -3,8 +3,8 @@
  */
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AdminLog, AdminLogSchema } from '../schema';
-import { AdminLogSchemaService } from '../services';
+import { AdminLog, AdminLogSchema } from '../../schema';
+import { AdminLogSchemaService } from '../../services';
 
 @Module({
   imports: [
