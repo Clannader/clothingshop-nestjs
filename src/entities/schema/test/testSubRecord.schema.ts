@@ -5,11 +5,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model, HydratedDocument } from 'mongoose';
 
-@Schema()
+@Schema({
+  autoIndex: true, // 要设置这个参数,@Prop下的自动索引才能生效
+})
 export class TestSubRecord {
   @Prop({
     type: String,
-    required: true,
+    required: true, // ""空值无法创建
     trim: true,
     unique: true, // 自动创建唯一索引
   })
