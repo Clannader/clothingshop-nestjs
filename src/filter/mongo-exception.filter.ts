@@ -7,11 +7,14 @@ import { Request, Response } from 'express';
 import { upperFirst } from 'lodash';
 import { CodeEnum } from '@/common/enum';
 import { GlobalService, Utils } from '@/common/utils';
+import { AopLogger } from '@/logger';
 
 @Catch(MongoServerError)
 export class MongoExceptionFilter implements ExceptionFilter {
   @Inject()
   private readonly globalService: GlobalService;
+
+  private readonly logger = new AopLogger(MongoExceptionFilter.name);
 
   catch(exception: MongoServerError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -20,7 +23,7 @@ export class MongoExceptionFilter implements ExceptionFilter {
 
     let message = exception.message;
     if (process.env.NODE_ENV !== 'test') {
-      console.error(exception.stack);
+      this.logger.error(exception);
     }
 
     if (exception.code === 11000) {

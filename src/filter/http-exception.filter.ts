@@ -11,11 +11,14 @@ import { CodeEnum } from '@/common/enum';
 import { ValidateException } from '@/common/exceptions';
 import { GlobalService, Utils } from '@/common/utils';
 import { upperFirst } from 'lodash';
+import { AopLogger } from '@/logger';
 
 @Catch(HttpException, Error)
 export class HttpExceptionFilter implements ExceptionFilter {
   @Inject()
   private readonly globalService: GlobalService;
+
+  private readonly logger = new AopLogger(HttpExceptionFilter.name);
 
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -27,7 +30,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         : CodeEnum.UNKNOWN;
     const message = exception.message;
     if (process.env.NODE_ENV !== 'test') {
-      console.error(exception.stack);
+      this.logger.error(exception);
     }
     const msg =
       exception instanceof ValidateException
