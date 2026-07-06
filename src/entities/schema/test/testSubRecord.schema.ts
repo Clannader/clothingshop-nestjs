@@ -7,7 +7,7 @@ import { Model, HydratedDocument } from 'mongoose';
 
 @Schema({
   autoIndex: true, // 要设置这个参数,@Prop下的自动索引才能生效
-  versionKey: 'v',
+  versionKey: 'version', // 重命名__v节点名称
 })
 export class TestSubRecord {
   @Prop({

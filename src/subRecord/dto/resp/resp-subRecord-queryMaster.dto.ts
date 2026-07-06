@@ -6,7 +6,7 @@ import { CommonResult } from '@/common';
 
 export class RespSubRecordQueryMasterDto extends CommonResult {
   /**
-   * 订单列表
+   * 主文档列表
    */
   items: SubRecordInfoMasterDto[];
 }

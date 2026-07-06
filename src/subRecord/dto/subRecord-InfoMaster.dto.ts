@@ -9,7 +9,7 @@ import { IsDefined, IsArray } from 'class-validator';
 
 export class SubRecordInfoMasterDto extends SubRecordCreateMasterDto {
   /**
-   * 商品名
+   * 订单列表
    */
   @Expose()
   @IsArray()
