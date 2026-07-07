@@ -2,16 +2,23 @@
  * Create by oliver.wu 2026/7/6
  */
 import { Expose } from 'class-transformer';
-import { SubRecordCreateMasterDto } from './subRecord-CreateMaster.dto';
+import { SubRecordModifyMasterDto } from './subRecord-ModifyMaster.dto';
 import { SubRecordListDto } from './subRecord-list.dto';
 
 import { IsDefined, IsArray } from 'class-validator';
 
-export class SubRecordInfoMasterDto extends SubRecordCreateMasterDto {
+export class SubRecordInfoMasterDto extends SubRecordModifyMasterDto {
   /**
-   *  数据的ID
+   * 创建时间
    */
-  id: string;
+  @Expose()
+  createDate: string;
+
+  /**
+   * 更新时间
+   */
+  @Expose()
+  updateDate: string;
 
   /**
    * 订单列表

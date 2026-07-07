@@ -13,11 +13,14 @@ import {
   ReqSubRecordQueryMasterDto,
   RespSubRecordQueryMasterDto,
   SubRecordInfoMasterDto,
+  ReqSubRecordModifyMasterDto,
 } from '@/subRecord/dto';
 
 import { CmsSession, CommonResult, RespModifyDataDto } from '@/common';
 import { CodeEnum } from '@/common/enum';
 import { Utils } from '@/common/utils';
+
+import * as moment from 'moment';
 
 @Injectable()
 export class SubRecordService {
@@ -84,11 +87,18 @@ export class SubRecordService {
       item.id = row.id;
       item.name = row.name;
       item.phone = row.phone;
+      item.createDate = moment(row['createdAt']).format('YYYY-MM-DD HH:mm:ss');
+      item.updateDate = moment(row['updatedAt']).format('YYYY-MM-DD HH:mm:ss');
       itemList.push(item);
     }
 
     resp.items = itemList;
     resp.code = CodeEnum.SUCCESS;
+    return resp;
+  }
+
+  async modifyMasterDoc(params: ReqSubRecordModifyMasterDto) {
+    const resp = new CommonResult();
     return resp;
   }
 }

@@ -26,6 +26,7 @@ import {
   ReqSubRecordCreateMasterDto,
   RespSubRecordQueryMasterDto,
   ReqSubRecordQueryMasterDto,
+  ReqSubRecordModifyMasterDto,
 } from '@/subRecord/dto';
 import { CommonResult, RespModifyDataDto } from '@/common';
 
@@ -71,5 +72,17 @@ export class SubRecordController {
   })
   getMasterList(@Query() params: ReqSubRecordQueryMasterDto) {
     return this.subRecordService.getMasterList(params);
+  }
+
+  @Post('/modifyMaster')
+  @ApiOperation({
+    summary: '编辑主文档',
+    description: '编辑主文档',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  modifyMasterDoc(@Body() params: ReqSubRecordModifyMasterDto) {
+    return this.subRecordService.modifyMasterDoc(params);
   }
 }
