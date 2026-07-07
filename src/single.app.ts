@@ -31,6 +31,7 @@ import {
   DbSession_Expires,
   GLOBAL_CONFIG,
   filterXss,
+  mongoSanitize,
 } from './common';
 import { ConfigService } from './common/config';
 import { SessionMiddleware } from './middleware';
@@ -149,7 +150,7 @@ export async function bootstrap() {
       depth: 10,
       arrayLimit: 100,
     });
-    return JSON.parse(filterXss.process(JSON.stringify(parsed)));
+    return JSON.parse(filterXss.process(JSON.stringify(mongoSanitize(parsed))));
   });
 
   // >>> 新增SAML协议授权

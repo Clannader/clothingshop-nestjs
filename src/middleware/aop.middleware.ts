@@ -1,6 +1,11 @@
 import { Injectable, NestMiddleware, Inject } from '@nestjs/common';
 import { NextFunction } from 'express';
-import { RequestSession, CmsResponse, filterXss } from '@/common';
+import {
+  RequestSession,
+  CmsResponse,
+  filterXss,
+  mongoSanitize,
+} from '@/common';
 import { CodeEnum } from '@/common/enum';
 import { ConfigService } from '@/common/config';
 import { AopLogger } from '@/logger';
@@ -44,8 +49,15 @@ export class AopMiddleware implements NestMiddleware {
     }
     // 升级后,req.query只能是只读属性了,所以不能修改,看后期怎么弄了
     // req.query = JSON.parse(clean(JSON.stringify(req.query)));
-    // console.log(req.query);
     req.body = JSON.parse(filterXss.process(JSON.stringify(req.body ?? {})));
+    // 针对req.body,req.params,req.headers,req.query过滤以$或者.开头的key替换成_
+    ['body', 'params', 'headers'].forEach((key) => {
+      if (req[key]) {
+        req[key] = mongoSanitize(req[key]);
+      }
+    });
+    console.log(req.query);
+    console.log(req.body);
     if (this.configService.get<boolean>('printUrl', true)) {
       this.logger.log(
         `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, ${method} 请求: ${url}`,
