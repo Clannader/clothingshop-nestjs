@@ -66,7 +66,8 @@ export class SubRecordService {
   async getMasterList(params: ReqSubRecordQueryMasterDto) {
     const resp = new RespSubRecordQueryMasterDto();
 
-    // 考虑测试name={$ne:''}这种NoSQL的漏洞查询
+    // 漏洞1:name={$ne:''}这种NoSQL的漏洞查询
+    // 漏洞2:查询name=(?:56).*,可以查询出包含56的名字的数据
     const where: Record<string, any> = {};
     if (!Utils.isEmpty(params.name)) {
       where.name = Utils.getIgnoreCase(params.name, true);
@@ -77,8 +78,7 @@ export class SubRecordService {
 
     const result = await this.testSubRecordSchemaService
       .getModel()
-      .find(where)
-      .setOptions({ sanitizeFilter: true });
+      .find(where);
 
     const itemList: SubRecordInfoMasterDto[] = [];
     for (const row of result) {
