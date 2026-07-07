@@ -56,8 +56,6 @@ export class AopMiddleware implements NestMiddleware {
         req[key] = mongoSanitize(req[key]);
       }
     });
-    console.log(req.query);
-    console.log(req.body);
     if (this.configService.get<boolean>('printUrl', true)) {
       this.logger.log(
         `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, ${method} 请求: ${url}`,
