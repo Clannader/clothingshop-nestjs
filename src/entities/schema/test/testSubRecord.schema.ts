@@ -24,6 +24,10 @@ export class TestSubRecord {
     trim: true,
   })
   phone: string; // 测试字段-电话
+
+  createdAt: Date;
+
+  updatedAt: Date;
 }
 
 // TODO 测试的方向：

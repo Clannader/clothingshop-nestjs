@@ -87,8 +87,8 @@ export class SubRecordService {
       item.id = row.id;
       item.name = row.name;
       item.phone = row.phone;
-      item.createDate = moment(row['createdAt']).format('YYYY-MM-DD HH:mm:ss');
-      item.updateDate = moment(row['updatedAt']).format('YYYY-MM-DD HH:mm:ss');
+      item.createDate = moment(row.createdAt).format('YYYY-MM-DD HH:mm:ss');
+      item.updateDate = moment(row.updatedAt).format('YYYY-MM-DD HH:mm:ss');
       itemList.push(item);
     }
 
