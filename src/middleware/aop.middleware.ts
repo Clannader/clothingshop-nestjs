@@ -1,9 +1,8 @@
 import { Injectable, NestMiddleware, Inject } from '@nestjs/common';
 import { NextFunction } from 'express';
-import { RequestSession, CmsResponse } from '@/common';
+import { RequestSession, CmsResponse, filterXss } from '@/common';
 import { CodeEnum } from '@/common/enum';
 import { ConfigService } from '@/common/config';
-import { clean } from 'node-xss';
 import { AopLogger } from '@/logger';
 import { AopAspect } from '@/interceptor/aop';
 import * as crypto from 'node:crypto';
@@ -45,7 +44,8 @@ export class AopMiddleware implements NestMiddleware {
     }
     // 升级后,req.query只能是只读属性了,所以不能修改,看后期怎么弄了
     // req.query = JSON.parse(clean(JSON.stringify(req.query)));
-    req.body = JSON.parse(clean(JSON.stringify(req.body ?? {})));
+    console.log(req.query);
+    req.body = JSON.parse(filterXss.process(JSON.stringify(req.body ?? {})));
     if (this.configService.get<boolean>('printUrl', true)) {
       this.logger.log(
         `服务器ID: ${cluster.worker ? cluster.worker.id : 1}, ${method} 请求: ${url}`,

@@ -76,16 +76,14 @@ export class SubRecordService {
       where.phone = Utils.getIgnoreCase(params.phone, true);
     }
 
-    const result = await this.testSubRecordSchemaService
-      .getModel()
-      .find(where);
+    const result = await this.testSubRecordSchemaService.getModel().find(where);
 
     const itemList: SubRecordInfoMasterDto[] = [];
     for (const row of result) {
       const item = new SubRecordInfoMasterDto();
+      item.id = row.id;
       item.name = row.name;
       item.phone = row.phone;
-      item.id = row.id;
       itemList.push(item);
     }
 
