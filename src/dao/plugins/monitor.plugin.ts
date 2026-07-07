@@ -58,10 +58,15 @@ export const monitorPlugin = function (schema: Schema): void {
     // 这里加入save时加入版本号的校验,避免拿回来的数据已经被更新过了
     this.$where = {
       ...this.$where,
-      [versionKey]: this[versionKey],
+      // [versionKey]: this[versionKey],
     };
-    this.increment(); // 这里就是抛出版本号异常,但是查看源码好像是开启doIncrement这个参数,可以给版本号自动加1
-    // 源代码路径mongoose/lib/model 418行
+    // console.log( this.constructor['modelName']) // 如果以后想知道是哪个表的Schema进来,可以通过这个方法打印表名称
+    // console.log(this.isModified()) // 判断doc是否有变化
+    if (this.isModified()) {
+      this.$where[versionKey] = this[versionKey];
+      this.increment(); // 这里就是抛出版本号异常,但是查看源码好像是开启doIncrement这个参数,可以给版本号自动加1
+      // 源代码路径mongoose/lib/model 418行
+    }
   });
   schema.post('save', function (result) {
     // logger.info('创建后:%s', JSON.stringify(result)); // 这里的result只是加多了一个__v字段

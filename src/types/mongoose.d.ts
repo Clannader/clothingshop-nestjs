@@ -10,5 +10,8 @@ declare module 'mongoose' {
     syncSaveDBObject<T extends HydratedDocument>(
       dbDataDocs: HydratedDocument<T>,
     ): Promise<HydratedDocument<T>>;
+    saveFindById<T extends HydratedDocument>(
+      id: any,
+    ): Promise<HydratedDocument<T>>;
   }
 }

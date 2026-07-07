@@ -4,7 +4,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 
 import { TestSubRecordSchemaService } from '@/entities/services';
-import type { TestSubRecord } from '@/entities/schema';
+import type { TestSubRecordDocument } from '@/entities/schema';
 import {
   ReqSubRecordListDto,
   RespSubRecordListDto,
@@ -16,7 +16,7 @@ import {
   ReqSubRecordModifyMasterDto,
 } from '@/subRecord/dto';
 
-import { CmsSession, CommonResult, RespModifyDataDto } from '@/common';
+import { CommonResult, RespModifyDataDto } from '@/common';
 import { CodeEnum } from '@/common/enum';
 import { Utils } from '@/common/utils';
 
@@ -99,6 +99,27 @@ export class SubRecordService {
 
   async modifyMasterDoc(params: ReqSubRecordModifyMasterDto) {
     const resp = new CommonResult();
+
+    const id = params.id;
+    const oldMaster: TestSubRecordDocument =
+      await this.testSubRecordSchemaService.getModel().saveFindById(id);
+    if (Utils.isEmpty(oldMaster)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = '主文档不存在';
+      return resp;
+    }
+
+    if (!Utils.isEmpty(params.name)) {
+      oldMaster.name = params.name;
+    }
+    if (!Utils.isEmpty(params.phone)) {
+      oldMaster.phone = params.phone;
+    }
+
+    await this.testSubRecordSchemaService
+      .getModel()
+      .syncSaveDBObject(oldMaster);
+
     return resp;
   }
 }
