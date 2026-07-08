@@ -30,6 +30,8 @@ import {
   sessionSecret,
   DbSession_Expires,
   GLOBAL_CONFIG,
+  filterXss,
+  mongoSanitize,
 } from './common';
 import { ConfigService } from './common/config';
 import { SessionMiddleware } from './middleware';
@@ -40,6 +42,7 @@ import parseEnv from '@/lib/parseEnv';
 import * as fs from 'fs';
 import { ApiTagsDescriptionRegistry } from '@/lib/api-tags-description';
 import * as expressStaticGzip from 'express-static-gzip';
+import { parse as qsParse } from 'qs';
 // import * as crypto from 'node:crypto';
 // import * as passport from 'passport';
 // import * as moment from 'moment';
@@ -138,6 +141,18 @@ export async function bootstrap() {
       }),
     }),
   );
+  app.set('query parser', (str: string) => {
+    // Express 5 默认使用querystring = require('node:querystring')来格式化query
+    // 现在重写格式化query方法,因为query变成可读了
+    const parsed = qsParse(str, {
+      // 这里的参数,还可以看qs的文档,以后根据业务需求进行修改
+      // https://www.npmjs.com/package/qs
+      depth: 10,
+      arrayLimit: 100,
+    });
+    return JSON.parse(filterXss.process(JSON.stringify(mongoSanitize(parsed))));
+  });
+
   // >>> 新增SAML协议授权
   // app.use(passport.initialize());
   // app.use(passport.session());

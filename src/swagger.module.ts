@@ -12,6 +12,7 @@ import { DatabaseModule } from './database';
 import { SamlAuthModule } from './saml';
 import { ServerLogModule } from './logs';
 import { RightsCodesModule, RightsGroupModule } from './rights';
+import { SubRecordModule } from './subRecord';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { RightsCodesModule, RightsGroupModule } from './rights';
     ServerLogModule,
     RightsCodesModule,
     RightsGroupModule,
+    SubRecordModule,
   ],
 })
 export class SwaggerModule {}

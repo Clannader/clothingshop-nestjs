@@ -107,7 +107,7 @@ export class RightsCodesService {
       err: Error;
 
     [err, oldRightsCode] = await Utils.toPromise(
-      this.rightsCodesSchemaService.getModel().findById(id),
+      this.rightsCodesSchemaService.getModel().saveFindById(id),
     );
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;

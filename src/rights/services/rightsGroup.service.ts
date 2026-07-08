@@ -141,7 +141,7 @@ export class RightsGroupService {
       err: Error;
     if (!isNew) {
       [err, oldRightsGroup] = await Utils.toPromise(
-        this.rightsGroupSchemaService.getModel().findById(id),
+        this.rightsGroupSchemaService.getModel().saveFindById(id),
       );
       if (err) {
         resp.code = CodeEnum.DB_EXEC_ERROR;
