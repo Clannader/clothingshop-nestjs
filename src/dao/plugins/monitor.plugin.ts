@@ -62,6 +62,10 @@ export const monitorPlugin = function (schema: Schema): void {
     };
     // console.log( this.constructor['modelName']) // 如果以后想知道是哪个表的Schema进来,可以通过这个方法打印表名称
     // console.log(this.isModified()) // 判断doc是否有变化
+    // 这里有一点要注意,测试版本号并发修改时,需要重新查一次版本逻辑问题,如果第一次传的请求和数据库的值没有任何改变时,是不会报错的
+    // 因为这里加了判断是否有修改才会新增版本号,由于第一次请求没有修改,则不会新增版本号,也就是第二次请求修改后,第一次请求save是不会报错的
+    // 然后最终结果会以第二次修改为准
+    // 如果测试的2次请求,和数据库的值不一样,第一次save会重新拿版本号修改
     if (this.isModified()) {
       this.$where[versionKey] = this[versionKey];
       this.increment(); // 这里就是抛出版本号异常,但是查看源码好像是开启doIncrement这个参数,可以给版本号自动加1

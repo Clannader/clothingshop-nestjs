@@ -14,7 +14,7 @@ export const syncSavePlugin = function (schema: Schema): void {
     if (err) {
       // 版本更新报错,查一遍最新数据
       const [err2, newResult] = await Utils.toPromise<HydratedDocument<T>>(
-        this.findById(dbDataDocs.id, { [versionKey]: 1 }),
+        this.findById(dbDataDocs.id, { [versionKey]: 1 }).select(versionKey),
       );
       if (err2) {
         throw err2;
