@@ -10,7 +10,7 @@ import {
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 import { join } from 'path';
 
-import { HttpExceptionFilter } from './filter';
+import { HttpExceptionFilter, MongoExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
 import { GLOBAL_CONFIG } from './common';
 import { CommonModule, ConfigModule } from './common/modules';
@@ -50,6 +50,10 @@ import { EventMessageModule } from '@/lib/event-message';
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: MongoExceptionFilter,
     },
     {
       provide: APP_PIPE,

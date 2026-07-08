@@ -4,3 +4,6 @@
 export * from './req';
 export * from './resp';
 export * from './subRecord-list.dto';
+export * from './subRecord-CreateMaster.dto';
+export * from './subRecord-InfoMaster.dto';
+export * from './subRecord-ModifyMaster.dto';

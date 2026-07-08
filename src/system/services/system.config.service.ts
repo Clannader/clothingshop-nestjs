@@ -241,7 +241,7 @@ export class SystemConfigService {
     if (!isNew) {
       // 如果是编辑,判断id值是否存在该配置
       [err, oldParentConfig] = await Utils.toPromise(
-        this.systemConfigSchemaService.getParentConfigModel().findById(id),
+        this.systemConfigSchemaService.getParentConfigModel().saveFindById(id),
       );
       if (err) {
         resp.code = CodeEnum.DB_EXEC_ERROR;
@@ -742,7 +742,9 @@ export class SystemConfigService {
       err: Error;
     if (!isNew) {
       [err, oldChildrenConfig] = await Utils.toPromise(
-        this.systemConfigSchemaService.getChildrenConfigModel().findById(id),
+        this.systemConfigSchemaService
+          .getChildrenConfigModel()
+          .saveFindById(id),
       );
       if (err) {
         resp.code = CodeEnum.DB_EXEC_ERROR;
