@@ -60,6 +60,20 @@ export const monitorPlugin = function (schema: Schema): void {
       ...this.$where,
       // [versionKey]: this[versionKey],
     };
+    // 在 pre 钩子中，this 指向文档实例，this.constructor 就是 Model，可以拿到名称
+    // AI 给的建议,没有时间验证是否正确
+    // 集合名（表名）
+    // console.log('集合名:', this.constructor.collection.collectionName); // 'users'
+    // 数据库名
+    // console.log('数据库名:', this.constructor.collection.db.databaseName); // 'my db'
+    // Schema 对象
+    // console.log('Schema:', this.schema); // Schema 对象
+    // Schema 选项
+    // console.log('Schema options:', this.schema.options); // { timestamps: true, ... }
+    // Schema 路径（字段列表）
+    // console.log('字段列表:', Object.keys(this.schema.paths)); // ['_id', 'name', 'email', ...]
+
+    // 验证过的
     // console.log( this.constructor['modelName']) // 如果以后想知道是哪个表的Schema进来,可以通过这个方法打印表名称
     // console.log(this.isModified()) // 判断doc是否有变化
     // 这里有一点要注意,测试版本号并发修改时,需要重新查一次版本逻辑问题,如果第一次传的请求和数据库的值没有任何改变时,是不会报错的
