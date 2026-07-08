@@ -284,7 +284,7 @@ export class TimeZoneService {
     if (!isNew) {
       // 如果是编辑,判断id值是否存在该时区
       [err, oldTimeZone] = await Utils.toPromise(
-        this.systemDataSchemaService.getTimeZoneDataModel().findById(id),
+        this.systemDataSchemaService.getTimeZoneDataModel().saveFindById(id),
       );
       if (err) {
         resp.code = CodeEnum.DB_EXEC_ERROR;
@@ -499,7 +499,10 @@ export class TimeZoneService {
       shopId: Utils.SYSTEM,
     };
     const [err, dbTimeZoneList] = await Utils.toPromise(
-      this.systemDataSchemaService.getTimeZoneDataModel().find(where),
+      this.systemDataSchemaService
+        .getTimeZoneDataModel()
+        .find(where)
+        .select(this.systemDataSchemaService.getTimeZoneVersionKey()),
     );
     if (err) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
