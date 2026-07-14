@@ -14,6 +14,7 @@ import {
   RespSubRecordQueryMasterDto,
   SubRecordInfoMasterDto,
   ReqSubRecordModifyMasterDto,
+  SubRecordMonitorDto,
 } from '@/subRecord/dto';
 
 import { CommonResult, RespModifyDataDto } from '@/common';
@@ -89,6 +90,24 @@ export class SubRecordService {
       item.phone = row.phone;
       item.createDate = moment(row.createdAt).format('YYYY-MM-DD HH:mm:ss');
       item.updateDate = moment(row.updatedAt).format('YYYY-MM-DD HH:mm:ss');
+      if (!Utils.isEmpty(row.monitor)) {
+        const monitorInfo = new SubRecordMonitorDto();
+        monitorInfo.maxOrders = row.monitor.maxOrders;
+        monitorInfo.maxLogs = row.monitor.maxLogs;
+        monitorInfo.intervalTime = row.monitor.intervalTime;
+        item.monitor = monitorInfo;
+      }
+      if (!Utils.isEmpty(row.orders)) {
+        const orders: SubRecordListDto[] = [];
+        row.orders.forEach((order) => {
+          const val = new SubRecordListDto();
+          val.productName = order.productName;
+          val.quantity = order.quantity;
+          val.price = order.price;
+          orders.push(val);
+        });
+        item.orders = orders;
+      }
       itemList.push(item);
     }
 

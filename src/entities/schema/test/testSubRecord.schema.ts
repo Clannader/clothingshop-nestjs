@@ -3,7 +3,65 @@
  * 测试子文档操作
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Model, HydratedDocument } from 'mongoose';
+import { Model, HydratedDocument, Types } from 'mongoose';
+
+@Schema({
+  autoIndex: true,
+  versionKey: 'v',
+  timestamps: true,
+})
+export class TestSubOrder {
+  // 商品名
+  @Prop({
+    type: String,
+    trim: true,
+    required: true,
+    unique: true,
+  })
+  productName: string;
+
+  // 数量
+  @Prop({
+    type: Number,
+    trim: true,
+    default: 1,
+  })
+  quantity: number;
+
+  // 价格
+  @Prop({
+    type: Types.Double,
+    trim: true,
+  })
+  price: number;
+}
+
+@Schema()
+export class TestSubMonitor {
+  // 最大订单数,10个
+  @Prop({
+    type: Number,
+    trim: true,
+    default: 10,
+  })
+  maxOrders: number;
+
+  // 最大日志量,100条
+  @Prop({
+    type: Number,
+    trim: true,
+    default: 100,
+  })
+  maxLogs: number;
+
+  // 监控间隔时间, 单位s, 默认30
+  @Prop({
+    type: Number,
+    trim: true,
+    default: 30,
+  })
+  intervalTime: number;
+}
 
 @Schema({
   autoIndex: true, // 要设置这个参数,@Prop下的自动索引才能生效
@@ -24,6 +82,16 @@ export class TestSubRecord {
     trim: true,
   })
   phone: string; // 测试字段-电话
+
+  @Prop({
+    type: [TestSubOrder],
+  })
+  orders: [TestSubOrder];
+
+  @Prop({
+    type: TestSubMonitor,
+  })
+  monitor: TestSubMonitor;
 
   // 如果使用timestamps: true,自动生成createdAt 和 updatedAt的话,需要声明这2个字段,不需要@Prop,否则类型无法点出这2个字段
   // 如果不设置自动生成,则需要使用@Prop来声明字段
