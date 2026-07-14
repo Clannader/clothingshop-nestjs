@@ -180,6 +180,8 @@ export class SubRecordService {
     // oldMaster.monitor.intervalTime = params.intervalTime;
 
     // 方案2: 使用方案2可以不必填monitor字段
+    // 建议使用方案2,这样创建主文档的时候,这些子文档的节点无需自动创建
+    // 并且子文档的字段必填校验也不会触发,业务触发创建时如果为空,也会触发子文档的文本校验逻辑
     const monitorObject = new NewTestSubRecordModel({
       monitor: {
         maxOrders: params.maxOrders,
@@ -198,9 +200,13 @@ export class SubRecordService {
     // 删除有2种方式
     // 1. 保留一个_id
     // const monitorObject = new NewTestSubRecordModel({monitor: {}});
-    // 2. delete monitor
+    // oldMaster.monitor = monitorObject.monitor;
+    // save()...
+
+    // 2. 删除整个字段monitor
     // const monitorObject = new NewTestSubRecordModel({});
     // oldMaster.monitor = monitorObject.monitor;
+    // save()...
 
     return resp;
   }

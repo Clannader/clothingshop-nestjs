@@ -55,7 +55,7 @@ export class TestSubMonitor {
   @Prop({
     type: Number,
     trim: true,
-    // required: true, // 可以通过这些属性添加校验
+    required: true, // 可以通过这些属性添加校验
   })
   maxOrders: number;
 
@@ -104,6 +104,7 @@ export class TestSubRecord {
     // default: () => ({
     //   // maxOrders: 5,
     // }), // 这种Nested path的子文档,因为没有办法new Doc(),只能初始化的时候创建一个空的,后面自定义add字段进去了
+    // 后面发现可以new Doc()了, 就是new NewTestSubRecordModel()
   })
   monitor: HydratedSingleSubdocument<TestSubMonitor>;
 
