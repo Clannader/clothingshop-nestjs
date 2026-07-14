@@ -25,9 +25,12 @@ export class TestSubRecord {
   })
   phone: string; // 测试字段-电话
 
+  // 如果使用timestamps: true,自动生成createdAt 和 updatedAt的话,需要声明这2个字段,不需要@Prop,否则类型无法点出这2个字段
+  // 如果不设置自动生成,则需要使用@Prop来声明字段
+  // 如果重命名__v,估计也需要声明字段才能使用类型点出字段值
   createdAt: Date;
-
   updatedAt: Date;
+  version: number;
 }
 
 // TODO 测试的方向：
