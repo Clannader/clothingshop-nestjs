@@ -15,6 +15,7 @@ import {
   SubRecordInfoMasterDto,
   ReqSubRecordModifyMasterDto,
   SubRecordMonitorDto,
+  ReqSubRecordCreateMonitorDto,
 } from '@/subRecord/dto';
 
 import { CommonResult, RespModifyDataDto } from '@/common';
@@ -143,6 +144,32 @@ export class SubRecordService {
       oldMaster.phone = params.phone;
     }
 
+    await this.testSubRecordSchemaService
+      .getModel()
+      .syncSaveDBObject(oldMaster);
+
+    return resp;
+  }
+
+  async createSubMonitorDoc(params: ReqSubRecordCreateMonitorDto) {
+    const resp = new RespModifyDataDto();
+
+    const createMonitor = {
+      maxOrders: params.maxOrders,
+      maxLogs: params.maxLogs,
+      intervalTime: params.intervalTime,
+    };
+
+    const id = params.id;
+    const oldMaster: TestSubRecordDocument =
+      await this.testSubRecordSchemaService.getModel().saveFindById(id);
+    if (Utils.isEmpty(oldMaster)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = '主文档不存在';
+      return resp;
+    }
+
+    oldMaster.monitor = createMonitor;
     await this.testSubRecordSchemaService
       .getModel()
       .syncSaveDBObject(oldMaster);

@@ -27,6 +27,7 @@ import {
   RespSubRecordQueryMasterDto,
   ReqSubRecordQueryMasterDto,
   ReqSubRecordModifyMasterDto,
+  ReqSubRecordCreateMonitorDto,
 } from '@/subRecord/dto';
 import { CommonResult, RespModifyDataDto } from '@/common';
 
@@ -84,5 +85,17 @@ export class SubRecordController {
   })
   modifyMasterDoc(@Body() params: ReqSubRecordModifyMasterDto) {
     return this.subRecordService.modifyMasterDoc(params);
+  }
+
+  @Post('/monitor/create')
+  @ApiOperation({
+    summary: '新增子文档监控',
+    description: '新增子文档监控',
+  })
+  @ApiCustomResponse({
+    type: RespModifyDataDto,
+  })
+  createSubMonitorDoc(@Body() params: ReqSubRecordCreateMonitorDto) {
+    return this.subRecordService.createSubMonitorDoc(params);
   }
 }
