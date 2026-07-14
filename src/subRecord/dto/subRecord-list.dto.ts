@@ -2,30 +2,12 @@
  * Create by oliver.wu 2026/7/3
  */
 import { Expose } from 'class-transformer';
-import { IsDefined, IsString, IsNumber } from 'class-validator';
+import { SubRecordSubCreateDto } from './subRecord-subCreate.dto'
 
-export class SubRecordListDto {
+export class SubRecordListDto extends SubRecordSubCreateDto {
   /**
-   * 商品名
+   *  数据的ID
    */
   @Expose()
-  @IsString()
-  @IsDefined()
-  productName: string;
-
-  /**
-   * 数量
-   */
-  @Expose()
-  @IsNumber()
-  @IsDefined()
-  quantity: number;
-
-  /**
-   * 价格
-   */
-  @Expose()
-  @IsNumber()
-  @IsDefined()
-  price: number;
+  id: string;
 }

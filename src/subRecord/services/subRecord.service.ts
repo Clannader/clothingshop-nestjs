@@ -53,6 +53,7 @@ export class SubRecordService {
   async createMasterDoc(params: ReqSubRecordCreateMasterDto) {
     const resp = new RespModifyDataDto();
 
+    // 针对非子文档字段进行创建
     const createMaster = {
       name: params.name,
       phone: params.phone,
@@ -71,7 +72,12 @@ export class SubRecordService {
     const resp = new RespSubRecordQueryMasterDto();
 
     // 漏洞1:name={$ne:''}这种NoSQL的漏洞查询
+    // 解决方案:1.请求中间件把$替换成_或者其他字符
+    // 解决方案:2.使用mongoose的方法认为条件的合法性
+    // 解决方案:3.校验请求参数的类型
+
     // 漏洞2:查询name=(?:56).*,可以查询出包含56的名字的数据
+    // 解决方案:1.新增了正则表达式的转义
     const where: Record<string, any> = {};
     if (!Utils.isEmpty(params.name)) {
       where.name = Utils.getIgnoreCase(params.name, true);
@@ -104,6 +110,7 @@ export class SubRecordService {
           val.productName = order.productName;
           val.quantity = order.quantity;
           val.price = order.price;
+          val.id = order.id;
           orders.push(val);
         });
         item.orders = orders;
@@ -119,6 +126,7 @@ export class SubRecordService {
   async modifyMasterDoc(params: ReqSubRecordModifyMasterDto) {
     const resp = new CommonResult();
 
+    // 针对非子文档字段进行编辑
     const id = params.id;
     const oldMaster: TestSubRecordDocument =
       await this.testSubRecordSchemaService.getModel().saveFindById(id);

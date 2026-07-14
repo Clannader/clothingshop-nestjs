@@ -8,3 +8,4 @@ export * from './subRecord-CreateMaster.dto';
 export * from './subRecord-InfoMaster.dto';
 export * from './subRecord-ModifyMaster.dto';
 export * from './subRecord-monitor.dto';
+export * from './subRecord-subCreate.dto';

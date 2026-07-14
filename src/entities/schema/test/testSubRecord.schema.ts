@@ -34,6 +34,11 @@ export class TestSubOrder {
     trim: true,
   })
   price: number;
+
+  createdAt: Date;
+  updatedAt: Date;
+  v: number;
+  id: string; // 子文档的_id没办法映射成虚拟id,需要考虑如何获取
 }
 
 @Schema()
