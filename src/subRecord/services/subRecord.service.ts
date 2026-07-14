@@ -192,6 +192,16 @@ export class SubRecordService {
       .getModel()
       .syncSaveDBObject(oldMaster);
 
+    // 删除暂时这样吧,感觉也不是特别重要
+    // await oldMaster.monitor.deleteOne() // 似乎没有效果
+    // delete oldMaster.monitor // 这种也没有效果
+    // 删除有2种方式
+    // 1. 保留一个_id
+    // const monitorObject = new NewTestSubRecordModel({monitor: {}});
+    // 2. delete monitor
+    // const monitorObject = new NewTestSubRecordModel({});
+    // oldMaster.monitor = monitorObject.monitor;
+
     return resp;
   }
 }
