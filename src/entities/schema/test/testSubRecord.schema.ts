@@ -29,6 +29,7 @@ export class TestSubOrder {
   @Prop({
     type: Number,
     trim: true,
+    required: true,
     default: 1,
   })
   quantity: number;
@@ -37,6 +38,7 @@ export class TestSubOrder {
   @Prop({
     type: Types.Double,
     trim: true,
+    required: true,
   })
   price: number;
 
