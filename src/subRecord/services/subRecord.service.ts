@@ -4,7 +4,10 @@
 import { Injectable, Inject } from '@nestjs/common';
 
 import { TestSubRecordSchemaService } from '@/entities/services';
-import type { TestSubRecordDocument } from '@/entities/schema';
+import {
+  TestSubRecordDocument,
+  NewTestSubRecordModel,
+} from '@/entities/schema';
 import {
   ReqSubRecordListDto,
   RespSubRecordListDto,
@@ -170,10 +173,21 @@ export class SubRecordService {
       return resp;
     }
 
+    // 方案1: 使用方案1新建主文档的时候必须要有monitor字段
     // 后期使用实例注入,把相同字段注入到对象中,不需要一个个字段set值
-    oldMaster.monitor.maxOrders = params.maxOrders;
-    oldMaster.monitor.maxLogs = params.maxLogs;
-    oldMaster.monitor.intervalTime = params.intervalTime;
+    // oldMaster.monitor.maxOrders = params.maxOrders;
+    // oldMaster.monitor.maxLogs = params.maxLogs;
+    // oldMaster.monitor.intervalTime = params.intervalTime;
+
+    // 方案2: 使用方案2可以不必填monitor字段
+    const monitorObject = new NewTestSubRecordModel({
+      monitor: {
+        maxOrders: params.maxOrders,
+        maxLogs: params.maxLogs,
+        intervalTime: params.intervalTime,
+      },
+    });
+    oldMaster.monitor = monitorObject.monitor;
     await this.testSubRecordSchemaService
       .getModel()
       .syncSaveDBObject(oldMaster);

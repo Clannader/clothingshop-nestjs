@@ -8,6 +8,7 @@ import {
   HydratedDocument,
   Types,
   HydratedSingleSubdocument,
+  model,
 } from 'mongoose';
 
 @Schema({
@@ -100,9 +101,9 @@ export class TestSubRecord {
 
   @Prop({
     type: TestSubMonitor,
-    default: () => ({
-      // maxOrders: 5,
-    }), // 这种Nested path的子文档,因为没有办法new Doc(),只能初始化的时候创建一个空的,后面自定义add字段进去了
+    // default: () => ({
+    //   // maxOrders: 5,
+    // }), // 这种Nested path的子文档,因为没有办法new Doc(),只能初始化的时候创建一个空的,后面自定义add字段进去了
   })
   monitor: HydratedSingleSubdocument<TestSubMonitor>;
 
@@ -114,18 +115,11 @@ export class TestSubRecord {
   version: number;
 }
 
-// TODO 测试的方向：
+// 测试的方向：
 // 1. 2种方式引入子文档,创建子文档时看是否能校验字段
 // 2. 查询分页子文档,多进程创建子文档(漏洞:可能会创建多个),删除修改子文档等操作
 
 export type TestSubRecordDocument = HydratedDocument<TestSubRecord>;
-
-// 子文档声明类型
-// export type THydratedTestSubRecordDocument = {
-//   monitor?: HydratedSingleSubdocument<TestSubMonitor>
-//   orders: Types.DocumentArray<TestSubOrder>
-//   // 如果有多个这种子文档,估计继续往下写定义多个即可???
-// }
 
 export const TestSubRecordSchema = SchemaFactory.createForClass(TestSubRecord);
 TestSubRecordSchema.statics.getAliasName = function () {
@@ -134,3 +128,21 @@ TestSubRecordSchema.statics.getAliasName = function () {
 export interface TestSubRecordModel extends Model<TestSubRecord> {
   getAliasName(): string;
 }
+
+// 子文档声明类型
+type THydratedTestSubRecordDocument = {
+  monitor?: HydratedSingleSubdocument<TestSubMonitor>;
+  orders: Types.DocumentArray<TestSubOrder>;
+  // 如果有多个这种子文档,估计继续往下写定义多个即可???
+};
+type NewTestSubRecordType = Model<
+  TestSubRecord,
+  {},
+  {},
+  {},
+  THydratedTestSubRecordDocument
+>;
+export const NewTestSubRecordModel = model<TestSubRecord, NewTestSubRecordType>(
+  'TestSubRecord',
+  TestSubRecordSchema,
+);
