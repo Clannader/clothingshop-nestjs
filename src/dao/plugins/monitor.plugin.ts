@@ -82,8 +82,9 @@ export const monitorPlugin = function (schema: Schema): void {
     // 如果测试的2次请求,和数据库的值不一样,第一次save会重新拿版本号修改
     if (this.isModified()) {
       this.$where[versionKey] = this[versionKey];
-      this.increment(); // 这里就是抛出版本号异常,但是查看源码好像是开启doIncrement这个参数,可以给版本号自动加1
+      this.increment && this.increment(); // 这里就是抛出版本号异常,但是查看源码好像是开启doIncrement这个参数,可以给版本号自动加1
       // 源代码路径mongoose/lib/model 418行
+      // 子文档的保存会进入2次,第一次是主文档的save,第二次是子文档的进入,发现没有increment方法和this.$op,statics['getAliasName']等方法
     }
   });
   schema.post('save', function (result) {
@@ -236,12 +237,15 @@ const writeDocumentLog = function (schema: schemaConfig, result: any) {
   const versionKey: string = schema.get('versionKey') as string;
   const logJSON = {
     methodName: this.$op, // 要不然写死create|save,要么写this.$op
-    modelName: schema.statics['getAliasName'].call(this),
+    modelName: schema?.statics['getAliasName']?.call(this), // 子文档没有这个方法
     result: JSON.stringify(cloneResult),
     params: JSON.stringify(omit(cloneResult, '_id', versionKey)),
     diffTime: new Date().getTime() - this.$locals.lastTime,
     id: cloneResult._id,
     type: 'DocumentLog',
   };
-  logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
+  if (this.$op) {
+    // 子文档保存没有这个操作值
+    logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
+  }
 };

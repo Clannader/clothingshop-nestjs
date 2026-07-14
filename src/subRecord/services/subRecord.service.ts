@@ -102,6 +102,7 @@ export class SubRecordService {
         monitorInfo.maxOrders = row.monitor.maxOrders;
         monitorInfo.maxLogs = row.monitor.maxLogs;
         monitorInfo.intervalTime = row.monitor.intervalTime;
+        // 可以取虚拟id: console.log(row.monitor.id)
         item.monitor = monitorInfo;
       }
       if (!Utils.isEmpty(row.orders)) {
@@ -154,11 +155,11 @@ export class SubRecordService {
   async createSubMonitorDoc(params: ReqSubRecordCreateMonitorDto) {
     const resp = new RespModifyDataDto();
 
-    const createMonitor = {
-      maxOrders: params.maxOrders,
-      maxLogs: params.maxLogs,
-      intervalTime: params.intervalTime,
-    };
+    // const createMonitor = {
+    //   maxOrders: params.maxOrders,
+    //   maxLogs: params.maxLogs,
+    //   intervalTime: params.intervalTime,
+    // };
 
     const id = params.id;
     const oldMaster: TestSubRecordDocument =
@@ -169,7 +170,10 @@ export class SubRecordService {
       return resp;
     }
 
-    oldMaster.monitor = createMonitor;
+    // 后期使用实例注入,把相同字段注入到对象中,不需要一个个字段set值
+    oldMaster.monitor.maxOrders = params.maxOrders;
+    oldMaster.monitor.maxLogs = params.maxLogs;
+    oldMaster.monitor.intervalTime = params.intervalTime;
     await this.testSubRecordSchemaService
       .getModel()
       .syncSaveDBObject(oldMaster);

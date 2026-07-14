@@ -3,7 +3,12 @@
  * 测试子文档操作
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Model, HydratedDocument, Types } from 'mongoose';
+import {
+  Model,
+  HydratedDocument,
+  Types,
+  HydratedSingleSubdocument,
+} from 'mongoose';
 
 @Schema({
   autoIndex: true,
@@ -47,7 +52,6 @@ export class TestSubMonitor {
   @Prop({
     type: Number,
     trim: true,
-    default: 10,
   })
   maxOrders: number;
 
@@ -55,7 +59,6 @@ export class TestSubMonitor {
   @Prop({
     type: Number,
     trim: true,
-    default: 100,
   })
   maxLogs: number;
 
@@ -63,7 +66,6 @@ export class TestSubMonitor {
   @Prop({
     type: Number,
     trim: true,
-    default: 30,
   })
   intervalTime: number;
 }
@@ -91,12 +93,13 @@ export class TestSubRecord {
   @Prop({
     type: [TestSubOrder],
   })
-  orders: [TestSubOrder];
+  orders: Types.DocumentArray<TestSubOrder>;
 
   @Prop({
     type: TestSubMonitor,
+    default: () => ({}), // 这种Nested path的子文档,因为没有办法new Doc(),只能初始化的时候创建一个空的,后面自定义add字段进去了
   })
-  monitor: TestSubMonitor;
+  monitor: HydratedSingleSubdocument<TestSubMonitor>;
 
   // 如果使用timestamps: true,自动生成createdAt 和 updatedAt的话,需要声明这2个字段,不需要@Prop,否则类型无法点出这2个字段
   // 如果不设置自动生成,则需要使用@Prop来声明字段
@@ -111,6 +114,14 @@ export class TestSubRecord {
 // 2. 查询分页子文档,多进程创建子文档(漏洞:可能会创建多个),删除修改子文档等操作
 
 export type TestSubRecordDocument = HydratedDocument<TestSubRecord>;
+
+// 子文档声明类型
+// export type THydratedTestSubRecordDocument = {
+//   monitor?: HydratedSingleSubdocument<TestSubMonitor>
+//   orders: Types.DocumentArray<TestSubOrder>
+//   // 如果有多个这种子文档,估计继续往下写定义多个即可???
+// }
+
 export const TestSubRecordSchema = SchemaFactory.createForClass(TestSubRecord);
 TestSubRecordSchema.statics.getAliasName = function () {
   return 'TestSubRecord';
