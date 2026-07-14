@@ -11,7 +11,7 @@ import {
 } from 'mongoose';
 
 @Schema({
-  autoIndex: true,
+  // autoIndex: true,
   versionKey: 'v',
   timestamps: true,
 })
@@ -21,7 +21,7 @@ export class TestSubOrder {
     type: String,
     trim: true,
     required: true,
-    unique: true,
+    // unique: true, // 如果这里加索引,是全部数据的子文档都不能有相同的,而不是单独一条记录的子文档不能有相同的,所以不可取,只能通过业务层来判断重复了
   })
   productName: string;
 
@@ -52,6 +52,7 @@ export class TestSubMonitor {
   @Prop({
     type: Number,
     trim: true,
+    // required: true, // 可以通过这些属性添加校验
   })
   maxOrders: number;
 
@@ -97,7 +98,9 @@ export class TestSubRecord {
 
   @Prop({
     type: TestSubMonitor,
-    default: () => ({}), // 这种Nested path的子文档,因为没有办法new Doc(),只能初始化的时候创建一个空的,后面自定义add字段进去了
+    default: () => ({
+      // maxOrders: 5,
+    }), // 这种Nested path的子文档,因为没有办法new Doc(),只能初始化的时候创建一个空的,后面自定义add字段进去了
   })
   monitor: HydratedSingleSubdocument<TestSubMonitor>;
 

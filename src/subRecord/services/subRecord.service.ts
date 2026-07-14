@@ -102,7 +102,7 @@ export class SubRecordService {
         monitorInfo.maxOrders = row.monitor.maxOrders;
         monitorInfo.maxLogs = row.monitor.maxLogs;
         monitorInfo.intervalTime = row.monitor.intervalTime;
-        // 可以取虚拟id: console.log(row.monitor.id)
+        // console.log(row.monitor.id) // 可以取虚拟id:
         item.monitor = monitorInfo;
       }
       if (!Utils.isEmpty(row.orders)) {
