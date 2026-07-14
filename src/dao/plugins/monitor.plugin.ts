@@ -86,6 +86,16 @@ export const monitorPlugin = function (schema: Schema): void {
       // 源代码路径mongoose/lib/model 418行
       // 子文档的保存会进入2次,第一次是主文档的save,第二次是子文档的进入,发现没有increment方法和this.$op,statics['getAliasName']等方法
     }
+    // @ts-ignore
+    const parent = this.ownerDocument ? this.ownerDocument() : null;
+    if (parent && parent !== this) {
+      console.log('这是子文档');
+      // 执行子文档特定逻辑
+      // 子文档没有this.increment方法
+    } else {
+      console.log('这是主文档');
+      // 执行主文档特定逻辑
+    }
   });
   schema.post('save', function (result) {
     // logger.info('创建后:%s', JSON.stringify(result)); // 这里的result只是加多了一个__v字段
@@ -247,5 +257,8 @@ const writeDocumentLog = function (schema: schemaConfig, result: any) {
   if (this.$op) {
     // 子文档保存没有这个操作值
     logger.info(Utils.replaceArgsFromJson(parserLog, logJSON, true));
+  } else {
+    // console.log('logJSON: %s', logJSON)
+    // console.log('子文档: %s', schema)
   }
 };
