@@ -52,6 +52,7 @@ export class SubRecordService {
       return resp;
     }
     const orderList: SubRecordOrderListDto[] = [];
+    // 分页查询看看很久以前的代码怎么写吧
     for (const row of result) {
       const order = new SubRecordOrderListDto();
     }
@@ -242,7 +243,9 @@ export class SubRecordService {
         .findOneAndUpdate(
           {
             _id: id,
-            'orders.productName': params.productName,
+            'orders.productName': {
+              $ne: params.productName,
+            },
           },
           {
             $push: {
@@ -262,6 +265,7 @@ export class SubRecordService {
         return resp;
       }
     } else {
+      // 编辑逻辑
     }
     return resp;
   }
@@ -279,7 +283,23 @@ export class SubRecordService {
     }
 
     // 暂时写删除单条,后面有空写删除多条
-    await oldMaster.orders.id(params.subId).deleteOne();
+    const where = {
+      orders: {
+        _id: params.subId,
+      },
+    };
+    //删除多个使用{multi: true}
+    await this.testSubRecordSchemaService.getModel().findOneAndUpdate(
+      {
+        _id: id,
+      },
+      {
+        $pull: where,
+      },
+      {
+        // multi: true // 删除多个
+      },
+    );
 
     return resp;
   }
