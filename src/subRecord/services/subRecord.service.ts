@@ -280,15 +280,19 @@ export class SubRecordService {
               '_id': {
                 $ne: params.subId,
               },
-              productName: params.productName
+              productName: params.productName,
+              // quantity: 3
             }
           },
           // 'orders.productName': params.productName, // 这种方式查询子文档,单个条件有效,多条件无效
+          // 'orders.quantity': 3
         }, {
-          'orders.$': 1, // 还是返回orders:[xxx]
+          // 如果是find,则返回数组形式;如果是findOne,则返回{}JSON形式
+          'orders.$': 1, // 'orders': 1返回的是orders:[xxx,xxx],数组可以多个;'orders.$': 1返回的是一条,但是是数组orders:[xxx]
           _id: 0,
         });
-      console.log(checkResult);
+      // 如果没有值则返回Null,有值则是{orders:[xxx]},就算一个元素也是返回一样的结构,所以返回一条需要从数组中取第0条
+      // console.log(checkResult);
       if (checkResult) {
         resp.code = CodeEnum.FAIL;
         resp.msg = `${params.productName}已存在`;
