@@ -64,17 +64,17 @@ export class SubRecordService {
           $unwind: '$orders',
         },
         {
-          $skip: params.offset * params.pageSize,
+          $skip: (params.offset - 1) * params.pageSize,
         },
         {
-          $limit: params.pageSize
+          $limit: params.pageSize,
         },
         // 重塑输出结构
         {
           $replaceRoot: {
-            newRoot: '$orders'
-          }
-        }
+            newRoot: '$orders',
+          },
+        },
       ]);
     const orderList: SubRecordOrderListDto[] = [];
     for (const row of result) {
