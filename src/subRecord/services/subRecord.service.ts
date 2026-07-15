@@ -223,11 +223,63 @@ export class SubRecordService {
   async saveSubOrderDoc(params: ReqSubRecordModifyOrderDto, isNew: boolean) {
     const resp = new RespModifySubDataDto();
 
+    const id = params.id;
+    const oldMaster: TestSubRecordDocument =
+      await this.testSubRecordSchemaService.getModel().findById(id);
+    if (Utils.isEmpty(oldMaster)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = '主文档不存在';
+      return resp;
+    }
+    if (isNew) {
+      const orderInfo = {
+        productName: params.productName,
+        quantity: params.quantity,
+        price: params.price,
+      };
+      const result = await this.testSubRecordSchemaService
+        .getModel()
+        .findOneAndUpdate(
+          {
+            _id: id,
+            'orders.productName': params.productName,
+          },
+          {
+            $push: {
+              orders: orderInfo,
+            },
+          },
+          {
+            new: true, // 返回更新后的文档
+            runValidators: true, // 执行 Schema 校验
+          },
+        );
+
+      // 若重复则返回 null
+      if (!result) {
+        resp.code = CodeEnum.FAIL;
+        resp.msg = `${params.productName}已存在`;
+        return resp;
+      }
+    } else {
+    }
     return resp;
   }
 
   async deleteSubOrderDoc(params: ReqSubRecordDeleteOrderDto) {
     const resp = new RespErrorResult();
+
+    const id = params.id;
+    const oldMaster: TestSubRecordDocument =
+      await this.testSubRecordSchemaService.getModel().findById(id);
+    if (Utils.isEmpty(oldMaster)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = '主文档不存在';
+      return resp;
+    }
+
+    // 暂时写删除单条,后面有空写删除多条
+    await oldMaster.orders.id(params.subId).deleteOne();
 
     return resp;
   }

@@ -3,7 +3,7 @@
  */
 import { CommonResult } from './common.dto';
 
-export class RespBasePageDto extends CommonResult{
+export class RespBasePageDto extends CommonResult {
   /**
    * 总数
    */
