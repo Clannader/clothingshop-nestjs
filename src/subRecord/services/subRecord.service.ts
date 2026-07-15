@@ -19,7 +19,6 @@ import {
   ReqSubRecordModifyMasterDto,
   SubRecordMonitorDto,
   ReqSubRecordCreateMonitorDto,
-  ReqSubRecordCreateOrderDto,
   ReqSubRecordModifyOrderDto,
   ReqSubRecordDeleteOrderDto,
 } from '@/subRecord/dto';
@@ -266,6 +265,35 @@ export class SubRecordService {
       }
     } else {
       // 编辑逻辑
+      const setValue = {
+        'orders.$.productName': params.productName,
+        'orders.$.quantity': params.quantity,
+        'orders.$.price': params.price,
+      };
+      const checkResult = await this.testSubRecordSchemaService
+        .getModel()
+        .findOneAndUpdate({
+          _id: id,
+          'orders._id': {
+            $ne: params.subId,
+          },
+          'orders.productName': params.productName,
+        });
+      console.log(checkResult);
+      if (checkResult) {
+        resp.code = CodeEnum.FAIL;
+        resp.msg = `${params.productName}已存在`;
+        return resp;
+      }
+      await this.testSubRecordSchemaService.getModel().findOneAndUpdate(
+        {
+          _id: id,
+          'orders._id': params.subId,
+        },
+        {
+          $set: setValue,
+        },
+      );
     }
     return resp;
   }
@@ -285,7 +313,7 @@ export class SubRecordService {
     // 暂时写删除单条,后面有空写删除多条
     const where = {
       orders: {
-        _id: params.subId,
+        _id: params.subId, // 多个 {$in: []}
       },
     };
     //删除多个使用{multi: true}
