@@ -7,7 +7,6 @@ import { CustomValidation } from '../decorator';
 export class ReqBasePageDto {
   /**
    * 页码,设置查询第几页数据
-   * @default 1
    */
   @Expose()
   @CustomValidation({
@@ -21,7 +20,6 @@ export class ReqBasePageDto {
 
   /**
    * 每页返回数
-   * @default 30
    */
   @Expose()
   @CustomValidation({

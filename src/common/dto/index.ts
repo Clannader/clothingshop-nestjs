@@ -8,3 +8,4 @@ export * from './resp-modifyData.dto';
 export * from './resp-modifySubData.dto';
 export * from './req-basePage.dto';
 export * from './req-baseSortPage.dto';
+export * from './resp-basePage.dto';

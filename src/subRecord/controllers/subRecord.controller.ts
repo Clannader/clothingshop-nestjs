@@ -52,10 +52,10 @@ import { plainToInstance } from 'class-transformer';
 export class SubRecordController {
   constructor(private readonly subRecordService: SubRecordService) {}
 
-  @Get('/getList')
+  @Get('/order/getList')
   @ApiOperation({
-    summary: '获取子文档列表',
-    description: '获取子文档列表',
+    summary: '获取订单列表',
+    description: '获取订单列表',
   })
   @ApiCustomResponse({
     type: RespSubRecordOrderListDto,
