@@ -14,6 +14,10 @@ import {
   UseInterceptors,
   Post,
   Body,
+  HttpCode,
+  HttpStatus,
+  Put,
+  Delete,
 } from '@nestjs/common';
 import { SessionGuard } from '@/guard';
 import { HttpInterceptor } from '@/interceptor/http';
@@ -28,8 +32,17 @@ import {
   ReqSubRecordQueryMasterDto,
   ReqSubRecordModifyMasterDto,
   ReqSubRecordCreateMonitorDto,
+  ReqSubRecordModifyOrderDto,
+  ReqSubRecordCreateOrderDto,
+  ReqSubRecordDeleteOrderDto,
 } from '@/subRecord/dto';
-import { CommonResult, RespModifyDataDto } from '@/common';
+import {
+  CommonResult,
+  RespErrorResult,
+  RespModifyDataDto,
+  RespModifySubDataDto,
+} from '@/common';
+import { plainToInstance } from 'class-transformer';
 
 @ApiCommon()
 @Controller('/cms/api/subRecord')
@@ -52,6 +65,7 @@ export class SubRecordController {
   }
 
   @Post('/createMaster')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '创建主文档',
     description: '创建主文档',
@@ -76,6 +90,7 @@ export class SubRecordController {
   }
 
   @Post('/modifyMaster')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '编辑主文档',
     description: '编辑主文档',
@@ -88,6 +103,7 @@ export class SubRecordController {
   }
 
   @Post('/monitor/create')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '新增子文档监控',
     description: '新增子文档监控',
@@ -97,5 +113,45 @@ export class SubRecordController {
   })
   createSubMonitorDoc(@Body() params: ReqSubRecordCreateMonitorDto) {
     return this.subRecordService.createSubMonitorDoc(params);
+  }
+
+  @Post('/order/create')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '创建订单',
+    description: '创建订单',
+  })
+  @ApiCustomResponse({
+    type: RespModifySubDataDto,
+  })
+  createSubOrderDoc(@Body() params: ReqSubRecordCreateOrderDto) {
+    const modifyParams = plainToInstance(ReqSubRecordModifyOrderDto, params);
+    return this.subRecordService.saveSubOrderDoc(modifyParams, true);
+  }
+
+  @Put('/order/modify')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '编辑订单',
+    description: '编辑订单',
+  })
+  @ApiCustomResponse({
+    type: RespModifySubDataDto,
+  })
+  modifySubOrderDoc(@Body() params: ReqSubRecordModifyOrderDto) {
+    return this.subRecordService.saveSubOrderDoc(params, false);
+  }
+
+  @Delete('/order/delete')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '删除订单',
+    description: '删除订单',
+  })
+  @ApiCustomResponse({
+    type: RespErrorResult,
+  })
+  deleteSubOrderDoc(@Body() params: ReqSubRecordDeleteOrderDto) {
+    return this.subRecordService.deleteSubOrderDoc(params);
   }
 }

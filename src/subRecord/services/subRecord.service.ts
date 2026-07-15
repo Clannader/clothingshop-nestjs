@@ -19,10 +19,14 @@ import {
   ReqSubRecordModifyMasterDto,
   SubRecordMonitorDto,
   ReqSubRecordCreateMonitorDto,
+  ReqSubRecordCreateOrderDto,
+  ReqSubRecordModifyOrderDto,
+  ReqSubRecordDeleteOrderDto,
 } from '@/subRecord/dto';
 
 import {
   CommonResult,
+  RespErrorResult,
   RespModifyDataDto,
   RespModifySubDataDto,
 } from '@/common';
@@ -216,8 +220,14 @@ export class SubRecordService {
     return resp;
   }
 
-  async createSubOrderDoc() {
+  async saveSubOrderDoc(params: ReqSubRecordModifyOrderDto, isNew: boolean) {
     const resp = new RespModifySubDataDto();
+
+    return resp;
+  }
+
+  async deleteSubOrderDoc(params: ReqSubRecordDeleteOrderDto) {
+    const resp = new RespErrorResult();
 
     return resp;
   }
