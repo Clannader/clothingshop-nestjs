@@ -272,12 +272,21 @@ export class SubRecordService {
       };
       const checkResult = await this.testSubRecordSchemaService
         .getModel()
-        .findOneAndUpdate({
+        .findOne({
           _id: id,
-          'orders._id': {
-            $ne: params.subId,
+          // 多条件查询
+          'orders': {
+            $elemMatch: {
+              '_id': {
+                $ne: params.subId,
+              },
+              productName: params.productName
+            }
           },
-          'orders.productName': params.productName,
+          // 'orders.productName': params.productName, // 这种方式查询子文档,单个条件有效,多条件无效
+        }, {
+          'orders.$': 1, // 还是返回orders:[xxx]
+          _id: 0,
         });
       console.log(checkResult);
       if (checkResult) {
