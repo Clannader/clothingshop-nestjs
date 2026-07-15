@@ -2,10 +2,12 @@
  * Create by oliver.wu 2026/7/3
  */
 import { Injectable, Inject } from '@nestjs/common';
+import { Types } from 'mongoose';
 
 import { TestSubRecordSchemaService } from '@/entities/services';
 import {
   TestSubRecordDocument,
+  TestSubOrderDocument,
   NewTestSubRecordModel,
 } from '@/entities/schema';
 import {
@@ -42,22 +44,51 @@ export class SubRecordService {
   async getTestOrderList(params: ReqSubRecordOrderListDto) {
     const resp = new RespSubRecordOrderListDto();
 
-    const [err, result] = await Utils.toPromise(
-      this.testSubRecordSchemaService.getModel().find(),
-    );
-    if (err) {
-      resp.code = CodeEnum.DB_EXEC_ERROR;
-      resp.msg = err.message;
-      return resp;
-    }
+    const result = await this.testSubRecordSchemaService
+      .getModel()
+      .aggregate<TestSubOrderDocument>([
+        {
+          $match: {
+            _id: new Types.ObjectId(params.id),
+          },
+        },
+        {
+          $project: {
+            orders: 1,
+            _id: 0,
+          },
+        },
+        {
+          // 解构子文档数组
+          // 打散orders数据,从orders:[xxx,xxx]变成[xxx,xxx]
+          $unwind: '$orders',
+        },
+        {
+          $skip: params.offset * params.pageSize,
+        },
+        {
+          $limit: params.pageSize
+        },
+        // 重塑输出结构
+        {
+          $replaceRoot: {
+            newRoot: '$orders'
+          }
+        }
+      ]);
     const orderList: SubRecordOrderListDto[] = [];
-    // 分页查询看看很久以前的代码怎么写吧
     for (const row of result) {
       const order = new SubRecordOrderListDto();
+      order.id = row._id.toString(); // 这里没有虚拟id
+      order.productName = row.productName;
+      order.quantity = row.quantity;
+      order.price = row.price;
+      orderList.push(order);
     }
 
     resp.orders = orderList;
     resp.code = CodeEnum.SUCCESS;
+    resp.total = 0;
 
     return resp;
   }
@@ -342,7 +373,8 @@ export class SubRecordService {
         _id: params.subId, // 多个 {$in: []}
       },
     };
-    //删除多个使用{multi: true}
+    // 删除全部使用{$unset: {orders: 1}}
+    // 删除多个使用{multi: true}
     await this.testSubRecordSchemaService.getModel().findOneAndUpdate(
       {
         _id: id,

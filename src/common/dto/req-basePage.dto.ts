@@ -1,7 +1,7 @@
 /**
  * Create by oliver.wu 2026/7/15
  */
-import { Expose, Type } from 'class-transformer';
+import { Expose, Type, Transform } from 'class-transformer';
 import { CustomValidation } from '../decorator';
 
 export class ReqBasePageDto {
@@ -16,6 +16,9 @@ export class ReqBasePageDto {
     isInt: true,
   })
   @Type(() => Number)
+  @Transform(({ value }) => {
+    return value ?? 1;
+  })
   offset?: number = 1;
 
   /**
@@ -29,5 +32,8 @@ export class ReqBasePageDto {
     isInt: true,
   })
   @Type(() => Number)
+  @Transform(({ value }) => {
+    return value ?? 30;
+  })
   pageSize?: number = 30;
 }
