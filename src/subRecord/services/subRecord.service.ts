@@ -11,7 +11,7 @@ import {
 import {
   ReqSubRecordListDto,
   RespSubRecordListDto,
-  SubRecordListDto,
+  SubRecordOrderListDto,
   ReqSubRecordCreateMasterDto,
   ReqSubRecordQueryMasterDto,
   RespSubRecordQueryMasterDto,
@@ -21,7 +21,11 @@ import {
   ReqSubRecordCreateMonitorDto,
 } from '@/subRecord/dto';
 
-import { CommonResult, RespModifyDataDto } from '@/common';
+import {
+  CommonResult,
+  RespModifyDataDto,
+  RespModifySubDataDto,
+} from '@/common';
 import { CodeEnum } from '@/common/enum';
 import { Utils } from '@/common/utils';
 
@@ -43,9 +47,9 @@ export class SubRecordService {
       resp.msg = err.message;
       return resp;
     }
-    const orderList: SubRecordListDto[] = [];
+    const orderList: SubRecordOrderListDto[] = [];
     for (const row of result) {
-      const order = new SubRecordListDto();
+      const order = new SubRecordOrderListDto();
     }
 
     resp.orders = orderList;
@@ -109,9 +113,9 @@ export class SubRecordService {
         item.monitor = monitorInfo;
       }
       if (!Utils.isEmpty(row.orders)) {
-        const orders: SubRecordListDto[] = [];
+        const orders: SubRecordOrderListDto[] = [];
         row.orders.forEach((order) => {
-          const val = new SubRecordListDto();
+          const val = new SubRecordOrderListDto();
           val.productName = order.productName;
           val.quantity = order.quantity;
           val.price = order.price;
@@ -205,8 +209,15 @@ export class SubRecordService {
 
     // 2. 删除整个字段monitor
     // const monitorObject = new NewTestSubRecordModel({});
-    // oldMaster.monitor = monitorObject.monitor;
+    // oldMaster.monitor = monitorObject.monitor; // or oldMaster.monitor = null
     // save()...
+
+    resp.id = oldMaster.id;
+    return resp;
+  }
+
+  async createSubOrderDoc() {
+    const resp = new RespModifySubDataDto();
 
     return resp;
   }

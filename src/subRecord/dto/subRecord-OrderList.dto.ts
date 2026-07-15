@@ -2,9 +2,9 @@
  * Create by oliver.wu 2026/7/3
  */
 import { Expose } from 'class-transformer';
-import { SubRecordSubCreateDto } from './subRecord-subCreate.dto';
+import { SubRecordOrderDto } from './subRecord-order.dto';
 
-export class SubRecordListDto extends SubRecordSubCreateDto {
+export class SubRecordOrderListDto extends SubRecordOrderDto {
   /**
    *  数据的ID
    */

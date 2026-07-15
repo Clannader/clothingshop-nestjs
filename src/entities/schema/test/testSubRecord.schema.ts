@@ -46,7 +46,7 @@ export class TestSubOrder {
   createdAt: Date;
   updatedAt: Date;
   v: number;
-  id: string; // 子文档的_id没办法映射成虚拟id,需要考虑如何获取
+  // id: string; // 子文档的_id没办法映射成虚拟id,需要考虑如何获取
 }
 
 @Schema()
@@ -133,7 +133,7 @@ export interface TestSubRecordModel extends Model<TestSubRecord> {
 // 子文档声明类型
 type THydratedTestSubRecordDocument = {
   monitor?: HydratedSingleSubdocument<TestSubMonitor>;
-  orders: Types.DocumentArray<TestSubOrder>;
+  orders?: Types.DocumentArray<TestSubOrder>;
   // 如果有多个这种子文档,估计继续往下写定义多个即可???
 };
 type NewTestSubRecordType = Model<

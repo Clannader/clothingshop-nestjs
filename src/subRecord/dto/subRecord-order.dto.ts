@@ -4,7 +4,7 @@
 import { Expose } from 'class-transformer';
 import { IsDefined, IsString, IsNumber } from 'class-validator';
 
-export class SubRecordSubCreateDto {
+export class SubRecordOrderDto {
   /**
    * 商品名
    */

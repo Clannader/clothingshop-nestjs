@@ -5,3 +5,4 @@ export * from './delete-result.dto';
 export * from './resp-publicKey-result.dto';
 export * from './resp-security-session.dto';
 export * from './resp-modifyData.dto';
+export * from './resp-modifySubData.dto';
