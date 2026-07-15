@@ -9,8 +9,8 @@ import {
   NewTestSubRecordModel,
 } from '@/entities/schema';
 import {
-  ReqSubRecordListDto,
-  RespSubRecordListDto,
+  ReqSubRecordOrderListDto,
+  RespSubRecordOrderListDto,
   SubRecordOrderListDto,
   ReqSubRecordCreateMasterDto,
   ReqSubRecordQueryMasterDto,
@@ -36,8 +36,8 @@ export class SubRecordService {
   @Inject()
   private readonly testSubRecordSchemaService: TestSubRecordSchemaService;
 
-  async getTestOrderList(params: ReqSubRecordListDto) {
-    const resp = new RespSubRecordListDto();
+  async getTestOrderList(params: ReqSubRecordOrderListDto) {
+    const resp = new RespSubRecordOrderListDto();
 
     const [err, result] = await Utils.toPromise(
       this.testSubRecordSchemaService.getModel().find(),

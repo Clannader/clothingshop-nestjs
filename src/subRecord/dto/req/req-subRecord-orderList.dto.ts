@@ -3,13 +3,14 @@
  */
 import { Expose } from 'class-transformer';
 import { IsOptional, IsString } from 'class-validator';
+import { ReqBasePageDto } from '@/common';
 
-export class ReqSubRecordListDto {
+export class ReqSubRecordOrderListDto extends ReqBasePageDto {
   /**
-   * 子文档名称
+   * 商品名
    */
   @Expose()
   @IsString()
   @IsOptional()
-  subName?: string;
+  productName?: string;
 }

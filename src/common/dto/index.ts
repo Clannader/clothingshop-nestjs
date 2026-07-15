@@ -6,3 +6,5 @@ export * from './resp-publicKey-result.dto';
 export * from './resp-security-session.dto';
 export * from './resp-modifyData.dto';
 export * from './resp-modifySubData.dto';
+export * from './req-basePage.dto';
+export * from './req-baseSortPage.dto';

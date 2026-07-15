@@ -21,8 +21,8 @@ import { HttpInterceptor } from '@/interceptor/http';
 import { SubRecordService } from '../services';
 import { ApiOperation } from '@nestjs/swagger';
 import {
-  ReqSubRecordListDto,
-  RespSubRecordListDto,
+  ReqSubRecordOrderListDto,
+  RespSubRecordOrderListDto,
   ReqSubRecordCreateMasterDto,
   RespSubRecordQueryMasterDto,
   ReqSubRecordQueryMasterDto,
@@ -45,9 +45,9 @@ export class SubRecordController {
     description: '获取子文档列表',
   })
   @ApiCustomResponse({
-    type: RespSubRecordListDto,
+    type: RespSubRecordOrderListDto,
   })
-  getTestOrderList(@Query() params: ReqSubRecordListDto) {
+  getTestOrderList(@Query() params: ReqSubRecordOrderListDto) {
     return this.subRecordService.getTestOrderList(params);
   }
 

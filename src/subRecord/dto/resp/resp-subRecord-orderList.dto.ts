@@ -4,7 +4,7 @@
 import { SubRecordOrderListDto } from '../subRecord-OrderList.dto';
 import { CommonResult } from '@/common';
 
-export class RespSubRecordListDto extends CommonResult {
+export class RespSubRecordOrderListDto extends CommonResult {
   /**
    * 订单列表
    */
