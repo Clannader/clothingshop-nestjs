@@ -44,25 +44,48 @@ export class SubRecordService {
   async getTestOrderList(params: ReqSubRecordOrderListDto) {
     const resp = new RespSubRecordOrderListDto();
 
+    const aggregateWhere = [
+      {
+        // 主文档筛选条件
+        $match: {
+          _id: new Types.ObjectId(params.id),
+        },
+      },
+      {
+        $project: {
+          orders: 1,
+          _id: 0,
+        },
+      },
+      {
+        // 解构子文档数组
+        // 打散orders数据,从orders:[xxx,xxx]变成[xxx,xxx]
+        $unwind: '$orders',
+      },
+      // 子文档筛选条件
+      // {
+      //   $match: {
+      //
+      //   }
+      // },
+    ]
+
+    const totalResult = await this.testSubRecordSchemaService.getModel().aggregate([
+      ...aggregateWhere,
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: 1
+          }
+        }
+      },
+    ]) // 返回 [{"_id":null,"total":16}]
+
     const result = await this.testSubRecordSchemaService
       .getModel()
       .aggregate<TestSubOrderDocument>([
-        {
-          $match: {
-            _id: new Types.ObjectId(params.id),
-          },
-        },
-        {
-          $project: {
-            orders: 1,
-            _id: 0,
-          },
-        },
-        {
-          // 解构子文档数组
-          // 打散orders数据,从orders:[xxx,xxx]变成[xxx,xxx]
-          $unwind: '$orders',
-        },
+        ...aggregateWhere,
         {
           $skip: (params.offset - 1) * params.pageSize,
         },
@@ -88,7 +111,7 @@ export class SubRecordService {
 
     resp.orders = orderList;
     resp.code = CodeEnum.SUCCESS;
-    resp.total = 0;
+    resp.total = totalResult[0].total;
 
     return resp;
   }
