@@ -1,10 +1,10 @@
 /**
- * Create by oliver.wu 2026/7/3
+ * Create by oliver.wu 2026/7/14
  */
 import { Expose } from 'class-transformer';
 import { IsDefined, IsString, IsNumber } from 'class-validator';
 
-export class SubRecordListDto {
+export class SubRecordOrderDto {
   /**
    * 商品名
    */

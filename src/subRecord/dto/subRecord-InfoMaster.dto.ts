@@ -3,7 +3,8 @@
  */
 import { Expose } from 'class-transformer';
 import { SubRecordModifyMasterDto } from './subRecord-ModifyMaster.dto';
-import { SubRecordListDto } from './subRecord-list.dto';
+import { SubRecordOrderListDto } from './subRecord-OrderList.dto';
+import { SubRecordMonitorDto } from './subRecord-monitor.dto';
 
 import { IsDefined, IsArray } from 'class-validator';
 
@@ -26,5 +27,11 @@ export class SubRecordInfoMasterDto extends SubRecordModifyMasterDto {
   @Expose()
   @IsArray()
   @IsDefined()
-  orders: SubRecordListDto[];
+  orders: SubRecordOrderListDto[];
+
+  /**
+   * 监控设置
+   */
+  @Expose()
+  monitor: SubRecordMonitorDto;
 }
