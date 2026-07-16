@@ -122,6 +122,10 @@ export class TestSubRecord {
 
 export type TestSubRecordDocument = HydratedDocument<TestSubRecord>;
 export type TestSubOrderDocument = HydratedDocument<TestSubOrder>;
+export type AggregateSubOrderDocument = {
+  total: number;
+  rows: [TestSubOrderDocument];
+};
 
 export const TestSubRecordSchema = SchemaFactory.createForClass(TestSubRecord);
 TestSubRecordSchema.statics.getAliasName = function () {

@@ -9,6 +9,7 @@ import {
   TestSubRecordDocument,
   TestSubOrderDocument,
   NewTestSubRecordModel,
+  AggregateSubOrderDocument,
 } from '@/entities/schema';
 import {
   ReqSubRecordOrderListDto,
@@ -68,19 +69,21 @@ export class SubRecordService {
       //
       //   }
       // },
-    ]
+    ];
 
-    const totalResult = await this.testSubRecordSchemaService.getModel().aggregate([
-      ...aggregateWhere,
-      {
-        $group: {
-          _id: null,
-          total: {
-            $sum: 1
-          }
-        }
-      },
-    ]) // 返回 [{"_id":null,"total":16}]
+    const totalResult = await this.testSubRecordSchemaService
+      .getModel()
+      .aggregate([
+        ...aggregateWhere,
+        {
+          $group: {
+            _id: null,
+            total: {
+              $sum: 1,
+            },
+          },
+        },
+      ]); // 返回 [{"_id":null,"total":16}]
 
     const result = await this.testSubRecordSchemaService
       .getModel()
@@ -108,6 +111,52 @@ export class SubRecordService {
       order.price = row.price;
       orderList.push(order);
     }
+
+    // 方案2查询分页
+    const twoResult = await this.testSubRecordSchemaService
+      .getModel()
+      .aggregate<AggregateSubOrderDocument>([
+        ...aggregateWhere,
+        {
+          // 分2个子管道进行聚合操作
+          $facet: {
+            total: [
+              {
+                $count: 'count',
+              },
+            ],
+            rows: [
+              {
+                $skip: (params.offset - 1) * params.pageSize,
+              },
+              {
+                $limit: params.pageSize,
+              },
+              // 重塑输出结构
+              {
+                $replaceRoot: {
+                  newRoot: '$orders',
+                },
+              },
+            ],
+          },
+        },
+        // 扁平化 total
+        {
+          $addFields: {
+            total: { $ifNull: [{ $arrayElemAt: ['$total.count', 0] }, 0] },
+          },
+        },
+      ]);
+    twoResult.forEach((v) => {
+      console.log(v.total);
+      v.rows.forEach((row) => {
+        console.log(row._id.toString());
+        console.log(row.productName);
+        console.log(row.quantity);
+        console.log(row.price);
+      });
+    });
 
     resp.orders = orderList;
     resp.code = CodeEnum.SUCCESS;
