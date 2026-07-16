@@ -3,13 +3,14 @@
  */
 import { ExceptionFilter, Catch, ArgumentsHost, Inject } from '@nestjs/common';
 import { MongoServerError } from 'mongodb';
+import { MongooseError } from 'mongoose';
 import { Request, Response } from 'express';
 import { upperFirst } from 'lodash';
 import { CodeEnum } from '@/common/enum';
 import { GlobalService, Utils } from '@/common/utils';
 import { AopLogger } from '@/logger';
 
-@Catch(MongoServerError)
+@Catch(MongoServerError, MongooseError)
 export class MongoExceptionFilter implements ExceptionFilter {
   @Inject()
   private readonly globalService: GlobalService;
