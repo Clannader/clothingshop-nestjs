@@ -13,7 +13,7 @@ import {
 import type { Request } from 'express';
 import * as os from 'os';
 import { CmsSession, LanguageType, ErrorPromise } from '../types';
-import { v4 } from 'uuid';
+import { v4 as uuidV4 } from 'uuid';
 import { i18n } from '../i18n';
 import { AopLogger } from '@/logger';
 import parseEnv from '@/lib/parseEnv';
@@ -460,7 +460,7 @@ export class Utils {
   }
 
   static getUuid(): string {
-    return v4().replace(/\-/g, '');
+    return uuidV4().replace(/\-/g, '');
   }
 
   /**
