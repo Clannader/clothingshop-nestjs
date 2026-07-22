@@ -14,3 +14,6 @@ updates:
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
+      - dependency-name: 'mongodb'
+        update-types: [ '6.20.x' ]
+        versions: [ '>6.20.x' ]
