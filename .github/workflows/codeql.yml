@@ -1,12 +1,8 @@
 # GitHub CodeQL 代码安全扫描工作流
-# 触发条件：push 到 master、PR 合并到 master、每周一凌晨定时全量扫描
+# 触发条件：每周一凌晨2点定时全量扫描
 name: CodeQL Analysis
 
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
   schedule:
     - cron: '0 2 * * 1' # 每周一凌晨2点定时扫描
 
