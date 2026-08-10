@@ -10,6 +10,9 @@ updates:
     directory: "/" # 依赖文件所在目录，默认为根目录‌
     schedule:
       interval: "weekly" # 检查频率（daily/weekly/monthly）‌
+      day: "monday" # 每周一检查
+      time: "02:00" # 凌晨2点（对应 timezone 指定的时区）
+      timezone: "Asia/Shanghai" # 时区：北京时间
     open-pull-requests-limit: 10 # 最大并发 PR 数量‌
     ignore:
       - dependency-name: '*'

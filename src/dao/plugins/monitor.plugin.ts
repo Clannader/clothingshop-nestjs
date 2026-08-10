@@ -89,11 +89,11 @@ export const monitorPlugin = function (schema: Schema): void {
     // @ts-ignore
     const parent = this.ownerDocument ? this.ownerDocument() : null;
     if (parent && parent !== this) {
-      console.log('这是子文档');
+      // console.log('这是子文档');
       // 执行子文档特定逻辑
       // 子文档没有this.increment方法
     } else {
-      console.log('这是主文档');
+      // console.log('这是主文档');
       // 执行主文档特定逻辑
     }
   });
