@@ -7,4 +7,5 @@ export const common = {
   hasNoPermission: 'User {0} does not have permission {1}.',
   hasNoPermissions: 'User {0} does not have permissions {1}.',
   duplicateKey: 'Field {0} already has a duplicate value {1}.',
+  invalidMongoId: 'Invalid MongoDB ID',
 };

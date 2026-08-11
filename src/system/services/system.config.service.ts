@@ -47,7 +47,8 @@ import {
 } from '@/entities/services';
 import { RightsEnum } from '@/rights';
 import { UserLogsService } from '@/logs';
-import { MemoryCacheService, SecretPem } from '@/cache/services';
+import { MemoryCacheService } from '@/cache/services';
+import { Types } from 'mongoose';
 
 type CheckSystemConfig = {
   key: string;
@@ -1025,7 +1026,17 @@ export class SystemConfigService {
       where.groupName = Utils.getIgnoreCase(groupName, true);
     }
     if (!Utils.isEmpty(id)) {
-      where._id = id;
+      const idParams = String(id);
+      if (!Types.ObjectId.isValid(idParams)) {
+        resp.code = CodeEnum.FAIL;
+        resp.msg = this.globalService.serverLang(
+          session,
+          '无效的Mongodb ID',
+          'common.invalidMongoId'
+        );
+        return resp;
+      }
+      where._id = idParams;
     }
 
     if (Utils.isEmpty(configKey) && Utils.isEmpty(id)) {
