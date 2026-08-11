@@ -430,7 +430,13 @@ export class SubRecordService {
   async deleteSubOrderDoc(params: ReqSubRecordDeleteOrderDto) {
     const resp = new RespErrorResult();
 
-    const id = params.id;
+    const id = String(params.id);
+    if (!Types.ObjectId.isValid(id)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = '主文档不存在';
+      return resp;
+    }
+
     const oldMaster: TestSubRecordDocument =
       await this.testSubRecordSchemaService.getModel().findById(id);
     if (Utils.isEmpty(oldMaster)) {
