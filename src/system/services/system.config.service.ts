@@ -902,8 +902,8 @@ export class SystemConfigService {
 
     // 判断二级key在自己的一级key中是否存在
     const where: CheckSystemConfig = {
-      key: params.configKey,
-      groupName: params.groupName,
+      key: String(params.configKey),
+      groupName: String(params.groupName),
     };
     if (!isNew) {
       where._id = {
