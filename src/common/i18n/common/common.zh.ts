@@ -7,4 +7,5 @@ export const common = {
   hasNoPermission: '用户{0}缺少所需权限{1}.',
   hasNoPermissions: '用户{0}缺少所需权限{1}.',
   duplicateKey: '字段{0}已有重复值{1}',
+  invalidMongoId: '无效的Mongodb ID',
 };
