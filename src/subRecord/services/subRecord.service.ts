@@ -440,9 +440,10 @@ export class SubRecordService {
     }
 
     // 暂时写删除单条,后面有空写删除多条
+    // 使用 $eq 操作符防止 NoSQL 注入，确保 subId 被当作字面值而非查询操作符
     const where = {
       orders: {
-        _id: params.subId, // 多个 {$in: []}
+        _id: { $eq: params.subId }, // 多个 {$in: []}
       },
     };
     // 删除全部使用{$unset: {orders: 1}}
