@@ -727,7 +727,7 @@ export class SystemConfigService {
     securityOptions?: SecurityOptions,
   ) {
     const resp = new RespSystemChildrenConfigCreateDto();
-    const id = params.id;
+    const id = String(params.id);
     if (!isNew && Utils.isEmpty(id)) {
       resp.code = CodeEnum.EMPTY;
       resp.msg = this.globalService.serverLang(
@@ -742,6 +742,16 @@ export class SystemConfigService {
       newChildrenConfig: ChildrenConfigDocument,
       err: Error;
     if (!isNew) {
+      // 防止SQL 注入
+      if (!Types.ObjectId.isValid(id)) {
+        resp.code = CodeEnum.FAIL;
+        resp.msg = this.globalService.serverLang(
+          session,
+          '无效的Mongodb ID',
+          'common.invalidMongoId'
+        );
+        return resp;
+      }
       [err, oldChildrenConfig] = await Utils.toPromise(
         this.systemConfigSchemaService
           .getChildrenConfigModel()
