@@ -907,7 +907,7 @@ export class SystemConfigService {
     };
     if (!isNew) {
       where._id = {
-        $ne: params.id,
+        $ne: id,
       };
     }
     const [errFind, count] = await Utils.toPromise(
