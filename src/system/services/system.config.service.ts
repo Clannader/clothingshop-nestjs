@@ -358,7 +358,7 @@ export class SystemConfigService {
 
     // 判断配置Key有没有重复
     const where: CheckSystemConfig = {
-      key: params.configKey,
+      key: String(params.configKey),
     };
     if (!isNew) {
       where._id = {
@@ -485,7 +485,7 @@ export class SystemConfigService {
     // 如果ids和keys都传入,则以ids为准
     const ids = params.ids;
     const keys = params.keys;
-    const groupName = params.groupName;
+    const groupName = String(params.groupName);
     const isParent = Utils.isEmpty(groupName);
 
     if (Utils.arrayIsNull(ids) && Utils.arrayIsNull(keys)) {
@@ -853,7 +853,7 @@ export class SystemConfigService {
 
       // 判断一级groupName必须存在
       const searchGroupName = {
-        key: params.groupName,
+        key: String(params.groupName),
       };
       const [errSearch, groupCount] = await Utils.toPromise(
         this.systemConfigSchemaService
@@ -878,7 +878,7 @@ export class SystemConfigService {
 
     // 判断二级key是否在全部的一级key中存在
     const checkParentName = {
-      key: params.configKey,
+      key: String(params.configKey),
     };
     const [errCheck, countParent] = await Utils.toPromise(
       this.systemConfigSchemaService
