@@ -15,6 +15,7 @@ views
 !/build/public
 !/build/views
 documentation
+AGENTS.md
 
 # github
 .github
