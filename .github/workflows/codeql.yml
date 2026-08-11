@@ -5,6 +5,7 @@ name: CodeQL Analysis
 on:
   schedule:
     - cron: '0 2 * * 1' # 每周一凌晨2点定时扫描
+  workflow_dispatch: # 支持在 GitHub Actions 页面手动触发扫描
 
 jobs:
   analyze:
