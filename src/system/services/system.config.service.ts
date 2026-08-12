@@ -47,7 +47,8 @@ import {
 } from '@/entities/services';
 import { RightsEnum } from '@/rights';
 import { UserLogsService } from '@/logs';
-import { MemoryCacheService, SecretPem } from '@/cache/services';
+import { MemoryCacheService } from '@/cache/services';
+import { Types } from 'mongoose';
 
 type CheckSystemConfig = {
   key: string;
@@ -357,7 +358,7 @@ export class SystemConfigService {
 
     // 判断配置Key有没有重复
     const where: CheckSystemConfig = {
-      key: params.configKey,
+      key: String(params.configKey),
     };
     if (!isNew) {
       where._id = {
@@ -484,7 +485,7 @@ export class SystemConfigService {
     // 如果ids和keys都传入,则以ids为准
     const ids = params.ids;
     const keys = params.keys;
-    const groupName = params.groupName;
+    const groupName = String(params.groupName);
     const isParent = Utils.isEmpty(groupName);
 
     if (Utils.arrayIsNull(ids) && Utils.arrayIsNull(keys)) {
@@ -726,7 +727,7 @@ export class SystemConfigService {
     securityOptions?: SecurityOptions,
   ) {
     const resp = new RespSystemChildrenConfigCreateDto();
-    const id = params.id;
+    const id = String(params.id);
     if (!isNew && Utils.isEmpty(id)) {
       resp.code = CodeEnum.EMPTY;
       resp.msg = this.globalService.serverLang(
@@ -741,6 +742,16 @@ export class SystemConfigService {
       newChildrenConfig: ChildrenConfigDocument,
       err: Error;
     if (!isNew) {
+      // 防止SQL 注入
+      if (!Types.ObjectId.isValid(id)) {
+        resp.code = CodeEnum.FAIL;
+        resp.msg = this.globalService.serverLang(
+          session,
+          '无效的Mongodb ID',
+          'common.invalidMongoId'
+        );
+        return resp;
+      }
       [err, oldChildrenConfig] = await Utils.toPromise(
         this.systemConfigSchemaService
           .getChildrenConfigModel()
@@ -842,7 +853,7 @@ export class SystemConfigService {
 
       // 判断一级groupName必须存在
       const searchGroupName = {
-        key: params.groupName,
+        key: String(params.groupName),
       };
       const [errSearch, groupCount] = await Utils.toPromise(
         this.systemConfigSchemaService
@@ -867,7 +878,7 @@ export class SystemConfigService {
 
     // 判断二级key是否在全部的一级key中存在
     const checkParentName = {
-      key: params.configKey,
+      key: String(params.configKey),
     };
     const [errCheck, countParent] = await Utils.toPromise(
       this.systemConfigSchemaService
@@ -891,12 +902,12 @@ export class SystemConfigService {
 
     // 判断二级key在自己的一级key中是否存在
     const where: CheckSystemConfig = {
-      key: params.configKey,
-      groupName: params.groupName,
+      key: String(params.configKey),
+      groupName: String(params.groupName),
     };
     if (!isNew) {
       where._id = {
-        $ne: params.id,
+        $ne: id,
       };
     }
     const [errFind, count] = await Utils.toPromise(
@@ -1025,7 +1036,17 @@ export class SystemConfigService {
       where.groupName = Utils.getIgnoreCase(groupName, true);
     }
     if (!Utils.isEmpty(id)) {
-      where._id = id;
+      const idParams = String(id);
+      if (!Types.ObjectId.isValid(idParams)) {
+        resp.code = CodeEnum.FAIL;
+        resp.msg = this.globalService.serverLang(
+          session,
+          '无效的Mongodb ID',
+          'common.invalidMongoId'
+        );
+        return resp;
+      }
+      where._id = idParams;
     }
 
     if (Utils.isEmpty(configKey) && Utils.isEmpty(id)) {

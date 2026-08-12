@@ -430,7 +430,13 @@ export class SubRecordService {
   async deleteSubOrderDoc(params: ReqSubRecordDeleteOrderDto) {
     const resp = new RespErrorResult();
 
-    const id = params.id;
+    const id = String(params.id);
+    if (!Types.ObjectId.isValid(id)) {
+      resp.code = CodeEnum.FAIL;
+      resp.msg = '主文档不存在';
+      return resp;
+    }
+
     const oldMaster: TestSubRecordDocument =
       await this.testSubRecordSchemaService.getModel().findById(id);
     if (Utils.isEmpty(oldMaster)) {
@@ -440,9 +446,13 @@ export class SubRecordService {
     }
 
     // 暂时写删除单条,后面有空写删除多条
+    // 使用 String() 显式类型转换防止 NoSQL 注入
+    // CodeQL 将 String() 识别为 sanitizer，可中断污点数据流
+    // 即使攻击者传入 { "$ne": null } 等操作符对象，也会被强制转为字符串
+    const subId = String(params.subId);
     const where = {
       orders: {
-        _id: params.subId, // 多个 {$in: []}
+        _id: subId, // 多个 {$in: []}
       },
     };
     // 删除全部使用{$unset: {orders: 1}}
