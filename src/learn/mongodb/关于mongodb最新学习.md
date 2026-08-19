@@ -592,6 +592,8 @@ console.log(connection.config)
 ### 29 pm2使用经验
 
 - 1.切换fork和cluster模式时,需要pm2 delete appName才可以重启服务,否则配置不会生效,因为pm2会缓存配置文件,不会重新读取配置文件
-- 2.cluster模式日志无法生成,只能使用fork
-- 3.fork模式下的多个子进程只有全部kill,才会重启全部恢复子进程,如果是代码启动fork,kill掉一个就会自启动一个
-- 4.fork模式下可以生成多个子进程,通过自己代码的config.ini实现
+- 2.cluster模式日志无法生成,只能使用fork,似乎Linux的日志是正常的,没有环境试
+- 3.fork模式下可以生成多个子进程,通过自己代码的config.ini实现
+- 4.pm2停止服务pm2 stop all
+- 5.如果使用pm2启动fork服务,其实就是使用pm2维护master,子进程不维护,master挂了自动启,自动启的时候会重新把子进程启起来
+- 6.如果是cluster模式,则是pm2维护所有实例
