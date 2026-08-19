@@ -3,7 +3,7 @@ module.exports = {
     {
       // 启动命令为 pm2 start ecosystem.config.js, 由 pm2 以全局安装方式(非项目依赖)驱动
       name: 'ClothingShop-App', // PM2 进程列表显示名
-      script: './main.js', // 入口脚本(相对路径)
+      script: './build/main.js', // 入口脚本(相对路径)
       instances: 4, // 集群模式起 4 个进程做负载均衡
       exec_mode: 'cluster',
       autorestart: true, // 崩溃自动重启(默认 true)
