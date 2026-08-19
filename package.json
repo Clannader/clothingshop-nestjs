@@ -1,6 +1,6 @@
 {
   "name": "@andybeat/clothingshop-nestjs",
-  "version": "2.16.0",
+  "version": "2.17.0",
   "private": true,
   "packageManager": "npm@11.16.0",
   "description": "Typescript Backend Server",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/AndyBeat/clothingshop-nestjs.git"
+    "url": "git+https://github.com/AndyBeat/clothingshop-nestjs.git"
   },
   "license": "MIT",
   "engines": {
@@ -147,7 +147,8 @@
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": [
-        "ts-jest", {
+        "ts-jest",
+        {
           "tsconfig": "tsconfig.build.json"
         }
       ]
