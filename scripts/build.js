@@ -20,7 +20,9 @@ delete pkg.devDependencies;
 // scripts只保留start
 const startScript = pkg.scripts.start;
 delete pkg.scripts
-pkg.scripts = startScript
+pkg.scripts = {
+  start: startScript,
+}
 fs.writeFileSync(
   path.join(packagePath, 'package.json'),
   JSON.stringify(pkg, null, 2),
