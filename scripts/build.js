@@ -14,8 +14,13 @@ fs.writeFileSync(
   runBatContentArray.join('\r\n'),
   'utf8',
 );
+delete pkg.private;
 delete pkg.jest;
 delete pkg.devDependencies;
+// scripts只保留start
+const startScript = pkg.scripts.start;
+delete pkg.scripts
+pkg.scripts = startScript
 fs.writeFileSync(
   path.join(packagePath, 'package.json'),
   JSON.stringify(pkg, null, 2),

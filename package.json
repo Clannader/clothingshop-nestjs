@@ -2,7 +2,7 @@
   "name": "@andybeat/clothingshop-nestjs",
   "version": "2.16.0",
   "private": true,
-  "packageManager": "npm@10.8.2",
+  "packageManager": "npm@11.16.0",
   "description": "Typescript Backend Server",
   "author": {
     "name": "AndyBeat",
@@ -13,6 +13,9 @@
     "url": "https://github.com/AndyBeat/clothingshop-nestjs.git"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=24.18.0"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "cross-env NODE_ENV=production && npm run build:dev && npm run build:zip",
