@@ -592,8 +592,29 @@ console.log(connection.config)
 ### 29 pm2使用经验
 
 - 1.切换fork和cluster模式时,需要pm2 delete appName才可以重启服务,否则配置不会生效,因为pm2会缓存配置文件,不会重新读取配置文件
-- 2.cluster模式日志无法生成,只能使用fork,似乎Linux的日志是正常的,没有环境试
-- 3.fork模式下可以生成多个子进程,通过自己代码的config.ini实现
-- 4.pm2停止服务pm2 stop all
+- 2.cluster模式日志无法生成,只能使用fork,似乎Linux下的cluster模式的日志是正常的,没有环境试
+- 3.fork模式下可以生成多个子进程,通过自己代码的config.ini实现,相当于使用pm2托管自己的master进程
+- 4.pm2停止服务pm2 stop all,安装pm2的日志模块pm2 install pm2-logrotate,设置日期格式pm2 set pm2-logrotate:dateFormat YYYY-MM-DD
 - 5.如果使用pm2启动fork服务,其实就是使用pm2维护master,子进程不维护,master挂了自动启,自动启的时候会重新把子进程启起来
 - 6.如果是cluster模式,则是pm2维护所有实例
+- 7.监控pm2: pm2 monit, 查看pm2-logrotate配置: pm2 conf pm2-logrotate, 停止服务: pm2 stop pm2-logrotate
+- 8.持久化位置：~/.pm2/module_conf.json(pm2 set 写入的文件), 修改方式：pm2 set pm2-logrotate:dateFormat YYYY-MM-DD_HH-mm-ss
+- 9.pm2-logrotate就是pm2的日志轮转模块,可以设置日志文件大小,保留天数,压缩等功能,默认是10M,30天,不压缩
+
+```javascript
+// ~/.pm2/module_conf.json 内容
+{
+  "pm2-logrotate": {
+    "max_size": "10M",
+      "retain": "30",
+      "compress": false,
+      "dateFormat": "YYYY-MM-DD",
+      "workerInterval": "30",
+      "rotateInterval": "0 0 * * *",
+      "rotateModule": true
+  },
+  "module-db-v2": {
+    "pm2-logrotate": {}
+  }
+}
+```
