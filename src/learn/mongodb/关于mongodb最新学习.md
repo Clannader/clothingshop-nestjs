@@ -627,7 +627,8 @@ console.log(connection.config)
 ```javascript
 log4js.configure({
   pm2: true, // 必须设置为 true
-  pm2InstanceVar: 'INSTANCE_ID', // 需与 PM2 配置中的 instance_var 对应
+  disableClustering: true,
+  // pm2InstanceVar: 'INSTANCE_ID', // 需与 PM2 配置中的 instance_var 对应
   appenders: { ... },
   categories: { ... }
 });
@@ -640,7 +641,8 @@ log4js.configure({
     name: 'app', 
     instances: 'max',
     exec_mode: 'cluster',
-    instance_var: 'INSTANCE_ID' // 关键配置
+    merge_logs: false,
+    // instance_var: 'INSTANCE_ID' // 关键配置
 }
 ```
 

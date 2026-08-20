@@ -9,7 +9,6 @@ module.exports = {
       instances: 4,
       exec_mode: 'cluster',
       merge_logs: false,
-      // instance_var: 'INSTANCE_ID', // cluster模式下关键配置
       autorestart: true, // 崩溃自动重启(默认 true)
       restart_delay: 5000, // 重启间隔5s (单位是ms)，避免快速重启风暴
       max_restarts: 20, // 短期超 20 次重启标记为 errored, 停止拉起
