@@ -34,6 +34,14 @@ export async function clusterApp() {
         `Sub-thread-worker ID:${worker.id} exit, processID : ${worker.process.pid}`,
       );
       console.log(`Sub-thread-code Code:${code}`);
+      // 延迟5s自动补充worker,保持进程数量恒等于threadNum
+      // 加延迟是防止"启动即崩"场景(如DB连不上)下的无限fork风暴,与 ecosystem.config.js 的 restart_delay 保持一致
+      setTimeout(() => {
+        const newWorker = cluster.fork();
+        console.log(
+          `Refork worker ID:${newWorker.id}, processID : ${newWorker.process.pid}`,
+        );
+      }, 5000);
     });
 
     cluster.on('listening', function (worker: Worker) {

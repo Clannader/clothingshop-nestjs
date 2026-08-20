@@ -11,6 +11,7 @@
 /version
 
 # Logs
+/logs
 *.log
 server.log*
 npm-debug.log*
