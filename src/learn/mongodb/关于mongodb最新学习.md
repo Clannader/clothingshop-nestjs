@@ -601,7 +601,7 @@ console.log(connection.config)
 - 8.持久化位置：~/.pm2/module_conf.json(pm2 set 写入的文件), 修改方式：pm2 set pm2-logrotate:dateFormat YYYY-MM-DD_HH-mm-ss
 - 9.pm2-logrotate就是pm2的日志轮转模块,可以设置日志文件大小,保留天数,压缩等功能,默认是10M,30天,不压缩
 
-```javascript
+```json5
 // ~/.pm2/module_conf.json 内容
 {
   "pm2-logrotate": {
@@ -622,9 +622,13 @@ console.log(connection.config)
 ### 30 解决pm2 cluster模式下日志无法生成问题
 
 - 1.安装模块：pm2 install pm2-intercom, 需要启动pm2的模块程序才可以
+```
+复测发现,好像和pm2-intercom没有任何关系,和log4js的disableClustering这个配置有关,需要设置成true,否则cluster模式下日志无法生成,
+因为cluster模式下,pm2会把日志输出到子进程,而log4js默认是禁止子进程输出日志的,所以需要设置disableClustering为true,才能让子进程输出日志
+```
 - 2.log4js新增配置
 
-```javascript
+```js
 log4js.configure({
   pm2: true, // 必须设置为 true
   disableClustering: true,
@@ -636,7 +640,7 @@ log4js.configure({
 
 - 3.pm2新增配置
 
-```javascript
+```json5
 {
     name: 'app', 
     instances: 'max',
@@ -648,7 +652,7 @@ log4js.configure({
 
 - 4.使用ApacheBench并发测试命中服务器
 
-```javascript
+```
 // 下载地址[apachelounge.com/download/](https://www.apachelounge.com/download/)
 // 下载httpd-2.4.68-260617-Win64-VS18.zip,解压后配置环境变量~\Apache24\bin
 ab -n 500 -c 100 http://localhost:5000/cms/api/user/publicKey
