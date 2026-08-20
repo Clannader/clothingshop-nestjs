@@ -31,9 +31,17 @@ pm2 conf pm2-logrotate
 
 # 修改单项配置（改完模块自动重启，即时生效）
 pm2 set pm2-logrotate:dateFormat YYYY-MM-DD_HH-mm-ss
+
+# 这条命令会导致日期为新的一天
 pm2 set pm2-logrotate:rotateInterval 0 0 * * *
+
 pm2 set pm2-logrotate:max_size 50M
 pm2 set pm2-logrotate:retain 15
+
+# 需要这样设置才能归纳前一天的日志
+pm2 set pm2-logrotate:rotateInterval '59 23 * * *'
+pm2 restart pm2-logrotate
+
 ```
 
 ## 注意事项

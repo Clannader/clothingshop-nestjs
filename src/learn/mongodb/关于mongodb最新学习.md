@@ -597,7 +597,7 @@ console.log(connection.config)
 - 4.pm2停止服务pm2 stop all,安装pm2的日志模块pm2 install pm2-logrotate,设置日期格式pm2 set pm2-logrotate:dateFormat YYYY-MM-DD
 - 5.如果使用pm2启动fork服务,其实就是使用pm2维护master,子进程不维护,master挂了自动启,自动启的时候会重新把子进程启起来
 - 6.如果是cluster模式,则是pm2维护所有实例
-- 7.监控pm2: pm2 monit, 查看pm2-logrotate配置: pm2 conf pm2-logrotate, 停止服务: pm2 stop pm2-logrotate
+- 7.监控pm2: pm2 monit, 查看pm2-logrotate配置: pm2 conf pm2-logrotate, 停止服务: pm2 stop pm2-logrotate, pm2 start pm2-logrotate
 - 8.持久化位置：~/.pm2/module_conf.json(pm2 set 写入的文件), 修改方式：pm2 set pm2-logrotate:dateFormat YYYY-MM-DD_HH-mm-ss
 - 9.pm2-logrotate就是pm2的日志轮转模块,可以设置日志文件大小,保留天数,压缩等功能,默认是10M,30天,不压缩
 
