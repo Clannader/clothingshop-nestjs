@@ -618,3 +618,36 @@ console.log(connection.config)
   }
 }
 ```
+
+### 30 解决pm2 cluster模式下日志无法生成问题
+
+- 1.安装模块：pm2 install pm2-intercom, 需要启动pm2的模块程序才可以
+- 2.log4js新增配置
+
+```javascript
+log4js.configure({
+  pm2: true, // 必须设置为 true
+  pm2InstanceVar: 'INSTANCE_ID', // 需与 PM2 配置中的 instance_var 对应
+  appenders: { ... },
+  categories: { ... }
+});
+```
+
+- 3.pm2新增配置
+
+```javascript
+{
+    name: 'app', 
+    instances: 'max',
+    exec_mode: 'cluster',
+    instance_var: 'INSTANCE_ID' // 关键配置
+}
+```
+
+- 4.使用ApacheBench并发测试命中服务器
+
+```javascript
+// 下载地址[apachelounge.com/download/](https://www.apachelounge.com/download/)
+// 下载httpd-2.4.68-260617-Win64-VS18.zip,解压后配置环境变量~\Apache24\bin
+ab -n 500 -c 100 http://localhost:5000/cms/api/user/publicKey
+```
