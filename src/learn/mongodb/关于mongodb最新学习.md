@@ -657,3 +657,10 @@ log4js.configure({
 // 下载httpd-2.4.68-260617-Win64-VS18.zip,解压后配置环境变量~\Apache24\bin
 ab -n 500 -c 100 http://localhost:5000/cms/api/user/publicKey
 ```
+
+- 5.pm2启动安装过的module时报错,解决方案如下
+
+```
+pm2 7.0版本以上, pm2 start moduleName时报[PM2][ERROR] Script not found: ~\pm2-intercom
+可以使用pm2 kill重新加载module
+```
