@@ -167,5 +167,9 @@
     },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "files": [
+    "build",
+    "ecosystem.config.js"
+  ]
 }

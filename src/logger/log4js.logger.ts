@@ -22,8 +22,8 @@ function replaceConsole(logger: Log4js.Logger) {
 }
 
 Log4js.configure({
-  pm2: true, // 必须设置为 true
-  disableClustering: true,
+  pm2: process.env.pm2Start === 'true', // 必须设置为 true
+  disableClustering: process.env.pm2Start === 'true',
   // pm2InstanceVar: 'INSTANCE_ID', // 需与 PM2 配置中的 instance_var 对应
   appenders: {
     fileLogs: {

@@ -22,6 +22,7 @@ module.exports = {
       // log_date_format: 'YYYY-MM-DD HH:mm:ss.SSS', // 每行 pm2 日志前置时间戳(仅 pm2 转发日志,log4js 时间戳不受影响)
       env: {
         NODE_ENV: 'production',
+        pm2Start: 'true',
       },
     },
   ],
