@@ -588,3 +588,79 @@ console.log(connection.config)
 ```javascript
 @Schema({ discriminatorKey: 'type', timestamps: true })
 ```
+
+### 29 pm2使用经验
+
+- 1.切换fork和cluster模式时,需要pm2 delete appName才可以重启服务,否则配置不会生效,因为pm2会缓存配置文件,不会重新读取配置文件
+- 2.cluster模式日志无法生成,只能使用fork,似乎Linux下的cluster模式的日志是正常的,没有环境试
+- 3.fork模式下可以生成多个子进程,通过自己代码的config.ini实现,相当于使用pm2托管自己的master进程
+- 4.pm2停止服务pm2 stop all,安装pm2的日志模块pm2 install pm2-logrotate,设置日期格式pm2 set pm2-logrotate:dateFormat YYYY-MM-DD
+- 5.如果使用pm2启动fork服务,其实就是使用pm2维护master,子进程不维护,master挂了自动启,自动启的时候会重新把子进程启起来
+- 6.如果是cluster模式,则是pm2维护所有实例
+- 7.监控pm2: pm2 monit, 查看pm2-logrotate配置: pm2 conf pm2-logrotate, 停止服务: pm2 stop pm2-logrotate, pm2 start pm2-logrotate
+- 8.持久化位置：~/.pm2/module_conf.json(pm2 set 写入的文件), 修改方式：pm2 set pm2-logrotate:dateFormat YYYY-MM-DD_HH-mm-ss
+- 9.pm2-logrotate就是pm2的日志轮转模块,可以设置日志文件大小,保留天数,压缩等功能,默认是10M,30天,不压缩
+
+```json5
+// ~/.pm2/module_conf.json 内容
+{
+  "pm2-logrotate": {
+    "max_size": "10M",
+      "retain": "30",
+      "compress": false,
+      "dateFormat": "YYYY-MM-DD",
+      "workerInterval": "30",
+      "rotateInterval": "0 0 * * *",
+      "rotateModule": true
+  },
+  "module-db-v2": {
+    "pm2-logrotate": {}
+  }
+}
+```
+
+### 30 解决pm2 cluster模式下日志无法生成问题
+
+- 1.安装模块：pm2 install pm2-intercom, 需要启动pm2的模块程序才可以
+```
+复测发现,好像和pm2-intercom没有任何关系,和log4js的disableClustering这个配置有关,需要设置成true,否则cluster模式下日志无法生成,
+因为cluster模式下,pm2会把日志输出到子进程,而log4js默认是禁止子进程输出日志的,所以需要设置disableClustering为true,才能让子进程输出日志
+```
+- 2.log4js新增配置
+
+```js
+log4js.configure({
+  pm2: true, // 必须设置为 true
+  disableClustering: true,
+  // pm2InstanceVar: 'INSTANCE_ID', // 需与 PM2 配置中的 instance_var 对应
+  appenders: { ... },
+  categories: { ... }
+});
+```
+
+- 3.pm2新增配置
+
+```json5
+{
+    name: 'app', 
+    instances: 'max',
+    exec_mode: 'cluster',
+    merge_logs: false,
+    // instance_var: 'INSTANCE_ID' // 关键配置
+}
+```
+
+- 4.使用ApacheBench并发测试命中服务器
+
+```
+// 下载地址[apachelounge.com/download/](https://www.apachelounge.com/download/)
+// 下载httpd-2.4.68-260617-Win64-VS18.zip,解压后配置环境变量~\Apache24\bin
+ab -n 500 -c 100 http://localhost:5000/cms/api/user/publicKey
+```
+
+- 5.pm2启动安装过的module时报错,解决方案如下
+
+```
+pm2 7.0版本以上, pm2 start moduleName时报[PM2][ERROR] Script not found: ~\pm2-intercom
+可以使用pm2 kill重新加载module
+```

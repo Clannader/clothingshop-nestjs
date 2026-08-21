@@ -36,7 +36,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "compodoc": "npx compodoc -p tsconfig.json -s"
+    "compodoc": "npx compodoc -p tsconfig.json -s",
+    "node:run": "cross-env NODE_ENV=development TS_NODE_FILES=true node build/main",
+    "node:start": "cross-env NODE_ENV=development TS_NODE_FILES=true node -r tsconfig-paths/register -r ts-node/register src/main.ts",
+    "pm2:start": "pm2 start ecosystem.config.js"
   },
   "dependencies": {
     "@andybeat/schedule": "^2.0.1",
@@ -164,5 +167,9 @@
     },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "files": [
+    "build",
+    "ecosystem.config.js"
+  ]
 }
