@@ -26,6 +26,7 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         pm2Start: 'true',
+        TS_NODE_FILES: 'true',
       },
     },
   ],
