@@ -1,5 +1,5 @@
 const path = require('path');
-const pm2Path = path.join(process.cwd(), 'logs', 'pm2')
+const pm2Path = path.join(process.cwd(), 'logs', 'pm2');
 module.exports = {
   apps: [
     {
