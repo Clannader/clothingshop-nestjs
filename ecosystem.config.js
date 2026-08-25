@@ -5,12 +5,12 @@ module.exports = {
     {
       // 启动命令为 pm2 start ecosystem.config.js, 由 pm2 以全局安装方式(非项目依赖)驱动
       name: 'ClothingShop-App', // PM2 进程列表显示名
-      script: 'src/main.ts', // 入口脚本(相对路径),直接运行 TS 源码
+      script: './src/main.ts', // 入口脚本(相对路径),直接运行 TS 源码
       // 等价启动命令: node -r tsconfig-paths/register -r ts-node/register src/main.ts
       interpreter: 'node', // 显式指定用 node 解释,避免 PM2 对 .ts 文件自动推断成 ts-node bin
       interpreter_args: '-r tsconfig-paths/register -r ts-node/register', // node 预加载模块参数
-      instances: 4,
-      exec_mode: 'cluster',
+      instances: 1, // fork 模式下实例数固定为 1
+      exec_mode: 'fork', // ts-node 直跑 TS 源码必须用 fork: cluster 模式下 PM2 走 node 原生 cluster.fork(),不传 interpreter_args,worker 直接 require('.ts') 必然启动即崩
       merge_logs: false,
       autorestart: true, // 崩溃自动重启(默认 true)
       restart_delay: 5000, // 重启间隔5s (单位是ms)，避免快速重启风暴
@@ -26,6 +26,7 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         pm2Start: 'true',
+        TS_NODE_FILES: 'true',
       },
     },
   ],
