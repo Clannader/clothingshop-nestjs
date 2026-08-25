@@ -2,7 +2,6 @@ const pkg = require('../package.json');
 const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
-const moment = require('moment');
 const version = pkg.version;
 
 const packagePath = path.join(process.cwd(), 'build');
@@ -38,6 +37,10 @@ const outStream = fs.createWriteStream(
 );
 const zlib = archiver('zip', {
   zlib: { level: 9 },
+  // zip的DOS时间默认按UTC字段编码,而解压工具按本地时间展示,
+  // 东八区打出的包解压后时间会早8小时(旧补丁用moment手动+8h是错误修法);
+  // 开启forceLocalTime后改用本地时间字段编码,解压显示的时间与打包时刻一致
+  forceLocalTime: true,
 });
 // 监听要压缩的所有文件数据
 outStream.on('close', function () {
@@ -63,10 +66,12 @@ zlib.on('error', function (err) {
 });
 
 zlib.pipe(outStream);
+// 统一所有条目的时间为打包时刻,不再透传源文件mtime
+// (archiver在entryData未设置date时会直接透传文件mtime,
+// 源文件mtime异常会原样写进zip,如旧版npm安装的依赖mtime固定为1985-10-26)
+const buildTime = new Date();
 zlib.directory(packagePath, '', (entryData) => {
-  // 如果添加date节点,则会以date为准
-  // entryData.date = moment().add(8, 'hour').toDate(); // 由于压缩打包显示的时间是零时区的时间,所以+8就是显示对的时间
-  // entryData.stats.mtime = moment(entryData.stats.mtime).add(8, 'hour').toDate();
+  entryData.date = buildTime;
   return entryData;
 });
 zlib.finalize().then();
