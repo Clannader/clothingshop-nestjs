@@ -6,7 +6,7 @@ import * as globalVariable from '../constants';
 import { LanguageType, CmsSession, WRITE_LOG } from '@/common';
 import type { MetadataLog } from '@/common/decorator';
 import { Utils } from '@/common/utils';
-import * as moment from 'moment';
+import moment from 'moment';
 
 @Injectable()
 export class GlobalService {

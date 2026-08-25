@@ -1,11 +1,8 @@
 /**
  * Create by oliver.wu 2024/9/25
  */
-// 这样写是可以的,但是ts校验类型又过不去
-// import * as cluster from 'node:cluster';
-import type { Worker } from 'node:cluster'; // 用这个声明,使用时ts编译不过去
-// @ts-ignore
-const cluster = require('node:cluster'); // 用这个声明的话,又不是ts的写法,暂时这样弄吧
+import cluster from 'node:cluster';
+import type { Worker } from 'node:cluster';
 import { availableParallelism } from 'node:os';
 import parseEnv from '@/lib/parseEnv';
 import { bootstrap } from './single.app';

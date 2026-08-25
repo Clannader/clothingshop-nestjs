@@ -13,9 +13,7 @@ import { AopAspect } from '@/interceptor/aop';
 import * as crypto from 'node:crypto';
 import { MemoryCacheService } from '@/cache/services';
 import { Utils } from '@/common/utils';
-
-// @ts-ignore
-const cluster = require('node:cluster');
+import cluster from 'node:cluster';
 
 @Injectable()
 export class AopMiddleware implements NestMiddleware {

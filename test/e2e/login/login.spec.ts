@@ -4,12 +4,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '@/app.module';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { SessionMiddleware } from '@/middleware';
 import { sessionName, sessionSecret, DbSession_Expires } from '@/common';
 import { MongooseConfigService, SessionMongoStore } from '@/dao';
-import * as request from 'supertest';
-import * as session from 'express-session';
+import request from 'supertest';
+import session from 'express-session';
 
 describe('LoginController (e2e)', () => {
   let app: INestApplication;

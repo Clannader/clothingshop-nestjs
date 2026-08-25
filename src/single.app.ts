@@ -16,7 +16,7 @@ import type { NestApplicationOptions } from '@nestjs/common';
 
 // const MongoStore = require('connect-mongo');
 import { SessionMongoStore, MongooseConfigService } from './dao';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 
 import './logger/log4js.logger';
 import { AppModule } from './app.module';
@@ -24,7 +24,7 @@ import { AopLogger } from './logger';
 import helmet from 'helmet';
 import { join } from 'path';
 import { renderFile } from 'ejs';
-import * as session from 'express-session';
+import session from 'express-session';
 import {
   sessionName,
   sessionSecret,
@@ -41,7 +41,7 @@ import { rateLimit, MemoryStore } from 'express-rate-limit';
 import parseEnv from '@/lib/parseEnv';
 import * as fs from 'fs';
 import { ApiTagsDescriptionRegistry } from '@/lib/api-tags-description';
-import * as expressStaticGzip from 'express-static-gzip';
+import expressStaticGzip from 'express-static-gzip';
 import { parse as qsParse } from 'qs';
 // import * as crypto from 'node:crypto';
 // import * as passport from 'passport';

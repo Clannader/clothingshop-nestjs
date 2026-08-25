@@ -4,7 +4,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '@/app.module';
-import * as request from 'supertest';
+import request from 'supertest';
 import { TokenService } from '@/gateway';
 import { ConfigService } from '@/common/config';
 import { Utils } from '@/common/utils';
