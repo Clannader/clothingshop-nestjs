@@ -114,7 +114,7 @@ export class ConfigTestModule {
           isGlobal: true,
         }),
       ],
-      controllers: [TestConfigController]
+      controllers: [TestConfigController],
     };
   }
 
@@ -139,9 +139,12 @@ export class ConfigTestModule {
           iniFilePath: join(__dirname, 'config.ini'),
           isGlobal: true,
         }),
-        TestConfigModule,
+        ConfigModule.register({
+          iniFilePath: join(__dirname, 'config.expand.ini'),
+          token: 'TOKEN',
+        }),
       ],
-      // controllers: [TestConfigController],
+      controllers: [TestConfigController, TestConfigTokenController],
     };
   }
 }

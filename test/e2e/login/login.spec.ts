@@ -105,7 +105,9 @@ describe('LoginController (e2e)', () => {
       });
   });
 
-  afterEach(async () => {
-    await app.close();
+  afterEach(() => {
+    setTimeout(async () => {
+      await app.close();
+    }, 3000);
   });
 });
