@@ -54,7 +54,7 @@ export class GatewayAuthController {
   @Inject()
   private readonly tokenCacheService: TokenCacheService;
 
-  @Post('/authorize')
+  @Post('/token')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: '接口授权验证',
@@ -113,7 +113,7 @@ export class GatewayAuthController {
       shopId: otherInfo.currentShop,
       requestIP: Utils.getRequestIP(req),
       requestHost: req.headers['host'],
-      isFirstLogin: false,
+      isFirstLogin: false, // TODO auth授权也需要拦截首次登录用户修改密码,但是看Swagger除外
       sessionId: sessionId,
       encryptRights: Utils.tripleDesEncrypt(
         JSON.stringify(otherInfo.rights),
@@ -124,6 +124,7 @@ export class GatewayAuthController {
         sessionId,
       ),
     };
+    // TODO auth授权的session估计要实例化到cmsSession中,和普通登录保持一致
     const accessExpires = this.configService.get<number>('tokenExpires', 3600);
     const refreshExpires = this.configService.get<number>('tokenRefresh', 7200);
     resp.accessToken = this.tokenService.generateToken(session, accessExpires);

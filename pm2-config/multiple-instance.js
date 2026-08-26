@@ -1,3 +1,5 @@
+const path = require('path');
+const pm2Path = path.join(process.cwd(), 'logs', 'pm2');
 module.exports = {
   apps: [
     {
@@ -14,8 +16,12 @@ module.exports = {
       min_uptime: 2000, // 运行不足 2s 视为启动失败
       max_memory_restart: '250M', // 达到内存阈值时自动重启
       watch: false,
+      out_file: path.join(pm2Path, 'out', 'out.log'), // 标准输出日志(默认在 %USERPROFILE%\.pm2\logs)
+      error_file: path.join(pm2Path, 'error', 'error.log'), // 错误输出日志
+      pid_file: path.join(pm2Path, 'pid', 'app.pid'), // 进程 pid 文件(默认在 %USERPROFILE%\.pm2\pids)
       env: {
         NODE_ENV: 'production',
+        pm2Start: 'true',
       },
     },
   ],

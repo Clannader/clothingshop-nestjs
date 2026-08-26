@@ -4,7 +4,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '@/app.module';
-import * as request from 'supertest';
+import request from 'supertest';
 import { TokenService } from '@/gateway';
 import { ConfigService } from '@/common/config';
 import { Utils } from '@/common/utils';
@@ -52,7 +52,7 @@ describe('GatewayAuthController (e2e)', () => {
       });
   });
 
-  it('/gateway/api/oauth/authorize oauth授权测试', async () => {
+  it('/gateway/api/oauth/token oauth授权测试', async () => {
     await request(app.getHttpServer())
       .post('/cms/api/user/getSecuritySession')
       .expect(200)
@@ -84,7 +84,7 @@ describe('GatewayAuthController (e2e)', () => {
       Buffer.from(publicKey, 'base64').toString(),
     );
     return request(app.getHttpServer())
-      .post('/gateway/api/oauth/authorize')
+      .post('/gateway/api/oauth/token')
       .set('security-token', securityToken)
       .set('security-id', securitySession.sessionId)
       .send({

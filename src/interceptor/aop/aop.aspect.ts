@@ -7,13 +7,11 @@ import { LogTypeEnum, UserTypeEnum } from '@/common/enum';
 import { ConfigService } from '@/common/config';
 import { Injectable, Inject } from '@nestjs/common';
 import { AopLogger } from '@/logger';
-import * as onFinished from 'on-finished';
+import onFinished from 'on-finished';
 import { AdminAccessSchemaService } from '@/entities/services';
 import { MemoryCacheService, TraceIdCacheService } from '@/cache/services';
 import { StatisticsUrlCountService } from '@/statistics/services';
-
-// @ts-ignore
-const cluster = require('node:cluster'); // 不明白这个包的引入问题,后期有解决办法修改了再说吧
+import cluster from 'node:cluster';
 
 @Injectable()
 export class AopAspect {

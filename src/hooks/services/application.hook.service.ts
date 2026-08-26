@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@/common/config';
 
-import * as moment from 'moment';
+import moment from 'moment';
 
 @Injectable()
 export class ApplicationHookService

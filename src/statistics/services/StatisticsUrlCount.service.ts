@@ -7,9 +7,7 @@ import { Subject, bufferTime, bufferCount, take, switchMap, map } from 'rxjs';
 import { ConfigService } from '@/common/config';
 import type { StatUrlCountType } from '@/common/types';
 import { StatisticsUrlSchemaService } from '@/entities/services';
-
-// @ts-ignore
-const cluster = require('node:cluster');
+import cluster from 'node:cluster';
 
 type InsertUrlCountType = {
   timestamp: Date;

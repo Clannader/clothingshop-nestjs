@@ -75,7 +75,7 @@ export class JwtHttpService extends HttpAbstractService {
     // TODO 这里还缺少重试的次数,报错最多重试3次
     const loginObservable = this.makeObservable(
       this.service.post,
-      '/gateway/api/oauth/authorize',
+      '/gateway/api/oauth/token',
       loginParams,
       {
         headers: {

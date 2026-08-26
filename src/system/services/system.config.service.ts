@@ -748,7 +748,7 @@ export class SystemConfigService {
         resp.msg = this.globalService.serverLang(
           session,
           '无效的Mongodb ID',
-          'common.invalidMongoId'
+          'common.invalidMongoId',
         );
         return resp;
       }
@@ -1042,7 +1042,7 @@ export class SystemConfigService {
         resp.msg = this.globalService.serverLang(
           session,
           '无效的Mongodb ID',
-          'common.invalidMongoId'
+          'common.invalidMongoId',
         );
         return resp;
       }

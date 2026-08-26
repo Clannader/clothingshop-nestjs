@@ -19,7 +19,7 @@ import { CmsSession } from '@/common';
 import Axios from 'axios';
 import { join } from 'path';
 import * as fs from 'fs';
-import * as moment from 'moment';
+import moment from 'moment';
 
 type DownloadLogDetails = {
   content: string;
