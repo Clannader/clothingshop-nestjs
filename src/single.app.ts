@@ -32,6 +32,8 @@ import {
   GLOBAL_CONFIG,
   filterXss,
   mongoSanitize,
+  RequestSession,
+  Session_Expires,
 } from './common';
 import { ConfigService } from './common/config';
 import { SessionMiddleware } from './middleware';
@@ -184,32 +186,30 @@ export async function bootstrap() {
     .setTitle('Clothingshop System API')
     .setDescription('The clothingshop restful api')
     .setVersion('1.0')
-    .addBearerAuth({
-      type: 'http',
-      description: 'AuthorizationCode from CMS',
-    })
-    // .addOAuth2({
-    //   type: 'oauth2',
+    // .addBearerAuth({
+    //   type: 'http',
     //   description: 'AuthorizationCode from CMS',
-    //   flows: {
-    //     // implicit: {
-    //     //   authorizationUrl: 'https://example.com/api/oauth/dialog',
-    //     //   scopes: {
-    //     //     'write:pets': 'modify pets in your account',
-    //     //     'read:pets': 'read your pets'
-    //     //   }
-    //     // },
-    //     authorizationCode: {
-    //       authorizationUrl: `${hostName}/gateway/api/oauth/authorize`,
-    //       tokenUrl: `${hostName}/gateway/api/oauth/token`,
-    //       scopes: {
-    //         // 'write:pets': 'modify pets in your account',
-    //         // 'read:pets': 'read your pets'
-    //       },
-    //     },
-    //   },
     // })
-    // 要研究一下授权问题,发现有三种授权方式,但是怎么设置都不生效
+    // OAuth2授权使用authorizationCode模式(授权码模式):Swagger UI点Authorize后不再弹用户名/密码输入框,
+    // 而是新开窗口跳转到authorizationUrl(GET)展示后端授权页,用户确认授权后302回swagger-ui的
+    // oauth2-redirect.html回调页并携带一次性授权码code,回调页再POST到tokenUrl(form-urlencoded)用code换token
+    // 注意1:后端需要提供三件套:GET授权页(校验CMS登录态)+签发一次性code+标准token端点(code换JWT);
+    // 项目现有的/gateway/api/oauth/authorize是POST+JSON+加密密码的自定义协议(服务间JwtHttpService专用),需新增GET路由
+    // 注意2:authorizationUrl/tokenUrl使用相对路径,请求会发到当前浏览器访问swagger-ui的origin,避免跨域问题(项目未开启CORS)
+    // 注意3:回调页固定为{origin}/oauth2-redirect.html(需从node_modules/swagger-ui-dist复制到public并挂载到根路径);
+    //       授权端点必须校验redirect_uri白名单(只放行该回调页地址)防止开放重定向;code需一次性消费+短TTL(如120秒)
+    // 注意4:Swagger UI属于公共客户端,禁止在initOAuth里配置clientSecret(会暴露到前端浏览器)
+    .addOAuth2({
+      type: 'oauth2',
+      description: 'OAuth2授权码模式,跳转CMS授权页确认授权后自动获取Token',
+      flows: {
+        authorizationCode: {
+          authorizationUrl: '/gateway/api/oauth/authorize',
+          tokenUrl: '/gateway/api/oauth/token',
+          scopes: {},
+        },
+      },
+    })
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
     .setContact('oliver.wu', `/index`, '294473343@qq.com');
 
@@ -233,6 +233,13 @@ export async function bootstrap() {
   SwaggerModule.setup('swagger-ui', app, document, {
     swaggerOptions: {
       persistAuthorization: true, // 这个参数好像是做持久化认证的
+      // OAuth2授权弹窗的预填参数,这个是之前OAuth2不生效的原因之一:
+      // 光在DocumentBuilder里面addOAuth2声明还不够,这里必须初始化initOAuth配置
+      initOAuth: {
+        clientId: 'SwaggerUI',
+        appName: 'CMS-Swagger-UI',
+        // clientSecret: 'CmsChina',
+      },
       filter: true,
       displayOperationId: true, // 显示OperationId
       displayRequestDuration: true, // 显示请求时间
@@ -254,6 +261,34 @@ export async function bootstrap() {
     jsonDocumentUrl: 'swagger-ui/json', // 默认为swagger-ui-json,可以自定义更换
     yamlDocumentUrl: 'swagger-ui/yaml', // 默认为swagger-ui-yaml,可以自定义更换
     // raw: true, // swagger 8.1.0版本新增是否禁用json/yaml,设置false时不会生成json/yaml文件.如果只想有json,设置['json']
+    // 未登录时返回占位空文档(对齐springdoc参考站点的行为),登录后才返回完整文档,避免未认证用户拿到API明细
+    // 注意:该钩子必须写在setup第4个参数的顶层(与swaggerOptions同级),源码里json/yaml/swagger-ui-init.js
+    // 三个端点都是从顶层读取patchDocumentOnRequest,写在swaggerOptions内部是不会生效的
+    patchDocumentOnRequest: (req, _res, document) => {
+      // 判定登录态,与SessionGuard保持一致:session里有adminSession且未过期
+      const adminSession = (req as RequestSession).session?.adminSession;
+      const isLogin =
+        !!adminSession && Date.now() - adminSession.expires <= Session_Expires;
+      if (isLogin) {
+        // 滑动续期,与SessionGuard保持一致
+        adminSession.expires = Date.now() + Session_Expires;
+        return document;
+      }
+      return {
+        openapi: document.openapi,
+        info: {
+          title: `401 (Unauthorized) | ${document.info.title}`,
+          description:
+            'API schema is only available for authenticated users. In order to proceed authenticate yourself.',
+          version: document.info.version,
+        },
+        paths: {},
+        // 保留securitySchemes,让Swagger UI的Authorize按钮仍然可用
+        components: {
+          securitySchemes: document.components?.securitySchemes,
+        },
+      };
+    },
   });
 
   // Starts listening for shutdown hooks, 如果加入健康检查官网建议开启
