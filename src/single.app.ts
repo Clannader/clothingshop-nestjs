@@ -245,6 +245,9 @@ export async function bootstrap() {
       initOAuth: {
         clientId: 'SwaggerUI',
         appName: 'CMS-Swagger-UI',
+        additionalQueryStringParams: {},
+        useBasicAuthenticationWithAccessCodeGrant: false,
+        usePkceWithAuthorizationCodeGrant: true, // 推荐开启 PKCE 增强安全性
         // clientSecret: 'CmsChina',
       },
       filter: true,
@@ -256,6 +259,10 @@ export async function bootstrap() {
       docExpansion: 'list', // 默认不展开标签
       tagsSorter: 'alpha', // 可能有alpha beta stable选择,但是没测试过
       operationsSorter: 'alpha',
+      // 这个参数可以直接修改oauth2-redirect.html域名地址
+      // 不过感觉还是js修改的比较好,要不然使用patchDocumentOnRequest里面重写
+      // 不过patchDocumentOnRequest里面的document没有oauth2RedirectUrl这个设置了,没办法根据不同域名变幻
+      // oauth2RedirectUrl: `${protocol}://${hostName}:${httpPort}/swagger-ui/oauth2-redirect.html`,
       // queryConfigEnabled: false, // 看不出有什么效果
       // showExtensions: false, // 看不出有什么效果
       // deepLinking: false, // 这个无效,源代码默认true
@@ -265,7 +272,7 @@ export async function bootstrap() {
     // customCss: '.swagger-ui .model-box { display:block }',
     customSiteTitle: 'CMS Swagger UI',
     customCssUrl: '/swagger-ui-override.css',
-    customJs: '/swagger-ui-override.js',
+    customJs: '/swagger-ui-override.js', // 修改oauth2-redirect.html域名可以不通过修改js
     jsonDocumentUrl: 'swagger-ui/json', // 默认为swagger-ui-json,可以自定义更换
     yamlDocumentUrl: 'swagger-ui/yaml', // 默认为swagger-ui-yaml,可以自定义更换
     // raw: true, // swagger 8.1.0版本新增是否禁用json/yaml,设置false时不会生成json/yaml文件.如果只想有json,设置['json']

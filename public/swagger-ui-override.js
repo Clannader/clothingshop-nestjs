@@ -7,15 +7,15 @@
 // 包装函数必须透传,否则页面初始化直接报错;脚本里的/swagger-ui前缀需与SwaggerModule.setup第一个参数
 // 保持一致(回调页由@nestjs/swagger把swagger-ui-dist整目录静态挂载在该前缀下自动提供)
 (function () {
-  const orig = window.SwaggerUIBundle;
-  if (typeof orig !== 'function') { return; }
+  const origin = window.SwaggerUIBundle;
+  if (typeof origin !== 'function') { return; }
   function SwaggerUiRedirectOverride(opts) {
     opts = opts || {};
     opts.oauth2RedirectUrl =
       window.location.origin + '/swagger-ui/oauth2-redirect.html';
-    return orig(opts);
+    return origin(opts);
   }
-  SwaggerUiRedirectOverride.presets = orig.presets;
-  SwaggerUiRedirectOverride.plugins = orig.plugins;
+  SwaggerUiRedirectOverride.presets = origin.presets;
+  SwaggerUiRedirectOverride.plugins = origin.plugins;
   window.SwaggerUIBundle = SwaggerUiRedirectOverride;
 })();
