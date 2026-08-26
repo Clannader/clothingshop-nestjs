@@ -206,17 +206,23 @@ export async function bootstrap() {
     //       授权端点必须校验redirect_uri白名单(只放行{origin}/swagger-ui/oauth2-redirect.html回调页地址)
     //       防止开放重定向;code需一次性消费+短TTL(如120秒)
     // 注意4:Swagger UI属于公共客户端,禁止在initOAuth里配置clientSecret(会暴露到前端浏览器)
-    .addOAuth2({
-      type: 'oauth2',
-      // description: 'OAuth2授权码模式,跳转CMS授权页确认授权后自动获取Token', // 描述有效,显示在swagger的授权界面中
-      flows: {
-        authorizationCode: {
-          authorizationUrl: '/gateway/api/oauth/authorize',
-          tokenUrl: '/gateway/api/oauth/token',
-          scopes: {},
+    .addOAuth2(
+      {
+        type: 'oauth2',
+        // description: 'OAuth2授权码模式,跳转CMS授权页确认授权后自动获取Token', // 描述有效,显示在swagger的授权界面中
+        flows: {
+          authorizationCode: {
+            authorizationUrl: '/gateway/api/oauth/authorize',
+            tokenUrl: '/gateway/api/oauth/token',
+            scopes: {
+              // read: 'Read access to protected resources',
+              // write: 'Write access to protected resources',
+            },
+          },
         },
       },
-    })
+      'oauth2-auth-code', // 安全方案名称
+    )
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
     .setContact('oliver.wu', `/index`, '294473343@qq.com');
 
@@ -249,6 +255,9 @@ export async function bootstrap() {
         useBasicAuthenticationWithAccessCodeGrant: false,
         usePkceWithAuthorizationCodeGrant: true, // 推荐开启 PKCE 增强安全性
         // clientSecret: 'CmsChina',
+        // 暂时不知道这2个参数用来干嘛
+        // realm: 'demo-realm',
+        // scopeSeparator: ' ',
       },
       filter: true,
       displayOperationId: true, // 显示OperationId
