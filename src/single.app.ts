@@ -195,13 +195,15 @@ export async function bootstrap() {
     // oauth2-redirect.html回调页并携带一次性授权码code,回调页再POST到tokenUrl(form-urlencoded)用code换token
     // 注意1:后端需要提供三件套:GET授权页(校验CMS登录态)+签发一次性code+标准token端点(code换JWT);
     // 项目现有的/gateway/api/oauth/authorize是POST+JSON+加密密码的自定义协议(服务间JwtHttpService专用),需新增GET路由
-    // 注意2:authorizationUrl/tokenUrl使用相对路径,请求会发到当前浏览器访问swagger-ui的origin,避免跨域问题(项目未开启CORS)
+    // 注意2:authorizationUrl/tokenUrl这里只写相对路径作为兜底值,因为启动时无法预知浏览器实际用哪个域名/IP访问swagger-ui;
+    //       完整URL由下方patchDocumentOnRequest钩子按每次请求的Host头动态改写成http(s)://{当前域名}/gateway/api/...,
+    //       拼出来的origin就是浏览器当前访问swagger-ui的域名,所以依旧不存在跨域问题(项目未开启CORS)
     // 注意3:回调页固定为{origin}/oauth2-redirect.html(需从node_modules/swagger-ui-dist复制到public并挂载到根路径);
     //       授权端点必须校验redirect_uri白名单(只放行该回调页地址)防止开放重定向;code需一次性消费+短TTL(如120秒)
     // 注意4:Swagger UI属于公共客户端,禁止在initOAuth里配置clientSecret(会暴露到前端浏览器)
     .addOAuth2({
       type: 'oauth2',
-      description: 'OAuth2授权码模式,跳转CMS授权页确认授权后自动获取Token',
+      // description: 'OAuth2授权码模式,跳转CMS授权页确认授权后自动获取Token', // 描述有效,显示在swagger的授权界面中
       flows: {
         authorizationCode: {
           authorizationUrl: '/gateway/api/oauth/authorize',
@@ -264,9 +266,37 @@ export async function bootstrap() {
     // 未登录时返回占位空文档(对齐springdoc参考站点的行为),登录后才返回完整文档,避免未认证用户拿到API明细
     // 注意:该钩子必须写在setup第4个参数的顶层(与swaggerOptions同级),源码里json/yaml/swagger-ui-init.js
     // 三个端点都是从顶层读取patchDocumentOnRequest,写在swaggerOptions内部是不会生效的
+    // 注意:回调参数不能直接标注RequestSession(泛型签名<TRequest=any>逆变不兼容会报TS2322),在函数体内cast
     patchDocumentOnRequest: (req, _res, document) => {
+      // 按当前请求动态改写OAuth2授权/令牌地址为完整URL:createDocument是启动时执行的,
+      // 那时无法预知浏览器会用localhost/IP/域名中的哪种方式访问swagger-ui,
+      // 所以在每次请求swagger json/yaml/init.js时按请求头动态拼origin;
+      // 协议优先取X-Forwarded-Proto(反向代理https卸载场景),无该代理头时express按socket是否TLS判定
+      const swaggerReq = req as RequestSession;
+      const forwardedProto = swaggerReq.headers['x-forwarded-proto'];
+      const swaggerProtocol =
+        typeof forwardedProto === 'string' && forwardedProto
+          ? forwardedProto
+          : swaggerReq.protocol;
+      const swaggerOrigin = `${swaggerProtocol}://${swaggerReq.get('host')}`;
+      // addOAuth2不传name时securitySchemes的key默认为oauth2(@nestjs/swagger的document-builder默认参数)
+      const oauth2Flows = (
+        document.components?.securitySchemes?.['oauth2'] as {
+          flows?: {
+            authorizationCode?: {
+              authorizationUrl?: string;
+              tokenUrl?: string;
+            };
+          };
+        }
+      )?.flows?.authorizationCode;
+      if (oauth2Flows) {
+        // 直接改写全局document的引用:每次请求都会按当前域名重新覆盖,多域名并发访问的竞态窗口可忽略
+        oauth2Flows.authorizationUrl = `${swaggerOrigin}/gateway/api/oauth/authorize`;
+        oauth2Flows.tokenUrl = `${swaggerOrigin}/gateway/api/oauth/token`;
+      }
       // 判定登录态,与SessionGuard保持一致:session里有adminSession且未过期
-      const adminSession = (req as RequestSession).session?.adminSession;
+      const adminSession = swaggerReq.session?.adminSession;
       const isLogin =
         !!adminSession && Date.now() - adminSession.expires <= Session_Expires;
       if (isLogin) {
