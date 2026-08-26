@@ -113,8 +113,8 @@ export class ConfigTestModule {
           iniFilePath: join(__dirname, 'config.ini'),
           isGlobal: true,
         }),
-        TestConfigModule,
       ],
+      controllers: [TestConfigController]
     };
   }
 
@@ -141,7 +141,7 @@ export class ConfigTestModule {
         }),
         TestConfigModule,
       ],
-      controllers: [TestConfigController],
+      // controllers: [TestConfigController],
     };
   }
 }
