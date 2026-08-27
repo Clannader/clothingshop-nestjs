@@ -182,6 +182,7 @@ export async function bootstrap() {
   app.engine('html', renderFile);
   app.setViewEngine('html');
 
+  const oauthName = 'oauth2-auth-code' // 安全方案名称
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Clothingshop System API')
     .setDescription('The clothingshop restful api')
@@ -221,7 +222,7 @@ export async function bootstrap() {
           },
         },
       },
-      'oauth2-auth-code', // 安全方案名称
+      oauthName, // 安全方案名称
     )
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
     .setContact('oliver.wu', `/index`, '294473343@qq.com');
@@ -303,7 +304,7 @@ export async function bootstrap() {
       const swaggerOrigin = `${swaggerProtocol}://${swaggerReq.get('host')}`;
       // addOAuth2不传name时securitySchemes的key默认为oauth2(@nestjs/swagger的document-builder默认参数)
       const oauth2Flows = (
-        document.components?.securitySchemes?.['oauth2'] as {
+        document.components?.securitySchemes?.[oauthName] as {
           flows?: {
             authorizationCode?: {
               authorizationUrl?: string;
