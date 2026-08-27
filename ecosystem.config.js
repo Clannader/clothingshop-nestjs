@@ -10,7 +10,7 @@ module.exports = {
       interpreter: 'node', // 显式指定用 node 解释,避免 PM2 对 .ts 文件自动推断成 ts-node bin
       interpreter_args: '-r tsconfig-paths/register -r ts-node/register', // node 预加载模块参数
       instances: 1, // fork 模式下实例数固定为 1
-      exec_mode: 'fork', // ts-node 直跑 TS 源码必须用 fork: cluster 模式下 PM2 走 node 原生 cluster.fork(),不传 interpreter_args,worker 直接 require('.ts') 必然启动即崩
+      exec_mode: 'fork', // ts-node 直跑 TS 源码必须用 fork. cluster 模式下: PM2 走 node 原生 cluster.fork(),不传 interpreter_args,worker 直接 require('.ts') 必然启动即崩
       merge_logs: false,
       autorestart: true, // 崩溃自动重启(默认 true)
       restart_delay: 5000, // 重启间隔5s (单位是ms)，避免快速重启风暴
