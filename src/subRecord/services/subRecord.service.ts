@@ -35,7 +35,7 @@ import {
 import { CodeEnum } from '@/common/enum';
 import { Utils } from '@/common/utils';
 
-import * as moment from 'moment';
+import moment from 'moment';
 
 @Injectable()
 export class SubRecordService {

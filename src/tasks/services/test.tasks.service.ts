@@ -12,11 +12,9 @@ import {
 } from '@/entities/services';
 // import type { AdminLog } from '@/entities/schema';
 import { TokenCacheService, MemoryCacheService } from '@/cache/services';
-import * as moment from 'moment';
+import moment from 'moment';
 import { TestIntervalName, TestIntervalType } from '../tasks.constants';
-
-// @ts-ignore
-const cluster = require('node:cluster');
+import cluster from 'node:cluster';
 
 @Injectable()
 export class TestTasksService {

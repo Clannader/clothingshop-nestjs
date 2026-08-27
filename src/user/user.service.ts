@@ -1,7 +1,7 @@
 // nestjs
 import { Inject, Injectable } from '@nestjs/common';
 // third party
-import * as moment from 'moment';
+import moment from 'moment';
 import { sign } from 'cookie-signature';
 // common
 import { CodeEnum, UserTypeEnum } from '@/common/enum';

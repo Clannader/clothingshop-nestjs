@@ -13,7 +13,7 @@ import {
 } from '../services';
 import { AXIOS_INSTANCE_TOKEN } from '../http.constants';
 import Axios from 'axios';
-import * as KeepAliveHttpAgent from 'agentkeepalive';
+import KeepAliveHttpAgent from 'agentkeepalive';
 import * as tunnel from 'tunnel';
 
 @Module({

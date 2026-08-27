@@ -4,7 +4,7 @@
 import { Injectable } from '@nestjs/common';
 import { SchedulerRegistry, Cron } from '@andybeat/schedule';
 
-import * as moment from 'moment';
+import moment from 'moment';
 
 // 启动时,取最近的一次整点做重置定时器任务的时间
 // 这里要注意一点,发现如果在xx:59:xx这种准备到下一个整点的时候启动时,刚启动就执行任务会报错

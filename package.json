@@ -23,7 +23,7 @@
     "build:prod": "npm run test && npm run test:e2e && npm run build",
     "build:prod:lint": "npm run lint && npm run build:prod",
     "build:zip": "node scripts/build.js",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.js\"",
+    "format": "prettier --write \"(src|test)/**/*.ts\" \"(scripts|pm2-config)/**/*.js\" ecosystem.config.js webpack.config.js",
     "start": "cross-env NODE_ENV=development nest start",
     "start:dev": "npm run start -- --watch",
     "start:debug": "npm run start -- --debug --watch",
@@ -37,7 +37,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "compodoc": "npx compodoc -p tsconfig.json -s",
-    "node:run": "cross-env NODE_ENV=development TS_NODE_FILES=true node build/main",
+    "node:run": "cross-env NODE_ENV=development node build/main",
     "node:start": "cross-env NODE_ENV=development TS_NODE_FILES=true node -r tsconfig-paths/register -r ts-node/register src/main.ts",
     "pm2:start": "pm2 start ecosystem.config.js"
   },

@@ -4,7 +4,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { ConfigTestModule } from '@T/config/config.test.module';
-import * as request from 'supertest';
+import request from 'supertest';
 
 describe('ConfigService 测试全局初始化', () => {
   let app: INestApplication;

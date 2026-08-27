@@ -7,9 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { AdminLogModel, AdminLog } from '../../schema';
 import { ConfigService } from '@/common/config';
 import type { SaveOptions } from 'mongoose';
-
-// @ts-ignore
-const cluster = require('node:cluster');
+import cluster from 'node:cluster';
 
 @Injectable()
 export class AdminLogSchemaService {
@@ -25,7 +23,7 @@ export class AdminLogSchemaService {
 
   createUserLog(logInfo: AdminLog, options?: SaveOptions) {
     logInfo.serverName = this.configService.get<string>('serverName');
-    logInfo.workerId = cluster?.worker?.id ?? 1;
+    logInfo.workerId = String(cluster?.worker?.id ?? 1);
     logInfo.date = logInfo?.date ?? new Date();
     return this.adminLogModel.insertOne(logInfo, {
       safe: { w: 0 },
