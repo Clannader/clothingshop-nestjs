@@ -182,6 +182,7 @@ export async function bootstrap() {
   app.engine('html', renderFile);
   app.setViewEngine('html');
 
+  const oauthName = 'oauth2-auth-code' // 安全方案名称
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Clothingshop System API')
     .setDescription('The clothingshop restful api')
@@ -192,26 +193,37 @@ export async function bootstrap() {
     // })
     // OAuth2授权使用authorizationCode模式(授权码模式):Swagger UI点Authorize后不再弹用户名/密码输入框,
     // 而是新开窗口跳转到authorizationUrl(GET)展示后端授权页,用户确认授权后302回swagger-ui的
-    // oauth2-redirect.html回调页并携带一次性授权码code,回调页再POST到tokenUrl(form-urlencoded)用code换token
+    // {origin}/swagger-ui/oauth2-redirect.html回调页并携带一次性授权码code,回调页再POST到tokenUrl(form-urlencoded)用code换token
     // 注意1:后端需要提供三件套:GET授权页(校验CMS登录态)+签发一次性code+标准token端点(code换JWT);
     // 项目现有的/gateway/api/oauth/authorize是POST+JSON+加密密码的自定义协议(服务间JwtHttpService专用),需新增GET路由
     // 注意2:authorizationUrl/tokenUrl这里只写相对路径作为兜底值,因为启动时无法预知浏览器实际用哪个域名/IP访问swagger-ui;
     //       完整URL由下方patchDocumentOnRequest钩子按每次请求的Host头动态改写成http(s)://{当前域名}/gateway/api/...,
     //       拼出来的origin就是浏览器当前访问swagger-ui的域名,所以依旧不存在跨域问题(项目未开启CORS)
-    // 注意3:回调页固定为{origin}/oauth2-redirect.html(需从node_modules/swagger-ui-dist复制到public并挂载到根路径);
-    //       授权端点必须校验redirect_uri白名单(只放行该回调页地址)防止开放重定向;code需一次性消费+短TTL(如120秒)
+    // 注意3:回调页由@nestjs/swagger将swagger-ui-dist整目录静态挂载在/swagger-ui前缀下自动提供(public目录无需复制文件);
+    //       redirect_uri问题:swagger-ui默认按"当前页面pathname去掉最后一段"拼接oauth2-redirect.html,无尾斜杠访问
+    //       /swagger-ui时目录为空串导致回调页落在根路径;且swaggerOptions是启动时静态序列化进swagger-ui-init.js的,
+    //       patchDocumentOnRequest只能改document改不了swaggerOptions,无法按请求域名动态,故由下方customJsStr内联
+    //       脚本包装window.SwaggerUIBundle,在浏览器端按当前origin动态注入oauth2RedirectUrl;
+    //       授权端点必须校验redirect_uri白名单(只放行{origin}/swagger-ui/oauth2-redirect.html回调页地址)
+    //       防止开放重定向;code需一次性消费+短TTL(如120秒)
     // 注意4:Swagger UI属于公共客户端,禁止在initOAuth里配置clientSecret(会暴露到前端浏览器)
-    .addOAuth2({
-      type: 'oauth2',
-      // description: 'OAuth2授权码模式,跳转CMS授权页确认授权后自动获取Token', // 描述有效,显示在swagger的授权界面中
-      flows: {
-        authorizationCode: {
-          authorizationUrl: '/gateway/api/oauth/authorize',
-          tokenUrl: '/gateway/api/oauth/token',
-          scopes: {},
+    .addOAuth2(
+      {
+        type: 'oauth2',
+        // description: 'OAuth2授权码模式,跳转CMS授权页确认授权后自动获取Token', // 描述有效,显示在swagger的授权界面中
+        flows: {
+          authorizationCode: {
+            authorizationUrl: '/gateway/api/oauth/authorize',
+            tokenUrl: '/gateway/api/oauth/token',
+            scopes: {
+              // read: 'Read access to protected resources',
+              // write: 'Write access to protected resources',
+            },
+          },
         },
       },
-    })
+      oauthName, // 安全方案名称
+    )
     // .setBasePath('cms') // 如果app加上了context-path,那么这里也要相应的加上,否则访问失败.不过后面发现这个方法废弃了
     .setContact('oliver.wu', `/index`, '294473343@qq.com');
 
@@ -240,7 +252,13 @@ export async function bootstrap() {
       initOAuth: {
         clientId: 'SwaggerUI',
         appName: 'CMS-Swagger-UI',
+        additionalQueryStringParams: {},
+        useBasicAuthenticationWithAccessCodeGrant: false,
+        usePkceWithAuthorizationCodeGrant: true, // 推荐开启 PKCE 增强安全性
         // clientSecret: 'CmsChina',
+        // 暂时不知道这2个参数用来干嘛
+        // realm: 'demo-realm',
+        // scopeSeparator: ' ',
       },
       filter: true,
       displayOperationId: true, // 显示OperationId
@@ -251,6 +269,10 @@ export async function bootstrap() {
       docExpansion: 'list', // 默认不展开标签
       tagsSorter: 'alpha', // 可能有alpha beta stable选择,但是没测试过
       operationsSorter: 'alpha',
+      // 这个参数可以直接修改oauth2-redirect.html域名地址
+      // 不过感觉还是js修改的比较好,要不然使用patchDocumentOnRequest里面重写
+      // 不过patchDocumentOnRequest里面的document没有oauth2RedirectUrl这个设置了,没办法根据不同域名变幻
+      // oauth2RedirectUrl: `${protocol}://${hostName}:${httpPort}/swagger-ui/oauth2-redirect.html`,
       // queryConfigEnabled: false, // 看不出有什么效果
       // showExtensions: false, // 看不出有什么效果
       // deepLinking: false, // 这个无效,源代码默认true
@@ -260,6 +282,7 @@ export async function bootstrap() {
     // customCss: '.swagger-ui .model-box { display:block }',
     customSiteTitle: 'CMS Swagger UI',
     customCssUrl: '/swagger-ui-override.css',
+    customJs: '/swagger-ui-override.js', // 修改oauth2-redirect.html域名可以不通过修改js
     jsonDocumentUrl: 'swagger-ui/json', // 默认为swagger-ui-json,可以自定义更换
     yamlDocumentUrl: 'swagger-ui/yaml', // 默认为swagger-ui-yaml,可以自定义更换
     // raw: true, // swagger 8.1.0版本新增是否禁用json/yaml,设置false时不会生成json/yaml文件.如果只想有json,设置['json']
@@ -281,7 +304,7 @@ export async function bootstrap() {
       const swaggerOrigin = `${swaggerProtocol}://${swaggerReq.get('host')}`;
       // addOAuth2不传name时securitySchemes的key默认为oauth2(@nestjs/swagger的document-builder默认参数)
       const oauth2Flows = (
-        document.components?.securitySchemes?.['oauth2'] as {
+        document.components?.securitySchemes?.[oauthName] as {
           flows?: {
             authorizationCode?: {
               authorizationUrl?: string;
