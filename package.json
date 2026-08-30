@@ -99,7 +99,7 @@
     "@compodoc/compodoc": "^2.0.0",
     "@nestjs/cli": "^11.0.24",
     "@nestjs/schematics": "^11.1.0",
-    "@nestjs/testing": "^11.2.1",
+    "@nestjs/testing": "^11.2.3",
     "@types/body-parser": "^1.19.6",
     "@types/cookie": "^0.6.0",
     "@types/cookie-parser": "^1.4.10",
