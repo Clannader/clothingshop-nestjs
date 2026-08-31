@@ -182,7 +182,7 @@ export async function bootstrap() {
   app.engine('html', renderFile);
   app.setViewEngine('html');
 
-  const oauthName = 'oauth2-auth-code' // 安全方案名称
+  const oauthName = 'oauth2-auth-code'; // 安全方案名称
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Clothingshop System API')
     .setDescription('The clothingshop restful api')
