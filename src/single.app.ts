@@ -46,6 +46,7 @@ import * as fs from 'fs';
 import { ApiTagsDescriptionRegistry } from '@/lib/api-tags-description';
 import expressStaticGzip from 'express-static-gzip';
 import { parse as qsParse } from 'qs';
+import { camelCase } from 'lodash';
 // import * as crypto from 'node:crypto';
 // import * as passport from 'passport';
 // import * as moment from 'moment';
@@ -233,8 +234,14 @@ export async function bootstrap() {
     .setContact('oliver.wu', `/index`, '294473343@qq.com');
 
   const apiTagsMap = ApiTagsDescriptionRegistry.scanControllerTags(app);
+  const apiDefinitionArray = []
+  const swaggerHost = 'swagger-ui'
   for (const [key, value] of apiTagsMap) {
     swaggerConfig.addTag(key, value);
+    apiDefinitionArray.push({
+      name: key,
+      url: `${swaggerHost}/${camelCase(key)}-json`
+    })
   }
 
   const swaggerOptions: SwaggerDocumentOptions = {
@@ -302,7 +309,7 @@ export async function bootstrap() {
     };
   }
 
-  SwaggerModule.setup('swagger-ui', app, document, {
+  SwaggerModule.setup(swaggerHost, app, document, {
     swaggerOptions: {
       // 刷新页面后保留已授权的 token，避免重复登录
       persistAuthorization: true, // 这个参数好像是做持久化认证的
@@ -330,6 +337,7 @@ export async function bootstrap() {
       docExpansion: 'list', // 默认不展开标签
       tagsSorter: 'alpha', // 可能有alpha beta stable选择,但是没测试过
       operationsSorter: 'alpha',
+      urls: apiDefinitionArray,
       // 这个参数可以直接修改oauth2-redirect.html域名地址
       // 不过感觉还是js修改的比较好,要不然使用patchDocumentOnRequest里面重写
       // 不过patchDocumentOnRequest里面的document没有oauth2RedirectUrl这个设置了,没办法根据不同域名变幻
@@ -341,12 +349,15 @@ export async function bootstrap() {
     // swaggerUrl: 'http://localhost:3000/swagger-ui-json', // 感觉无效
     // 启用 Swagger UI 原生「Select a definition」多 definition 下拉（topbar 右上角）：
     explorer: true,
+    // 下拉默认选中分类,刷新后回落此值——swagger-ui 无内置持久化，
+    // 不记忆上次手动选择
+    // 'urls.primaryName': 'RepairController', // 测试好像没什么用
     // customCss: '.swagger-ui .model-box { display:block }',
     customSiteTitle: 'CMS Swagger UI',
     customCssUrl: '/swagger-ui-override.css',
     customJs: '/swagger-ui-override.js', // 修改oauth2-redirect.html域名可以不通过修改js
-    jsonDocumentUrl: 'swagger-ui/json', // 默认为swagger-ui-json,可以自定义更换
-    yamlDocumentUrl: 'swagger-ui/yaml', // 默认为swagger-ui-yaml,可以自定义更换
+    jsonDocumentUrl: `${swaggerHost}/json`, // 默认为swagger-ui-json,可以自定义更换
+    yamlDocumentUrl: `${swaggerHost}/yaml`, // 默认为swagger-ui-yaml,可以自定义更换
     // raw: true, // swagger 8.1.0版本新增是否禁用json/yaml,设置false时不会生成json/yaml文件.如果只想有json,设置['json']
     // 未登录时返回占位空文档(对齐springdoc参考站点的行为),登录后才返回完整文档,避免未认证用户拿到API明细
     // 注意:该钩子必须写在setup第4个参数的顶层(与swaggerOptions同级),源码里json/yaml/swagger-ui-init.js
@@ -355,18 +366,50 @@ export async function bootstrap() {
     patchDocumentOnRequest: patchDocumentOnRequest,
   });
 
+  const isOperationTagged = (value: unknown, tag: string): boolean => {
+    const tags = (value as { tags?: unknown } | null | undefined)?.tags;
+    return Array.isArray(tags) && tags.includes(tag);
+  }
+  const filterDocumentByTag = (document: OpenAPIObject, tag: string): OpenAPIObject => {
+    const filteredPaths: Record<string, Record<string, unknown>> = {};
+    for (const [path, pathItem] of Object.entries(document.paths ?? {})) {
+      const matchedOperations = Object.entries(pathItem as Record<string, unknown>).filter(
+        ([, operation]) => isOperationTagged(operation, tag),
+      );
+      if (matchedOperations.length > 0) {
+        filteredPaths[path] = Object.fromEntries(matchedOperations);
+      }
+    }
+
+    return {
+      ...document,
+      paths: filteredPaths as OpenAPIObject['paths'],
+      tags: document.tags?.filter((tagEntry) => tagEntry.name === tag),
+    };
+  }
+  // 循环写swagger生成json分类
+  for(const {name, url} of apiDefinitionArray) {
+    SwaggerModule.setup(swaggerHost, app, filterDocumentByTag(document, name), {
+      // JSON 端点路径显式钉死（与 SWAGGER_DEFINITIONS 中各子文档 url 对齐）
+      jsonDocumentUrl: url,
+      ui: false,
+      raw: ['json'],
+      patchDocumentOnRequest: patchDocumentOnRequest,
+    });
+  }
+
   // Starts listening for shutdown hooks, 如果加入健康检查官网建议开启
   // app.enableShutdownHooks();
 
   const server = await app.listen(httpPort).then((server) => {
     aopLogger.log(
-      `Application is running on: ${protocol}://${hostName}:${httpPort}/swagger-ui`,
+      `Application is running on: ${protocol}://${hostName}:${httpPort}/${swaggerHost}`,
     );
     aopLogger.log(
-      `SwaggerJson is running on: ${protocol}://${hostName}:${httpPort}/swagger-ui/json`,
+      `SwaggerJson is running on: ${protocol}://${hostName}:${httpPort}/${swaggerHost}/json`,
     );
     aopLogger.log(
-      `SwaggerYaml is running on: ${protocol}://${hostName}:${httpPort}/swagger-ui/yaml`,
+      `SwaggerYaml is running on: ${protocol}://${hostName}:${httpPort}/${swaggerHost}/yaml`,
     );
     aopLogger.log(
       `Node Version: ${process.version}, processID : ${process.pid}`,
