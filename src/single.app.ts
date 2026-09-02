@@ -7,6 +7,7 @@ import {
   SwaggerModule,
   DocumentBuilder,
   SwaggerDocumentOptions,
+  OpenAPIObject,
 } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import type { NestApplicationOptions } from '@nestjs/common';
@@ -45,6 +46,7 @@ import * as fs from 'fs';
 import { ApiTagsDescriptionRegistry } from '@/lib/api-tags-description';
 import expressStaticGzip from 'express-static-gzip';
 import { parse as qsParse } from 'qs';
+import { camelCase } from 'lodash';
 // import * as crypto from 'node:crypto';
 // import * as passport from 'passport';
 // import * as moment from 'moment';
@@ -182,7 +184,7 @@ export async function bootstrap() {
   app.engine('html', renderFile);
   app.setViewEngine('html');
 
-  const oauthName = 'oauth2-auth-code'; // 安全方案名称
+  const oauthName = parseEnv.read('oauthName'); // 安全方案名称
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Clothingshop System API')
     .setDescription('The clothingshop restful api')
@@ -218,6 +220,10 @@ export async function bootstrap() {
             scopes: {
               // read: 'Read access to protected resources',
               // write: 'Write access to protected resources',
+              openid: 'OpenID Connect scope',
+              profile: 'Profile information',
+              API: 'Public API',
+              monitoring: 'Monitoring data',
             },
           },
         },
@@ -228,13 +234,19 @@ export async function bootstrap() {
     .setContact('oliver.wu', `/index`, '294473343@qq.com');
 
   const apiTagsMap = ApiTagsDescriptionRegistry.scanControllerTags(app);
+  const apiDefinitionArray = [];
+  const swaggerHost = 'swagger-ui';
   for (const [key, value] of apiTagsMap) {
     swaggerConfig.addTag(key, value);
+    apiDefinitionArray.push({
+      name: key,
+      url: `${swaggerHost}/${camelCase(key)}-json`,
+    });
   }
 
   const swaggerOptions: SwaggerDocumentOptions = {
     operationIdFactory: (controllerKey: string, methodKey: string) => {
-      return `${controllerKey}_${methodKey}`;
+      return `${controllerKey}-${methodKey}`; // 这个把_改成了-,因为swagger出现js警告
     },
     // autoTagControllers: false, // 这个的意思是设置true,那么控制器Controller不使用ApiTags也能创建分类,否则需要显示调用ApiTags来创建分类
     // deepScanRoutes: true // 不懂有什么用
@@ -244,8 +256,66 @@ export async function bootstrap() {
     swaggerConfig.build(),
     swaggerOptions,
   );
-  SwaggerModule.setup('swagger-ui', app, document, {
+  const patchDocumentOnRequest = (
+    req: unknown,
+    _res: unknown,
+    document: OpenAPIObject,
+  ): OpenAPIObject => {
+    // 按当前请求动态改写OAuth2授权/令牌地址为完整URL:createDocument是启动时执行的,
+    // 那时无法预知浏览器会用localhost/IP/域名中的哪种方式访问swagger-ui,
+    // 所以在每次请求swagger json/yaml/init.js时按请求头动态拼origin;
+    // 协议优先取X-Forwarded-Proto(反向代理https卸载场景),无该代理头时express按socket是否TLS判定
+    const swaggerReq = req as RequestSession;
+    const forwardedProto = swaggerReq.headers['x-forwarded-proto'];
+    const swaggerProtocol =
+      typeof forwardedProto === 'string' && forwardedProto
+        ? forwardedProto
+        : swaggerReq.protocol;
+    const swaggerOrigin = `${swaggerProtocol}://${swaggerReq.get('host')}`;
+    // addOAuth2不传name时securitySchemes的key默认为oauth2(@nestjs/swagger的document-builder默认参数)
+    const oauth2Flows = (
+      document.components?.securitySchemes?.[oauthName] as {
+        flows?: {
+          authorizationCode?: {
+            authorizationUrl?: string;
+            tokenUrl?: string;
+          };
+        };
+      }
+    )?.flows?.authorizationCode;
+    if (oauth2Flows) {
+      // 直接改写全局document的引用:每次请求都会按当前域名重新覆盖,多域名并发访问的竞态窗口可忽略
+      oauth2Flows.authorizationUrl = `${swaggerOrigin}/gateway/api/oauth/authorize`;
+      oauth2Flows.tokenUrl = `${swaggerOrigin}/gateway/api/oauth/token`;
+    }
+    // 判定登录态,与SessionGuard保持一致:session里有adminSession且未过期
+    const adminSession = swaggerReq.session?.adminSession;
+    const isLogin = true;
+    // !!adminSession && Date.now() - adminSession.expires <= Session_Expires;
+    if (isLogin) {
+      // 滑动续期,与SessionGuard保持一致
+      // adminSession.expires = Date.now() + Session_Expires;
+      return document;
+    }
+    return {
+      openapi: document.openapi,
+      info: {
+        title: `401 (Unauthorized) | ${document.info.title}`,
+        description:
+          'API schema is only available for authenticated users. In order to proceed authenticate yourself.',
+        version: document.info.version,
+      },
+      paths: {},
+      // 保留securitySchemes,让Swagger UI的Authorize按钮仍然可用
+      components: {
+        securitySchemes: document.components?.securitySchemes,
+      },
+    };
+  };
+
+  SwaggerModule.setup(swaggerHost, app, document, {
     swaggerOptions: {
+      // 刷新页面后保留已授权的 token，避免重复登录
       persistAuthorization: true, // 这个参数好像是做持久化认证的
       // OAuth2授权弹窗的预填参数,这个是之前OAuth2不生效的原因之一:
       // 光在DocumentBuilder里面addOAuth2声明还不够,这里必须初始化initOAuth配置
@@ -255,6 +325,8 @@ export async function bootstrap() {
         additionalQueryStringParams: {},
         useBasicAuthenticationWithAccessCodeGrant: false,
         usePkceWithAuthorizationCodeGrant: true, // 推荐开启 PKCE 增强安全性
+        // 留空：由使用者在 Swagger UI 授权弹窗中按需勾选 scopes（此字段类型仅接受 string[]）
+        scopes: [],
         // clientSecret: 'CmsChina',
         // 暂时不知道这2个参数用来干嘛
         // realm: 'demo-realm',
@@ -269,6 +341,7 @@ export async function bootstrap() {
       docExpansion: 'list', // 默认不展开标签
       tagsSorter: 'alpha', // 可能有alpha beta stable选择,但是没测试过
       operationsSorter: 'alpha',
+      urls: apiDefinitionArray,
       // 这个参数可以直接修改oauth2-redirect.html域名地址
       // 不过感觉还是js修改的比较好,要不然使用patchDocumentOnRequest里面重写
       // 不过patchDocumentOnRequest里面的document没有oauth2RedirectUrl这个设置了,没办法根据不同域名变幻
@@ -278,84 +351,140 @@ export async function bootstrap() {
       // deepLinking: false, // 这个无效,源代码默认true
     },
     // swaggerUrl: 'http://localhost:3000/swagger-ui-json', // 感觉无效
-    // explorer: true,
+    // 启用 Swagger UI 原生「Select a definition」多 definition 下拉（topbar 右上角）：
+    explorer: true,
+    // 下拉默认选中分类,刷新后回落此值——swagger-ui 无内置持久化，
+    // 不记忆上次手动选择
+    // 'urls.primaryName': 'RepairController', // 测试好像没什么用
     // customCss: '.swagger-ui .model-box { display:block }',
     customSiteTitle: 'CMS Swagger UI',
     customCssUrl: '/swagger-ui-override.css',
     customJs: '/swagger-ui-override.js', // 修改oauth2-redirect.html域名可以不通过修改js
-    jsonDocumentUrl: 'swagger-ui/json', // 默认为swagger-ui-json,可以自定义更换
-    yamlDocumentUrl: 'swagger-ui/yaml', // 默认为swagger-ui-yaml,可以自定义更换
+    jsonDocumentUrl: `${swaggerHost}/json`, // 默认为swagger-ui-json,可以自定义更换
+    yamlDocumentUrl: `${swaggerHost}/yaml`, // 默认为swagger-ui-yaml,可以自定义更换
     // raw: true, // swagger 8.1.0版本新增是否禁用json/yaml,设置false时不会生成json/yaml文件.如果只想有json,设置['json']
     // 未登录时返回占位空文档(对齐springdoc参考站点的行为),登录后才返回完整文档,避免未认证用户拿到API明细
     // 注意:该钩子必须写在setup第4个参数的顶层(与swaggerOptions同级),源码里json/yaml/swagger-ui-init.js
     // 三个端点都是从顶层读取patchDocumentOnRequest,写在swaggerOptions内部是不会生效的
     // 注意:回调参数不能直接标注RequestSession(泛型签名<TRequest=any>逆变不兼容会报TS2322),在函数体内cast
-    patchDocumentOnRequest: (req, _res, document) => {
-      // 按当前请求动态改写OAuth2授权/令牌地址为完整URL:createDocument是启动时执行的,
-      // 那时无法预知浏览器会用localhost/IP/域名中的哪种方式访问swagger-ui,
-      // 所以在每次请求swagger json/yaml/init.js时按请求头动态拼origin;
-      // 协议优先取X-Forwarded-Proto(反向代理https卸载场景),无该代理头时express按socket是否TLS判定
-      const swaggerReq = req as RequestSession;
-      const forwardedProto = swaggerReq.headers['x-forwarded-proto'];
-      const swaggerProtocol =
-        typeof forwardedProto === 'string' && forwardedProto
-          ? forwardedProto
-          : swaggerReq.protocol;
-      const swaggerOrigin = `${swaggerProtocol}://${swaggerReq.get('host')}`;
-      // addOAuth2不传name时securitySchemes的key默认为oauth2(@nestjs/swagger的document-builder默认参数)
-      const oauth2Flows = (
-        document.components?.securitySchemes?.[oauthName] as {
-          flows?: {
-            authorizationCode?: {
-              authorizationUrl?: string;
-              tokenUrl?: string;
-            };
-          };
-        }
-      )?.flows?.authorizationCode;
-      if (oauth2Flows) {
-        // 直接改写全局document的引用:每次请求都会按当前域名重新覆盖,多域名并发访问的竞态窗口可忽略
-        oauth2Flows.authorizationUrl = `${swaggerOrigin}/gateway/api/oauth/authorize`;
-        oauth2Flows.tokenUrl = `${swaggerOrigin}/gateway/api/oauth/token`;
-      }
-      // 判定登录态,与SessionGuard保持一致:session里有adminSession且未过期
-      const adminSession = swaggerReq.session?.adminSession;
-      const isLogin =
-        !!adminSession && Date.now() - adminSession.expires <= Session_Expires;
-      if (isLogin) {
-        // 滑动续期,与SessionGuard保持一致
-        adminSession.expires = Date.now() + Session_Expires;
-        return document;
-      }
-      return {
-        openapi: document.openapi,
-        info: {
-          title: `401 (Unauthorized) | ${document.info.title}`,
-          description:
-            'API schema is only available for authenticated users. In order to proceed authenticate yourself.',
-          version: document.info.version,
-        },
-        paths: {},
-        // 保留securitySchemes,让Swagger UI的Authorize按钮仍然可用
-        components: {
-          securitySchemes: document.components?.securitySchemes,
-        },
-      };
-    },
+    patchDocumentOnRequest: patchDocumentOnRequest,
   });
+
+  const isOperationTagged = (value: unknown, tag: string): boolean => {
+    const tags = (value as { tags?: unknown } | null | undefined)?.tags;
+    return Array.isArray(tags) && tags.includes(tag);
+  };
+  /**
+   * 递归遍历任意 OpenAPI 文档片段，收集全部内部组件引用（refs：section → 名称集合）。
+   * 仅识别 '#/components/<section>/<name>' 形态的 $ref（@nestjs/swagger 生成的 DTO 类名
+   * 为纯标识符，不含 RFC3986 转义序列，无需 URI 解码）；$ref 所在对象的同级字段继续深入。
+   * @param value 任意 JSON 结构（operation / schema / 数组 / 标量）
+   * @param refs 收集结果容器
+   */
+  const collectComponentRefs = (
+    value: unknown,
+    refs: Map<string, Set<string>>,
+  ): void => {
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        collectComponentRefs(item, refs);
+      }
+      return;
+    }
+    if (value === null || typeof value !== 'object') {
+      return;
+    }
+    for (const [key, child] of Object.entries(
+      value as Record<string, unknown>,
+    )) {
+      if (key === '$ref' && typeof child === 'string') {
+        const matched = child.match(/^#\/components\/([^/]+)\/([^/]+)$/);
+        if (matched) {
+          const [, section, name] = matched;
+          let names = refs.get(section);
+          if (!names) {
+            names = new Set<string>();
+            refs.set(section, names);
+          }
+          names.add(name);
+        }
+      } else {
+        collectComponentRefs(child, refs);
+      }
+    }
+  };
+  const filterDocumentByTag = (
+    document: OpenAPIObject,
+    tag: string,
+  ): OpenAPIObject => {
+    const filteredPaths: Record<string, Record<string, unknown>> = {};
+    for (const [path, pathItem] of Object.entries(document.paths ?? {})) {
+      const matchedOperations = Object.entries(
+        pathItem as Record<string, unknown>,
+      ).filter(([, operation]) => isOperationTagged(operation, tag));
+      if (matchedOperations.length > 0) {
+        filteredPaths[path] = Object.fromEntries(matchedOperations);
+      }
+    }
+
+    // schemas 引用闭包：先收 paths 的直接引用，再逐层展开 schema 内部嵌套引用直至不再新增
+    const allSchemas = document.components?.schemas ?? {};
+    const refs = new Map<string, Set<string>>();
+    collectComponentRefs(filteredPaths, refs);
+    const keptSchemaNames = new Set<string>(refs.get('schemas') ?? []);
+    const frontier = [...keptSchemaNames];
+    while (frontier.length > 0) {
+      const name = frontier.pop() as string;
+      collectComponentRefs(allSchemas[name], refs);
+      for (const nested of refs.get('schemas') ?? []) {
+        if (!keptSchemaNames.has(nested)) {
+          keptSchemaNames.add(nested);
+          frontier.push(nested);
+        }
+      }
+    }
+    const keptSchemas: Record<string, unknown> = {};
+    for (const name of keptSchemaNames) {
+      if (allSchemas[name] !== undefined) {
+        keptSchemas[name] = allSchemas[name];
+      }
+    }
+
+    return {
+      ...document,
+      paths: filteredPaths as OpenAPIObject['paths'],
+      components: {
+        ...(document.components ?? {}),
+        schemas: keptSchemas as NonNullable<
+          OpenAPIObject['components']
+        >['schemas'],
+      },
+      tags: document.tags?.filter((tagEntry) => tagEntry.name === tag),
+    };
+  };
+  // 循环写swagger生成json分类
+  for (const { name, url } of apiDefinitionArray) {
+    SwaggerModule.setup(swaggerHost, app, filterDocumentByTag(document, name), {
+      // JSON 端点路径显式钉死（与 SWAGGER_DEFINITIONS 中各子文档 url 对齐）
+      jsonDocumentUrl: url,
+      ui: false,
+      raw: ['json'],
+      patchDocumentOnRequest: patchDocumentOnRequest,
+    });
+  }
 
   // Starts listening for shutdown hooks, 如果加入健康检查官网建议开启
   // app.enableShutdownHooks();
 
   const server = await app.listen(httpPort).then((server) => {
     aopLogger.log(
-      `Application is running on: ${protocol}://${hostName}:${httpPort}/swagger-ui`,
+      `Application is running on: ${protocol}://${hostName}:${httpPort}/${swaggerHost}`,
     );
     aopLogger.log(
-      `SwaggerJson is running on: ${protocol}://${hostName}:${httpPort}/swagger-ui/json`,
+      `SwaggerJson is running on: ${protocol}://${hostName}:${httpPort}/${swaggerHost}/json`,
     );
     aopLogger.log(
-      `SwaggerYaml is running on: ${protocol}://${hostName}:${httpPort}/swagger-ui/yaml`,
+      `SwaggerYaml is running on: ${protocol}://${hostName}:${httpPort}/${swaggerHost}/yaml`,
     );
     aopLogger.log(
       `Node Version: ${process.version}, processID : ${process.pid}`,

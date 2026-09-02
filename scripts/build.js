@@ -20,7 +20,7 @@ delete pkg.devDependencies;
 const startScript = pkg.scripts.start;
 delete pkg.scripts;
 pkg.scripts = {
-  start: startScript,
+  start: 'node main.js',
 };
 fs.writeFileSync(
   path.join(packagePath, 'package.json'),
