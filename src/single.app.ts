@@ -234,14 +234,14 @@ export async function bootstrap() {
     .setContact('oliver.wu', `/index`, '294473343@qq.com');
 
   const apiTagsMap = ApiTagsDescriptionRegistry.scanControllerTags(app);
-  const apiDefinitionArray = []
-  const swaggerHost = 'swagger-ui'
+  const apiDefinitionArray = [];
+  const swaggerHost = 'swagger-ui';
   for (const [key, value] of apiTagsMap) {
     swaggerConfig.addTag(key, value);
     apiDefinitionArray.push({
       name: key,
-      url: `${swaggerHost}/${camelCase(key)}-json`
-    })
+      url: `${swaggerHost}/${camelCase(key)}-json`,
+    });
   }
 
   const swaggerOptions: SwaggerDocumentOptions = {
@@ -256,7 +256,11 @@ export async function bootstrap() {
     swaggerConfig.build(),
     swaggerOptions,
   );
-  const patchDocumentOnRequest = (req: unknown, _res: unknown, document: OpenAPIObject): OpenAPIObject => {
+  const patchDocumentOnRequest = (
+    req: unknown,
+    _res: unknown,
+    document: OpenAPIObject,
+  ): OpenAPIObject => {
     // 按当前请求动态改写OAuth2授权/令牌地址为完整URL:createDocument是启动时执行的,
     // 那时无法预知浏览器会用localhost/IP/域名中的哪种方式访问swagger-ui,
     // 所以在每次请求swagger json/yaml/init.js时按请求头动态拼origin;
@@ -286,8 +290,8 @@ export async function bootstrap() {
     }
     // 判定登录态,与SessionGuard保持一致:session里有adminSession且未过期
     const adminSession = swaggerReq.session?.adminSession;
-    const isLogin = true
-      // !!adminSession && Date.now() - adminSession.expires <= Session_Expires;
+    const isLogin = true;
+    // !!adminSession && Date.now() - adminSession.expires <= Session_Expires;
     if (isLogin) {
       // 滑动续期,与SessionGuard保持一致
       // adminSession.expires = Date.now() + Session_Expires;
@@ -307,7 +311,7 @@ export async function bootstrap() {
         securitySchemes: document.components?.securitySchemes,
       },
     };
-  }
+  };
 
   SwaggerModule.setup(swaggerHost, app, document, {
     swaggerOptions: {
@@ -369,26 +373,97 @@ export async function bootstrap() {
   const isOperationTagged = (value: unknown, tag: string): boolean => {
     const tags = (value as { tags?: unknown } | null | undefined)?.tags;
     return Array.isArray(tags) && tags.includes(tag);
-  }
-  const filterDocumentByTag = (document: OpenAPIObject, tag: string): OpenAPIObject => {
+  };
+  /**
+   * 递归遍历任意 OpenAPI 文档片段，收集全部内部组件引用（refs：section → 名称集合）。
+   * 仅识别 '#/components/<section>/<name>' 形态的 $ref（@nestjs/swagger 生成的 DTO 类名
+   * 为纯标识符，不含 RFC3986 转义序列，无需 URI 解码）；$ref 所在对象的同级字段继续深入。
+   * @param value 任意 JSON 结构（operation / schema / 数组 / 标量）
+   * @param refs 收集结果容器
+   */
+  const collectComponentRefs = (
+    value: unknown,
+    refs: Map<string, Set<string>>,
+  ): void => {
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        collectComponentRefs(item, refs);
+      }
+      return;
+    }
+    if (value === null || typeof value !== 'object') {
+      return;
+    }
+    for (const [key, child] of Object.entries(
+      value as Record<string, unknown>,
+    )) {
+      if (key === '$ref' && typeof child === 'string') {
+        const matched = child.match(/^#\/components\/([^/]+)\/([^/]+)$/);
+        if (matched) {
+          const [, section, name] = matched;
+          let names = refs.get(section);
+          if (!names) {
+            names = new Set<string>();
+            refs.set(section, names);
+          }
+          names.add(name);
+        }
+      } else {
+        collectComponentRefs(child, refs);
+      }
+    }
+  };
+  const filterDocumentByTag = (
+    document: OpenAPIObject,
+    tag: string,
+  ): OpenAPIObject => {
     const filteredPaths: Record<string, Record<string, unknown>> = {};
     for (const [path, pathItem] of Object.entries(document.paths ?? {})) {
-      const matchedOperations = Object.entries(pathItem as Record<string, unknown>).filter(
-        ([, operation]) => isOperationTagged(operation, tag),
-      );
+      const matchedOperations = Object.entries(
+        pathItem as Record<string, unknown>,
+      ).filter(([, operation]) => isOperationTagged(operation, tag));
       if (matchedOperations.length > 0) {
         filteredPaths[path] = Object.fromEntries(matchedOperations);
+      }
+    }
+
+    // schemas 引用闭包：先收 paths 的直接引用，再逐层展开 schema 内部嵌套引用直至不再新增
+    const allSchemas = document.components?.schemas ?? {};
+    const refs = new Map<string, Set<string>>();
+    collectComponentRefs(filteredPaths, refs);
+    const keptSchemaNames = new Set<string>(refs.get('schemas') ?? []);
+    const frontier = [...keptSchemaNames];
+    while (frontier.length > 0) {
+      const name = frontier.pop() as string;
+      collectComponentRefs(allSchemas[name], refs);
+      for (const nested of refs.get('schemas') ?? []) {
+        if (!keptSchemaNames.has(nested)) {
+          keptSchemaNames.add(nested);
+          frontier.push(nested);
+        }
+      }
+    }
+    const keptSchemas: Record<string, unknown> = {};
+    for (const name of keptSchemaNames) {
+      if (allSchemas[name] !== undefined) {
+        keptSchemas[name] = allSchemas[name];
       }
     }
 
     return {
       ...document,
       paths: filteredPaths as OpenAPIObject['paths'],
+      components: {
+        ...(document.components ?? {}),
+        schemas: keptSchemas as NonNullable<
+          OpenAPIObject['components']
+        >['schemas'],
+      },
       tags: document.tags?.filter((tagEntry) => tagEntry.name === tag),
     };
-  }
+  };
   // 循环写swagger生成json分类
-  for(const {name, url} of apiDefinitionArray) {
+  for (const { name, url } of apiDefinitionArray) {
     SwaggerModule.setup(swaggerHost, app, filterDocumentByTag(document, name), {
       // JSON 端点路径显式钉死（与 SWAGGER_DEFINITIONS 中各子文档 url 对齐）
       jsonDocumentUrl: url,
