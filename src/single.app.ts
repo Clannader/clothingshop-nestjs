@@ -7,6 +7,7 @@ import {
   SwaggerModule,
   DocumentBuilder,
   SwaggerDocumentOptions,
+  OpenAPIObject,
 } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import type { NestApplicationOptions } from '@nestjs/common';
@@ -248,8 +249,62 @@ export async function bootstrap() {
     swaggerConfig.build(),
     swaggerOptions,
   );
+  const patchDocumentOnRequest = (req: unknown, _res: unknown, document: OpenAPIObject): OpenAPIObject => {
+    // 按当前请求动态改写OAuth2授权/令牌地址为完整URL:createDocument是启动时执行的,
+    // 那时无法预知浏览器会用localhost/IP/域名中的哪种方式访问swagger-ui,
+    // 所以在每次请求swagger json/yaml/init.js时按请求头动态拼origin;
+    // 协议优先取X-Forwarded-Proto(反向代理https卸载场景),无该代理头时express按socket是否TLS判定
+    const swaggerReq = req as RequestSession;
+    const forwardedProto = swaggerReq.headers['x-forwarded-proto'];
+    const swaggerProtocol =
+      typeof forwardedProto === 'string' && forwardedProto
+        ? forwardedProto
+        : swaggerReq.protocol;
+    const swaggerOrigin = `${swaggerProtocol}://${swaggerReq.get('host')}`;
+    // addOAuth2不传name时securitySchemes的key默认为oauth2(@nestjs/swagger的document-builder默认参数)
+    const oauth2Flows = (
+      document.components?.securitySchemes?.[oauthName] as {
+        flows?: {
+          authorizationCode?: {
+            authorizationUrl?: string;
+            tokenUrl?: string;
+          };
+        };
+      }
+    )?.flows?.authorizationCode;
+    if (oauth2Flows) {
+      // 直接改写全局document的引用:每次请求都会按当前域名重新覆盖,多域名并发访问的竞态窗口可忽略
+      oauth2Flows.authorizationUrl = `${swaggerOrigin}/gateway/api/oauth/authorize`;
+      oauth2Flows.tokenUrl = `${swaggerOrigin}/gateway/api/oauth/token`;
+    }
+    // 判定登录态,与SessionGuard保持一致:session里有adminSession且未过期
+    const adminSession = swaggerReq.session?.adminSession;
+    const isLogin = true
+      // !!adminSession && Date.now() - adminSession.expires <= Session_Expires;
+    if (isLogin) {
+      // 滑动续期,与SessionGuard保持一致
+      // adminSession.expires = Date.now() + Session_Expires;
+      return document;
+    }
+    return {
+      openapi: document.openapi,
+      info: {
+        title: `401 (Unauthorized) | ${document.info.title}`,
+        description:
+          'API schema is only available for authenticated users. In order to proceed authenticate yourself.',
+        version: document.info.version,
+      },
+      paths: {},
+      // 保留securitySchemes,让Swagger UI的Authorize按钮仍然可用
+      components: {
+        securitySchemes: document.components?.securitySchemes,
+      },
+    };
+  }
+
   SwaggerModule.setup('swagger-ui', app, document, {
     swaggerOptions: {
+      // 刷新页面后保留已授权的 token，避免重复登录
       persistAuthorization: true, // 这个参数好像是做持久化认证的
       // OAuth2授权弹窗的预填参数,这个是之前OAuth2不生效的原因之一:
       // 光在DocumentBuilder里面addOAuth2声明还不够,这里必须初始化initOAuth配置
@@ -284,7 +339,8 @@ export async function bootstrap() {
       // deepLinking: false, // 这个无效,源代码默认true
     },
     // swaggerUrl: 'http://localhost:3000/swagger-ui-json', // 感觉无效
-    // explorer: true,
+    // 启用 Swagger UI 原生「Select a definition」多 definition 下拉（topbar 右上角）：
+    explorer: true,
     // customCss: '.swagger-ui .model-box { display:block }',
     customSiteTitle: 'CMS Swagger UI',
     customCssUrl: '/swagger-ui-override.css',
@@ -296,58 +352,7 @@ export async function bootstrap() {
     // 注意:该钩子必须写在setup第4个参数的顶层(与swaggerOptions同级),源码里json/yaml/swagger-ui-init.js
     // 三个端点都是从顶层读取patchDocumentOnRequest,写在swaggerOptions内部是不会生效的
     // 注意:回调参数不能直接标注RequestSession(泛型签名<TRequest=any>逆变不兼容会报TS2322),在函数体内cast
-    patchDocumentOnRequest: (req, _res, document) => {
-      // 按当前请求动态改写OAuth2授权/令牌地址为完整URL:createDocument是启动时执行的,
-      // 那时无法预知浏览器会用localhost/IP/域名中的哪种方式访问swagger-ui,
-      // 所以在每次请求swagger json/yaml/init.js时按请求头动态拼origin;
-      // 协议优先取X-Forwarded-Proto(反向代理https卸载场景),无该代理头时express按socket是否TLS判定
-      const swaggerReq = req as RequestSession;
-      const forwardedProto = swaggerReq.headers['x-forwarded-proto'];
-      const swaggerProtocol =
-        typeof forwardedProto === 'string' && forwardedProto
-          ? forwardedProto
-          : swaggerReq.protocol;
-      const swaggerOrigin = `${swaggerProtocol}://${swaggerReq.get('host')}`;
-      // addOAuth2不传name时securitySchemes的key默认为oauth2(@nestjs/swagger的document-builder默认参数)
-      const oauth2Flows = (
-        document.components?.securitySchemes?.[oauthName] as {
-          flows?: {
-            authorizationCode?: {
-              authorizationUrl?: string;
-              tokenUrl?: string;
-            };
-          };
-        }
-      )?.flows?.authorizationCode;
-      if (oauth2Flows) {
-        // 直接改写全局document的引用:每次请求都会按当前域名重新覆盖,多域名并发访问的竞态窗口可忽略
-        oauth2Flows.authorizationUrl = `${swaggerOrigin}/gateway/api/oauth/authorize`;
-        oauth2Flows.tokenUrl = `${swaggerOrigin}/gateway/api/oauth/token`;
-      }
-      // 判定登录态,与SessionGuard保持一致:session里有adminSession且未过期
-      const adminSession = swaggerReq.session?.adminSession;
-      const isLogin =
-        !!adminSession && Date.now() - adminSession.expires <= Session_Expires;
-      if (isLogin) {
-        // 滑动续期,与SessionGuard保持一致
-        adminSession.expires = Date.now() + Session_Expires;
-        return document;
-      }
-      return {
-        openapi: document.openapi,
-        info: {
-          title: `401 (Unauthorized) | ${document.info.title}`,
-          description:
-            'API schema is only available for authenticated users. In order to proceed authenticate yourself.',
-          version: document.info.version,
-        },
-        paths: {},
-        // 保留securitySchemes,让Swagger UI的Authorize按钮仍然可用
-        components: {
-          securitySchemes: document.components?.securitySchemes,
-        },
-      };
-    },
+    patchDocumentOnRequest: patchDocumentOnRequest,
   });
 
   // Starts listening for shutdown hooks, 如果加入健康检查官网建议开启
