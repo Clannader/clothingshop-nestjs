@@ -10,6 +10,9 @@ import {
   Inject,
   Req,
   Headers,
+  Get,
+  Render,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiHeaders } from '@nestjs/swagger';
 import {
@@ -216,5 +219,22 @@ export class GatewayAuthController {
     result.expires = refreshExpires;
     resp.refreshToken = this.tokenService.generateToken(result, refreshExpires);
     return resp;
+  }
+
+  @Get('/authorize')
+  @Render('authorizeLogin')
+  gotoAuthorize(@Query() params: Record<string, any>) {
+    console.log(params);
+    /**
+     * {
+     *   response_type: 'code',
+     *   client_id: 'SwaggerUI',
+     *   redirect_uri: 'http://localhost:5000/swagger-ui/oauth2-redirect.html',
+     *   state: 'V2VkIFNlcCAwMiAyMDI2IDExOjI1OjIzIEdNVCswODAwICjkuK3lm73moIflh4bml7bpl7Qp',
+     *   code_challenge: 'kP0oSVbn-GJgi0pUTnSTjtMBwArWD5X5oLkwbnkqRbI',
+     *   code_challenge_method: 'S256'
+     * }
+     */
+    return {};
   }
 }
