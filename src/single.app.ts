@@ -182,7 +182,7 @@ export async function bootstrap() {
   app.engine('html', renderFile);
   app.setViewEngine('html');
 
-  const oauthName = 'oauth2-auth-code'; // 安全方案名称
+  const oauthName = parseEnv.read('oauthName'); // 安全方案名称
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Clothingshop System API')
     .setDescription('The clothingshop restful api')
@@ -238,7 +238,7 @@ export async function bootstrap() {
 
   const swaggerOptions: SwaggerDocumentOptions = {
     operationIdFactory: (controllerKey: string, methodKey: string) => {
-      return `${controllerKey}_${methodKey}`;
+      return `${controllerKey}-${methodKey}`; // 这个把_改成了-,因为swagger出现js警告
     },
     // autoTagControllers: false, // 这个的意思是设置true,那么控制器Controller不使用ApiTags也能创建分类,否则需要显示调用ApiTags来创建分类
     // deepScanRoutes: true // 不懂有什么用
