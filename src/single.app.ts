@@ -218,6 +218,10 @@ export async function bootstrap() {
             scopes: {
               // read: 'Read access to protected resources',
               // write: 'Write access to protected resources',
+              openid: 'OpenID Connect scope',
+              profile: 'Profile information',
+              API: 'Public API',
+              monitoring: 'Monitoring data',
             },
           },
         },
@@ -255,6 +259,8 @@ export async function bootstrap() {
         additionalQueryStringParams: {},
         useBasicAuthenticationWithAccessCodeGrant: false,
         usePkceWithAuthorizationCodeGrant: true, // 推荐开启 PKCE 增强安全性
+        // 留空：由使用者在 Swagger UI 授权弹窗中按需勾选 scopes（此字段类型仅接受 string[]）
+        scopes: [],
         // clientSecret: 'CmsChina',
         // 暂时不知道这2个参数用来干嘛
         // realm: 'demo-realm',
