@@ -13,9 +13,11 @@ updates:
       day: "monday" # 每周一检查
       time: "02:00" # 凌晨2点（对应 timezone 指定的时区）
       timezone: "Asia/Shanghai" # 时区：北京时间
-    open-pull-requests-limit: 10 # 最大并发 PR 数量‌
+    open-pull-requests-limit: 15 # 最大并发 PR 数量‌
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
       - dependency-name: 'mongodb'
         versions: [ '>6.20.x' ]
+      - dependency-name: 'swagger-ui-dist'
+        versions: [ '>5.32.13' ]
