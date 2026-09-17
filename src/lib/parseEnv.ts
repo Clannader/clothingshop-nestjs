@@ -26,6 +26,10 @@ class ParseEnv {
     }
     return pemPath;
   }
+
+  getOauthName() {
+    return this.read('oauthName') || 'oauth2-auth-code'
+  }
 }
 
 const parseEnv: ParseEnv = new ParseEnv();
