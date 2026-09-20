@@ -45,7 +45,7 @@
     "@andybeat/schedule": "^12.0.1",
     "@andybeat/swagger": "^12.0.4",
     "@nestjs/cache-manager": "^12.0.0",
-    "@nestjs/common": "^12.0.1",
+    "@nestjs/common": "^12.0.3",
     "@nestjs/core": "^12.0.1",
     "@nestjs/event-emitter": "^12.0.0",
     "@nestjs/jwt": "^12.0.1",
