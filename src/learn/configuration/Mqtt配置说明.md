@@ -268,4 +268,5 @@ MQTT的发布者不需要订阅,只有接收消息的消费者需要订阅,也�
    1.5 clean=false时,必须设置clientId.当断开连接后,Number Of Consumers不会减少,需要注意.只有false时,qos=1才会拉取离线消息
    1.6 发消息者不需要订阅,只有接收消息才需要订阅,发送方只需要连接上消息服务器,直接按主题发消息即可,接收方才需要订阅主题,才能接收到消息
    1.7 如果使用jolokia api来删除topic,需要在jolokia-access.xml的commands节点下新增<command>exec</command>
+   1.8 请求头加密:Authorization='Basic ' + new Buffer(username + ':' + password).toString('base64')
 ```
