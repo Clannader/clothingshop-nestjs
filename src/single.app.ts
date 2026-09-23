@@ -189,7 +189,7 @@ export async function bootstrap() {
   app.engine('html', renderFile);
   app.setViewEngine('html');
 
-  const oauthName = parseEnv.read('oauthName'); // 安全方案名称
+  const oauthName = parseEnv.getOauthName(); // 安全方案名称
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Clothingshop System API')
     .setDescription('The clothingshop restful api')
