@@ -23,6 +23,7 @@ import { SECRET_CONFIG, GLOBAL_CONFIG } from '@/common';
             brokerUrl: configService.get<string>('mqttUrl'),
             username: secretConfig.get<string>('mqttUserName'),
             password: secretConfig.get<string>('mqttPassword'),
+            clientId: secretConfig.get<string>('mqttClientId'), // clientId就是连接的名称,如果不设置就是随机
           }),
         );
         svc.start();
