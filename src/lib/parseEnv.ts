@@ -28,7 +28,7 @@ class ParseEnv {
   }
 
   getOauthName() {
-    return this.read('oauthName') || 'oauth2-auth-code'
+    return this.read('oauthName') || 'oauth2-auth-code';
   }
 }
 
