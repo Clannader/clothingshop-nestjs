@@ -45,9 +45,12 @@ export class MqttAbstractService {
 
     try {
       this.client = connect(brokerUrl, {
-        clientId,
+        protocolVersion: 4,
+        ...(clientId !== undefined ? { clientId } : {}),
         ...(username !== undefined ? { username } : {}),
         ...(password !== undefined ? { password } : {}),
+        reconnectPeriod: 5000,
+        connectTimeout: 30 * 1000,
       });
     } catch (err) {
       console.error(

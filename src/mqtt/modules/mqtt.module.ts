@@ -5,6 +5,7 @@ import { Module, OnModuleDestroy } from '@nestjs/common';
 import { MqttAbstractService, normalizeMqttConfig } from '../services';
 import { ConfigService } from '@/common/config';
 import { SecretConfigModule } from '@/common/modules';
+import { SECRET_CONFIG, GLOBAL_CONFIG } from '@/common';
 
 @Module({
   imports: [SecretConfigModule.register()],
@@ -12,7 +13,7 @@ import { SecretConfigModule } from '@/common/modules';
   providers: [
     {
       provide: MqttAbstractService,
-      inject: [ConfigService],
+      inject: [GLOBAL_CONFIG, SECRET_CONFIG],
       useFactory: (
         configService: ConfigService,
         secretConfig: ConfigService,
