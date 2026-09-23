@@ -37,6 +37,10 @@ export class MqttAbstractService {
       defaultQos,
     } = this.mqttConfig;
 
+    if (Utils.isEmpty(brokerUrl)) {
+      return;
+    }
+
     // 如果有默认订阅,需要初始化
     // 实际订阅动作统一由 'connect' 重放
     for (const topic of defaultTopics) {

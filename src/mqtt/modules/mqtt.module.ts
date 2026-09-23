@@ -20,8 +20,8 @@ import cluster from 'node:cluster';
         secretConfig: ConfigService,
       ) => {
         const workerId = cluster?.worker?.id ?? 1;
-        const serverName = configService.get<string>('serverName')
-        const clientId = secretConfig.get<string>('mqttClientId')
+        const serverName = configService.get<string>('serverName');
+        const clientId = secretConfig.get<string>('mqttClientId');
         const svc = new MqttAbstractService(
           normalizeMqttConfig({
             brokerUrl: configService.get<string>('mqttUrl'),
