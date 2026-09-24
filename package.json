@@ -79,7 +79,7 @@
     "log4js": "^6.9.1",
     "moment": "^2.31.0",
     "mongodb": "6.20.0",
-    "mongoose": "8.24.2",
+    "mongoose": "8.24.4",
     "mqtt": "^5.16.0",
     "on-finished": "^2.4.1",
     "qrcode": "^1.5.4",
