@@ -6,13 +6,29 @@ import {
   ApiCustomResponse,
   ApiTagsController,
 } from '@/common/decorator';
-import { Controller, Get, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { SessionGuard } from '@/guard';
 import { HttpInterceptor } from '@/interceptor/http';
-import { ApiRights, RightsEnum } from '@/rights';
+import { ApiOrRights, ApiRights, RightsEnum } from '@/rights';
 import { MqttAbstractService } from '@/mqtt';
 import { ApiOperation } from '@andybeat/swagger';
-import { RespSubscriptionsInfo } from '@/mqtt/dto';
+import {
+  MqttPublishInfo,
+  MqttSubscriptionSubDto,
+  RespMqttSubscribeInfo,
+  RespMqttUnsubscribeInfo,
+  RespSubscriptionsInfo,
+} from '@/mqtt/dto';
+import { CommonResult } from '@/common';
 
 @ApiCommon()
 @Controller('/cms/api/mqtt')
@@ -38,6 +54,54 @@ export class MqttController {
   getConnectInfo() {
     const resp = new RespSubscriptionsInfo();
     resp.connectInfo = this.mqttService.getSubscriptionsInfo();
+    return resp;
+  }
+
+  @Post('/subscribe')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '订阅主题',
+    description: '订阅主题',
+  })
+  @ApiCustomResponse({
+    type: RespMqttSubscribeInfo,
+  })
+  @ApiOrRights(RightsEnum.MqttSubscribe)
+  async subscribe(@Body() params: MqttSubscriptionSubDto) {
+    const resp = new RespMqttSubscribeInfo();
+    resp.subscribeInfo = await this.mqttService.subscribe(params);
+    return resp;
+  }
+
+  @Post('/unsubscribe')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '取消订阅',
+    description: '取消订阅',
+  })
+  @ApiCustomResponse({
+    type: RespMqttUnsubscribeInfo,
+  })
+  @ApiOrRights(RightsEnum.MqttUnsubscribe)
+  unsubscribe(@Body() params: MqttSubscriptionSubDto) {
+    const resp = new RespMqttUnsubscribeInfo();
+    resp.unsubscribeInfo = this.mqttService.unsubscribe(params.topic);
+    return resp;
+  }
+
+  @Post('/publish')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '发布消息',
+    description: '发布消息',
+  })
+  @ApiCustomResponse({
+    type: CommonResult,
+  })
+  @ApiOrRights(RightsEnum.MqttPublish)
+  async publish(@Body() params: MqttPublishInfo) {
+    const resp = new CommonResult();
+    await this.mqttService.publish(params);
     return resp;
   }
 }
