@@ -94,7 +94,7 @@ export class MqttAbstractService {
     this.client.on('close', () => {
       this.maxReconnectionAttempts++;
       console.log(`${this.getClientName()}连接已关闭(自动重连中...)`);
-      if (this.maxReconnectionAttempts >= 30) {
+      if (this.maxReconnectionAttempts >= 100) {
         this.stop();
       }
     });
@@ -126,7 +126,7 @@ export class MqttAbstractService {
    * 当前是否已连接 broker
    */
   isConnected(): boolean {
-    return this.client !== undefined && this.client.connected;
+    return this.client !== undefined && this.client.connected === true;
   }
 
   /**
@@ -153,7 +153,7 @@ export class MqttAbstractService {
   /** 连接状态 + 当前订阅清单 */
   getSubscriptionsInfo(): MqttSubscriptionsInfo {
     return {
-      connected: this.client?.connected === true,
+      connected: this.isConnected(),
       brokerUrl: this.mqttConfig.brokerUrl,
       subscriptions: [...this.subscriptions.entries()].map(([topic, qos]) => ({
         topic,
@@ -161,6 +161,21 @@ export class MqttAbstractService {
       })),
     };
   }
+
+  /**
+   * 退订 topic
+   */
+  unsubscribe() {}
+
+  /**
+   * 订阅 topic
+   */
+  subscribe() {}
+
+  /**
+   * 推送消息
+   */
+  publish() {}
 }
 
 export function normalizeMqttConfig(partial: Partial<MqttConfig>): MqttConfig {
