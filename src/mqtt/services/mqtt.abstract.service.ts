@@ -184,20 +184,28 @@ export class MqttAbstractService {
   /**
    * 退订 topic
    */
-  unsubscribe(topic: string): MqttUnsubscribeInfo {
+  async unsubscribe(topic: string): Promise<MqttUnsubscribeInfo> {
     const rawTopic = this.checkTopicName(topic);
-    this.subscriptions.delete(rawTopic);
-    if (this.isConnected()) {
-      this.client.unsubscribe(rawTopic, (err) => {
-        if (err) {
-          console.error(
-            `${this.getClientName()}退订 ${rawTopic} 失败: ${Utils.errMessage(err)}`,
-          );
-        } else {
-          console.error(`${this.getClientName()}退订 ${rawTopic} 成功`);
-        }
-      });
+    if (!this.isConnected()) {
+      throw new CodeException(
+        CodeEnum.EXCEPTION,
+        `${this.getClientName()}客户端未连接 broker，无法退订`,
+      );
     }
+    try {
+      await new Promise<void>((resolve, reject) => {
+        this.client.unsubscribe(rawTopic, (err) =>
+          err ? reject(err) : resolve(),
+        );
+      });
+    } catch (err) {
+      throw new CodeException(
+        CodeEnum.EXCEPTION,
+        `${this.getClientName()}退订 ${rawTopic} 失败: ${Utils.errMessage(err)}`,
+      );
+    }
+    this.subscriptions.delete(rawTopic);
+    console.log(`${this.getClientName()}退订 ${rawTopic} 成功`);
     return {
       topic: rawTopic,
       unsubscribedAt: new Date().toISOString(),

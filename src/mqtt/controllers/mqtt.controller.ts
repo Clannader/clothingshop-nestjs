@@ -83,9 +83,9 @@ export class MqttController {
     type: RespMqttUnsubscribeInfo,
   })
   @ApiOrRights(RightsEnum.MqttUnsubscribe)
-  unsubscribe(@Body() params: MqttSubscriptionSubDto) {
+  async unsubscribe(@Body() params: MqttSubscriptionSubDto) {
     const resp = new RespMqttUnsubscribeInfo();
-    resp.unsubscribeInfo = this.mqttService.unsubscribe(params.topic);
+    resp.unsubscribeInfo = await this.mqttService.unsubscribe(params.topic);
     return resp;
   }
 
