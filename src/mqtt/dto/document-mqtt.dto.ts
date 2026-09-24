@@ -93,3 +93,23 @@ export class MqttSubscribeInfo {
    */
   activeSubscriptions: string[];
 }
+
+export class MqttPublishInfo {
+  /**
+   * 发送消息的主题 topic
+   * @example testMessage
+   */
+  @IsDefined()
+  @IsString()
+  @Expose()
+  topic: string;
+
+  /**
+   * 消息内容
+   * @example hello mqtt
+   */
+  @IsDefined()
+  @IsString()
+  @Expose()
+  message: string;
+}

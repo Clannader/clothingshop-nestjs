@@ -7,6 +7,7 @@ import { connect, MqttClient } from 'mqtt';
 import { MqttConfig } from '../types';
 import { Utils } from '@/common/utils';
 import {
+  MqttPublishInfo,
   MqttSubscribeInfo,
   MqttSubscriptionsInfo,
   MqttSubscriptionSubDto,
@@ -243,7 +244,31 @@ export class MqttAbstractService {
   /**
    * 推送消息
    */
-  publish() {}
+  async publish(messageInfo: MqttPublishInfo) {
+    const rawTopic = this.checkTopicName(messageInfo.topic);
+    if (!this.isConnected()) {
+      throw new CodeException(
+        CodeEnum.EXCEPTION,
+        `${this.getClientName()}客户端未连接 broker，无法发送消息`,
+      );
+    }
+    try {
+      await new Promise<void>((resolve, reject) => {
+        this.client.publish(rawTopic, messageInfo.message, (err, packet) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve();
+        });
+      });
+    } catch (err) {
+      throw new CodeException(
+        CodeEnum.EXCEPTION,
+        `${this.getClientName()}发送消息失败: ${Utils.errMessage(err)}`,
+      );
+    }
+  }
 }
 
 export function normalizeMqttConfig(partial: Partial<MqttConfig>): MqttConfig {
