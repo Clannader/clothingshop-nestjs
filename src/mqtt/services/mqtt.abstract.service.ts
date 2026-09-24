@@ -11,6 +11,7 @@ import { Utils } from '@/common/utils';
 export class MqttAbstractService {
   private client?: MqttClient;
   private readonly mqttConfig: MqttConfig;
+  private maxReconnectionAttempts: number = 0; // 最大重连次数
 
   /** 该链接的所有订阅列表 */
   private readonly subscriptions = new Map<string, 0 | 1 | 2>();
@@ -53,8 +54,8 @@ export class MqttAbstractService {
         ...(clientId !== undefined ? { clientId } : {}),
         ...(username !== undefined ? { username } : {}),
         ...(password !== undefined ? { password } : {}),
-        reconnectPeriod: 5000,
-        connectTimeout: 30 * 1000,
+        reconnectPeriod: 10 * 1000, // 每次重连间隔时间
+        connectTimeout: 30 * 1000, // 连接超时时间
       });
     } catch (err) {
       console.error(
@@ -70,6 +71,7 @@ export class MqttAbstractService {
 
     // 首连与断线重连均触发：按订阅真源重放全部订阅，保证重连后订阅自动恢复
     this.client.on('connect', () => {
+      this.maxReconnectionAttempts = 0;
       console.log(`${this.getClientName()}已连接 broker ${brokerUrl}`);
       this.resubscribeAll();
     });
@@ -94,7 +96,11 @@ export class MqttAbstractService {
       );
     });
     this.client.on('close', () => {
+      this.maxReconnectionAttempts++;
       console.log(`${this.getClientName()}连接已关闭(自动重连中...)`);
+      if (this.maxReconnectionAttempts >= 30) {
+        this.stop();
+      }
     });
     this.client.on('reconnect', () => {
       console.log(`${this.getClientName()}正在重连 broker...`);
