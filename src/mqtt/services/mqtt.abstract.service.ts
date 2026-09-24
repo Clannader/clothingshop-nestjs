@@ -6,7 +6,14 @@ import { connect, MqttClient } from 'mqtt';
 
 import { MqttConfig } from '../types';
 import { Utils } from '@/common/utils';
-import { MqttSubscriptionsInfo } from '../dto';
+import {
+  MqttSubscribeInfo,
+  MqttSubscriptionsInfo,
+  MqttSubscriptionSubDto,
+  MqttUnsubscribeInfo,
+} from '../dto';
+import { CodeException } from '@/common/exceptions';
+import { CodeEnum } from '@/common/enum';
 
 @Injectable()
 export class MqttAbstractService {
@@ -163,14 +170,75 @@ export class MqttAbstractService {
   }
 
   /**
+   * 校验topic是否合法
+   */
+  checkTopicName(topic: string): string {
+    const rawTopic = typeof topic === 'string' ? topic.trim() : '';
+    if (rawTopic.length === 0) {
+      throw new CodeException(CodeEnum.EXCEPTION, 'Topic必填且为非空字符串');
+    }
+    return rawTopic;
+  }
+
+  /**
    * 退订 topic
    */
-  unsubscribe() {}
+  unsubscribe(topic: string): MqttUnsubscribeInfo {
+    const rawTopic = this.checkTopicName(topic);
+    this.subscriptions.delete(rawTopic);
+    if (this.isConnected()) {
+      this.client.unsubscribe(rawTopic, (err) => {
+        if (err) {
+          console.error(
+            `${this.getClientName()}退订 ${rawTopic} 失败: ${Utils.errMessage(err)}`,
+          );
+        } else {
+          console.error(`${this.getClientName()}退订 ${rawTopic} 成功`);
+        }
+      });
+    }
+    return {
+      topic: rawTopic,
+      unsubscribedAt: new Date().toISOString(),
+      activeSubscriptions: [...this.subscriptions.keys()],
+    };
+  }
 
   /**
    * 订阅 topic
    */
-  subscribe() {}
+  async subscribe(
+    topicInfo: MqttSubscriptionSubDto,
+  ): Promise<MqttSubscribeInfo> {
+    const rawTopic = this.checkTopicName(topicInfo.topic);
+    const qos = topicInfo.qos ?? this.mqttConfig.defaultQos;
+    if (!this.isConnected()) {
+      throw new CodeException(
+        CodeEnum.EXCEPTION,
+        `${this.getClientName()}客户端未连接 broker，无法订阅`,
+      );
+    }
+    try {
+      await new Promise<void>((resolve, reject) => {
+        this.client.subscribe(rawTopic, { qos }, (err) =>
+          err ? reject(err) : resolve(),
+        );
+      });
+    } catch (err) {
+      throw new CodeException(
+        CodeEnum.EXCEPTION,
+        `${this.getClientName()}订阅失败: ${Utils.errMessage(err)}`,
+      );
+    }
+
+    this.subscriptions.set(rawTopic, qos);
+    return {
+      topic: rawTopic,
+      qos,
+      subscribedAt: new Date().toISOString(),
+      activeSubscriptions: [...this.subscriptions.keys()],
+    };
+  }
 
   /**
    * 推送消息
