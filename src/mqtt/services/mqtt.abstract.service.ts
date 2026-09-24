@@ -6,6 +6,7 @@ import { connect, MqttClient } from 'mqtt';
 
 import { MqttConfig } from '../types';
 import { Utils } from '@/common/utils';
+import { MqttSubscriptionsInfo } from '../dto';
 
 @Injectable()
 export class MqttAbstractService {
@@ -78,16 +79,11 @@ export class MqttAbstractService {
 
     // 收到消息
     this.client.on('message', (topic, payload, packet) => {
+      // 服务器上的MQTT不会用于接收消息,因为服务器是集群的,如果订阅,会造成收消息风暴
+      // 服务器上的MQTT只适用于发消息
       console.log(
         `${this.getClientName()}收到消息: topic=${topic}, payload=${payload.toString('utf-8')}, qos=${packet.qos}, retain=${packet.retain}`,
       );
-      // this.pushMessage({
-      //   topic,
-      //   payload: payload.toString('utf-8'),
-      //   qos: packet.qos ?? 0,
-      //   retain: packet.retain ?? false,
-      //   receivedAt: new Date().toISOString(),
-      // });
     });
 
     this.client.on('error', (err) => {
@@ -152,6 +148,18 @@ export class MqttAbstractService {
 
   getClientName() {
     return `[MQTT] 客户端(${this.mqttConfig.brokerUrl}) `;
+  }
+
+  /** 连接状态 + 当前订阅清单 */
+  getSubscriptionsInfo(): MqttSubscriptionsInfo {
+    return {
+      connected: this.client?.connected === true,
+      brokerUrl: this.mqttConfig.brokerUrl,
+      subscriptions: [...this.subscriptions.entries()].map(([topic, qos]) => ({
+        topic,
+        qos,
+      })),
+    };
   }
 }
 
