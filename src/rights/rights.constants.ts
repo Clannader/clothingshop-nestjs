@@ -41,6 +41,10 @@ export enum RightsEnum {
   TimeZoneSync = '30143',
   TimeZoneModify = '30144',
   TimeZoneDelete = '30145',
+  MqttServiceSetup = '3015',
+  MqttPublish = '30151',
+  MqttSubscribe = '30152',
+  MqttUnsubscribe = '30153',
   UserSetup = '3020',
   RightsSetup = '3030',
   RightsGroupSetup = '3031',
@@ -143,6 +147,24 @@ export const RightsList: RightsConfig = {
             },
           },
           // 后续计划邮箱设置,国家/省份/城市设置,动态参数设置,消息设置,都归属在里面吧
+          MqttServiceSetup: {
+            code: RightsEnum.MqttServiceSetup, // 3015
+            desc: 'MQTT服务设置',
+            children: {
+              MqttPublish: {
+                code: RightsEnum.MqttPublish, // 30151
+                desc: 'MQTT发送消息',
+              },
+              MqttSubscribe: {
+                code: RightsEnum.MqttSubscribe, // 30152
+                desc: 'MQTT订阅',
+              },
+              MqttUnsubscribe: {
+                code: RightsEnum.MqttUnsubscribe, // 30153
+                desc: 'MQTT取消订阅',
+              },
+            },
+          },
         },
       },
       UserSetup: {
