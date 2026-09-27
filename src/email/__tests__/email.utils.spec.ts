@@ -3,7 +3,7 @@
  */
 import { Test, TestingModule } from '@nestjs/testing';
 import { EmailUtils } from '@/email/email.utils';
-import { CommonModule } from '@/common/modules';
+import { CommonModule, ServerConfigModule } from '@/common/modules';
 import { readFileSync } from 'fs';
 
 describe('EmailUtils', () => {
@@ -11,7 +11,7 @@ describe('EmailUtils', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [CommonModule],
+      imports: [CommonModule, ServerConfigModule],
       providers: [EmailUtils],
     }).compile();
 

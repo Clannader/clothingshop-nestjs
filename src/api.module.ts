@@ -8,12 +8,10 @@ import {
   ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
-import { join } from 'path';
 
 import { HttpExceptionFilter, MongoExceptionFilter } from './filter';
 import { ValidationPipe } from './pipe';
-import { GLOBAL_CONFIG } from './common';
-import { CommonModule, ConfigModule } from './common/modules';
+import { CommonModule, ServerConfigModule } from './common/modules';
 import { AopMiddleware, XmlMiddleware } from './middleware';
 import { MongooseConfigModule } from './dao';
 import { AopAspectModule } from './interceptor/aop';
@@ -29,17 +27,7 @@ import { EventMessageModule } from '@/lib/event-message';
     CommonModule,
     TasksListModule,
     ApplicationHookModule,
-    ConfigModule.register({
-      iniFilePath: join(process.cwd(), '/config/config_example.ini'),
-      envFilePath:
-        process.env.NODE_ENV === 'development'
-          ? join(process.cwd(), '/config/.env.development')
-          : join(process.cwd(), '/config/.env.production'),
-      isGlobal: true,
-      isWatch: true,
-      token: GLOBAL_CONFIG,
-      // expandVariables: true, // 有bug,暂时去掉,原因是watch文件时,文件被修改了,没有检测到最新的值到内存里面
-    }),
+    ServerConfigModule,
     MongooseConfigModule,
     SwaggerModule,
     AopAspectModule,
