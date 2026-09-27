@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import { join, resolve } from 'path';
 import { cloneDeep, forEach, get, isPlainObject, set, unset } from 'lodash';
-// import { DotenvExpandOptions, expand } from 'dotenv-expand';
+import { DotenvExpandOptions, expand } from 'dotenv-expand';
 import { ConfigServiceOptions } from './config.interface';
 // import { NoInferType, ExcludeUndefinedIf, KeyOf } from '../common.type';
 import { Utils } from '../utils';
@@ -82,15 +82,15 @@ export class ConfigService {
       }
       // 由于expandVariables始终都是false,所以下面这段代码其实是无效的
       // 先注释掉吧,以后有机会了再修改
-      // if (this.options.expandVariables) {
-      //   const expandOptions: DotenvExpandOptions =
-      //     typeof this.options.expandVariables === 'object'
-      //       ? this.options.expandVariables
-      //       : {};
-      //   // 2022-06-08 真是又无语了,不知道为什么watch文件时,明明重新加载了,但是经过这个折叠方法
-      //   // 之后,修改过的值还是旧值,只能暂时把这个参数关闭了
-      //   config = expand({ ...expandOptions, parsed: config }).parsed || config;
-      // }
+      if (this.options.expandVariables) {
+        const expandOptions: DotenvExpandOptions =
+          typeof this.options.expandVariables === 'object'
+            ? this.options.expandVariables
+            : {};
+        // 2022-06-08 真是又无语了,不知道为什么watch文件时,明明重新加载了,但是经过这个折叠方法
+        // 之后,修改过的值还是旧值,只能暂时把这个参数关闭了
+        config = expand({ ...expandOptions, parsed: config }).parsed || config;
+      }
     }
     this.validateConfig(config);
     this.internalConfig = this.options.ignoreEnvVars
