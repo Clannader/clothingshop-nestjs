@@ -110,10 +110,10 @@ export class ConfigModule {
     } else {
       // 如果pem目录不存在则创建一个目录
       // const pemDir = join(process.cwd(), '/pem');
-      if (!fs.existsSync(pemPath)) {
-        fs.mkdirSync(pemPath);
-      }
-      fs.writeFileSync(secretPath, '');
+      // if (!fs.existsSync(pemPath)) {
+      //   fs.mkdirSync(pemPath);
+      // }
+      // fs.writeFileSync(secretPath, '');
     }
     return config;
   }
