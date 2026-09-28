@@ -15,12 +15,15 @@ import {
 } from '../dto';
 import { CodeException } from '@/common/exceptions';
 import { CodeEnum } from '@/common/enum';
+import { AopLogger } from '@/logger';
 
 @Injectable()
 export class MqttAbstractService {
   private client?: MqttClient;
   private readonly mqttConfig: MqttConfig;
   private maxReconnectionAttempts: number = 0; // 最大重连次数
+
+  private readonly logger = new AopLogger(MqttAbstractService.name);
 
   /** 该链接的所有订阅列表 */
   private readonly subscriptions = new Map<string, 0 | 1 | 2>();
@@ -67,21 +70,21 @@ export class MqttAbstractService {
         connectTimeout: 30 * 1000, // 连接超时时间
       });
     } catch (err) {
-      console.error(
+      this.logger.error(
         `${this.getClientName()}创建失败: ${Utils.errMessage(err)}`,
       );
       this.client = undefined;
       return;
     }
 
-    console.log(
+    this.logger.log(
       `${this.getClientName()}正在连接 ${brokerUrl} (clientId=${clientId})...`,
     );
 
     // 首连与断线重连均触发：按订阅真源重放全部订阅，保证重连后订阅自动恢复
     this.client.on('connect', () => {
       this.maxReconnectionAttempts = 0;
-      console.log(`${this.getClientName()}已连接 broker ${brokerUrl}`);
+      this.logger.log(`${this.getClientName()}已连接 broker ${brokerUrl}`);
       this.resubscribeAll();
     });
 
@@ -89,25 +92,25 @@ export class MqttAbstractService {
     this.client.on('message', (topic, payload, packet) => {
       // 服务器上的MQTT不会用于接收消息,因为服务器是集群的,如果订阅,会造成收消息风暴
       // 服务器上的MQTT只适用于发消息
-      console.log(
+      this.logger.log(
         `${this.getClientName()}收到消息: topic=${topic}, payload=${payload.toString('utf-8')}, qos=${packet.qos}, retain=${packet.retain}`,
       );
     });
 
     this.client.on('error', (err) => {
-      console.error(
+      this.logger.error(
         `${this.getClientName()}连接错误: ${Utils.errMessage(err)}`,
       );
     });
     this.client.on('close', () => {
       this.maxReconnectionAttempts++;
-      console.log(`${this.getClientName()}连接已关闭(自动重连中...)`);
+      this.logger.log(`${this.getClientName()}连接已关闭(自动重连中...)`);
       if (this.maxReconnectionAttempts >= 100) {
         this.stop();
       }
     });
     this.client.on('reconnect', () => {
-      console.log(`${this.getClientName()}正在重连 broker...`);
+      this.logger.log(`${this.getClientName()}正在重连 broker...`);
     });
   }
 
@@ -120,11 +123,11 @@ export class MqttAbstractService {
     for (const [topic, qos] of this.subscriptions) {
       client.subscribe(topic, { qos }, (err) => {
         if (err) {
-          console.error(
+          this.logger.error(
             `${this.getClientName()}订阅 ${topic} 失败: ${Utils.errMessage(err)}`,
           );
         } else {
-          console.log(`${this.getClientName()}已订阅 ${topic}(qos=${qos})`);
+          this.logger.log(`${this.getClientName()}已订阅 ${topic}(qos=${qos})`);
         }
       });
     }
@@ -146,9 +149,9 @@ export class MqttAbstractService {
     }
     try {
       this.client.end();
-      console.log(`${this.getClientName()}已断开连接`);
+      this.logger.log(`${this.getClientName()}已断开连接`);
     } catch (err) {
-      console.error(
+      this.logger.error(
         `${this.getClientName()}断开连接异常: ${Utils.errMessage(err)}`,
       );
     }
@@ -205,7 +208,7 @@ export class MqttAbstractService {
       );
     }
     this.subscriptions.delete(rawTopic);
-    console.log(`${this.getClientName()}退订 ${rawTopic} 成功`);
+    this.logger.log(`${this.getClientName()}退订 ${rawTopic} 成功`);
     return {
       topic: rawTopic,
       unsubscribedAt: new Date().toISOString(),

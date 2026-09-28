@@ -9,9 +9,18 @@ class ParseEnv {
   private readonly envIni: Record<string, any> = {};
 
   constructor() {
-    const iniPath = join(process.cwd(), '/config/config.ini');
+    const iniPath = join(process.cwd(), '/config/config_example.ini'); // 这只是一个例子ini,并非真实配置
     if (fs.existsSync(iniPath)) {
       this.envIni = dotenv.parse(fs.readFileSync(iniPath));
+      const pemPath = this.getPemPath();
+      // 修改获取真实config.ini设置,覆盖例子的config内容
+      const actualConfigPath = join(pemPath, 'config.ini');
+      if (fs.existsSync(actualConfigPath)) {
+        const actualConfig = dotenv.parse(fs.readFileSync(actualConfigPath));
+        for (const [key, value] of Object.entries(actualConfig)) {
+          this.envIni[key] = value;
+        }
+      }
     }
   }
 
@@ -29,6 +38,10 @@ class ParseEnv {
 
   getOauthName() {
     return this.read('oauthName') || 'oauth2-auth-code';
+  }
+
+  getEnvIni() {
+    return this.envIni;
   }
 }
 

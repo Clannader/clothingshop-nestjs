@@ -27,10 +27,10 @@ describe('ConfigService 加载带参变量', () => {
     expect(service.get<string>('myTitle')).toBe('My name is oliver');
     expect(service.get<string>('myInfo')).toBe('My name is oliver, age is 28');
     expect(service.get<string>('dbUrl')).toBe(
-      'M9kB1vUOFHzgzHa2VeIUkgeMZJ/4SQzeJ6ehKlLZPTz6fmy7SBEY2A==',
+      'SEC:X2agApWXC8SQS39fc+g0yn2l/hZwwWKclUXJOURINX37Y9xg9CRsKg==',
     );
     expect(service.getSecurityConfig('dbUrl')).toBe(
-      'M9kB1vUOFHzgzHa2VeIUkgeMZJ/4SQzeJ6ehKlLZPTz6fmy7SBEY2A==',
+      'mongodb://127.0.0.1:27018/clothingshop',
     );
     // 测试完了回退数据
     service.set('myName', '');

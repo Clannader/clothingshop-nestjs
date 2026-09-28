@@ -13,7 +13,6 @@ import {
   CmsSession,
   UpdateLoginWhere,
   LoginResult,
-  SECRET_CONFIG,
   LanguageType,
   SecurityOptions,
   sessionSecret,
@@ -50,8 +49,8 @@ export class UserService {
   @Inject()
   private readonly userSessionService: UserSessionService;
 
-  @Inject(SECRET_CONFIG)
-  private readonly secretConfig: ConfigService;
+  @Inject()
+  private readonly configService: ConfigService;
 
   @Inject()
   private readonly memoryCacheService: MemoryCacheService;
