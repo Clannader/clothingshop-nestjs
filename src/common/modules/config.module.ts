@@ -100,6 +100,9 @@ export class ConfigModule {
         };
   }
 
+  /**
+   * @deprecated 已经不再使用这个对象
+   */
   private static loadSecretFile(): Record<string, any> {
     const pemPath = parseEnv.getPemPath();
     const secretPath = join(pemPath, 'config.ini');
