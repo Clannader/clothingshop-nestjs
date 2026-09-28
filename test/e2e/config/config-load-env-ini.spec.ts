@@ -28,7 +28,7 @@ describe('ConfigService 同时加载env和ini', () => {
     expect(service.get<string>('ENV_NAME')).toBe('clothingshop');
     expect(service.get<string>('ENV_APP_HOME')).toBe('/${ENV_NAME}/index');
     expect(service.get<string>('dbUrl')).toBe(
-      'X2agApWXC8SQS39fc+g0yn2l/hZwwWKclUXJOURINX37Y9xg9CRsKg==',
+      'SEC:X2agApWXC8SQS39fc+g0yn2l/hZwwWKclUXJOURINX37Y9xg9CRsKg==',
     );
     expect(service.getSecurityConfig('dbUrl')).toBe(
       'mongodb://127.0.0.1:27018/clothingshop',

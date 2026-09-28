@@ -1,15 +1,23 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 // import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import { resolve, join } from 'path';
-import { get, set, unset, isPlainObject, forEach, cloneDeep } from 'lodash';
+import { join, resolve } from 'path';
+import {
+  cloneDeep,
+  forEach,
+  get,
+  isPlainObject,
+  set,
+  unset,
+  has,
+} from 'lodash';
 import { DotenvExpandOptions, expand } from 'dotenv-expand';
 import { ConfigServiceOptions } from './config.interface';
 // import { NoInferType, ExcludeUndefinedIf, KeyOf } from '../common.type';
 import { Utils } from '../utils';
 import {
-  CONFIG_OPTIONS,
   CONFIG_ENV_TOKEN,
+  CONFIG_OPTIONS,
   CONFIG_SECRET,
 } from './config.constants';
 
@@ -19,7 +27,11 @@ type ReturnValueOf = string | boolean | number;
 export class ConfigService {
   private internalConfig: Record<string, any> = {};
   private orgInternalConfig: Record<string, any> = {};
-  private readonly iniFilePath: string = resolve(process.cwd(), 'config.ini');
+  private readonly iniFilePath: string = resolve(
+    process.cwd(),
+    'config/config_example.ini',
+  );
+  private pemConfigPath: string;
   // private readonly envFilePath: string = resolve(process.cwd(), '.env');
 
   constructor(
@@ -29,6 +41,7 @@ export class ConfigService {
   ) {
     if (!Utils.isEmpty(options.iniFilePath)) {
       this.iniFilePath = options.iniFilePath;
+      this.pemConfigPath = options.iniFilePath;
     }
     // this.iniFilePath = Utils.isEmpty(options.iniFilePath)
     //   ? this.iniFilePath
@@ -45,19 +58,14 @@ export class ConfigService {
 
   private loadIniFile(): void {
     let config: Record<string, any> = {};
+    // 这里是读第一次模版config.ini
     if (fs.existsSync(this.iniFilePath)) {
       // config = Object.assign(
       //   // 其实用dotenv这个包就可以直接格式化数据,但是由于要重新写入文件,这样会丢失注释的内容,所以还是得自己来格式化了
       //   // dotenv.parse(fs.readFileSync(this.iniFilePath)),
       //   config,
       // );
-      const sourceString = fs.readFileSync(this.iniFilePath, {
-        encoding: this.options.encoding || 'utf-8',
-      });
-      // 由于上传ini文件后,下载下来的文件的换行符是\n,本地使用的是\r\n所以需要做个替换
-      const orgIniConfig = this.parse(
-        sourceString.replace(/(\r\n|\n|\r)/g, '\r\n'),
-      );
+      const orgIniConfig = this.getConfigRecord(this.iniFilePath);
       this.orgInternalConfig = cloneDeep(orgIniConfig);
       // if (!this.options.ignoreEnvVars) {
       //   config = Object.assign(orgIniConfig, this.envConfig);
@@ -65,6 +73,21 @@ export class ConfigService {
       //   config = orgIniConfig;
       // }
       config = orgIniConfig;
+      // 下面修改获取Config.ini重构逻辑
+      const pemPath = this.getPemPath();
+      // 修改获取真实config.ini设置,覆盖例子的config内容
+      const actualConfigPath = join(pemPath, 'config.ini');
+      if (fs.existsSync(actualConfigPath)) {
+        const actualConfig = this.getConfigRecord(actualConfigPath);
+        for (const [key, value] of Object.entries(actualConfig)) {
+          this.orgInternalConfig[key] = value;
+          orgIniConfig[key] = value;
+        }
+        config = orgIniConfig;
+        this.pemConfigPath = actualConfigPath;
+      }
+      // 由于expandVariables始终都是false,所以下面这段代码其实是无效的
+      // 先注释掉吧,以后有机会了再修改
       if (this.options.expandVariables) {
         const expandOptions: DotenvExpandOptions =
           typeof this.options.expandVariables === 'object'
@@ -84,6 +107,14 @@ export class ConfigService {
         };
   }
 
+  private getConfigRecord(iniPath: string) {
+    const sourceString = fs.readFileSync(iniPath, {
+      encoding: this.options.encoding || 'utf-8',
+    });
+    // 由于上传ini文件后,下载下来的文件的换行符是\n,本地使用的是\r\n所以需要做个替换
+    return this.parse(sourceString.replace(/(\r\n|\n|\r)/g, '\r\n'));
+  }
+
   private parse(
     src: string | Buffer,
     sep?: string,
@@ -94,7 +125,9 @@ export class ConfigService {
       _eq = eq || '=',
       // regex = new RegExp('^(.+)(?<!=)' + _eq + '(?!=)(.+)$'); // 由于部分配置进行了加密,正则需要匹配
       // regex = new RegExp(`^([^${_eq}.]+)${_eq}(.+)$`); // 由于部分配置进行了加密,正则需要匹配
-      regex = new RegExp(`^([^${_eq}]+)${_eq}(.+)$`); // 修改去掉.,当内容为xx.js=xx时无法匹配,待测试
+      regex = new RegExp(`^([^${_eq}]+)${_eq}(.*)$`); // 修改去掉.,当内容为xx.js=xx时无法匹配,待测试
+    // 修改了一下正则: 原^([^${_eq}]+)${_eq}(.+)$, 现在^([^${_eq}]+)${_eq}(.*)$
+    // 把+改成了*,这样设置xxx=空时也能获取到空值而不是没有这个key
     // 第一个等号的分隔
     const qs = src.toString();
     if (qs.length === 0) {
@@ -102,13 +135,13 @@ export class ConfigService {
     }
     const strArray = qs.split(_sep);
     strArray.forEach((value, index) => {
-      ConfigService.parseRows(obj, regex, index, value);
+      this.parseRows(obj, regex, index, value);
     });
 
     return obj;
   }
 
-  private static parseRows(
+  private parseRows(
     obj: Record<string, any>,
     regex: RegExp,
     i: number,
@@ -122,7 +155,7 @@ export class ConfigService {
     }
   }
 
-  private static transformTypeof(value: string): ReturnValueOf {
+  private transformTypeof(value: string): ReturnValueOf {
     if (/^-?\d+(\.\d+)?$/.test(value)) {
       return +value;
     } else if (/^(true|false)$/.test(value)) {
@@ -134,9 +167,9 @@ export class ConfigService {
 
   private watchConfig(): void {
     //触发这个要保存文件才能立刻触发,如果用Nodejs自动检测会很慢
-    if (fs.existsSync(this.iniFilePath)) {
+    if (fs.existsSync(this.pemConfigPath)) {
       fs.watchFile(
-        this.iniFilePath,
+        this.pemConfigPath,
         {
           persistent: true,
           interval: 1000,
@@ -161,9 +194,7 @@ export class ConfigService {
   ): ReturnValueOf {
     const internalValue = get(this.internalConfig, propertyPath);
     if (!Utils.isUndefined(internalValue)) {
-      return ConfigService.transformTypeof(
-        internalValue,
-      ) as unknown as ReturnValueOf;
+      return this.transformTypeof(internalValue) as unknown as ReturnValueOf;
     }
 
     return defaultValue as ReturnValueOf;
@@ -171,25 +202,31 @@ export class ConfigService {
 
   getSecurityConfig(propertyPath: string): string {
     const internalValue = get(this.internalConfig, propertyPath);
-    const isSecurity = ConfigService.transformTypeof(
-      get(this.internalConfig, 'security'),
-    ) as boolean;
-    return !Utils.isUndefined(internalValue) &&
-      typeof isSecurity === 'boolean' &&
-      isSecurity
-      ? Utils.tripleDesDecrypt(
-          internalValue,
-          this.secretConfig['tripleKey'],
-          this.secretConfig['tripleIv'],
-        )
-      : internalValue;
+    // const isSecurity = this.transformTypeof(
+    //   get(this.internalConfig, 'security'),
+    // ) as boolean;
+    const prefix = 'SEC:';
+    if (internalValue.startsWith(prefix)) {
+      return Utils.tripleDesDecrypt(
+        internalValue.replace(prefix, ''),
+        this.secretConfig['tripleKey'],
+        this.secretConfig['tripleIv'],
+      );
+    }
+    const encrypt = Utils.tripleDesEncrypt(
+      internalValue,
+      this.secretConfig['tripleKey'],
+      this.secretConfig['tripleIv'],
+    );
+    this.set(propertyPath, `${prefix}${encrypt}`);
+    return internalValue;
   }
 
   set(key: string, value: string | number | boolean) {
     if (Utils.isEmpty(key)) {
       return;
     }
-    if (value == null || value === '') {
+    if (value == null) {
       unset(this.internalConfig, key);
       unset(this.orgInternalConfig, key);
     } else {
@@ -205,7 +242,7 @@ export class ConfigService {
       set(this.orgInternalConfig, key, value);
     }
     if (this.options.isWatch) {
-      fs.writeFileSync(this.iniFilePath, this.getMapToString());
+      fs.writeFileSync(this.pemConfigPath, this.getMapToString());
     }
   }
 
@@ -221,7 +258,7 @@ export class ConfigService {
     }
 
     forEach(this.orgInternalConfig, (value, key) => {
-      if (!Utils.isEmpty(value)) {
+      if (value !== null) {
         if (/^#\d+$/.test(key)) {
           temp.push(value); //-->value\r\n
         } else {
@@ -273,9 +310,7 @@ export class ConfigService {
       console.log(validatedConfig);
       // validatedEnvConfig = validatedConfig;
     } else if (this.options.validationSchema) {
-      const validationOptions = ConfigService.getSchemaValidationOptions(
-        this.options,
-      );
+      const validationOptions = this.getSchemaValidationOptions(this.options);
       const { error, value: validatedConfig } =
         this.options.validationSchema.validate(config, validationOptions);
 
@@ -287,7 +322,7 @@ export class ConfigService {
     }
   }
 
-  private static getSchemaValidationOptions(options: ConfigServiceOptions) {
+  private getSchemaValidationOptions(options: ConfigServiceOptions) {
     if (options.validationOptions) {
       if (typeof options.validationOptions.allowUnknown === 'undefined') {
         options.validationOptions.allowUnknown = true;
@@ -303,9 +338,10 @@ export class ConfigService {
   // 单独给这个INI设置一个方法获取
   getPemPath() {
     const pemPathIni = this.get<string>('pemPath');
-    if (Utils.isEmpty(pemPathIni)) {
+    // 新增判断,如果有pemPath,则覆盖config,否则不覆盖
+    if (has(this.orgInternalConfig, 'pemPath') && Utils.isEmpty(pemPathIni)) {
       return join(process.cwd(), 'pem');
     }
-    return pemPathIni;
+    return pemPathIni ?? '';
   }
 }

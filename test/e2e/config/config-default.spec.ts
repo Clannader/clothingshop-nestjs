@@ -26,7 +26,7 @@ describe('ConfigService 默认加载', () => {
     expect(typeof service.get<boolean>('isShow')).toBe('boolean');
     expect(typeof service.get<string>('isString')).toBe('string');
     expect(service.get<string>('dbUrl')).toBe(
-      'X2agApWXC8SQS39fc+g0yn2l/hZwwWKclUXJOURINX37Y9xg9CRsKg==',
+      'SEC:X2agApWXC8SQS39fc+g0yn2l/hZwwWKclUXJOURINX37Y9xg9CRsKg==',
     );
     expect(service.getSecurityConfig('dbUrl')).toBe(
       'mongodb://127.0.0.1:27018/clothingshop',
