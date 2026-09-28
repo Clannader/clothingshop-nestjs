@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 // import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import { join, resolve } from 'path';
-import { cloneDeep, forEach, get, isPlainObject, set, unset } from 'lodash';
+import { cloneDeep, forEach, get, isPlainObject, set, unset, has } from 'lodash';
 import { DotenvExpandOptions, expand } from 'dotenv-expand';
 import { ConfigServiceOptions } from './config.interface';
 // import { NoInferType, ExcludeUndefinedIf, KeyOf } from '../common.type';
@@ -12,7 +12,6 @@ import {
   CONFIG_OPTIONS,
   CONFIG_SECRET,
 } from './config.constants';
-import parseEnv from '@/lib/parseEnv';
 import validator from 'validator';
 
 type ReturnValueOf = string | boolean | number;
@@ -68,7 +67,7 @@ export class ConfigService {
       // }
       config = orgIniConfig;
       // 下面修改获取Config.ini重构逻辑
-      const pemPath = parseEnv.getPemPath();
+      const pemPath = this.getPemPath();
       // 修改获取真实config.ini设置,覆盖例子的config内容
       const actualConfigPath = join(pemPath, 'config.ini');
       if (fs.existsSync(actualConfigPath)) {
@@ -335,9 +334,10 @@ export class ConfigService {
   // 单独给这个INI设置一个方法获取
   getPemPath() {
     const pemPathIni = this.get<string>('pemPath');
-    if (Utils.isEmpty(pemPathIni)) {
+    // 新增判断,如果有pemPath,则覆盖config,否则不覆盖
+    if (has(this.orgInternalConfig, 'pemPath') && Utils.isEmpty(pemPathIni)) {
       return join(process.cwd(), 'pem');
     }
-    return pemPathIni;
+    return pemPathIni ?? '';
   }
 }
