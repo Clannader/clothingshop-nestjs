@@ -7,7 +7,7 @@ import { Strategy } from '@node-saml/passport-saml';
 import { Profile, SamlOptions } from '@node-saml/node-saml/lib';
 import * as fs from 'fs';
 import { join } from 'path';
-import { LoginResult, SECRET_CONFIG, SecurityOptions } from '@/common';
+import { LoginResult, SecurityOptions } from '@/common';
 import { ConfigService } from '@/common/config';
 import { UserService } from '@/user';
 import { CodeEnum, LanguageEnum } from '@/common/enum';
@@ -20,8 +20,8 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
   private readonly userService: UserService;
 
   constructor(
-    @Inject(SECRET_CONFIG)
-    private secretConfig: ConfigService,
+    @Inject()
+    private configService: ConfigService,
   ) {
     let idpCert = ' ';
     let privateKey = '';
@@ -41,9 +41,9 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
     // 这里的ts校验不通过,看以后如何处理
     // @ts-ignore
     super({
-      callbackUrl: secretConfig.get<string>('callbackUrl'), // 设置为微软的Basic SAML Configuration -> Reply URL地址
-      entryPoint: secretConfig.get<string>('entryPoint'), // 设置为微软的Set up XXX -> Login URL 登录地址
-      issuer: secretConfig.get<string>('issuer'), // 有些时候需要加上spn:{{issuerID}}, Application ID
+      callbackUrl: configService.get<string>('callbackUrl'), // 设置为微软的Basic SAML Configuration -> Reply URL地址
+      entryPoint: configService.get<string>('entryPoint'), // 设置为微软的Set up XXX -> Login URL 登录地址
+      issuer: configService.get<string>('issuer'), // 有些时候需要加上spn:{{issuerID}}, Application ID
       idpCert, // 微软的SAML Certificates -> 下载证书
       // 如果authnContext为空并且设置disableRequestedAuthnContext=true,那么微软就会根据用户的授权方式进行授权,而不是每次都是
       // 使用密码来进行授权,微软的邮箱可以通过很多方式授权,每个账号可能都不一样,如果这里写死,那么就变成必须按照这种方式进行授权

@@ -6,18 +6,18 @@ import { RequestSession } from '@/common';
 import { CodeEnum } from '@/common/enum';
 import { CodeException } from '@/common/exceptions';
 import { GlobalService } from '@/common/utils';
-import { CONFIG_SECRET } from '@/common/config';
 import * as jwt from 'jsonwebtoken';
 
 import type { LanguageType } from '@/common';
+import { ConfigService } from '@/common/config';
 
 @Injectable()
 export class UserSessionService {
   @Inject()
   private readonly globalService: GlobalService;
 
-  @Inject(CONFIG_SECRET)
-  private readonly secretConfig: Record<string, any>;
+  @Inject()
+  private readonly configService: ConfigService;
 
   deleteSession(req: RequestSession): Promise<void> {
     delete req.session;
@@ -30,7 +30,10 @@ export class UserSessionService {
 
   verifyToken(language: LanguageType, token: string) {
     try {
-      return jwt.verify(token, this.secretConfig['jwtSecret']) as any;
+      return jwt.verify(
+        token,
+        this.configService.get<string>('jwtSecret'),
+      ) as any;
     } catch ({ name, message }) {
       if (name === 'TokenExpiredError') {
         throw new CodeException(

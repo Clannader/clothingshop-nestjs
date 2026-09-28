@@ -34,7 +34,7 @@ describe('ConfigService 观察ini文件', () => {
         : iniContent + '\r\nAA=Hello',
     ); // 这里不知道为什么会多\r\n,有可能是前面的测试导致的或者什么情况吧,不是很清楚
 
-    service.set('AA', '');
+    service.set('AA', null); // 20260927修改后,保留''值,除非设置null或者undefined
     const setIniContent2 = readFileSync(iniPath, 'utf-8').toString();
     expect(setIniContent2).toBe(iniContent); // 这里由于写入文件的时候没有\r\n所以和之前的对比要删掉
     // 并且\r\n只是占了2个字符的长度
@@ -51,7 +51,7 @@ describe('ConfigService 观察ini文件', () => {
     );
     setTimeout(() => {
       expect(service.get('AA')).toBe('Hello');
-      service.set('AA', '');
+      service.set('AA', null);
       cb();
     }, 1000);
   });
@@ -67,7 +67,7 @@ describe('ConfigService 观察ini文件', () => {
     );
     await delay(1000);
     expect(service.get('AA')).toBe('Hello');
-    service.set('AA', '');
+    service.set('AA', null);
   });
 
   afterEach(async () => {
