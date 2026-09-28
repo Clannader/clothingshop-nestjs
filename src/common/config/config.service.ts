@@ -2,7 +2,15 @@ import { Inject, Injectable } from '@nestjs/common';
 // import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import { join, resolve } from 'path';
-import { cloneDeep, forEach, get, isPlainObject, set, unset, has } from 'lodash';
+import {
+  cloneDeep,
+  forEach,
+  get,
+  isPlainObject,
+  set,
+  unset,
+  has,
+} from 'lodash';
 import { DotenvExpandOptions, expand } from 'dotenv-expand';
 import { ConfigServiceOptions } from './config.interface';
 // import { NoInferType, ExcludeUndefinedIf, KeyOf } from '../common.type';
@@ -12,7 +20,6 @@ import {
   CONFIG_OPTIONS,
   CONFIG_SECRET,
 } from './config.constants';
-import validator from 'validator';
 
 type ReturnValueOf = string | boolean | number;
 
@@ -199,10 +206,7 @@ export class ConfigService {
     //   get(this.internalConfig, 'security'),
     // ) as boolean;
     const prefix = 'SEC:';
-    if (
-      internalValue.startsWith(prefix) &&
-      validator.isBase64(internalValue.replace(prefix, ''))
-    ) {
+    if (internalValue.startsWith(prefix)) {
       return Utils.tripleDesDecrypt(
         internalValue.replace(prefix, ''),
         this.secretConfig['tripleKey'],
