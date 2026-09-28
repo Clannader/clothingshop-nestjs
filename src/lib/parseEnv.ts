@@ -4,6 +4,7 @@
 import { join } from 'path';
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
+import { has } from 'lodash';
 
 class ParseEnv {
   private readonly envIni: Record<string, any> = {};
@@ -30,10 +31,10 @@ class ParseEnv {
 
   getPemPath() {
     let pemPath = this.read('pemPath');
-    if (pemPath == null || pemPath === '') {
+    if (has(this.envIni, 'pemPath') && (pemPath == null || pemPath === '')) {
       pemPath = join(process.cwd(), 'pem');
     }
-    return pemPath;
+    return pemPath ?? '';
   }
 
   getOauthName() {
