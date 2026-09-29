@@ -206,17 +206,18 @@ export class ConfigService {
     //   get(this.internalConfig, 'security'),
     // ) as boolean;
     const prefix = 'SEC:';
+    // 修改整合config之后,其实secretConfig这个对象已经没有用了
     if (internalValue.startsWith(prefix)) {
       return Utils.tripleDesDecrypt(
         internalValue.replace(prefix, ''),
-        this.secretConfig['tripleKey'],
-        this.secretConfig['tripleIv'],
+        this.internalConfig['tripleKey'],
+        this.internalConfig['tripleIv'],
       );
     }
     const encrypt = Utils.tripleDesEncrypt(
       internalValue,
-      this.secretConfig['tripleKey'],
-      this.secretConfig['tripleIv'],
+      this.internalConfig['tripleKey'],
+      this.internalConfig['tripleIv'],
     );
     this.set(propertyPath, `${prefix}${encrypt}`);
     return internalValue;
