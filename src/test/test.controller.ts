@@ -511,7 +511,8 @@ export class TestController {
     type: RespSerializerUserEntityDto,
   })
   testSerializer(@Body() params: ReqSerializerParamsDto) {
-    console.log(params);
+    const safeParamsLog = JSON.stringify(params).replace(/[\r\n]/g, '');
+    console.log(safeParamsLog);
     const resp = new RespSerializerUserEntityDto();
     const role = new ReqSerializerRoleEntityDto({
       id: 8888,
