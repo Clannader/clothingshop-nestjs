@@ -34,7 +34,7 @@ export class BoxController {
   async writeLog(@Body() params: Record<string, any>) {
     const list = params.ifclog_list;
     const trace_id = list[0].trace_id;
-    console.log(trace_id);
+    // console.log(trace_id);
     await this.tokenCacheService.setTokenCache(trace_id, trace_id);
     const [err, result] = await this.sequenceSchemaService
       .getNextSequence(SequenceTypeEnum.Message)
