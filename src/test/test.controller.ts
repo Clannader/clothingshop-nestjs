@@ -405,7 +405,8 @@ export class TestController {
   })
   @ApiGenericsResponse(RespObjectDto, UserSessionDto)
   async gatewayGet(@Query() params: ReqTestSchemaDto) {
-    console.log(params);
+    const safeParamsLog = JSON.stringify(params).replace(/[\r\n]/g, '');
+    console.log(safeParamsLog);
     const resp = new RespObjectDto();
     resp.code = CodeEnum.SUCCESS;
     resp.rows = 23;
@@ -430,7 +431,7 @@ export class TestController {
     @UserLanguage() language: LanguageType,
   ) {
     // console.log(typeof id); // 这里要注意的是虽然ts断言类型是number,但是实际上拿到的类型还是string
-    console.log(language);
+    // console.log(language);
 
     // const sleep = (id) => {
     //   return new Promise((resolve) => {
@@ -511,7 +512,8 @@ export class TestController {
     type: RespSerializerUserEntityDto,
   })
   testSerializer(@Body() params: ReqSerializerParamsDto) {
-    console.log(params);
+    const safeParamsLog = JSON.stringify(params).replace(/[\r\n]/g, '');
+    console.log(safeParamsLog);
     const resp = new RespSerializerUserEntityDto();
     const role = new ReqSerializerRoleEntityDto({
       id: 8888,

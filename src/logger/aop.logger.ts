@@ -16,6 +16,7 @@ export class AopLogger extends ConsoleLogger {
     // 所以判断没传第二个参数的时候就调一个参数的log方法即可,目前只能这样解决了
     logger.addContext('originalContext', context || this.context);
     if (process.env.NODE_ENV !== 'test') {
+      // 这里的message需要保留\r\n,不能替换成空格
       logger.info(AopLogger.getStackTrace(), message);
     }
     // if (context) {

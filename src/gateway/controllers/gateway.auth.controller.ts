@@ -224,7 +224,8 @@ export class GatewayAuthController {
   @Get('/authorize')
   @Render('authorizeLogin')
   gotoAuthorize(@Query() params: Record<string, any>) {
-    console.log(params);
+    const safeParamsLog = JSON.stringify(params).replace(/[\r\n]/g, '');
+    console.log(safeParamsLog);
     /**
      * {
      *   response_type: 'code',
