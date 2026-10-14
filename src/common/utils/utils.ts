@@ -6,6 +6,7 @@ import {
   has,
   forEach,
   cloneDeep,
+  cloneDeepWith,
   set,
   pick,
   omit,
@@ -20,6 +21,7 @@ import parseEnv from '@/lib/parseEnv';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import * as crypto from 'node:crypto';
+import axios from 'axios';
 
 // RSA公钥和私钥只需加载一次
 const pemPath = parseEnv.getPemPath();
@@ -415,25 +417,29 @@ export class Utils {
 
   private static piiJson(jsonData: Record<string, any>, ...args: string[]) {
     // 先克隆一份json数据,不对原始数据进行修改
-    const piiJson = cloneDeep(jsonData);
+    const piiJsonClone = cloneDeepWith(jsonData, (value) => {
+      if (value instanceof axios.AxiosHeaders) {
+        return cloneDeep(value.toJSON())
+      }
+    });
     // 循环克隆的json数据
-    forEach(piiJson, (value, key) => {
+    forEach(piiJsonClone, (value, key) => {
       // 判断json数据的key是否是传入需要脱敏的字段值,并且只能脱敏字符串类型的数据
       if (args.includes(key) && typeof value === 'string') {
-        piiJson[key] = this.piiData(value);
+        piiJsonClone[key] = this.piiData(value);
         return true; // 相当于continue
       } else if (Array.isArray(value)) {
         // 如果值是数组,循环判断
-        piiJson[key] = value.map((v) => {
+        piiJsonClone[key] = value.map((v) => {
           return this.piiJson(v, ...args);
         });
         return true;
       } else if (isPlainObject(value)) {
-        piiJson[key] = this.piiJson(value, ...args);
+        piiJsonClone[key] = this.piiJson(value, ...args);
         return true;
       }
     });
-    return piiJson;
+    return piiJsonClone;
   }
 
   /**
