@@ -13,5 +13,6 @@ declare module 'mongoose' {
     saveFindById<T extends HydratedDocument>(
       id: any,
     ): Promise<HydratedDocument<T>>;
+    getSchemaVersionKey(): string;
   }
 }

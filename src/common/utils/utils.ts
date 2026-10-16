@@ -419,7 +419,7 @@ export class Utils {
     // 先克隆一份json数据,不对原始数据进行修改
     const piiJsonClone = cloneDeepWith(jsonData, (value) => {
       if (value instanceof axios.AxiosHeaders) {
-        return cloneDeep(value.toJSON())
+        return cloneDeep(value.toJSON());
       }
     });
     // 循环克隆的json数据
