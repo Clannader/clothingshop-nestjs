@@ -304,7 +304,7 @@ export class SystemConfigService {
       resp.code = CodeEnum.FAIL;
       resp.msg = this.globalService.serverLang(
         session,
-        '配置Key格式错误:以大写字母开头,数字、字母、下划线组合,最长10个字符',
+        '配置Key格式错误:以大写字母开头,数字、字母、下划线组合,最长20个字符',
         'systemConfig.keyFormatError',
       );
       return resp;
@@ -816,7 +816,7 @@ export class SystemConfigService {
       resp.code = CodeEnum.FAIL;
       resp.msg = this.globalService.serverLang(
         session,
-        '配置Key格式错误:以大写字母开头,数字、字母、下划线组合,最长10个字符',
+        '配置Key格式错误:以大写字母开头,数字、字母、下划线组合,最长20个字符',
         'systemConfig.keyFormatError',
       );
       return resp;
