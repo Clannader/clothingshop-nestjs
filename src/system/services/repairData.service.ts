@@ -318,7 +318,10 @@ export class RepairDataService {
       shopId: Utils.SYSTEM,
     };
     const [errGroup, dbRightsGroupList] = await Utils.toPromise(
-      this.rightsGroupSchemaService.getModel().find(groupWhere),
+      this.rightsGroupSchemaService
+        .getModel()
+        .find(groupWhere)
+        .select(this.rightsGroupSchemaService.getModel().getSchemaVersionKey()),
     );
     if (errGroup) {
       resp.code = CodeEnum.DB_EXEC_ERROR;
@@ -365,6 +368,9 @@ export class RepairDataService {
       if (mergeLogContent.length > 1) {
         newRightsGroup.updateUser = session.adminId;
         newRightsGroup.updateDate = new Date();
+        // 这里如果报No matching document found for id "69605fe13a0a22f159ff6465" version 0 modifiedPaths "rightCodes, updateUser, updateDate"
+        // 主要原因是__v这个字段被我任何时候都不查回来了,save的时候需要用到,如果没有就会报错
+        // 所以查的时候需要返回这个__v才可以正常save
         await newRightsGroup.save();
         await this.userLogsService.writeUserLog(
           session,
