@@ -38,3 +38,10 @@ export const saveFindByIdPlugin = function (schema: Schema): void {
     return this.findById(id).select(versionKey);
   };
 };
+
+export const schemaVersionKeyPlugin = function (schema: Schema): void {
+  schema.statics.getSchemaVersionKey = function (): string {
+    // 获取更新版本的字段名'__v'
+    return schema.get('versionKey') as string;
+  };
+};
