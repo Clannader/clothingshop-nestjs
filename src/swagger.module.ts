@@ -13,7 +13,7 @@ import { SamlAuthModule } from './saml';
 import { ServerLogModule } from './logs';
 import { RightsCodesModule, RightsGroupModule } from './rights';
 import { SubRecordModule } from './subRecord';
-import { MqttModule } from './mqtt';
+import { MqttModule, MqttTestingModule } from './mqtt';
 
 @Module({
   imports: [
@@ -30,6 +30,7 @@ import { MqttModule } from './mqtt';
     RightsGroupModule,
     SubRecordModule,
     MqttModule,
+    MqttTestingModule,
   ],
 })
 export class SwaggerModule {}

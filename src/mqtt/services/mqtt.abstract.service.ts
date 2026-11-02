@@ -104,6 +104,7 @@ export class MqttAbstractService {
     });
     this.client.on('close', () => {
       this.maxReconnectionAttempts++;
+      // TODO 需要加判断是手动end()还是连不上时的自动重连
       this.logger.log(`${this.getClientName()}连接已关闭(自动重连中...)`);
       if (this.maxReconnectionAttempts >= 100) {
         this.stop();

@@ -17,7 +17,8 @@ export class SamlAuthGuard extends AuthGuard('saml') {
     // http:ip:port/sso/login?email=xxx
     return {
       additionalParams: {
-        login_hint: request.query.email,
+        login_hint: request.query.email, // 预填登录邮箱地址
+        // whr: 'yourdomain.com' // Home Realm Discovery域提示：跳过域选择直达联合 IdP(按需)
       },
     };
   }

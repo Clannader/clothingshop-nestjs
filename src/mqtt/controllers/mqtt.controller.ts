@@ -19,7 +19,7 @@ import {
 import { SessionGuard } from '@/guard';
 import { HttpInterceptor } from '@/interceptor/http';
 import { ApiOrRights, ApiRights, RightsEnum } from '@/rights';
-import { MqttAbstractService } from '@/mqtt';
+import { MqttAbstractService } from '../services';
 import { ApiOperation } from '@andybeat/swagger';
 import {
   MqttPublishInfo,

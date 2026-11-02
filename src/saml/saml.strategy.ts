@@ -38,6 +38,7 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
     if (fs.existsSync(publicPath)) {
       publicCert = fs.readFileSync(publicPath, 'utf-8').toString();
     }
+    // 微软参考文档地址https://learn.microsoft.com/en-us/entra/identity-platform/single-sign-on-saml-protocol
     // 这里的ts校验不通过,看以后如何处理
     // @ts-ignore
     super({
