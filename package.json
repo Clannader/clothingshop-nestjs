@@ -78,8 +78,8 @@
     "lodash": "^4.18.1",
     "log4js": "^6.9.1",
     "moment": "^2.31.0",
-    "mongodb": "6.20.0",
-    "mongoose": "8.24.2",
+    "mongodb": "6.22.0",
+    "mongoose": "8.24.8",
     "mqtt": "^5.16.1",
     "on-finished": "^2.4.2",
     "qrcode": "^1.5.4",
@@ -143,6 +143,11 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.1",
     "webpack-node-externals": "^3.0.0"
+  },
+  "overrides": {
+    "mongoose": {
+      "mongodb": "$mongodb"
+    }
   },
   "jest": {
     "moduleFileExtensions": [
