@@ -115,7 +115,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
        *   // sanitizeFilter 改写后
        *   findOne({ adminId: { $eq: { $regex: '^Supervisor$', $options: 'i' } } })
        */
-      sanitizeFilter: true,
+      sanitizeFilter: false,
     };
     if (this.configService.get<boolean>('mongoDBSSL')) {
       options.tls = true;
