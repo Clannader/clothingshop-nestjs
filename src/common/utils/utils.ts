@@ -22,6 +22,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import * as crypto from 'node:crypto';
 import axios from 'axios';
+import { trusted } from 'mongoose';
 
 // RSA公钥和私钥只需加载一次
 const pemPath = parseEnv.getPemPath();
@@ -351,9 +352,9 @@ export class Utils {
   static getIgnoreCase(fieldName: string, mode = false): IgnoreCaseType {
     if (mode) {
       // mode=true就是模糊查询
-      return { $regex: this.escapeString(fieldName), $options: 'i' };
+      return trusted({ $regex: this.escapeString(fieldName), $options: 'i' });
     }
-    return { $regex: '^' + this.escapeString(fieldName) + '$', $options: 'i' };
+    return trusted({ $regex: '^' + this.escapeString(fieldName) + '$', $options: 'i' });
   }
 
   static isSupervisor(session: CmsSession) {

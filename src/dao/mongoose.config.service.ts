@@ -106,7 +106,16 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       },
       // 问题是设置这个属性无效,真是奇怪,connection里面是有这个属性了,但是没有效果
       // 难道model和connection的设置是分开的???
-      sanitizeFilter: true, // 解决NoSQL注入,全局设置过滤属性,但是会有问题,不清楚是用户输入的条件还是开发的硬编码条件
+      // 解决NoSQL注入,全局设置过滤属性,但是会有问题,不清楚是用户输入的条件还是开发的硬编码条件
+      // 目前只能设置这个值为false,一旦设置成了true,就会被改写成 { $eq: 原值 }
+      /**
+       * 所以你的查询实际执行时变成了：
+       *   // 你写的
+       *   findOne({ adminId: { $regex: '^Supervisor$', $options: 'i' } })
+       *   // sanitizeFilter 改写后
+       *   findOne({ adminId: { $eq: { $regex: '^Supervisor$', $options: 'i' } } })
+       */
+      sanitizeFilter: true,
     };
     if (this.configService.get<boolean>('mongoDBSSL')) {
       options.tls = true;
