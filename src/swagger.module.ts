@@ -14,6 +14,7 @@ import { ServerLogModule } from './logs';
 import { RightsCodesModule, RightsGroupModule } from './rights';
 import { SubRecordModule } from './subRecord';
 import { MqttModule, MqttTestingModule } from './mqtt';
+import { EmailModule } from './email';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { MqttModule, MqttTestingModule } from './mqtt';
     SubRecordModule,
     MqttModule,
     MqttTestingModule,
+    EmailModule,
   ],
 })
 export class SwaggerModule {}
