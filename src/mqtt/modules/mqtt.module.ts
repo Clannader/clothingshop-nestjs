@@ -21,9 +21,9 @@ import cluster from 'node:cluster';
         const clientId = configService.get<string>('mqttClientId');
         const svc = new MqttAbstractService(
           normalizeMqttConfig({
-            brokerUrl: configService.get<string>('mqttUrl'),
-            username: configService.get<string>('mqttUserName'),
-            password: configService.get<string>('mqttPassword'),
+            brokerUrl: configService.getSecurityConfig('mqttUrl'),
+            username: configService.getSecurityConfig('mqttUserName'),
+            password: configService.getSecurityConfig('mqttPassword'),
             clientId: `${clientId}-${serverName}-${workerId}`, // clientId就是连接的名称,如果不设置就是随机
           }),
         );
