@@ -36,6 +36,11 @@ if (existsSync(publicKeyPath)) {
 if (existsSync(privatePath)) {
   privateKeyPem = readFileSync(privatePath, 'utf8');
 }
+// ==================== AES-256-GCM 配置常量 ====================
+const ALGORITHM = 'aes-256-gcm';
+const KEY_LENGTH = 32; // AES-256 需要 32 字节密钥
+const NONCE_LENGTH = 12; // GCM 推荐 12 字节 nonce
+const AUTH_TAG_LENGTH = 16; // 认证标签长度，通常 16 字节
 
 /**
  * 系统工具类
@@ -702,5 +707,28 @@ export class Utils {
 
   static errMessage(err: unknown): string {
     return err instanceof Error ? err.message : String(err);
+  }
+
+  /**
+   * 随机生成一个AES KEY
+   */
+  static generateAesKey() {
+    /**
+     *   不想让密钥以字节的形式在代码传,使用KeyObject对象
+     *   const keyObject = crypto.generateKeySync(
+     *     'aes', {length: 256}
+     *   )
+     *   console.log(keyObject.export().toString('hex'))
+     *   console.log(keyObject.export().toString('base64'))
+     */
+
+    /**
+     *  只是加密用,这个简单
+     *  const buffer = crypto.randomBytes(32)
+     *  buffer.toString('hex'); // 64字符,最常用
+     *  buffer.toString('base64'); // 44字符
+     *  buffer.toString('base64url'); // 43字符, URL安全
+     */
+    return crypto.randomBytes(KEY_LENGTH).toString('hex');
   }
 }
