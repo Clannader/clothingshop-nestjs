@@ -59,6 +59,7 @@ const createRsaKey = () => {
 
   fs.writeFileSync(path.join(uuidDir, 'public-rsa.pem'), publicKey);
   fs.writeFileSync(path.join(uuidDir, 'private-rsa.pem'), privateKey);
+  fs.writeFileSync(path.join(uuidDir, 'private-aes.ini'), crypto.randomBytes(32).toString('hex'));
 
   console.log('密钥对生成成功!');
 }
