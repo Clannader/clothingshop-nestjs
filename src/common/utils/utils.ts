@@ -36,6 +36,11 @@ if (existsSync(publicKeyPath)) {
 if (existsSync(privatePath)) {
   privateKeyPem = readFileSync(privatePath, 'utf8');
 }
+// ==================== AES-256-GCM 配置常量 ====================
+const ALGORITHM = 'aes-256-gcm';
+const KEY_LENGTH = 32; // AES-256 需要 32 字节密钥
+const NONCE_LENGTH = 12; // GCM 推荐 12 字节 nonce
+const AUTH_TAG_LENGTH = 16; // 认证标签长度，通常 16 字节
 
 /**
  * 系统工具类
@@ -134,6 +139,73 @@ export class Utils {
     });
     const decryptStr = decryptAction.toString(CryptoJS.enc.Utf8);
     return this.isEmpty(decryptStr) ? null : decryptStr;
+  }
+
+  /**
+   * 校验AES密钥必须是Buffer对象: 必须是 KEY_LENGTH(32) 字节
+   * @param keyBuffer 密钥字符串
+   * @returns 32 字节的密钥
+   */
+  private static getAesKey(keyBuffer: Buffer): Buffer {
+    if (keyBuffer.length !== KEY_LENGTH) {
+      throw new Error(
+        `AES key length must be ${KEY_LENGTH} bytes, got ${keyBuffer.length}`,
+      );
+    }
+    return keyBuffer;
+  }
+
+  /**
+   * AES-256-GCM加密(认证加密, 密文被篡改后解密会失败)
+   * 每次加密随机生成 NONCE_LENGTH(12) 字节 nonce, 输出为 base64(nonce + authTag + 密文), 解密时不需要再传iv
+   * @param str 加密的内容
+   * @param key 32 字节的密钥字符串
+   */
+  static aesEncrypt(str: string, key: Buffer): string {
+    const keyBuffer = this.getAesKey(key);
+    const nonce = crypto.randomBytes(NONCE_LENGTH);
+    const cipher = crypto.createCipheriv(ALGORITHM, keyBuffer, nonce, {
+      authTagLength: AUTH_TAG_LENGTH,
+    });
+    const encrypted = Buffer.concat([
+      cipher.update(str, 'utf8'),
+      cipher.final(),
+    ]);
+    return Buffer.concat([nonce, cipher.getAuthTag(), encrypted]).toString(
+      'base64',
+    );
+  }
+
+  /**
+   * AES-256-GCM解密, 密文被篡改/密钥不合法/密文格式错误时返回 null
+   * @param str 解密内容
+   * @param key 32 字节的密钥字符串
+   */
+  static aesDecrypt(str: string, key: Buffer): string | null {
+    try {
+      const keyBuffer = this.getAesKey(key);
+      const data = Buffer.from(str, 'base64');
+      const tagEnd = NONCE_LENGTH + AUTH_TAG_LENGTH;
+      // 长度不足 nonce + authTag, 不可能是合法密文
+      if (data.length < tagEnd) {
+        return null;
+      }
+      const decipher = crypto.createDecipheriv(
+        ALGORITHM,
+        keyBuffer,
+        data.subarray(0, NONCE_LENGTH),
+        { authTagLength: AUTH_TAG_LENGTH },
+      );
+      decipher.setAuthTag(data.subarray(NONCE_LENGTH, tagEnd));
+      const decrypted = Buffer.concat([
+        decipher.update(data.subarray(tagEnd)),
+        decipher.final(),
+      ]);
+      return decrypted.toString('utf8');
+    } catch (e) {
+      this.logger.error(e);
+      return null;
+    }
   }
 
   /**
@@ -702,5 +774,28 @@ export class Utils {
 
   static errMessage(err: unknown): string {
     return err instanceof Error ? err.message : String(err);
+  }
+
+  /**
+   * 随机生成一个AES KEY
+   */
+  static generateAesKey() {
+    /**
+     *   不想让密钥以字节的形式在代码传,使用KeyObject对象
+     *   const keyObject = crypto.generateKeySync(
+     *     'aes', {length: 256}
+     *   )
+     *   console.log(keyObject.export().toString('hex'))
+     *   console.log(keyObject.export().toString('base64'))
+     */
+
+    /**
+     *  只是加密用,这个简单
+     *  const buffer = crypto.randomBytes(32) // buffer对象
+     *  buffer.toString('hex'); // 64字符,最常用
+     *  buffer.toString('base64'); // 44字符
+     *  buffer.toString('base64url'); // 43字符, URL安全
+     */
+    return crypto.randomBytes(KEY_LENGTH);
   }
 }

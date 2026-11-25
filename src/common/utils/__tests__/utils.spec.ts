@@ -1,6 +1,7 @@
 import { Utils } from '@/common/utils';
-import { RightsEnum } from '@/rights';
 import { userRightsCodeExp, userRightsGroupExp } from '@/common';
+import type { AopLogger } from '@/logger';
+import crypto from 'node:crypto';
 
 describe('Utils', () => {
   it('32位系统路径转义', () => {
@@ -55,6 +56,81 @@ describe('Utils', () => {
       'ClothingShopClothingShopClothingShopClothingShopClothingShopBBBB';
     const encrypt2 = Utils.tripleDesEncrypt('a', key);
     expect(Utils.tripleDesDecrypt(encrypt2, key)).toBe('a');
+  });
+
+  // 32 字节的 AES 密钥(按 UTF-8 字节数计算, 这里正好是 32 个 ASCII 字符)
+  const aesKey = Utils.generateAesKey();
+
+  it('AES-256-GCM加解密 "a"', () => {
+    const encrypt = Utils.aesEncrypt('a', aesKey);
+    expect(Utils.aesDecrypt(encrypt, aesKey)).toBe('a');
+  });
+
+  it('AES-256-GCM加解密中文/emoji/空串/长文本', () => {
+    for (const text of ['你好，世界', 'emoji 👍🎉', '', 'a'.repeat(10000)]) {
+      expect(Utils.aesDecrypt(Utils.aesEncrypt(text, aesKey), aesKey)).toBe(
+        text,
+      );
+    }
+  });
+
+  it('AES每次加密随机生成nonce, 相同明文密文不同', () => {
+    const encrypt1 = Utils.aesEncrypt('a', aesKey);
+    const encrypt2 = Utils.aesEncrypt('a', aesKey);
+    expect(encrypt1).not.toBe(encrypt2);
+    expect(Utils.aesDecrypt(encrypt1, aesKey)).toBe('a');
+    expect(Utils.aesDecrypt(encrypt2, aesKey)).toBe('a');
+  });
+
+  it('AES密文结构为 nonce(12字节) + authTag(16字节) + 密文', () => {
+    // GCM 是流式加密, 密文长度与明文字节数相同, "abc" 为 3 字节
+    const data = Buffer.from(Utils.aesEncrypt('abc', aesKey), 'base64');
+    expect(data.length).toBe(12 + 16 + 3);
+  });
+
+  it('AES密文长度不足 nonce + authTag 时返回null', () => {
+    expect(Utils.aesDecrypt('', aesKey)).toBeNull();
+    expect(Utils.aesDecrypt('not-a-valid-ciphertext', aesKey)).toBeNull();
+    expect(
+      Utils.aesDecrypt(Buffer.alloc(27).toString('base64'), aesKey),
+    ).toBeNull();
+  });
+
+  it('AES解密认证失败时返回null并记录日志', () => {
+    // logger 是私有成员, 通过类型断言拿到; 解密失败会打 error 日志, 这里静音并断言调用次数
+    const logger = (Utils as unknown as { logger: AopLogger }).logger;
+    const errorSpy = jest
+      .spyOn(logger, 'error')
+      .mockImplementation(() => undefined);
+    const encrypt = Utils.aesEncrypt('a', aesKey);
+
+    // 密钥不匹配(长度合法但内容不同)
+    const wrongKey = Utils.generateAesKey();
+    expect(Utils.aesDecrypt(encrypt, wrongKey)).toBeNull();
+
+    // 密文被篡改(GCM 能发现篡改)
+    const data = Buffer.from(encrypt, 'base64');
+    data[data.length - 1] ^= 0x01;
+    expect(Utils.aesDecrypt(data.toString('base64'), aesKey)).toBeNull();
+
+    // 长度足够但内容不是合法密文
+    expect(
+      Utils.aesDecrypt(Buffer.alloc(32).toString('base64'), aesKey),
+    ).toBeNull();
+
+    // 密钥长度不合法
+    expect(Utils.aesDecrypt(encrypt, crypto.randomBytes(31))).toBeNull();
+
+    expect(errorSpy).toHaveBeenCalledTimes(4);
+    errorSpy.mockRestore();
+  });
+
+  it('AES密钥必须是32字节, 加密时不合法直接抛错', () => {
+    // 31 字节
+    expect(() => Utils.aesEncrypt('a', crypto.randomBytes(31))).toThrow();
+    // 16 个中文字符 = 48 字节
+    expect(() => Utils.aesEncrypt('a', Buffer.from('密'.repeat(16)))).toThrow();
+    expect(() => Utils.aesEncrypt('a', aesKey)).not.toThrow();
   });
 
   it('base64加解密 "a"', () => {
